@@ -1,0 +1,71 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="and" path="ActionManager" hit="Collect Host and Client logs" />
+    <option name="client" path="ActionManager" hit="Collect Host and Client logs" />
+    <option name="collect" path="ActionManager" hit="Collect Host and Client logs" />
+    <option name="host" path="ActionManager" hit="Collect Host and Client logs" />
+    <option name="logs" path="ActionManager" hit="Collect Host and Client logs" />
+    <option name="an" path="ActionManager" hit="Collect Logs and Submit an Issue..." />
+    <option name="and" path="ActionManager" hit="Collect Logs and Submit an Issue..." />
+    <option name="collect" path="ActionManager" hit="Collect Logs and Submit an Issue..." />
+    <option name="issue" path="ActionManager" hit="Collect Logs and Submit an Issue..." />
+    <option name="logs" path="ActionManager" hit="Collect Logs and Submit an Issue..." />
+    <option name="submit" path="ActionManager" hit="Collect Logs and Submit an Issue..." />
+    <option name="copy" path="ActionManager" hit="Copy Invitation Link..." />
+    <option name="invitation" path="ActionManager" hit="Copy Invitation Link..." />
+    <option name="link" path="ActionManager" hit="Copy Invitation Link..." />
+    <option name="configuration" path="ActionManager" hit="Debug context configuration" />
+    <option name="context" path="ActionManager" hit="Debug context configuration" />
+    <option name="debug" path="ActionManager" hit="Debug context configuration" />
+    <option name="disable" path="ActionManager" hit="Disable Permanent Link (internal)" />
+    <option name="internal" path="ActionManager" hit="Disable Permanent Link (internal)" />
+    <option name="link" path="ActionManager" hit="Disable Permanent Link (internal)" />
+    <option name="permanent" path="ActionManager" hit="Disable Permanent Link (internal)" />
+    <option name="dumpremoteeditors" path="ActionManager" hit="DumpRemoteEditors" />
+    <option name="access" path="ActionManager" hit="Enable Access and Copy Invitation Link..." />
+    <option name="and" path="ActionManager" hit="Enable Access and Copy Invitation Link..." />
+    <option name="copy" path="ActionManager" hit="Enable Access and Copy Invitation Link..." />
+    <option name="enable" path="ActionManager" hit="Enable Access and Copy Invitation Link..." />
+    <option name="invitation" path="ActionManager" hit="Enable Access and Copy Invitation Link..." />
+    <option name="link" path="ActionManager" hit="Enable Access and Copy Invitation Link..." />
+    <option name="get" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="ide" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="internal" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="link" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="permanent" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="to" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="your" path="ActionManager" hit="Get Permanent Link to Your IDE (internal)" />
+    <option name="another" path="ActionManager" hit="Join Another IDE as Participant..." />
+    <option name="as" path="ActionManager" hit="Join Another IDE as Participant..." />
+    <option name="ide" path="ActionManager" hit="Join Another IDE as Participant..." />
+    <option name="join" path="ActionManager" hit="Join Another IDE as Participant..." />
+    <option name="participant" path="ActionManager" hit="Join Another IDE as Participant..." />
+    <option name="license" path="ActionManager" hit="Manage License" />
+    <option name="manage" path="ActionManager" hit="Manage License" />
+    <option name="and" path="ActionManager" hit="Permissions and Security..." />
+    <option name="permissions" path="ActionManager" hit="Permissions and Security..." />
+    <option name="security" path="ActionManager" hit="Permissions and Security..." />
+    <option name="all" path="ActionManager" hit="Reload All Client ToolWindows" />
+    <option name="client" path="ActionManager" hit="Reload All Client ToolWindows" />
+    <option name="reload" path="ActionManager" hit="Reload All Client ToolWindows" />
+    <option name="toolwindows" path="ActionManager" hit="Reload All Client ToolWindows" />
+    <option name="configuration" path="ActionManager" hit="Run context configuration" />
+    <option name="context" path="ActionManager" hit="Run context configuration" />
+    <option name="run" path="ActionManager" hit="Run context configuration" />
+    <option name="be" path="ActionManager" hit="Show Be Controls" />
+    <option name="controls" path="ActionManager" hit="Show Be Controls" />
+    <option name="show" path="ActionManager" hit="Show Be Controls" />
+    <option name="cwm" path="ActionManager" hit="Show CWM popup" />
+    <option name="popup" path="ActionManager" hit="Show CWM popup" />
+    <option name="show" path="ActionManager" hit="Show CWM popup" />
+    <option name="access" path="ActionManager" hit="Turn Access Off and Disconnect All" />
+    <option name="all" path="ActionManager" hit="Turn Access Off and Disconnect All" />
+    <option name="and" path="ActionManager" hit="Turn Access Off and Disconnect All" />
+    <option name="disconnect" path="ActionManager" hit="Turn Access Off and Disconnect All" />
+    <option name="off" path="ActionManager" hit="Turn Access Off and Disconnect All" />
+    <option name="turn" path="ActionManager" hit="Turn Access Off and Disconnect All" />
+    <option name="chars" path="ActionManager" hit="Type Chars" />
+    <option name="type" path="ActionManager" hit="Type Chars" />
+  </configurable>
+</options>

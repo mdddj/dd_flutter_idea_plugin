@@ -1,0 +1,89 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="download" path="ActionManager" hit="Download Shared Indexes" />
+    <option name="indexes" path="ActionManager" hit="Download Shared Indexes" />
+    <option name="shared" path="ActionManager" hit="Download Shared Indexes" />
+    <option name="consent" path="ActionManager" hit="Notify Shared Index Consent" />
+    <option name="index" path="ActionManager" hit="Notify Shared Index Consent" />
+    <option name="notify" path="ActionManager" hit="Notify Shared Index Consent" />
+    <option name="shared" path="ActionManager" hit="Notify Shared Index Consent" />
+    <option name="downloaded" path="ActionManager" hit="Notify Shared Index Downloaded" />
+    <option name="index" path="ActionManager" hit="Notify Shared Index Downloaded" />
+    <option name="notify" path="ActionManager" hit="Notify Shared Index Downloaded" />
+    <option name="shared" path="ActionManager" hit="Notify Shared Index Downloaded" />
+    <option name="all" path="ActionManager" hit="Remove All Shared Indexes" />
+    <option name="indexes" path="ActionManager" hit="Remove All Shared Indexes" />
+    <option name="remove" path="ActionManager" hit="Remove All Shared Indexes" />
+    <option name="shared" path="ActionManager" hit="Remove All Shared Indexes" />
+    <option name="all" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="and" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="available" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="indexes" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="indexing" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="reloads" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="removes" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="shared" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="subsystem" path="ActionManager" hit="Removes all available shared indexes and reloads indexing subsystem" />
+    <option name="current" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="download" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="for" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="indexes" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="pre-built" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="project" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="restarts" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+    <option name="shared" path="ActionManager" hit="Restarts pre-built shared indexes download for current project" />
+  </configurable>
+  <configurable id="shared-indexes" configurable_name="Shared Indexes">
+    <option name="" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="and" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="become" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="cpu" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="downloaded" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="for" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="fully" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="helps" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="indexes" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="indexing" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="it" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="local" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="ready" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="reduce" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="shared" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="suspend" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="to" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="usage" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="wait" hit="   Suspend local indexing to wait for shared indexes to become ready and fully downloaded. It helps to reduce CPU usage.   " />
+    <option name="ask" hit="Ask before download" />
+    <option name="before" hit="Ask before download" />
+    <option name="download" hit="Ask before download" />
+    <option name="don" hit="Don't download, use local indexes" />
+    <option name="download" hit="Don't download, use local indexes" />
+    <option name="indexes" hit="Don't download, use local indexes" />
+    <option name="local" hit="Don't download, use local indexes" />
+    <option name="t" hit="Don't download, use local indexes" />
+    <option name="use" hit="Don't download, use local indexes" />
+    <option name="automatically" hit="Download automatically" />
+    <option name="download" hit="Download automatically" />
+    <option name="download" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="indexes" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="indexing" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="pre-built" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="reduce" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="shared" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="time" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="to" hit="Download pre-built shared indexes to reduce indexing time" />
+    <option name="jdks" hit="JDKs:" />
+    <option name="libraries" hit="Maven Libraries:" />
+    <option name="maven" hit="Maven Libraries:" />
+    <option name="indexes" hit="Public Shared Indexes" />
+    <option name="public" hit="Public Shared Indexes" />
+    <option name="shared" hit="Public Shared Indexes" />
+    <option name="indexes" hit="Shared Indexes" />
+    <option name="shared" hit="Shared Indexes" />
+    <option name="for" hit="Wait for shared indexes" />
+    <option name="indexes" hit="Wait for shared indexes" />
+    <option name="shared" hit="Wait for shared indexes" />
+    <option name="wait" hit="Wait for shared indexes" />
+  </configurable>
+</options>

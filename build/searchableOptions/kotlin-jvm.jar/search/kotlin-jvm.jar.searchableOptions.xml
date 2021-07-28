@@ -1,0 +1,46 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="clear" path="ActionManager" hit="Clear results" />
+    <option name="results" path="ActionManager" hit="Clear results" />
+    <option name="configure" path="ActionManager" hit="Configure Kotlin (JavaScript) in Project" />
+    <option name="in" path="ActionManager" hit="Configure Kotlin (JavaScript) in Project" />
+    <option name="javascript" path="ActionManager" hit="Configure Kotlin (JavaScript) in Project" />
+    <option name="kotlin" path="ActionManager" hit="Configure Kotlin (JavaScript) in Project" />
+    <option name="project" path="ActionManager" hit="Configure Kotlin (JavaScript) in Project" />
+    <option name="configure" path="ActionManager" hit="Configure Kotlin in Project" />
+    <option name="in" path="ActionManager" hit="Configure Kotlin in Project" />
+    <option name="kotlin" path="ActionManager" hit="Configure Kotlin in Project" />
+    <option name="project" path="ActionManager" hit="Configure Kotlin in Project" />
+    <option name="backup" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="compilation" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="create" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="debugging" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="for" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="incremental" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="kotlin" path="ActionManager" hit="Create backup for debugging Kotlin incremental compilation" />
+    <option name="activity" path="ActionManager" hit="Kotlin Project Post-Open Activity" />
+    <option name="kotlin" path="ActionManager" hit="Kotlin Project Post-Open Activity" />
+    <option name="post-open" path="ActionManager" hit="Kotlin Project Post-Open Activity" />
+    <option name="project" path="ActionManager" hit="Kotlin Project Post-Open Activity" />
+    <option name="api" path="ActionManager" hit="Report as Incompatible API" />
+    <option name="as" path="ActionManager" hit="Report as Incompatible API" />
+    <option name="incompatible" path="ActionManager" hit="Report as Incompatible API" />
+    <option name="report" path="ActionManager" hit="Report as Incompatible API" />
+    <option name="file" path="ActionManager" hit="Run Scratch File" />
+    <option name="run" path="ActionManager" hit="Run Scratch File" />
+    <option name="scratch" path="ActionManager" hit="Run Scratch File" />
+    <option name="alt" path="ActionManager" hit="Run Scratch File (Ctrl+Alt+W)" />
+    <option name="ctrl" path="ActionManager" hit="Run Scratch File (Ctrl+Alt+W)" />
+    <option name="file" path="ActionManager" hit="Run Scratch File (Ctrl+Alt+W)" />
+    <option name="run" path="ActionManager" hit="Run Scratch File (Ctrl+Alt+W)" />
+    <option name="scratch" path="ActionManager" hit="Run Scratch File (Ctrl+Alt+W)" />
+    <option name="w" path="ActionManager" hit="Run Scratch File (Ctrl+Alt+W)" />
+    <option name="bytecode" path="ActionManager" hit="Show Kotlin Bytecode" />
+    <option name="kotlin" path="ActionManager" hit="Show Kotlin Bytecode" />
+    <option name="show" path="ActionManager" hit="Show Kotlin Bytecode" />
+    <option name="execution" path="ActionManager" hit="Stop scratch execution" />
+    <option name="scratch" path="ActionManager" hit="Stop scratch execution" />
+    <option name="stop" path="ActionManager" hit="Stop scratch execution" />
+  </configurable>
+</options>

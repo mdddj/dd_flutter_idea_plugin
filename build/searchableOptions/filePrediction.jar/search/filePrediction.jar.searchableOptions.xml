@@ -1,0 +1,18 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="and" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="calculates" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="candidates" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="file" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="next" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="predicted" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="probability" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="shows" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="them" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="with" path="ActionManager" hit="Calculates next file candidates and shows them with predicted probability" />
+    <option name="candidates" path="ActionManager" hit="Show Next File Candidates" />
+    <option name="file" path="ActionManager" hit="Show Next File Candidates" />
+    <option name="next" path="ActionManager" hit="Show Next File Candidates" />
+    <option name="show" path="ActionManager" hit="Show Next File Candidates" />
+  </configurable>
+</options>

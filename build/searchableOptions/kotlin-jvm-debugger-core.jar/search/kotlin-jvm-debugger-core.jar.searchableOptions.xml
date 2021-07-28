@@ -1,0 +1,30 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="applicability" path="ActionManager" hit="Inspect Breakpoint Applicability" />
+    <option name="breakpoint" path="ActionManager" hit="Inspect Breakpoint Applicability" />
+    <option name="inspect" path="ActionManager" hit="Inspect Breakpoint Applicability" />
+    <option name="kotlin" path="ActionManager" hit="Show Kotlin Variables Only" />
+    <option name="only" path="ActionManager" hit="Show Kotlin Variables Only" />
+    <option name="show" path="ActionManager" hit="Show Kotlin Variables Only" />
+    <option name="variables" path="ActionManager" hit="Show Kotlin Variables Only" />
+  </configurable>
+  <configurable id="reference.idesettings.debugger.kotlin.data.view" configurable_name="Kotlin">
+    <option name="agent" hit="Disable coroutine agent" />
+    <option name="coroutine" hit="Disable coroutine agent" />
+    <option name="disable" hit="Disable coroutine agent" />
+    <option name="kotlin" hit="Kotlin" />
+  </configurable>
+  <configurable id="debugger.stepping" configurable_name="Stepping">
+    <option name="classes" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="do" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="implementation" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="into" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="kotlin" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="library" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="not" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="runtime" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="step" hit="Do not step into Kotlin runtime library implementation classes" />
+    <option name="kotlin" hit="Kotlin" />
+  </configurable>
+</options>

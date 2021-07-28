@@ -1,0 +1,6 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="前往PUB查看" />
+    <option name="pub" path="ActionManager" hit="前往PUB查看" />
+  </configurable>
+</options>

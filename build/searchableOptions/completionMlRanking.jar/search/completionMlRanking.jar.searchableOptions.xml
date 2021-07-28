@@ -1,0 +1,42 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="clipboard" path="ActionManager" hit="Copy ML Completion Features To Clipboard" />
+    <option name="completion" path="ActionManager" hit="Copy ML Completion Features To Clipboard" />
+    <option name="copy" path="ActionManager" hit="Copy ML Completion Features To Clipboard" />
+    <option name="features" path="ActionManager" hit="Copy ML Completion Features To Clipboard" />
+    <option name="ml" path="ActionManager" hit="Copy ML Completion Features To Clipboard" />
+    <option name="to" path="ActionManager" hit="Copy ML Completion Features To Clipboard" />
+  </configurable>
+  <configurable id="editor.preferences.completion" configurable_name="Code Completion">
+    <option name="java" hit="Java" />
+    <option name="kotlin" hit="Kotlin" />
+    <option name="completion" hit="Machine Learning-Assisted Completion" />
+    <option name="learning-assisted" hit="Machine Learning-Assisted Completion" />
+    <option name="machine" hit="Machine Learning-Assisted Completion" />
+    <option name="changes" hit="Mark position changes in completion popup" />
+    <option name="completion" hit="Mark position changes in completion popup" />
+    <option name="in" hit="Mark position changes in completion popup" />
+    <option name="mark" hit="Mark position changes in completion popup" />
+    <option name="popup" hit="Mark position changes in completion popup" />
+    <option name="position" hit="Mark position changes in completion popup" />
+    <option name="completion" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="exists" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="if" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="in" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="it" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="item" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="mark" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="most" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="popup" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="relevant" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="the" hit="Mark the most relevant item in completion popup if it exists" />
+    <option name="based" hit="Sort completion suggestions based on machine learning" />
+    <option name="completion" hit="Sort completion suggestions based on machine learning" />
+    <option name="learning" hit="Sort completion suggestions based on machine learning" />
+    <option name="machine" hit="Sort completion suggestions based on machine learning" />
+    <option name="on" hit="Sort completion suggestions based on machine learning" />
+    <option name="sort" hit="Sort completion suggestions based on machine learning" />
+    <option name="suggestions" hit="Sort completion suggestions based on machine learning" />
+  </configurable>
+</options>

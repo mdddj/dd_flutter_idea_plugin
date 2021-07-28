@@ -1,0 +1,105 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="follow" path="ActionManager" hit="Follow single user" />
+    <option name="single" path="ActionManager" hit="Follow single user" />
+    <option name="user" path="ActionManager" hit="Follow single user" />
+    <option name="all" path="ActionManager" hit="Force All to Follow You" />
+    <option name="follow" path="ActionManager" hit="Force All to Follow You" />
+    <option name="force" path="ActionManager" hit="Force All to Follow You" />
+    <option name="to" path="ActionManager" hit="Force All to Follow You" />
+    <option name="you" path="ActionManager" hit="Force All to Follow You" />
+    <option name="follow" path="ActionManager" hit="Invite Others to Follow You" />
+    <option name="invite" path="ActionManager" hit="Invite Others to Follow You" />
+    <option name="others" path="ActionManager" hit="Invite Others to Follow You" />
+    <option name="to" path="ActionManager" hit="Invite Others to Follow You" />
+    <option name="you" path="ActionManager" hit="Invite Others to Follow You" />
+    <option name="call" path="ActionManager" hit="Join Voice Call" />
+    <option name="join" path="ActionManager" hit="Join Voice Call" />
+    <option name="voice" path="ActionManager" hit="Join Voice Call" />
+    <option name="about" path="ActionManager" hit="Learn About Code With Me" />
+    <option name="code" path="ActionManager" hit="Learn About Code With Me" />
+    <option name="learn" path="ActionManager" hit="Learn About Code With Me" />
+    <option name="me" path="ActionManager" hit="Learn About Code With Me" />
+    <option name="with" path="ActionManager" hit="Learn About Code With Me" />
+    <option name="call" path="ActionManager" hit="Leave Call" />
+    <option name="leave" path="ActionManager" hit="Leave Call" />
+    <option name="call" path="ActionManager" hit="Open Call Tool Window..." />
+    <option name="open" path="ActionManager" hit="Open Call Tool Window..." />
+    <option name="tool" path="ActionManager" hit="Open Call Tool Window..." />
+    <option name="window" path="ActionManager" hit="Open Call Tool Window..." />
+    <option name="settings" path="ActionManager" hit="Settings..." />
+    <option name="settings" path="ActionManager" hit="Sound Settings..." />
+    <option name="sound" path="ActionManager" hit="Sound Settings..." />
+  </configurable>
+  <configurable id="reference.settingsdialog.IDE.editor.colors.Code With Me" configurable_name="Code With Me">
+    <option name="code" hit="Code With Me" />
+    <option name="me" hit="Code With Me" />
+    <option name="with" hit="Code With Me" />
+    <option name="1" hit="User 1 marker" />
+    <option name="marker" hit="User 1 marker" />
+    <option name="user" hit="User 1 marker" />
+    <option name="1" hit="User 1 selection" />
+    <option name="selection" hit="User 1 selection" />
+    <option name="user" hit="User 1 selection" />
+    <option name="2" hit="User 2 marker" />
+    <option name="marker" hit="User 2 marker" />
+    <option name="user" hit="User 2 marker" />
+    <option name="2" hit="User 2 selection" />
+    <option name="selection" hit="User 2 selection" />
+    <option name="user" hit="User 2 selection" />
+    <option name="3" hit="User 3 marker" />
+    <option name="marker" hit="User 3 marker" />
+    <option name="user" hit="User 3 marker" />
+    <option name="3" hit="User 3 selection" />
+    <option name="selection" hit="User 3 selection" />
+    <option name="user" hit="User 3 selection" />
+    <option name="4" hit="User 4 marker" />
+    <option name="marker" hit="User 4 marker" />
+    <option name="user" hit="User 4 marker" />
+    <option name="4" hit="User 4 selection" />
+    <option name="selection" hit="User 4 selection" />
+    <option name="user" hit="User 4 selection" />
+    <option name="5" hit="User 5 marker" />
+    <option name="marker" hit="User 5 marker" />
+    <option name="user" hit="User 5 marker" />
+    <option name="5" hit="User 5 selection" />
+    <option name="selection" hit="User 5 selection" />
+    <option name="user" hit="User 5 selection" />
+    <option name="6" hit="User 6 marker" />
+    <option name="marker" hit="User 6 marker" />
+    <option name="user" hit="User 6 marker" />
+    <option name="6" hit="User 6 selection" />
+    <option name="selection" hit="User 6 selection" />
+    <option name="user" hit="User 6 selection" />
+  </configurable>
+  <configurable id="CodeWithMe" configurable_name="Code With Me">
+    <option name="code" hit="Code With Me" />
+    <option name="me" hit="Code With Me" />
+    <option name="with" hit="Code With Me" />
+    <option name="instruction" hit="Instruction" />
+    <option name="lobby" hit="Lobby server URL:" />
+    <option name="server" hit="Lobby server URL:" />
+    <option name="url" hit="Lobby server URL:" />
+    <option name="colors" hit="Manage user's colors" />
+    <option name="manage" hit="Manage user's colors" />
+    <option name="s" hit="Manage user's colors" />
+    <option name="user" hit="Manage user's colors" />
+    <option name="and" hit="Set up private on-premise lobby and relay servers" />
+    <option name="lobby" hit="Set up private on-premise lobby and relay servers" />
+    <option name="on-premise" hit="Set up private on-premise lobby and relay servers" />
+    <option name="private" hit="Set up private on-premise lobby and relay servers" />
+    <option name="relay" hit="Set up private on-premise lobby and relay servers" />
+    <option name="servers" hit="Set up private on-premise lobby and relay servers" />
+    <option name="set" hit="Set up private on-premise lobby and relay servers" />
+    <option name="up" hit="Set up private on-premise lobby and relay servers" />
+    <option name="jetbrains" hit="Use JetBrains Server" />
+    <option name="server" hit="Use JetBrains Server" />
+    <option name="use" hit="Use JetBrains Server" />
+    <option name="name" hit="Use System Name" />
+    <option name="system" hit="Use System Name" />
+    <option name="use" hit="Use System Name" />
+    <option name="name" hit="User name:" />
+    <option name="user" hit="User name:" />
+  </configurable>
+</options>

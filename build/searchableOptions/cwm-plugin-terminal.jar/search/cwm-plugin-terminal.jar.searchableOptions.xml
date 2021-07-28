@@ -1,0 +1,6 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="share" path="ActionManager" hit="Share" />
+  </configurable>
+</options>

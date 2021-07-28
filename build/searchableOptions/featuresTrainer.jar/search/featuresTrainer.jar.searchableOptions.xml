@@ -1,0 +1,46 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="all" path="ActionManager" hit="Autorun All Lessons" />
+    <option name="autorun" path="ActionManager" hit="Autorun All Lessons" />
+    <option name="lessons" path="ActionManager" hit="Autorun All Lessons" />
+    <option name="autorun" path="ActionManager" hit="Autorun Current Lesson" />
+    <option name="current" path="ActionManager" hit="Autorun Current Lesson" />
+    <option name="lesson" path="ActionManager" hit="Autorun Current Lesson" />
+    <option name="clipboard" path="ActionManager" hit="Copy IFT Course Text to Clipboard" />
+    <option name="copy" path="ActionManager" hit="Copy IFT Course Text to Clipboard" />
+    <option name="course" path="ActionManager" hit="Copy IFT Course Text to Clipboard" />
+    <option name="ift" path="ActionManager" hit="Copy IFT Course Text to Clipboard" />
+    <option name="text" path="ActionManager" hit="Copy IFT Course Text to Clipboard" />
+    <option name="to" path="ActionManager" hit="Copy IFT Course Text to Clipboard" />
+    <option name="features" path="ActionManager" hit="Learn IDE Features" />
+    <option name="ide" path="ActionManager" hit="Learn IDE Features" />
+    <option name="learn" path="ActionManager" hit="Learn IDE Features" />
+    <option name="lesson" path="ActionManager" hit="Next Lesson" />
+    <option name="next" path="ActionManager" hit="Next Lesson" />
+    <option name="lesson" path="ActionManager" hit="Previous Lesson" />
+    <option name="previous" path="ActionManager" hit="Previous Lesson" />
+    <option name="learning" path="ActionManager" hit="Reset Learning Progress" />
+    <option name="progress" path="ActionManager" hit="Reset Learning Progress" />
+    <option name="reset" path="ActionManager" hit="Reset Learning Progress" />
+    <option name="lesson" path="ActionManager" hit="Restart Lesson" />
+    <option name="restart" path="ActionManager" hit="Restart Lesson" />
+    <option name="as" path="ActionManager" hit="Set Current Lesson as Passed" />
+    <option name="current" path="ActionManager" hit="Set Current Lesson as Passed" />
+    <option name="lesson" path="ActionManager" hit="Set Current Lesson as Passed" />
+    <option name="passed" path="ActionManager" hit="Set Current Lesson as Passed" />
+    <option name="set" path="ActionManager" hit="Set Current Lesson as Passed" />
+  </configurable>
+  <configurable id="FeaturesTrainerSettingsPanel" configurable_name="Features Trainer">
+    <option name="features" hit="Features Trainer" />
+    <option name="trainer" hit="Features Trainer" />
+    <option name="java" hit="Java" />
+    <option name="language" hit="Learning main programming language" />
+    <option name="learning" hit="Learning main programming language" />
+    <option name="main" hit="Learning main programming language" />
+    <option name="programming" hit="Learning main programming language" />
+    <option name="lessons" hit="Reset Lessons Progress" />
+    <option name="progress" hit="Reset Lessons Progress" />
+    <option name="reset" hit="Reset Lessons Progress" />
+  </configurable>
+</options>

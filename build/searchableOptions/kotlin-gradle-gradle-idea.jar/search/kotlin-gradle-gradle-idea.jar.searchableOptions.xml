@@ -1,0 +1,32 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="configurations" path="ActionManager" hit="Load Script Configurations" />
+    <option name="load" path="ActionManager" hit="Load Script Configurations" />
+    <option name="script" path="ActionManager" hit="Load Script Configurations" />
+    <option name="dsl" path="ActionManager" hit="Show Kotlin Gradle DSL Logs" />
+    <option name="gradle" path="ActionManager" hit="Show Kotlin Gradle DSL Logs" />
+    <option name="kotlin" path="ActionManager" hit="Show Kotlin Gradle DSL Logs" />
+    <option name="logs" path="ActionManager" hit="Show Kotlin Gradle DSL Logs" />
+    <option name="show" path="ActionManager" hit="Show Kotlin Gradle DSL Logs" />
+    <option name="been" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="changed" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="changes" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="code" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="configuration" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="dsl" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="external" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="get" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="gradle" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="has" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="importing" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="insight" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="kotlin" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="load" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="project" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="script" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="the" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="to" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+    <option name="without" path="ActionManager" hit="The Gradle Kotlin DSL script configuration has been changed. Load the changes to get code insight without importing the external Gradle project." />
+  </configurable>
+</options>

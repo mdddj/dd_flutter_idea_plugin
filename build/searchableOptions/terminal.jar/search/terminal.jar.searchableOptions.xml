@@ -1,0 +1,132 @@
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="" path="ActionManager" hit="" />
+    <option name="clear" path="ActionManager" hit="Clear Terminal" />
+    <option name="terminal" path="ActionManager" hit="Clear Terminal" />
+    <option name="copy" path="ActionManager" hit="Copy" />
+    <option name="clipboard" path="ActionManager" hit="Copy selected text to clipboard" />
+    <option name="copy" path="ActionManager" hit="Copy selected text to clipboard" />
+    <option name="selected" path="ActionManager" hit="Copy selected text to clipboard" />
+    <option name="text" path="ActionManager" hit="Copy selected text to clipboard" />
+    <option name="to" path="ActionManager" hit="Copy selected text to clipboard" />
+    <option name="command" path="ActionManager" hit="Debug highlighted command using IDE" />
+    <option name="debug" path="ActionManager" hit="Debug highlighted command using IDE" />
+    <option name="highlighted" path="ActionManager" hit="Debug highlighted command using IDE" />
+    <option name="ide" path="ActionManager" hit="Debug highlighted command using IDE" />
+    <option name="using" path="ActionManager" hit="Debug highlighted command using IDE" />
+    <option name="goto" path="ActionManager" hit="Goto Next Splitter" />
+    <option name="next" path="ActionManager" hit="Goto Next Splitter" />
+    <option name="splitter" path="ActionManager" hit="Goto Next Splitter" />
+    <option name="goto" path="ActionManager" hit="Goto Previous Splitter" />
+    <option name="previous" path="ActionManager" hit="Goto Previous Splitter" />
+    <option name="splitter" path="ActionManager" hit="Goto Previous Splitter" />
+    <option name="action" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="feature" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="highlighted" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="ide" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="launches" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="relevant" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="the" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="using" path="ActionManager" hit="Launches the highlighted action using the relevant IDE feature" />
+    <option name="left" path="ActionManager" hit="Move Tab Left" />
+    <option name="move" path="ActionManager" hit="Move Tab Left" />
+    <option name="tab" path="ActionManager" hit="Move Tab Left" />
+    <option name="move" path="ActionManager" hit="Move Tab Right" />
+    <option name="right" path="ActionManager" hit="Move Tab Right" />
+    <option name="tab" path="ActionManager" hit="Move Tab Right" />
+    <option name="editor" path="ActionManager" hit="Move to Editor" />
+    <option name="move" path="ActionManager" hit="Move to Editor" />
+    <option name="to" path="ActionManager" hit="Move to Editor" />
+    <option name="current" path="ActionManager" hit="Open current file location in terminal" />
+    <option name="file" path="ActionManager" hit="Open current file location in terminal" />
+    <option name="in" path="ActionManager" hit="Open current file location in terminal" />
+    <option name="location" path="ActionManager" hit="Open current file location in terminal" />
+    <option name="open" path="ActionManager" hit="Open current file location in terminal" />
+    <option name="terminal" path="ActionManager" hit="Open current file location in terminal" />
+    <option name="in" path="ActionManager" hit="Open in Terminal" />
+    <option name="open" path="ActionManager" hit="Open in Terminal" />
+    <option name="terminal" path="ActionManager" hit="Open in Terminal" />
+    <option name="paste" path="ActionManager" hit="Paste" />
+    <option name="clipboard" path="ActionManager" hit="Paste from clipboard" />
+    <option name="from" path="ActionManager" hit="Paste from clipboard" />
+    <option name="paste" path="ActionManager" hit="Paste from clipboard" />
+    <option name="action" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="debugger" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="feature" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="highlighted" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="ide" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="performs" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="relevant" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="the" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="under" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="using" path="ActionManager" hit="Performs the highlighted action using the relevant IDE feature under debugger" />
+    <option name="rename" path="ActionManager" hit="Rename Session" />
+    <option name="session" path="ActionManager" hit="Rename Session" />
+    <option name="command" path="ActionManager" hit="Run highlighted command using IDE" />
+    <option name="highlighted" path="ActionManager" hit="Run highlighted command using IDE" />
+    <option name="ide" path="ActionManager" hit="Run highlighted command using IDE" />
+    <option name="run" path="ActionManager" hit="Run highlighted command using IDE" />
+    <option name="using" path="ActionManager" hit="Run highlighted command using IDE" />
+    <option name="all" path="ActionManager" hit="Select All" />
+    <option name="select" path="ActionManager" hit="Select All" />
+    <option name="all" path="ActionManager" hit="Select all" />
+    <option name="select" path="ActionManager" hit="Select all" />
+    <option name="down" path="ActionManager" hit="Split Down" />
+    <option name="split" path="ActionManager" hit="Split Down" />
+    <option name="right" path="ActionManager" hit="Split Right" />
+    <option name="split" path="ActionManager" hit="Split Right" />
+    <option name="editor" path="ActionManager" hit="Switch Focus To Editor" />
+    <option name="focus" path="ActionManager" hit="Switch Focus To Editor" />
+    <option name="switch" path="ActionManager" hit="Switch Focus To Editor" />
+    <option name="to" path="ActionManager" hit="Switch Focus To Editor" />
+  </configurable>
+  <configurable id="terminal" configurable_name="Terminal">
+    <option name="application" hit="Application Settings" />
+    <option name="settings" hit="Application Settings" />
+    <option name="audible" hit="Audible bell" />
+    <option name="bell" hit="Audible bell" />
+    <option name="close" hit="Close session when it ends" />
+    <option name="ends" hit="Close session when it ends" />
+    <option name="it" hit="Close session when it ends" />
+    <option name="session" hit="Close session when it ends" />
+    <option name="when" hit="Close session when it ends" />
+    <option name="configure" hit="Configure terminal keybindings" />
+    <option name="keybindings" hit="Configure terminal keybindings" />
+    <option name="terminal" hit="Configure terminal keybindings" />
+    <option name="clipboard" hit="Copy to clipboard on selection" />
+    <option name="copy" hit="Copy to clipboard on selection" />
+    <option name="on" hit="Copy to clipboard on selection" />
+    <option name="selection" hit="Copy to clipboard on selection" />
+    <option name="to" hit="Copy to clipboard on selection" />
+    <option name="environment" hit="Environment variables:" />
+    <option name="variables" hit="Environment variables:" />
+    <option name="highlight" hit="Highlight hyperlinks" />
+    <option name="hyperlinks" hit="Highlight hyperlinks" />
+    <option name="mouse" hit="Mouse reporting" />
+    <option name="reporting" hit="Mouse reporting" />
+    <option name="ide" hit="Override IDE shortcuts" />
+    <option name="override" hit="Override IDE shortcuts" />
+    <option name="shortcuts" hit="Override IDE shortcuts" />
+    <option name="button" hit="Paste on middle mouse button click" />
+    <option name="click" hit="Paste on middle mouse button click" />
+    <option name="middle" hit="Paste on middle mouse button click" />
+    <option name="mouse" hit="Paste on middle mouse button click" />
+    <option name="on" hit="Paste on middle mouse button click" />
+    <option name="paste" hit="Paste on middle mouse button click" />
+    <option name="project" hit="Project Settings" />
+    <option name="settings" hit="Project Settings" />
+    <option name="commands" hit="Run Commands using IDE" />
+    <option name="ide" hit="Run Commands using IDE" />
+    <option name="run" hit="Run Commands using IDE" />
+    <option name="using" hit="Run Commands using IDE" />
+    <option name="integration" hit="Shell integration" />
+    <option name="shell" hit="Shell integration" />
+    <option name="path" hit="Shell path:" />
+    <option name="shell" hit="Shell path:" />
+    <option name="directory" hit="Start directory:" />
+    <option name="start" hit="Start directory:" />
+    <option name="name" hit="Tab name:" />
+    <option name="tab" hit="Tab name:" />
+    <option name="terminal" hit="Terminal" />
+  </configurable>
+</options>
