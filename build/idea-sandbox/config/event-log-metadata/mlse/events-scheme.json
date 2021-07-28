@@ -1,0 +1,98 @@
+{
+  "groups" : [ {
+    "id" : "mlse.event.log",
+    "builds" : [ ],
+    "versions" : [ {
+      "from" : "1"
+    } ],
+    "rules" : {
+      "event_id" : [ "{enum#__event_id}" ],
+      "event_data" : {
+        "code" : [ "{regexp#integer}" ],
+        "error" : [ "{util#class_name}", "{enum:EMPTY_CONTENT|INVALID_JSON|UNKNOWN}", "{enum:EMPTY_SERVICE_URL|UNREACHABLE_SERVICE|EMPTY_RESPONSE_BODY|ERROR_ON_LOAD}" ],
+        "error_ts" : [ "{regexp#integer}" ],
+        "errors" : [ "{regexp#integer}" ],
+        "external" : [ "{enum#boolean}" ],
+        "failed" : [ "{regexp#integer}" ],
+        "paths" : [ "{regexp#hash}" ],
+        "send" : [ "{regexp#integer}" ],
+        "stage" : [ "{enum:LOADING|PARSING}" ],
+        "succeed" : [ "{regexp#integer}" ],
+        "total" : [ "{regexp#integer}" ],
+        "version" : [ "{regexp#version}" ]
+      },
+      "enums" : {
+        "__event_id" : [ "logs.send", "loading.config.failed", "metadata.loaded", "metadata.updated", "metadata.update.failed", "metadata.load.failed" ]
+      }
+    }
+  }, {
+    "id" : "mlse.log",
+    "builds" : [ ],
+    "versions" : [ {
+      "from" : "2"
+    } ],
+    "rules" : {
+      "event_id" : [ "{enum:sessionFinished|searchRestarted}" ],
+      "event_data" : {
+        "closePopup" : [ "{enum#boolean}" ],
+        "collectedItems.actionId" : [ "{util#action}" ],
+        "collectedItems.contributorId" : [ "{enum#se_tab}" ],
+        "collectedItems.features.globalUsage" : [ "{regexp#integer}" ],
+        "collectedItems.features.groupLength" : [ "{regexp#integer}" ],
+        "collectedItems.features.isAbbreviation" : [ "{enum#boolean}" ],
+        "collectedItems.features.isAction" : [ "{enum#boolean}" ],
+        "collectedItems.features.isEnabled" : [ "{enum#boolean}" ],
+        "collectedItems.features.isGroup" : [ "{enum#boolean}" ],
+        "collectedItems.features.isToggleAction" : [ "{enum#boolean}" ],
+        "collectedItems.features.matchMode" : [ "{enum:NONE|INTENTION|NAME|DESCRIPTION|GROUP|NON_MENU|SYNONYM}" ],
+        "collectedItems.features.priority" : [ "{regexp#integer}" ],
+        "collectedItems.features.textLength" : [ "{regexp#integer}" ],
+        "collectedItems.features.timeSinceLastUsage" : [ "{regexp#integer}" ],
+        "collectedItems.features.totalSymbolsAmount" : [ "{regexp#integer}" ],
+        "collectedItems.features.usage" : [ "{regexp#integer}" ],
+        "collectedItems.features.usagesPerUserRatio" : [ "{regexp#float}" ],
+        "collectedItems.features.usersRatio" : [ "{regexp#float}" ],
+        "collectedItems.features.weight" : [ "{regexp#float}" ],
+        "collectedItems.features.withIcon" : [ "{enum#boolean}" ],
+        "collectedItems.id" : [ "{regexp#integer}" ],
+        "collectedItems.mlWeight" : [ "{regexp#float}" ],
+        "experimentGroup" : [ "{regexp#integer}" ],
+        "globalMaxUsage" : [ "{regexp#integer}" ],
+        "globalMinUsage" : [ "{regexp#integer}" ],
+        "lastOpenToolWindow" : [ "{util#toolwindow}" ],
+        "maxUsage" : [ "{regexp#integer}" ],
+        "minUsage" : [ "{regexp#integer}" ],
+        "openFileTypes" : [ "{util#file_type}" ],
+        "orderByMl" : [ "{enum#boolean}" ],
+        "projectOpened" : [ "{enum#boolean}" ],
+        "rebuildReason" : [ "{enum#restart_reasons}" ],
+        "seTabId" : [ "{enum#se_tab}" ],
+        "searchIndex" : [ "{regexp#integer}" ],
+        "selectedIds" : [ "{regexp#integer}" ],
+        "selectedIndexes" : [ "{regexp#integer}" ],
+        "sessionId" : [ "{regexp#integer}" ],
+        "startTime" : [ "{regexp#integer}" ],
+        "totalItems" : [ "{regexp#integer}" ],
+        "typedBackspaces" : [ "{regexp#integer}" ],
+        "typedSymbolKeys" : [ "{regexp#integer}" ]
+      },
+      "enums" : {
+        "restart_reasons" : [ "SEARCH_STARTED", "TEXT_CHANGED", "TAB_CHANGED", "SCOPE_CHANGED", "EXIT_DUMB_MODE" ],
+        "se_tab" : [ "SearchEverywhereContributor.All", "ClassSearchEverywhereContributor", "FileSearchEverywhereContributor", "RecentFilesSEContributor", "SymbolSearchEverywhereContributor", "ActionSearchEverywhereContributor", "RunConfigurationsSEContributor", "CommandsContributor", "TopHitSEContributor", "com.intellij.ide.actions.searcheverywhere.CalculatorSEContributor", "TmsSearchEverywhereContributor", "YAMLKeysSearchEverywhereContributor", "UrlSearchEverywhereContributor", "Vcs.Git", "third.party" ]
+      }
+    }
+  } ],
+  "rules" : {
+    "enums" : {
+      "boolean" : [ "true", "false" ]
+    },
+    "regexps" : {
+      "count" : "\\d+K?M?\\+?",
+      "float" : "-?\\d+\\.\\d+(E\\-?\\d+)?",
+      "hash" : "([0-9A-Fa-f]{40,64})|undefined",
+      "integer" : "-?\\d+(\\+)?",
+      "version" : "Unknown|unknown.format|unknown|UNKNOWN|((\\d+\\.?)*\\d+)"
+    }
+  },
+  "version" : "1966"
+}

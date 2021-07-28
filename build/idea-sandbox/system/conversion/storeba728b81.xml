@@ -1,0 +1,19 @@
+<conversion>
+  <applied-converters>
+    <converter id="kotlin-non-jvm-source-roots" />
+  </applied-converters>
+  <project-files>
+    <f p="./.idea\dbnavigator.xml" t="1616758966" />
+    <f p="./.idea\runConfigurations\_template__of_Flutter.xml" t="1627433968" />
+    <f p="./.idea\libraries\Dart_Packages.xml" t="1627363944" />
+    <f p="./.idea\libraries\Dart_SDK.xml" t="1623806039" />
+    <f p="./.idea\libraries\Flutter_Plugins.xml" t="1627363944" />
+    <f p="./.idea\workspace.xml" t="1627437659" />
+    <f p="./.idea\vcs.xml" t="1627366782" />
+    <f p="./.idea\misc.xml" t="1624851380" />
+    <f p="./.idea\runConfigurations\main_dart.xml" t="1626852116" />
+    <f p="./.idea\FluxStore-1.7.3.iml" t="1627263386" />
+    <f p="./.idea\modules.xml" t="1616728922" />
+    <f p="./.idea\libraries\KotlinJavaRuntime.xml" t="1626852116" />
+  </project-files>
+</conversion>
