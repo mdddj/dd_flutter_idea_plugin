@@ -1,5 +1,14 @@
 <application>
   <component name="ActionsLocalSummary">
+    <e n="EditorBackSpace">
+      <i c="1" l="1627459654344" />
+    </e>
+    <e n="EditorCopy">
+      <i c="1" l="1627455146609" />
+    </e>
+    <e n="SaveAll">
+      <i c="1" l="1627459655264" />
+    </e>
     <e n="WelcomeScreen.OpenProject">
       <i c="1" l="1627435996998" />
     </e>

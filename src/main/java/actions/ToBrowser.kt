@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 
+/// 跳转url
 const val PUB_URL = "https://pub.dev/packages/"
 
 /// 选中插件唤醒浏览器打开pub对应的插件页面
