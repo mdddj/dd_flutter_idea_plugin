@@ -18,7 +18,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import services.PUBL_API_URL
 import services.PubService
 import services.await
-import kotlin.coroutines.CoroutineContext
 
 /**
  * 处理yaml文件,处理项目使用的插件列表
@@ -27,29 +26,17 @@ import kotlin.coroutines.CoroutineContext
 class YamlFileParser(
     private val file: PsiFile,
     private val hodle: ProblemsHolder
-) : CoroutineScope {
+)  {
 
-    //父携程
-    private val parentJob = SupervisorJob()
+
     private val pubDatas = mutableMapOf<String, PubVersionDataModel>()
 
     /**
      * 线程并发策略
      * Dispatchers.IO 会使用一种较高的并发策略,当要执行的代码大多数时间是在阻塞和等待中,比如执行网络请求的时候为了能支持更高的并发数量
      */
-    private val scope = CoroutineScope(Dispatchers.IO + parentJob)
 
-    /**
-     * 关闭全部携程
-     */
-     fun cancelAll(){
-            coroutineContext.cancelChildren() // 关闭全部子任务,以后发起的子任务可以正常工作
-    }
-    /**
-     * 获取携程任务的上下文
-     */
-    override val coroutineContext: CoroutineContext
-        get() = scope.coroutineContext
+
 
 
     /**

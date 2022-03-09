@@ -5,8 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import common.YamlFileParser
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 /**
  * yaml 版本自动补全
@@ -25,17 +24,23 @@ class YamlElementVisitor(
     private val isOnTheFly: Boolean
 ) : PsiElementVisitor() {
 
-
+    @OptIn(DelicateCoroutinesApi::class)
     override fun visitFile(file: PsiFile) {
         if (!isOnTheFly) return
 
 
-//        print("即将执行携程程序")
-//        val yamlFileParser = YamlFileParser(file,holder)
-//        yamlFileParser.cancelAll()
-//        yamlFileParser.launch {
-//            yamlFileParser.startCheckFile()
-//        }
+        /// 另外开一个线程执行检测
+        runBlocking(Dispatchers.Main){
+
+            launch {
+                val yamlFileParser = YamlFileParser(file,holder)
+                yamlFileParser.startCheckFile()
+            }
+        }
+
+
+
+
         super.visitFile(file)
 
     }
