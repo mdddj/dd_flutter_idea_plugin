@@ -6577,3 +6577,12 @@ Caused by: java.lang.NoClassDefFoundError: Could not initialize class kotlinx.co
 2022-03-09 16:59:45,881 [  17038]   INFO - m.codeWithMe.CodeWithMeCleanup - found 0 Code With Me client system folders to check 
 2022-03-09 16:59:45,882 [  17039]   INFO - m.codeWithMe.CodeWithMeCleanup - found 0 Code With Me client config folders to check 
 2022-03-09 16:59:45,883 [  17040]   INFO - m.codeWithMe.CodeWithMeCleanup - keep only [] major versions 
+2022-03-09 17:01:43,281 [ 134438]   INFO - il.indexing.FileBasedIndexImpl - START INDEX SHUTDOWN 
+2022-03-09 17:01:43,327 [ 134484]   INFO - tellij.psi.stubs.StubIndexImpl - StubIndexExtension-s were unloaded 
+2022-03-09 17:01:43,407 [ 134564]   INFO - il.indexing.FileBasedIndexImpl - END INDEX SHUTDOWN 
+2022-03-09 17:01:43,409 [ 134566]   INFO - stubs.SerializationManagerImpl - Start shutting down /Users/hlx/idea/dd_flutter_idea_plugin/build/idea-sandbox/system/index/rep.names 
+2022-03-09 17:01:43,409 [ 134566]   INFO - stubs.SerializationManagerImpl - Finished shutting down /Users/hlx/idea/dd_flutter_idea_plugin/build/idea-sandbox/system/index/rep.names 
+2022-03-09 17:01:43,410 [ 134567]   INFO - fs.persistent.PersistentFSImpl - VFS dispose started 
+2022-03-09 17:01:43,412 [ 134569]   INFO - fs.persistent.PersistentFSImpl - VFS dispose completed 
+2022-03-09 17:01:43,412 [ 134569]   INFO -        #com.intellij.idea.Main - ------------------------------------------------------ IDE SHUTDOWN ------------------------------------------------------ 
+2022-03-09 17:01:43,413 [ 134570]   INFO - org.jetbrains.io.BuiltInServer - web server stopped 
