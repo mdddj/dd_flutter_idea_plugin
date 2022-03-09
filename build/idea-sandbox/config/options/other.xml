@@ -1,8 +1,8 @@
 <application>
-  <component name="ProjectPluginTrackerManager">
+  <component name="DynamicPluginEnabler">
     <trackers>
       <map>
-        <entry key="1qFG2ne786GyaMNuV9O7Ov7ckUF">
+        <entry key="20ylqsLPeDN7ePmqJfSjnPafZkZ">
           <value>
             <ProjectPluginTracker />
           </value>
@@ -11,27 +11,21 @@
     </trackers>
   </component>
   <component name="PropertiesComponent">
-    <property name="file.chooser.recent.files" value="D:/shop/store" />
-    <property name="fileTypeChangedCounter" value="4" />
-    <property name="fileTypeDetectors" value="com.android.tools.idea.fileTypes.profiler.MemoryCaptureFileType$Detector:com.android.tools.idea.sqlite.fileType.SqliteFileTypeDetector:com.intellij.ide.scratch.ScratchFileServiceImpl$Detector" />
+    <property name="CWM_LOGGING_VERSION" value="1" />
+    <property name="MarketplacePluginsSearchHistory" value="dart" />
+    <property name="bundled.plugins.list.saved.version" value="IC-213.6777.52" />
+    <property name="eclipse.projects.detected" value="" />
+    <property name="fileTypeChangedCounter" value="3" />
+    <property name="fileTypeDetectors" value="com.android.tools.idea.profilers.capture.MemoryCaptureFileType$Detector:com.android.tools.idea.sqlite.fileType.SqliteFileTypeDetector:com.intellij.ide.scratch.ScratchFileServiceImpl$Detector:org.jetbrains.plugins.textmate.TextMateFileType$TextMateFileDetector" />
     <property name="got.it.tooltip.cwm.invitation.notification" value="1" />
+    <property name="gotit.previous.run" value="IC-213.6777.52" />
     <property name="ide.memory.adjusted" value="true" />
-    <property name="ide.updates.previous.build.number" value="IC-211.7628.21" />
-    <property name="ide.updates.whats.new.shown.for" value="211" />
-    <property name="installed.kotlin.plugin.version" value="211-1.4.32-release-IJ7628.19" />
-    <property name="kotlin.plugin.releaseDate" value="211-1.4.32-release-IJ7628.19:2021-06-28" />
-    <property name="lastSeenTip" value="neue-RemoveBreakpoint.html" />
-    <property name="lastTimeTipsWereShown" value="1627436019461" />
-    <property name="last_opened_file_path" value="D:/shop/store" />
-    <property name="log.trace.categories" value="#com.jetbrains.rdserver.requests&#10;#com.jetbrains.rd.ide.document&#10;#com.jetbrains.rdserver.document&#10;#com.jetbrains.rdserver.editors&#10;#com.jetbrains.rdserver.actions" />
-    <property name="new.jvm.backend.notification" value="true" />
+    <property name="ide.updates.whats.new.shown.for" value="213" />
+    <property name="installed.kotlin.plugin.version" value="213-1.5.10-release-949-IJ6777.52" />
     <property name="packagesearch.endpoint.url.fulltext" value="https://package-search.services.jetbrains.com/api/search/idea/fulltext" />
     <property name="packagesearch.endpoint.url.suggest" value="https://package-search.services.jetbrains.com/api/search/idea/suggest" />
-    <property name="packagesearch.status.updated.ts" value="1627436013802" />
-    <property name="seenTips" value="neue-RemoveBreakpoint.html" />
+    <property name="packagesearch.status.updated.ts" value="1646807877086" />
+    <property name="registry.to.advanced.settings.migration.build" value="IC-213.6777.52" />
     <property name="tasks.pass.word.conversion.enforced" value="true" />
-  </component>
-  <component name="ToolbarSettingsService">
-    <option name="NEW_TOOLBAR_SETTINGS" value="OLD_NAVBAR" />
   </component>
 </application>

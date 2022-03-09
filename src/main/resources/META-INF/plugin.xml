@@ -35,5 +35,8 @@
         <action id="ToPub" class="actions.ToBrowser" text="前往PUB查看">
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="first"/>
         </action>
+        <action id="CheckFlutterPluginVersionIsNew" class="actions.CheckFlutterPluginHasNewVersion" text="检测版本更新">
+            <add-to-group group-id="EditorPopupMenu.GoTo" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>

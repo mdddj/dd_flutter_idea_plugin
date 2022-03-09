@@ -29,6 +29,7 @@ class YamlFileParser(
     private val hodle: ProblemsHolder
 ) : CoroutineScope {
 
+    //父携程
     private val parentJob = SupervisorJob()
     private val pubDatas = mutableMapOf<String, PubVersionDataModel>()
 
@@ -38,6 +39,15 @@ class YamlFileParser(
      */
     private val scope = CoroutineScope(Dispatchers.IO + parentJob)
 
+    /**
+     * 关闭全部携程
+     */
+     fun cancelAll(){
+            coroutineContext.cancelChildren() // 关闭全部子任务,以后发起的子任务可以正常工作
+    }
+    /**
+     * 获取携程任务的上下文
+     */
     override val coroutineContext: CoroutineContext
         get() = scope.coroutineContext
 
@@ -99,7 +109,6 @@ class YamlFileParser(
                                 println("${pubData.name} not last version")
                                 plugin.newVersion = pubData.latest.version
                                 hasNewVersionPlugins.add(plugin)
-
                             }
                         }else{
                             /// 如果数据存在则不重复请求
@@ -108,7 +117,6 @@ class YamlFileParser(
                     } catch (e: Exception) {
                         println("get pub data error :${e.message}")
                     }
-
                 }
             }
         }.awaitAll()
@@ -171,5 +179,7 @@ class YamlFileParser(
     private fun isYamlFile(): Boolean {
         return file.fileType.javaClass == YAMLFileType.YML.javaClass
     }
+
+
 
 }
