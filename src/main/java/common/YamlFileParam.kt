@@ -1,15 +1,16 @@
 package common
 
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.startOffset
-import fix.NewVersinFix
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import model.PluginVersion
 import model.PubVersionDataModel
 import org.jetbrains.yaml.YAMLFileType
-import org.jetbrains.yaml.psi.*
+import org.jetbrains.yaml.psi.YAMLKeyValue
+import org.jetbrains.yaml.psi.YamlPsiElementVisitor
 import org.jetbrains.yaml.psi.impl.YAMLFileImpl
 import org.jetbrains.yaml.psi.impl.YAMLMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
@@ -20,12 +21,16 @@ import services.PubService
 import services.await
 
 /**
+ * 开始请求数据时回调
+ */
+typealias CheckPluginStartCallback = (pluginName: String,index: Int,count: Int) -> Unit
+
+/**
  * 处理yaml文件,处理项目使用的插件列表
  * 创建子携程来处理网络请求
  */
 class YamlFileParser(
     private val file: PsiFile,
-    private val hodle: ProblemsHolder
 )  {
 
 
@@ -39,45 +44,35 @@ class YamlFileParser(
 
 
 
-    /**
-     * 问题注册器,并新增快速修复功能更
-     */
-    private fun regProblem(plugins: List<PluginVersion>) {
-        plugins.map { plugin ->
-            // 有新版本了,注册问题快捷修复
-            // 获取psielement
-            val findElementAt = file.findElementAt(plugin.startIndex)!!
-
-            hodle.registerProblem(
-                findElementAt,
-                "当前插件有新版本:${plugin.newVersion}",
-                ProblemHighlightType.WARNING,
-                NewVersinFix(file.findElementAt(plugin.startIndex)!!, plugin.newVersion)
-            )
-        }
-    }
 
     /**
      * 检查文件
      */
-    suspend fun startCheckFile() {
+    suspend fun startCheckFile(pluginStart: CheckPluginStartCallback? ) :  List<PluginVersion> {
         if (isYamlFile()) {
-            val allPlugins = getAllPlugins()
-            println("plugins size is ${allPlugins.size}")
+            var allPlugins = emptyList<PluginVersion>()
+            runReadAction {
+                 allPlugins = getAllPlugins()
+            }
 
-            println("start check plugin versions ")
-            val hasNewVersionPlugins = checkVersionFormPub(allPlugins)
-            regProblem(hasNewVersionPlugins)
+            println("插件总数 ${allPlugins.size}")
+
+            println("开始检测版本是否为最新")
+            val hasNewVersionPlugins = checkVersionFormPub(allPlugins,pluginStart)
+            println("检测完毕,一共有${hasNewVersionPlugins.size}个插件可更新")
+            return hasNewVersionPlugins
+
         } else {
             print("不是yaml文件取消检测")
         }
+        return emptyList()
     }
 
     /**
      * 从服务器中获得最新版本
      */
 
-    private suspend fun checkVersionFormPub(plugins: List<PluginVersion>): List<PluginVersion> {
+    private suspend fun checkVersionFormPub(plugins: List<PluginVersion>,startCallback: CheckPluginStartCallback?): List<PluginVersion> {
         val build = Retrofit.Builder().baseUrl(PUBL_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -89,11 +84,12 @@ class YamlFileParser(
                 async {
                     try {
                         if (!pubDatas.containsKey(plugin.name)) {
+                            startCallback?.let { it(plugin.name,plugins.indexOf(plugin),plugins.size) }
                             val pubData = pubService.callPluginDetails(plugin.name).await()
                             pubDatas[plugin.name] = pubData
 //                      println("server version:${pubData.latest.version} <--> current:${plugin.currentVersion.replace("^","").trim()}")
                             if (pubData.latest.version.trim() != plugin.currentVersion.replace("^", "").trim()) {
-                                println("${pubData.name} not last version")
+                                println("${pubData.name} 有新版本 ${plugin.currentVersion} -->  ${pubData.latest.version}")
                                 plugin.newVersion = pubData.latest.version
                                 hasNewVersionPlugins.add(plugin)
                             }
@@ -102,7 +98,7 @@ class YamlFileParser(
                             println("have data , no get")
                         }
                     } catch (e: Exception) {
-                        println("get pub data error :${e.message}")
+                        println("请求插件版本失败 :${e.message}")
                     }
                 }
             }

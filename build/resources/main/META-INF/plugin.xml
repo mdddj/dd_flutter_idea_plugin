@@ -1,10 +1,10 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin">
   <version>1.0-SNAPSHOT</version>
   <change-notes>Add change notes here.&lt;br&gt;
       &lt;em&gt;most HTML tags may be used&lt;/em&gt;</change-notes>
-  <idea-version since-build="213.6777" until-build="213.*" />
+  <idea-version since-build="221.5080" until-build="221.*" />
   <id>shop.itbug.dd_flutter_plugin</id>
-  <name>Dd_Flutter_Plugin</name>
+  <name>FlutterCheckVersionX</name>
   <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
   <description><![CDATA[典典的idea flutter 插件工具的使用封装,不定时更新一些小功能
     已支持的功能:
@@ -19,6 +19,10 @@
   <depends>com.intellij.modules.java</depends>
   <extensions defaultExtensionNs="com.intellij">
     <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml" groupBundle="messages.InspectionsBundle" groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR" implementationClass="tools.AutoVersionTool" />
+    <postStartupActivity implementation="activity.FlutterProjectOpenActivity" />
+    <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension" />
+    <!--        通知  -->
+    <notificationGroup id="plugin_new_version_notif" displayType="BALLOON" key="notification.group.name" />
   </extensions>
   <actions>
     <!-- Add your actions here -->

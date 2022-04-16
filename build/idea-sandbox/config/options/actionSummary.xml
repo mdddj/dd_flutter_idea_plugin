@@ -1,25 +1,25 @@
 <application>
   <component name="ActionsLocalSummary">
     <e n="CheckFlutterPluginVersionIsNew">
-      <i c="1" l="1646810854777" />
+      <i c="1" l="1650138494028" />
+    </e>
+    <e n="SaveAll">
+      <i c="3" l="1650140586482" />
     </e>
     <e n="WelcomeScreen.OpenProject">
-      <i c="1" l="1646807868537" />
+      <i c="2" l="1650138411648" />
     </e>
     <e n="com.intellij.diagnostic.IdeMessagePanel$4">
-      <i c="1" l="1646807948139" />
+      <i c="1" l="1650138496703" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="1" l="1646808779689" />
-    </e>
-    <e n="com.intellij.notification.EventLogConsole$ClearLogAction">
-      <i c="2" l="1646809558379" />
+      <i c="4" l="1650141607060" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
-      <i c="1" l="1646807893690" />
+      <i c="1" l="1650110211533" />
     </e>
     <e n="com.intellij.openapi.fileEditor.impl.tabActions.CloseTab">
-      <i c="1" l="1646811907092" />
+      <i c="6" l="1650141706366" />
     </e>
   </component>
 </application>

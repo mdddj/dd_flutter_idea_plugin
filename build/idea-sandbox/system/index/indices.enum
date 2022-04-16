@@ -27,6 +27,7 @@ javafx.id.name
 javafx.custom.component
 org.jetbrains.kotlin.idea.versions.KotlinJvmMetadataVersionIndex
 org.jetbrains.kotlin.idea.versions.KotlinJsMetadataVersionIndex
+org.jetbrains.kotlin.idea.vfilefinder.KotlinPartialPackageNamesIndex
 org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
 org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 org.jetbrains.kotlin.idea.vfilefinder.KotlinMetadataFileIndex
@@ -57,6 +58,7 @@ shared.index.hashes.TodoIndex
 shared.index.hashes.IdIndex
 dom.namespaceKey
 dom.elementClass
+markdown.header
 properties.index
 org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
@@ -73,6 +75,7 @@ org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
+org.jetbrains.kotlin.idea.stubindex.KotlinInnerTypeAliasClassIdIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelExtensionsByReceiverTypeIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinExtensionsInObjectsByReceiverTypeIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
@@ -89,7 +92,6 @@ org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
 org.jetbrains.kotlin.idea.stubindex.KotlinSubclassObjectNameIndex
-markdown.header
 gr.class.fqn
 gr.script.fqn
 gr.field.name
@@ -133,6 +135,7 @@ shared.index.hashes.javafx.id.name
 shared.index.hashes.javafx.custom.component
 shared.index.hashes.org.jetbrains.kotlin.idea.versions.KotlinJvmMetadataVersionIndex
 shared.index.hashes.org.jetbrains.kotlin.idea.versions.KotlinJsMetadataVersionIndex
+shared.index.hashes.org.jetbrains.kotlin.idea.vfilefinder.KotlinPartialPackageNamesIndex
 shared.index.hashes.org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
 shared.index.hashes.org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 shared.index.hashes.org.jetbrains.kotlin.idea.vfilefinder.KotlinMetadataFileIndex

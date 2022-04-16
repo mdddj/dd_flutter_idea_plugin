@@ -2,6 +2,11 @@
   <component name="DynamicPluginEnabler">
     <trackers>
       <map>
+        <entry key="20Fe7LPjEVkmyMaTh0EwWjFWta3">
+          <value>
+            <ProjectPluginTracker />
+          </value>
+        </entry>
         <entry key="20ylqsLPeDN7ePmqJfSjnPafZkZ">
           <value>
             <ProjectPluginTracker />
@@ -10,22 +15,28 @@
       </map>
     </trackers>
   </component>
-  <component name="PropertiesComponent">
-    <property name="CWM_LOGGING_VERSION" value="1" />
-    <property name="MarketplacePluginsSearchHistory" value="dart" />
-    <property name="bundled.plugins.list.saved.version" value="IC-213.6777.52" />
-    <property name="eclipse.projects.detected" value="" />
-    <property name="fileTypeChangedCounter" value="3" />
-    <property name="fileTypeDetectors" value="com.android.tools.idea.profilers.capture.MemoryCaptureFileType$Detector:com.android.tools.idea.sqlite.fileType.SqliteFileTypeDetector:com.intellij.ide.scratch.ScratchFileServiceImpl$Detector:org.jetbrains.plugins.textmate.TextMateFileType$TextMateFileDetector" />
-    <property name="got.it.tooltip.cwm.invitation.notification" value="1" />
-    <property name="gotit.previous.run" value="IC-213.6777.52" />
-    <property name="ide.memory.adjusted" value="true" />
-    <property name="ide.updates.whats.new.shown.for" value="213" />
-    <property name="installed.kotlin.plugin.version" value="213-1.5.10-release-949-IJ6777.52" />
-    <property name="packagesearch.endpoint.url.fulltext" value="https://package-search.services.jetbrains.com/api/search/idea/fulltext" />
-    <property name="packagesearch.endpoint.url.suggest" value="https://package-search.services.jetbrains.com/api/search/idea/suggest" />
-    <property name="packagesearch.status.updated.ts" value="1646807877086" />
-    <property name="registry.to.advanced.settings.migration.build" value="IC-213.6777.52" />
-    <property name="tasks.pass.word.conversion.enforced" value="true" />
-  </component>
+  <component name="PropertyService">{
+  &quot;keyToString&quot;: {
+    &quot;CWM_LOGGING_VERSION&quot;: &quot;1&quot;,
+    &quot;RunOnceActivity.se.text.search&quot;: &quot;true&quot;,
+    &quot;bundled.plugins.list.saved.version&quot;: &quot;IC-221.5080.210&quot;,
+    &quot;eclipse.projects.detected&quot;: &quot;&quot;,
+    &quot;fileTypeChangedCounter&quot;: &quot;3&quot;,
+    &quot;got.it.tooltip.cwm.invitation.notification&quot;: &quot;1&quot;,
+    &quot;gotit.previous.run&quot;: &quot;IC-221.5080.210&quot;,
+    &quot;ide.memory.adjusted&quot;: &quot;true&quot;,
+    &quot;ide.updates.whats.new.shown.for&quot;: &quot;221&quot;,
+    &quot;installed.kotlin.plugin.version&quot;: &quot;221-1.6.20-release-285-IJ5080.210&quot;,
+    &quot;registry.to.advanced.settings.migration.build&quot;: &quot;IC-221.5080.210&quot;,
+    &quot;tasks.pass.word.conversion.enforced&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;fileTypeDetectors&quot;: [
+      &quot;com.intellij.ide.scratch.ScratchFileServiceImpl$Detector&quot;,
+      &quot;com.android.tools.idea.sqlite.fileType.SqliteFileTypeDetector&quot;,
+      &quot;com.android.tools.idea.profilers.capture.MemoryCaptureFileType$Detector&quot;,
+      &quot;org.jetbrains.plugins.textmate.TextMateFileType$TextMateFileDetector&quot;
+    ]
+  }
+}</component>
 </application>
