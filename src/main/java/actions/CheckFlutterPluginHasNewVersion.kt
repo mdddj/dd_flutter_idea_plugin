@@ -22,14 +22,5 @@ class CheckFlutterPluginHasNewVersion: AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val psiElement = e.getData(PlatformDataKeys.PSI_ELEMENT)
 
-        if (psiElement != null) {
-            val text = psiElement.text
-            if (text != null) {
-                if (text.contains(": ^") || text.contains(": any")) {
-                    val pluginName = text.split(":")[0];
-
-                }
-            }
-        }
     }
 }

@@ -40,6 +40,8 @@
                            displayType="BALLOON"
                            key="notification.group.name"/>
 
+        <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml" />
+
 
     </extensions>
 

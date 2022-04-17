@@ -23,6 +23,7 @@
     <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension" />
     <!--        通知  -->
     <notificationGroup id="plugin_new_version_notif" displayType="BALLOON" key="notification.group.name" />
+    <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml" />
   </extensions>
   <actions>
     <!-- Add your actions here -->

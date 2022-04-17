@@ -56,6 +56,9 @@ class FlutterProjectOpenActivity : StartupActivity {
                     override fun run(indicator: ProgressIndicator) {
 
 
+                        // 清理缓存
+                        CacheUtil.getCatch().asMap().clear()
+
                         // 这里用了kotlin的携程功能,因为要发起较多的网络请求,需要异步操作
                         val pls = runBlocking(Dispatchers.IO) {
 

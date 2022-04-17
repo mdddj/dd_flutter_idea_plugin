@@ -2,29 +2,29 @@
   <component name="RecentProjectsManager">
     <option name="additionalInfo">
       <map>
-        <entry key="$USER_HOME$/girlmerry">
-          <value>
-            <RecentProjectMetaInfo frameTitle="girlmerry – pubspec.yaml" projectWorkspaceId="20ylqsLPeDN7ePmqJfSjnPafZkZ">
-              <option name="activationTimestamp" value="1650142539132" />
-              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
-              <option name="build" value="IC-221.5080.210" />
-              <option name="buildTimestamp" value="1649734374260" />
-              <frame x="27" y="38" width="1485" height="895" extendedState="6" />
-              <option name="productionCode" value="IC" />
-              <option name="projectOpenTimestamp" value="1650141608437" />
-            </RecentProjectMetaInfo>
-          </value>
-        </entry>
         <entry key="$USER_HOME$/simple_shop_v2">
           <value>
             <RecentProjectMetaInfo frameTitle="simple_shop_v2 – pubspec.yaml [simple_shop_v2]" projectWorkspaceId="20Fe7LPjEVkmyMaTh0EwWjFWta3">
-              <option name="activationTimestamp" value="1650142543534" />
+              <option name="activationTimestamp" value="1650164563473" />
               <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
               <option name="build" value="IC-221.5080.210" />
-              <option name="buildTimestamp" value="1649734374260" />
-              <frame x="90" y="38" width="1400" height="895" extendedState="6" />
+              <option name="buildTimestamp" value="1649734357220" />
+              <frame x="213" y="136" width="1186" height="769" />
               <option name="productionCode" value="IC" />
-              <option name="projectOpenTimestamp" value="1650142543528" />
+              <option name="projectOpenTimestamp" value="1650164564086" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/girlmerry">
+          <value>
+            <RecentProjectMetaInfo frameTitle="girlmerry – pubspec.yaml" opened="true" projectWorkspaceId="20ylqsLPeDN7ePmqJfSjnPafZkZ">
+              <option name="activationTimestamp" value="1650178262235" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="build" value="IC-221.5080.210" />
+              <option name="buildTimestamp" value="1649734357220" />
+              <frame x="27" y="38" width="1485" height="895" extendedState="6" />
+              <option name="productionCode" value="IC" />
+              <option name="projectOpenTimestamp" value="1650164589347" />
             </RecentProjectMetaInfo>
           </value>
         </entry>
