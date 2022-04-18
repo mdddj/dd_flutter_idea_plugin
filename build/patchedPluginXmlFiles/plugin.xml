@@ -1,4 +1,4 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin">
+<idea-plugin url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin">
   <version>1.0-SNAPSHOT</version>
   <change-notes>Add change notes here.&lt;br&gt;
       &lt;em&gt;most HTML tags may be used&lt;/em&gt;</change-notes>
@@ -7,10 +7,10 @@
   <name>FlutterCheckVersionX</name>
   <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
   <description><![CDATA[典典的idea flutter 插件工具的使用封装,不定时更新一些小功能
-    已支持的功能:
-    <ul>
-        <li>选中插件名字跳转到pub</li>
-    <ul>]]></description>
+        已支持的功能:
+        <ul>
+            <li>选中插件名字跳转到pub</li>
+            <ul>]]></description>
   <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
   <depends>com.intellij.modules.platform</depends>
@@ -23,12 +23,11 @@
     <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml" groupBundle="messages.InspectionsBundle" groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR" implementationClass="tools.AutoVersionTool" />
     <postStartupActivity implementation="activity.FlutterProjectOpenActivity" />
     <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension" />
-    <!--        通知  -->
-    <notificationGroup id="plugin_new_version_notif" displayType="BALLOON" key="notification.group.name" />
+    <notificationGroup id="plugin_new_version_notif" displayType="BALLOON" />
     <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml" />
+    <codeInsight.inlayProvider implementationClass="inlay.dartfile.DartTypeInlayHintsProvider" language="Dart" />
   </extensions>
   <actions>
-    <!-- Add your actions here -->
     <action id="ToPub" class="actions.ToBrowser" text="前往PUB查看">
       <add-to-group group-id="EditorPopupMenu.GoTo" anchor="first" />
     </action>

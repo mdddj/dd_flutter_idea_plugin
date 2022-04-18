@@ -1,29 +1,12 @@
 package inlay
 
 import com.intellij.codeInsight.hints.*
-import com.intellij.codeInsight.hints.presentation.InlayPresentation
-import com.intellij.codeInsight.hints.presentation.MouseButton
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.suggested.endOffset
-import com.jetbrains.lang.dart.DartFileType
-import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
-import icons.MyIcons
-import kotlinx.coroutines.*
-import model.PluginVersion
 import util.CacheUtil
 import util.MyPsiElementUtil
-import java.awt.Point
-import java.awt.event.MouseEvent
-import java.time.LocalDateTime
-import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -45,7 +28,9 @@ class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider.Set
         get() = "settings.inlay.menus"
     override val previewText: String?
         get() = """
-            测试一下preview Text 属性
+dependencies:
+  extended_image: ^6.0.2+1
+  flutter_easyrefresh: ^2.2.1
         """.trimIndent()
 
     override fun createSettings(): Settings {

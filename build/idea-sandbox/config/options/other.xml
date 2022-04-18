@@ -22,9 +22,10 @@
     "FLUTTER_LAST_SURVEY_CONTENT_CHECK_KEY": "1650247096387",
     "MarketplacePluginsSearchHistory": "Flutter\nF\ndart\nda\nd",
     "RunOnceActivity.se.text.search": "true",
+    "SettingsSearchHistory": "dart.type.inlay.hints.provider\n111",
     "bundled.plugins.list.saved.version": "IC-221.5080.210",
     "eclipse.projects.detected": "",
-    "file.gist.reindex.count": "3",
+    "file.gist.reindex.count": "4",
     "fileTypeChangedCounter": "8",
     "got.it.tooltip.cwm.invitation.notification": "1",
     "got.it.tooltip.reader.mode.got.it": "1",
@@ -55,4 +56,9 @@
     ]
   }
 }]]></component>
+  <component name="PsiViewerSettings">
+    <option name="type" value="Dart file" />
+    <option name="dialect" value="Language: Dart" />
+    <option name="textDividerLocation" value="254" />
+  </component>
 </application>

@@ -7,19 +7,28 @@
       <i c="1" l="1650138494028" />
     </e>
     <e n="EditorBackSpace">
-      <i c="66" l="1650254864267" />
+      <i c="75" l="1650271962067" />
+    </e>
+    <e n="EditorChooseLookupItem">
+      <i c="1" l="1650271038828" />
     </e>
     <e n="EditorCopy">
       <i c="10" l="1650254395745" />
     </e>
     <e n="EditorDuplicate">
-      <i c="8" l="1650254373029" />
+      <i c="9" l="1650271959660" />
     </e>
     <e n="EditorEnter">
-      <i c="1" l="1650254718496" />
+      <i c="10" l="1650271029109" />
+    </e>
+    <e n="EditorLeft">
+      <i c="4" l="1650271052650" />
     </e>
     <e n="EditorPaste">
-      <i c="20" l="1650254718931" />
+      <i c="21" l="1650263432087" />
+    </e>
+    <e n="EditorRight">
+      <i c="4" l="1650271053095" />
     </e>
     <e n="Find">
       <i c="7" l="1650248879606" />
@@ -34,13 +43,16 @@
       <i c="1" l="1650210283873" />
     </e>
     <e n="PsiViewerForContext">
-      <i c="3" l="1650247553465" />
+      <i c="4" l="1650268780153" />
     </e>
     <e n="SaveAll">
-      <i c="25" l="1650254723732" />
+      <i c="28" l="1650271055261" />
     </e>
     <e n="SettingsEntryPoint">
       <i c="1" l="1650252920211" />
+    </e>
+    <e n="ShowIntentionActions">
+      <i c="1" l="1650259822623" />
     </e>
     <e n="WelcomeScreen.OpenProject">
       <i c="2" l="1650138411648" />
@@ -49,7 +61,7 @@
       <i c="2" l="1650252780805" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="11" l="1650254345903" />
+      <i c="16" l="1650271008131" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />
