@@ -1,12 +1,21 @@
 <application>
+  <component name="DimensionService">
+    <location key="find.popup.0.0.3600.2338@192dpi" x="1360" y="358" />
+    <size key="find.popup.0.0.3600.2338@192dpi" width="1148" height="1434" />
+    <size key="#com.intellij.internal.psiView.PsiViewerDialog.0.0.3600.2338@192dpi" width="1600" height="1200" />
+  </component>
   <component name="WindowManager">
-    <frame x="213" y="136" width="1186" height="769" />
+    <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
   </component>
   <component name="WindowStateApplicationService">
-    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650164587094">
+    <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow" timestamp="1650254218083">
+      <screen x="0" y="44" width="1800" height="1076" />
+    </state>
+    <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow/0.44.1800.1076" timestamp="1650254218083" />
+    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650254344431">
       <screen x="0" y="44" width="1800" height="1076" />
     </state>
     <state x="756" y="444" width="800" height="650" key="WELCOME_SCREEN/0.38.1512.895" timestamp="1650142548872" />
-    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650164587094" />
+    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650254344431" />
   </component>
 </application>

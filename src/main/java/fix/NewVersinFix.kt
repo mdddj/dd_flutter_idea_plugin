@@ -12,7 +12,8 @@ import com.intellij.psi.tree.IElementType
  */
 class NewVersinFix(
     psiElement: PsiElement,
-    private val newVersion: String
+    private val newVersion: String,
+    val fixed: ()->Unit
 ) : LocalQuickFixOnPsiElement(psiElement) {
 
 
@@ -35,6 +36,7 @@ class NewVersinFix(
                 ), null
             )
         startElement.replace(psiExpression)
+        fixed()
     }
 
 }

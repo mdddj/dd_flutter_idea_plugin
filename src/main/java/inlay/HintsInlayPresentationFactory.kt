@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
+import com.intellij.ui.Colors
 import com.intellij.ui.awt.RelativePoint
 import icons.MyIcons
 import java.awt.Point
@@ -18,23 +19,19 @@ import javax.swing.Icon
 
 /**
  * 悬浮提示的工厂类
+ * 提供了一些的悬浮提示工具函数
  */
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
-    fun pluginInlay(): InlayPresentation {
-        return factory.collapsible(
-            prefix = text("<"),
-            collapsed = text("收起"),
-            expanded = {
-                text("展开")
-            },
-            suffix = text(">")
-        )
+
+
+    fun simpleText(text: String,tip: String?): InlayPresentation{
+        return text(text).con().bg().addTip(tip ?: text)
     }
 
     fun menuActions(psiElement: PsiElement, pluginName: String): InlayPresentation {
         return factory.mouseHandling(
-            base = dartIcon().addTip("点击可对插件包的操作"),
+            base = dartIcon().addTip("点击可对插件包的操作").con(),
             clickListener = object : InlayPresentationFactory.ClickListener {
 
                 // 插件图标项目被点击
@@ -75,6 +72,20 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
     private fun InlayPresentation.insert(newInlay: InlayPresentation): InlayPresentation =
         factory.join(listOf(this, newInlay)) { text("") }
+
+    private fun InlayPresentation.con(): InlayPresentation = factory.container(
+        this,
+            InlayPresentationFactory.Padding(
+                5,5,2,2,
+            ),
+        InlayPresentationFactory.RoundedCorners(
+
+            10,10
+        ),
+
+
+
+    )
 
 
     private val actionMenus = listOf(

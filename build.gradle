@@ -44,12 +44,12 @@ intellij {
     // 插件名字
     pluginName = 'FlutterCheckVersionX'
 
-    version = '221.5080.210'
+//    version = 'IC'
     // 调试版本,这里使用的是本地安装的版本
-//    localPath = '/Applications/IntelliJ IDEA.app'
+    localPath = '/Applications/IntelliJ IDEA.app'
 
-    // 插件的依赖项,因为flutter项目中的第三包是在yaml文件中,所以要依赖yaml插件来操作psi树
-    plugins = ['org.jetbrains.plugins.yaml', 'java']
+    // 插件的依赖项
+    plugins = ['org.jetbrains.plugins.yaml', 'java','yaml',"Dart:221.5480","io.flutter:66.0.4"]
 
 //    sandboxDir = '/Users/hlx/idea-sandbox'
 
@@ -64,8 +64,3 @@ patchPluginXml {
 test {
     useJUnitPlatform()
 }
-
-
-//configurations.all {
-//    exclude group: "org.ehcache:ehcache",module "org.slf4j:slf4j-api"
-//}

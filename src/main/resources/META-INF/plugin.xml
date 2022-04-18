@@ -1,16 +1,15 @@
-<idea-plugin url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin"
-             xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin">
     <id>shop.itbug.dd_flutter_plugin</id>
     <name>FlutterCheckVersionX</name>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
     <description><![CDATA[
-    典典的idea flutter 插件工具的使用封装,不定时更新一些小功能
-    已支持的功能:
-    <ul>
-        <li>选中插件名字跳转到pub</li>
-    <ul>
-    ]]></description>
+        典典的idea flutter 插件工具的使用封装,不定时更新一些小功能
+        已支持的功能:
+        <ul>
+            <li>选中插件名字跳转到pub</li>
+            <ul>
+        ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
@@ -18,6 +17,8 @@
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.java</depends>
+    <depends>Dart</depends>
+    <depends>io.flutter</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <localInspection
@@ -29,18 +30,17 @@
                 enabledByDefault="true"
                 level="ERROR"
                 implementationClass="tools.AutoVersionTool"/>
-        
 
-        <postStartupActivity implementation="activity.FlutterProjectOpenActivity" />
 
-        <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension" />
+        <postStartupActivity implementation="activity.FlutterProjectOpenActivity"/>
 
-<!--        通知  -->
+        <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension"/>
+
+        <!--        通知  -->
         <notificationGroup id="plugin_new_version_notif"
-                           displayType="BALLOON"
-                           key="notification.group.name"/>
+                           displayType="BALLOON"/>
 
-        <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml" />
+        <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml"/>
 
 
     </extensions>

@@ -17,6 +17,8 @@
   <depends>org.jetbrains.plugins.yaml</depends>
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.java</depends>
+  <depends>Dart</depends>
+  <depends>io.flutter</depends>
   <extensions defaultExtensionNs="com.intellij">
     <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml" groupBundle="messages.InspectionsBundle" groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR" implementationClass="tools.AutoVersionTool" />
     <postStartupActivity implementation="activity.FlutterProjectOpenActivity" />

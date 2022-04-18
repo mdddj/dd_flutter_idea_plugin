@@ -15,28 +15,44 @@
       </map>
     </trackers>
   </component>
-  <component name="PropertyService">{
-  &quot;keyToString&quot;: {
-    &quot;CWM_LOGGING_VERSION&quot;: &quot;1&quot;,
-    &quot;RunOnceActivity.se.text.search&quot;: &quot;true&quot;,
-    &quot;bundled.plugins.list.saved.version&quot;: &quot;IC-221.5080.210&quot;,
-    &quot;eclipse.projects.detected&quot;: &quot;&quot;,
-    &quot;fileTypeChangedCounter&quot;: &quot;3&quot;,
-    &quot;got.it.tooltip.cwm.invitation.notification&quot;: &quot;1&quot;,
-    &quot;gotit.previous.run&quot;: &quot;IC-221.5080.210&quot;,
-    &quot;ide.memory.adjusted&quot;: &quot;true&quot;,
-    &quot;ide.updates.whats.new.shown.for&quot;: &quot;221&quot;,
-    &quot;installed.kotlin.plugin.version&quot;: &quot;221-1.6.20-release-285-IJ5080.210&quot;,
-    &quot;registry.to.advanced.settings.migration.build&quot;: &quot;IC-221.5080.210&quot;,
-    &quot;tasks.pass.word.conversion.enforced&quot;: &quot;true&quot;
+  <component name="PropertyService"><![CDATA[{
+  "keyToString": {
+    "CWM_LOGGING_VERSION": "1",
+    "Darcula.SavedEditorTheme": "_@user_Darcula",
+    "FLUTTER_LAST_SURVEY_CONTENT_CHECK_KEY": "1650247096387",
+    "MarketplacePluginsSearchHistory": "Flutter\nF\ndart\nda\nd",
+    "RunOnceActivity.se.text.search": "true",
+    "bundled.plugins.list.saved.version": "IC-221.5080.210",
+    "eclipse.projects.detected": "",
+    "file.gist.reindex.count": "3",
+    "fileTypeChangedCounter": "8",
+    "got.it.tooltip.cwm.invitation.notification": "1",
+    "got.it.tooltip.reader.mode.got.it": "1",
+    "gotit.previous.run": "IC-221.5080.210",
+    "ide.memory.adjusted": "true",
+    "ide.updates.whats.new.shown.for": "221",
+    "installed.kotlin.plugin.version": "221-1.6.20-release-285-IJ5080.210",
+    "io.flutter.analytics.clientId": "3d221309-3dd5-4205-8086-0287b68d23a1",
+    "io.flutter.analytics.optOut": "true",
+    "io.flutter.analytics.toastShown": "true",
+    "io.flutter.console.preferencesSet": "true",
+    "registry.to.advanced.settings.migration.build": "IU-221.5080.210",
+    "tasks.pass.word.conversion.enforced": "true",
+    "ts.lib.d.ts.version": "4.5.4"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;fileTypeDetectors&quot;: [
-      &quot;com.intellij.ide.scratch.ScratchFileServiceImpl$Detector&quot;,
-      &quot;com.android.tools.idea.sqlite.fileType.SqliteFileTypeDetector&quot;,
-      &quot;com.android.tools.idea.profilers.capture.MemoryCaptureFileType$Detector&quot;,
-      &quot;org.jetbrains.plugins.textmate.TextMateFileType$TextMateFileDetector&quot;
+  "keyToStringList": {
+    "fileTypeDetectors": [
+      "com.intellij.ide.scratch.ScratchFileServiceImpl$Detector",
+      "com.intellij.profiler.ultimate.hprof.impl.HprofFileTypeDetector",
+      "com.intellij.docker.dockerFile.DockerFileTypeDetector",
+      "com.intellij.javascript.debugger.sourcemap.SourceMapFileType$MyFileTypeDetector",
+      "com.intellij.database.vfs.DbStorageFileType$Detector",
+      "com.jetbrains.nodejs.util.NodeFileTypeDetector$JavaScriptFileTypeDetector",
+      "com.jetbrains.nodejs.util.NodeFileTypeDetector$TypeScriptFileTypeDetector",
+      "com.android.tools.idea.sqlite.fileType.SqliteFileTypeDetector",
+      "com.android.tools.idea.profilers.capture.MemoryCaptureFileType$Detector",
+      "org.jetbrains.plugins.textmate.TextMateFileType$TextMateFileDetector"
     ]
   }
-}</component>
+}]]></component>
 </application>

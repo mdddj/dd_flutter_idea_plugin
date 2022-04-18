@@ -1,25 +1,67 @@
 <application>
   <component name="ActionsLocalSummary">
+    <e n="$SelectAll">
+      <i c="1" l="1650210174576" />
+    </e>
     <e n="CheckFlutterPluginVersionIsNew">
       <i c="1" l="1650138494028" />
     </e>
+    <e n="EditorBackSpace">
+      <i c="66" l="1650254864267" />
+    </e>
+    <e n="EditorCopy">
+      <i c="10" l="1650254395745" />
+    </e>
+    <e n="EditorDuplicate">
+      <i c="8" l="1650254373029" />
+    </e>
+    <e n="EditorEnter">
+      <i c="1" l="1650254718496" />
+    </e>
+    <e n="EditorPaste">
+      <i c="20" l="1650254718931" />
+    </e>
+    <e n="Find">
+      <i c="7" l="1650248879606" />
+    </e>
+    <e n="FindInPath">
+      <i c="12" l="1650254396388" />
+    </e>
+    <e n="GotoDeclaration">
+      <i c="3" l="1650254693716" />
+    </e>
+    <e n="PsiViewer">
+      <i c="1" l="1650210283873" />
+    </e>
+    <e n="PsiViewerForContext">
+      <i c="3" l="1650247553465" />
+    </e>
     <e n="SaveAll">
-      <i c="3" l="1650140586482" />
+      <i c="25" l="1650254723732" />
+    </e>
+    <e n="SettingsEntryPoint">
+      <i c="1" l="1650252920211" />
     </e>
     <e n="WelcomeScreen.OpenProject">
       <i c="2" l="1650138411648" />
     </e>
     <e n="com.intellij.diagnostic.IdeMessagePanel$4">
-      <i c="1" l="1650138496703" />
+      <i c="2" l="1650252780805" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="6" l="1650164589081" />
+      <i c="11" l="1650254345903" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />
     </e>
     <e n="com.intellij.openapi.fileEditor.impl.tabActions.CloseTab">
-      <i c="6" l="1650141706366" />
+      <i c="22" l="1650254908101" />
+    </e>
+    <e n="com.intellij.toolWindow.ToolWindowHeader$HideAction">
+      <i c="2" l="1650254210758" />
+    </e>
+    <e n="io.flutter.FlutterInitializer$3">
+      <i c="1" l="1650246903857" />
     </e>
   </component>
 </application>

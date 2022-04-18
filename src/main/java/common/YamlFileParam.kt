@@ -45,6 +45,7 @@ class YamlFileParser(
 
 
 
+
     /**
      * 检查文件
      */
@@ -89,7 +90,6 @@ class YamlFileParser(
                             pubDatas[plugin.name] = pubData
 //                      println("server version:${pubData.latest.version} <--> current:${plugin.currentVersion.replace("^","").trim()}")
                             if (pubData.latest.version.trim() != plugin.currentVersion.replace("^", "").trim()) {
-                                println("${pubData.name} 有新版本 ${plugin.currentVersion} -->  ${pubData.latest.version}")
                                 plugin.newVersion = pubData.latest.version
                                 hasNewVersionPlugins.add(plugin)
                             }
@@ -106,6 +106,9 @@ class YamlFileParser(
         return hasNewVersionPlugins
     }
 
+
+
+    fun allPlugins()=  getAllPlugins()
 
     /**
      * 通过文件来获取项目中使用的插件列表

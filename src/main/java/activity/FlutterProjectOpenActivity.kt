@@ -48,6 +48,8 @@ class FlutterProjectOpenActivity : StartupActivity {
             // 如果转换失败了,不进行任何操作
             if (psiFile != null) {
 
+                // Yaml相关操作的类
+                val yamlFileParser = YamlFileParser(psiFile)
 
                 /// 启动一个后台进程,这个是idea的开发api,直接拿来用
                 ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Checking") {
@@ -57,7 +59,7 @@ class FlutterProjectOpenActivity : StartupActivity {
 
 
                         // 清理缓存
-                        CacheUtil.getCatch().asMap().clear()
+                        CacheUtil.getCatch().invalidateAll()
 
                         // 这里用了kotlin的携程功能,因为要发起较多的网络请求,需要异步操作
                         val pls = runBlocking(Dispatchers.IO) {
@@ -65,8 +67,6 @@ class FlutterProjectOpenActivity : StartupActivity {
                             // 等待携程的全部任务完成,然后将有新版本的插件Model模型接收过来
                             val ps = withContext(Dispatchers.Default) {
 
-                                // Yaml相关操作的类
-                                val yamlFileParser = YamlFileParser(psiFile)
 
                                 // 临时变量: 项目插件依赖总数
                                 var countPlugin = 0
@@ -119,10 +119,10 @@ class FlutterProjectOpenActivity : StartupActivity {
                         }
                     }
                 })
-
             }
 
         }
 
     }
+
 }

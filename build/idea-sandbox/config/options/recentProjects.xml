@@ -4,27 +4,27 @@
       <map>
         <entry key="$USER_HOME$/simple_shop_v2">
           <value>
-            <RecentProjectMetaInfo frameTitle="simple_shop_v2 – pubspec.yaml [simple_shop_v2]" projectWorkspaceId="20Fe7LPjEVkmyMaTh0EwWjFWta3">
-              <option name="activationTimestamp" value="1650164563473" />
+            <RecentProjectMetaInfo frameTitle="simple_shop_v2 – main.dart [simple_shop_v2]" projectWorkspaceId="20Fe7LPjEVkmyMaTh0EwWjFWta3">
+              <option name="activationTimestamp" value="1650254336500" />
               <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
-              <option name="build" value="IC-221.5080.210" />
-              <option name="buildTimestamp" value="1649734357220" />
-              <frame x="213" y="136" width="1186" height="769" />
-              <option name="productionCode" value="IC" />
-              <option name="projectOpenTimestamp" value="1650164564086" />
+              <option name="build" value="IU-221.5080.210" />
+              <option name="buildTimestamp" value="1649734343258" />
+              <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
+              <option name="productionCode" value="IU" />
+              <option name="projectOpenTimestamp" value="1650254188390" />
             </RecentProjectMetaInfo>
           </value>
         </entry>
         <entry key="$USER_HOME$/girlmerry">
           <value>
-            <RecentProjectMetaInfo frameTitle="girlmerry – pubspec.yaml" opened="true" projectWorkspaceId="20ylqsLPeDN7ePmqJfSjnPafZkZ">
-              <option name="activationTimestamp" value="1650178262235" />
+            <RecentProjectMetaInfo frameTitle="girlmerry – address_list.dart" projectWorkspaceId="20ylqsLPeDN7ePmqJfSjnPafZkZ">
+              <option name="activationTimestamp" value="1650259456198" />
               <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
-              <option name="build" value="IC-221.5080.210" />
-              <option name="buildTimestamp" value="1649734357220" />
-              <frame x="27" y="38" width="1485" height="895" extendedState="6" />
-              <option name="productionCode" value="IC" />
-              <option name="projectOpenTimestamp" value="1650164589347" />
+              <option name="build" value="IU-221.5080.210" />
+              <option name="buildTimestamp" value="1649734343258" />
+              <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
+              <option name="productionCode" value="IU" />
+              <option name="projectOpenTimestamp" value="1650254346039" />
             </RecentProjectMetaInfo>
           </value>
         </entry>

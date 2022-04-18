@@ -1,7 +1,6 @@
 package util
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.elementType
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 
 /**
@@ -23,9 +22,7 @@ class MyPsiElementUtil {
                 val text = psiElement.text
                 if (text != null) {
                     if ( psiElement is YAMLKeyValueImpl && (text.contains(": ^") || text.contains(": any")) ) {
-                        val pluginName = text.split(":")[0]
-                        println("$pluginName -- ${psiElement.javaClass}")
-                        return pluginName
+                        return text.split(":")[0]
                     }
                 }
             }
