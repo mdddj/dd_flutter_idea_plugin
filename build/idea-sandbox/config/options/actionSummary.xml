@@ -1,5 +1,8 @@
 <application>
   <component name="ActionsLocalSummary">
+    <e n="$Paste">
+      <i c="2" l="1650273340186" />
+    </e>
     <e n="$SelectAll">
       <i c="1" l="1650210174576" />
     </e>
@@ -19,16 +22,19 @@
       <i c="9" l="1650271959660" />
     </e>
     <e n="EditorEnter">
-      <i c="10" l="1650271029109" />
+      <i c="13" l="1650273324717" />
     </e>
     <e n="EditorLeft">
       <i c="4" l="1650271052650" />
     </e>
     <e n="EditorPaste">
-      <i c="21" l="1650263432087" />
+      <i c="22" l="1650273325090" />
     </e>
     <e n="EditorRight">
       <i c="4" l="1650271053095" />
+    </e>
+    <e n="EditorUp">
+      <i c="1" l="1650273324224" />
     </e>
     <e n="Find">
       <i c="7" l="1650248879606" />
@@ -46,7 +52,7 @@
       <i c="4" l="1650268780153" />
     </e>
     <e n="SaveAll">
-      <i c="28" l="1650271055261" />
+      <i c="29" l="1650273342435" />
     </e>
     <e n="SettingsEntryPoint">
       <i c="1" l="1650252920211" />
@@ -61,7 +67,7 @@
       <i c="2" l="1650252780805" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="16" l="1650271008131" />
+      <i c="17" l="1650273309623" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />

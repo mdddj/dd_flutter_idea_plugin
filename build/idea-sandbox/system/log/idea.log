@@ -5761,3 +5761,352 @@ Caused by: java.lang.IllegalStateException: Template not found: Dart File
 2022-04-18 17:08:09,805 [  16411]   INFO - #c.i.o.v.n.p.PersistentFSImpl - VFS dispose started
 2022-04-18 17:08:09,807 [  16413]   INFO - #c.i.o.v.n.p.PersistentFSImpl - VFS dispose completed
 2022-04-18 17:08:09,807 [  16413]   INFO - #c.i.o.f.i.FileTypeDetectionService - 0 auto-detected files. Detection took 0 ms
+2022-04-18 17:14:41,289 [      2]   INFO - #c.i.i.StartupUtil - ------------------------------------------------------ IDE STARTED ------------------------------------------------------
+2022-04-18 17:14:41,321 [     34]   INFO - #c.i.i.p.PluginManager - Using cached broken plugins file
+2022-04-18 17:14:41,359 [     72]   INFO - #c.i.u.EnvironmentUtil - loading shell env: /bin/zsh -l -i -c '/Applications/IntelliJ IDEA.app/Contents/bin/printenv' > '/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/ij-env-tmp-dir773390244607536319/ij-shell-env-data.tmp'
+2022-04-18 17:14:41,628 [    341]   INFO - #c.i.i.p.PluginManager - Module intellij.haml/watcher is not enabled because dependency com.intellij.plugins.watcher is not available
+Module intellij.recommenders.python is not enabled because dependency Pythonid is not available
+Module intellij.protoeditor.python is not enabled because dependency com.intellij.modules.python is not available
+Module intellij.protoeditor.go is not enabled because dependency org.jetbrains.plugins.go is not available
+Module intellij.space.php is not enabled because dependency com.jetbrains.php is not available
+Module intellij.webDeployment/phpStorm is not enabled because dependency com.intellij.modules.phpstorm is not available
+Module intellij.less/watcher is not enabled because dependency com.intellij.plugins.watcher is not available
+Module intellij.spring.jsf is not enabled because dependency com.intellij.jsf is not available
+Module kotlin-ultimate.common-for-kotlin is not enabled because dependency com.intellij.nativeDebug is not available
+Module kotlin-ultimate.ultimate-native is not enabled because dependency kotlin-ultimate.common-for-kotlin is not available
+Module intellij.maven.ext/javaee-ejb is not enabled because dependency com.intellij.javaee.ejb is not available
+Module intellij.thymeleaf/vue is not enabled because dependency org.jetbrains.plugins.vue is not available
+2022-04-18 17:14:41,642 [    355]   INFO - #c.i.i.p.PluginManager - Loaded bundled plugins: IDEA CORE (221.5080.210), IDE Features Trainer (221.5080.210), Grazie (221.5080.210), Toml (221.5080.210), Settings Repository (221.5080.210), YAML (221.5080.210), WSL File System Support (221.5080.210), TextMate Bundles (221.5080.210), Terminal (221.5080.210), Haml (221.5080.210), JetBrains maven model api classes (221.5080.210), JetBrains Repository Search (221.5080.210), Qodana (221.5080.210), EditorConfig (221.5080.210), WebP Support (221.5080.210), Recommenders for Java and Python (221.5080.210), Protocol Buffers (221.5080.210), Mercurial (221.5080.210), Space (221.5080.210), Shell Script (221.5080.210), Settings Sync (221.5080.210), Projector Libraries for Code With Me and Remote Development (221.5080.210), SSH Remote Run (221.5080.210), FTP/SFTP Connectivity (ex. Remote Hosts Access) (221.5080.210), Remote Development Gateway (221.5080.210), Terminal for Gateway (221.5080.210), Visual Studio Keymap (221.5080.210), NetBeans Keymap (221.5080.210), Eclipse Keymap (221.5080.210), Images (221.5080.210), HTTP Client (221.5080.210), macOS Light Theme (221.5080.210), Dependency Management Api for External Build Tools (221.5080.210), Endpoints (221.5080.210), Diagrams (221.5080.210), Copyright (221.5080.210), Properties (221.5080.210), Gradle (221.5080.210), CSS (221.5080.210), Stylus (221.5080.210), Sass (221.5080.210), Less (221.5080.210), Configuration Script (221.5080.210), Machine Learning Code Completion (221.5080.210), Project Wide Analysis (221.5080.210), IDE Settings Sync (221.5080.210), Java (221.5080.210), Kotlin (221-1.6.20-release-285-IJ5080.210), Performance Testing (Kotlin) (221.5080.210), Java Bytecode Decompiler (221.5080.210), Eclipse Interoperability (221.5080.210), Java Stream Debugger (221.5080.210), Package Search (221.5080.210), com.intellij.tracing.ide (221.5080.210), JVM Microservices Frameworks (221.5080.210), Micronaut (221.5080.210), Java IDE Customization (221.5080.210), Java Internationalization (221.5080.210), Velocity (221.5080.210), UI Designer (221.5080.210), Spring Messaging (221.5080.210), Spring Boot (221.5080.210), Spring (221.5080.210), Jakarta EE: RESTful Web Services (JAX-RS) (221.5080.210), Spring WebSocket (221.5080.210), Spring Integration Patterns (221.5080.210), Spring Cloud (221.5080.210), Jakarta EE: WebSockets (221.5080.210), Jakarta EE: Expression Language (EL) (221.5080.210), Spring Security (221.5080.210), Jakarta EE Platform (221.5080.210), Quarkus (221.5080.210), Jakarta EE: Contexts and Dependency Injection (CDI) (221.5080.210), Dependency Structure Matrix (221.5080.210), AOP Pointcut Language (221.5080.210), Project Wide Analysis for Java (221.5080.210), Performance Testing (221.5080.210), Shared Indexes (221.5080.210), Spring Initializr (221.5080.210), Performance Testing (Dynamic Plugins) (221.5080.210), Performance Testing (Java) (221.5080.210), Smali Support (221.5080.210), ZKM-Unscramble (221.5080.210), XPathView + XSLT (221.5080.210), IntelliLang (221.5080.210), JavaFX (221.5080.210), Markdown (221.5080.210), Gherkin (221.5080.210), Jakarta EE: Web/Servlets (221.5080.210), gRPC (221.5080.210), Jakarta EE: Bean Validation (221.5080.210), Task Management (221.5080.210), Time Tracking (221.5080.210), XSLT Debugger (221.5080.210), W3C Validators (221.5080.210), TestNG (221.5080.210), Subversion (221.5080.210), Remote Development Server (221.5080.210), Refactor-X (221.5080.210), Perforce Helix Core (221.5080.210), Lombok (221.5080.210), JUnit (221.5080.210), Cucumber for Java (221.5080.210), HTML Tools (221.5080.210), GitHub (221.5080.210), Git (221.5080.210), IDE Features Trainer: Git Lessons (221.5080.210), Shared Project Indexes (221.5080.210), ChangeReminder (221.5080.210), Machine Learning in Search Everywhere (221.5080.210), Docker (221.5080.210), Code Coverage for Java (221.5080.210), Bytecode Viewer (221.5080.210), Groovy (221.5080.210), Ant (221.5080.210), Maven (221.5080.210), Gradle-Java (221.5080.210), Gradle-Maven (221.5080.210), Gradle Extension (221.5080.210), Performance Testing (Gradle) (221.5080.210), Reactive Streams (221.5080.210), Jakarta EE: Gradle Integration (221.5080.210), Maven Extension (221.5080.210), Performance Testing (Maven) (221.5080.210), Cucumber for Groovy (221.5080.210), Plugin DevKit (221.5080.210), OpenAPI Specifications (221.5080.210), Spring Web (221.5080.210), Thymeleaf (221.5080.210), JavaScript Debugger (221.5080.210), JavaScript and TypeScript (221.5080.210), TSLint (221.5080.210), Spy-js (221.5080.210), Persistence Frameworks (221.5080.210), Spring Data (221.5080.210), Jakarta EE: Persistence (JPA) (221.5080.210), Jakarta NoSQL (221.5080.210), Jakarta EE: Application Servers (221.5080.210), Integration Testing of Workspace Model (221.5080.210), Jakarta EE: Server Pages (JSP) (221.5080.210), Jakarta EE: Messaging (JMS) (221.5080.210), FreeMarker (221.5080.210), Tomcat and TomEE (221.5080.210), WildFly (221.5080.210), GlassFish (221.5080.210), Database Tools and SQL (221.5080.210), Hibernate (221.5080.210), Node.js (221.5080.210), Gradle DSL API (221.5080.210), Gradle Dependency Updater Implementation (221.5080.210), Package Checker (0.7.19), Android (2020.3.1 Final.221.5080.210), Code With Me (221.5080.210), Ktor (221.5080.210), Refactoring Detector (221.5080.210), JavaScript Intention Power Pack (221.5080.210), Angular and AngularJS (221.5080.210)
+2022-04-18 17:14:41,643 [    356]   INFO - #c.i.i.p.PluginManager - Loaded custom plugins: Dart (221.5480), Flutter (66.0.4), FlutterCheckVersionX (1.1-SNAPSHOT)
+2022-04-18 17:14:41,763 [    476]   INFO - #c.i.u.EnvironmentUtil - shell environment loaded (42 vars)
+2022-04-18 17:14:42,047 [    760]   INFO - #c.i.i.StartupUtil - JNA library (64-bit) loaded in 725 ms
+2022-04-18 17:14:42,117 [    830]   INFO - #c.i.i.StartupUtil - IDE: IntelliJ IDEA (build #IU-221.5080.210, 12 Apr 2022 11:32)
+2022-04-18 17:14:42,126 [    839]   INFO - #c.i.i.StartupUtil - OS: Mac OS X (12.3.1, aarch64)
+2022-04-18 17:14:42,188 [    901]   INFO - #c.i.i.StartupUtil - JRE: 11.0.14.1+1-b2043.25 (JetBrains s.r.o.)
+2022-04-18 17:14:42,189 [    902]   INFO - #c.i.i.StartupUtil - JVM: 11.0.14.1+1-b2043.25 (OpenJDK 64-Bit Server VM)
+2022-04-18 17:14:42,209 [    922]   INFO - #c.i.i.StartupUtil - JVM options: [-Dapple.awt.fileDialogForDirectories=true, -Dapple.laf.useScreenMenuBar=true, -Didea.classpath.index.enabled=false, -Didea.config.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/config, -Didea.is.internal=true, -Didea.plugins.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins, -Didea.required.plugins.id=shop.itbug.FlutterCheckVersionX, -Didea.smooth.progress=false, -Didea.system.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/system, -Djava.system.class.loader=com.intellij.util.lang.PathClassLoader, -Xms256m, -Xmx512m, -Dfile.encoding=UTF-8, -Duser.country=CN, -Duser.language=zh, -Duser.variant, -ea]
+2022-04-18 17:14:42,210 [    923]   INFO - #c.i.i.StartupUtil - args: []
+2022-04-18 17:14:42,210 [    923]   INFO - #c.i.i.StartupUtil - library path: /Users/ldd/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
+2022-04-18 17:14:42,210 [    923]   INFO - #c.i.i.StartupUtil - boot library path: /Applications/IntelliJ IDEA.app/Contents/jbr/Contents/Home/lib
+2022-04-18 17:14:42,248 [    961]   INFO - #c.i.i.StartupUtil - locale=zh_CN_#Hans JNU=UTF-8 file.encoding=UTF-8
+  idea.config.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/config
+  idea.system.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/system
+  idea.plugins.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins
+  idea.log.path=/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/system/log
+2022-04-18 17:14:42,265 [    978]   INFO - #c.i.i.StartupUtil - CPU cores: 8; ForkJoinPool.commonPool: java.util.concurrent.ForkJoinPool@55d6a7d4[Running, parallelism = 7, size = 7, active = 3, running = 3, steals = 58, tasks = 0, submissions = 0]; factory: com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory@149f75ae
+2022-04-18 17:14:42,342 [   1055]   WARN - #c.i.u.m.MacOSApplicationProvider - No URL bundle (CFBundleURLTypes) is defined in the main bundle.
+To be able to open external links, specify protocols in the app layout section of the build file.
+Example: args.urlSchemes = ["your-protocol"] will handle following links: your-protocol://open?file=file&line=line
+2022-04-18 17:14:42,684 [   1397]   INFO - #c.i.a.o.PathMacrosImpl - Loaded path macros: {MAVEN_REPOSITORY=/Users/ldd/.m2/repository}
+2022-04-18 17:14:42,721 [   1434]   INFO - #c.i.u.n.s.CertificateManager - Default SSL context initialized
+2022-04-18 17:14:42,768 [   1481]   INFO - #c.i.d.JitWatcher - JIT compilation state checking enabled
+2022-04-18 17:14:42,803 [   1516]   INFO - #o.j.i.BuiltInServerManager - built-in server started, port 63343
+2022-04-18 17:14:42,806 [   1519]   WARN - #c.i.i.DebugAttachDetector - Unable to start DebugAttachDetector, please add `--add-exports java.base/jdk.internal.vm=ALL-UNNAMED` to VM options
+2022-04-18 17:14:42,836 [   1549]   INFO - #c.i.u.i.FilePageCache - lower=100; upper=492; buffer=10; max=492
+2022-04-18 17:14:42,912 [   1625]   WARN - #c.i.n.i.NotificationGroupManagerImpl - Notification group CodeWithMe is already registered (group=com.intellij.notification.NotificationGroup@6afb64e7). Plugin descriptor: PluginDescriptor(name=Code With Me, id=com.jetbrains.codeWithMe, descriptorPath=plugin.xml, path=/Applications/IntelliJ IDEA.app/Contents/plugins/cwm-plugin, version=221.5080.210, package=null, isBundled=true)
+2022-04-18 17:14:43,202 [   1915]   INFO - #c.i.c.CloudConfigManager - === Start: JBA_NOT_CONNECTED (0ms) ===
+2022-04-18 17:14:43,210 [   1923]   INFO - #c.i.o.a.Experiments - Experimental features enabled for user: wsl.p9.support, wsl.prefer.p9.support, wsl.p9.show.roots.in.file.chooser, wsl.execute.with.wsl.exe, linux.native.menu, recent.and.edited.files.together, show.create.new.element.in.popup, search.everywhere.mixed.results, new.project.wizard, editor.reader.mode, new.large.text.file.viewer, wsl.fsd.content.loader, terminal.shell.command.handling, reuse.target.paths.for.rsync
+2022-04-18 17:14:43,250 [   1963]   INFO - #c.i.o.u.i.UpdateCheckerService - channel: release
+2022-04-18 17:14:43,321 [   2034]   INFO - #c.i.c.CloudConfigManager - === Start.updateInitStatus ===
+2022-04-18 17:14:43,324 [   2037]   INFO - #c.i.u.m.t.NST - touchbar-server isn't running, skip nst loading
+2022-04-18 17:14:43,331 [   2044]   INFO - #c.i.u.m.t.TouchbarSupport - touchbar support is enabled
+2022-04-18 17:14:43,332 [   2045]   INFO - #c.i.c.CloudConfigManager - === calculateInitStatus ===
+2022-04-18 17:14:43,475 [   2188]   INFO - #c.i.i.p.DisabledPluginsState - Plugins to enable: [com.jetbrains.codeWithMe]
+2022-04-18 17:14:43,552 [   2265]   INFO - #c.i.i.s.p.i.SharedIndexMainZipStorage - Shared Indexes Storage is opened and empty
+2022-04-18 17:14:44,293 [   3006]   INFO - #c.i.i.c.ETagCloudConfigFileClient - === Get cloud config URL: https://cloudconfig.jetbrains.com/cloudconfig/files ===
+2022-04-18 17:14:44,318 [   3031]   INFO - #c.i.u.m.s.Menu - use new ScreenMenuBar implementation
+2022-04-18 17:14:44,530 [   3243]   INFO - #c.i.i.StartupUtil - notify that start-up thread is free
+2022-04-18 17:14:45,454 [   4167]   INFO - #c.i.u.i.FileBasedIndexImpl - Indices to be built:FilenameIndex(v = 258)
+2022-04-18 17:14:45,462 [   4175]   INFO - c.i.u.i.FileBasedIndexDataInitialization - Index data initialization done: 2278 ms. Initialized indexes: [FilenameIndex, FrameworkDetectionIndex, TodoIndex, IdIndex, filetypes, Stubs, Trigram.Index, fileIncludes, DomFileIndex, RelaxSymbolIndex, XmlTagNames, XmlNamespaces, html5.custom.attributes.index, SchemaTypeInheritance, json.file.root.values, HashFragmentIndex, yaml.keys.name, editorconfig.index.name, http.request.execution.environment, http.request.completion.host, http.request.headers.values.index, http.request.name.index, xmlProperties, CssIndex, css.template.selectors, CompassFunctionsIndex, bytecodeAnalysis, java.auto.module.name, java.source.module.name, java.null.method.argument, java.fun.expression, java.binary.plus.expression, org.jetbrains.kotlin.idea.versions.KotlinJvmMetadataVersionIndex, org.jetbrains.kotlin.idea.versions.KotlinJsMetadataVersionIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinPartialPackageNamesIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinMetadataFileIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinMetadataFilePackageIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinPackageSourcesMemberNamesIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinJvmModuleAnnotationsIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinBuiltInsMetadataIndex, org.jetbrains.kotlin.idea.vfilefinder.KotlinStdlibIndex, org.jetbrains.kotlin.idea.vfilefinder.KlibMetaFileIndex, protoeditor.java.outer.class.index, VtlFileIndex, com.intellij.uiDesigner.FormClassIndex, SpringXmlBeansIndex, spring.spiFileIndex, spring.autoConfigureMetadataIndex, XsltSymbolIndex, JavaFxControllerClassIndex, javafx.id.name, javafx.custom.component, javafx.stylesheets.name, groovy.trait.fields, groovy.trait.methods, LombokConfigIndex, java.cucumber.java8.step, HtmlTagIdIndex, docker.compose.services, ant-imports, groovy.cucumber.step, IdeaPluginRegistrationIndex, PluginIdModuleIndex, PluginIdDependenciesIndex, devkit.ExtensionPointIndex, devkit.ExtensionPointClassIndex, js.test.names, js.package.index, js.custom.single.entry.index, js.implicit.elements.index, js.string.literal.words.index, HtmlScriptSrcIndex, TypeScriptExternalPathCandidates, OpenapiSpecificationContentIndexer, DartImportIndex, DartPathIndex, DartClassIndex, DartLibraryIndex, DartComponentIndex, DartSymbolIndex, sql.types.count.index, sql.routine.index, taglibUris, FtlFileIndex, com.android.tools.idea.model.AndroidManifestIndex$Companion$NAME$1.NAME, BindingXmlIndex, MlModelFileIndex, NavXmlIndex, angularjs.template.cache, angularjs.ui.router.views.index, angularjs.app.index].
+2022-04-18 17:14:45,652 [   4365]   INFO - c.i.p.s.StubIndexImpl$StubIndexInitialization - Index data initialization done: 189 ms. Initialized stub indexes: {gr.method.name, angularjs.templateUrl.index, ts.embedded.content.index, org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex, js.typedef.index2, gr.field.name, JS.base.types.index, properties.index, gr.script.class, org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex, js.global.symbol.index, angularjs.delimiter.index, ts.external.module.index, js.gcl.modules, angular2.source.pipe.index, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex, java.anonymous.baseref, js.amd.modules, java.class.shortname, dom.elementClass, js.imported.bindings.index, java.class.extlist, kotlin.primeIndexKey, org.jetbrains.kotlin.idea.stubindex.KotlinProbablyContractedFunctionShortNameIndex, js.export.default.react.component.index, Css.attr, org.jetbrains.kotlin.idea.stubindex.KotlinMultifileClassPartIndex, sql.column.name, js.exported.index, protobuf.byShortName, org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeFqNameIndex, angularjs.directives.index, JS.class.implements, java.field.name, sql.names, protobuf.byQualifiedName, js.symbol.index2, org.jetbrains.kotlin.idea.stubindex.KotlinFilePartClassIndex, angularjs.filter.index, es6.exported.index, org.jetbrains.kotlin.idea.stubindex.KotlinJvmNameAnnotationIndex, org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex, org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeClassByPackageIndex, angular2.metadata.function.index, js.used.remote.modules, Scss.function, org.jetbrains.kotlin.idea.stubindex.KotlinInnerTypeAliasClassIdIndex, org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex, org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex, gr.class.super, amd.requirePaths.index, gr.anonymous.class, angularjs.module.index, angular2.ivy.directive.index, org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIndex, org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex, Scss.placeholder.selector, js.doc.modules, org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex, ts.local.classes, angularjs.generic.modules.index, Css.custom.property, angular2.metadata.className.index, Css.ampersand.selector, js.symbol.qualified.names.index, angularjs.ui.router.generic.states.index, js.class.index2, Stylus.mixins, dom.namespaceKey, js.element.qualifiedName, org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex, angularjs.directives.doc.index, sql.table.shortName, java.annotations, markdown.header, org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex, Css.id, Less.mixins, org.jetbrains.kotlin.idea.stubindex.KotlinSubclassObjectNameIndex, java.method.parameter.types, js.namespace.index, js.local.namespace.members.index, Stylus.variables, JS.subclass.stub.index, jvm.static.member.name, js.nonglobal.symbol.index, org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex, JS.class.super, Css.custom.mixin, Scss.mixin, js.generics.index, angular2.source.module.index, java.class.fqn, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex, JS.global.qualified.elements, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasByPackageIndex, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex, java.method.name, org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex, angular2.metadata.node.index, gr.script.fqn, angular2.metadata.pipe.index, org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex, angular2.ivy.pipe.index, angular2.metadata.module.index, org.jetbrains.kotlin.idea.stubindex.KotlinExtensionsInObjectsByReceiverTypeIndex, gr.annot.members, js.qualified.shortName, amd.baseUrl.index, Less.variables, angular2.ivy.module.index, jvm.static.member.type, angular2.templateUrl.index, angularjs.symbol.index, java.module.name, Css.class, angular2.source.directive.index, JS.framework.markers.index, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex, gr.annot.method.name, es6.assignment.index, Scss.variable, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelExtensionsByReceiverTypeIndex, gr.class.fqn, angularjs.ui.router.states.index, angularjs.controller.index, js.lazy.packages, org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeShortNameIndex, org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex, angular2.metadata.directive.index}.
+2022-04-18 17:14:46,519 [   5232]   INFO - #c.i.c.CloudConfigManager - === calculateInitStatus.value: JBA_NOT_CONNECTED ===
+2022-04-18 17:14:46,523 [   5236]   INFO - #c.i.c.CloudConfigManager - === End.updateInitStatus ===
+2022-04-18 17:14:46,974 [   5687]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Help' preloaded at 'MainMenu' in 38 ms
+2022-04-18 17:14:47,117 [   5830]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'File' preloaded at 'MainMenu' in 188 ms
+2022-04-18 17:15:08,775 [  27488]   INFO - #c.j.r.f.FollowMeManager - Register new user 0:'ldd' with ClientId=ClientId(value=Host)
+2022-04-18 17:15:09,675 [  28388]   INFO - #c.i.p.i.a.w.LegacyBridgeArtifactManagerRedefiner - Using workspace model to open project
+2022-04-18 17:15:09,768 [  28481]   INFO - STDOUT - Info  | RdCoroutineScope          | 21:JobScheduler FJ pool 4/7 | RdCoroutineHost overridden 
+2022-04-18 17:15:09,795 [  28508]   INFO - #c.j.r.p.c.t.i.DistributedTestHost - Host address=localhost/127.0.0.1
+2022-04-18 17:15:09,796 [  28509]   INFO - #c.i.o.v.i.l.NativeFileWatcherImpl - Starting file watcher: /Applications/IntelliJ IDEA.app/Contents/bin/fsnotifier
+2022-04-18 17:15:09,810 [  28523]   INFO - #c.i.o.v.i.l.NativeFileWatcherImpl - Native file watcher is operational.
+2022-04-18 17:15:09,832 [  28545]   INFO - #c.i.o.v.i.p.NewMappings - VCS Root: [Git] - [<Project>]
+2022-04-18 17:15:09,921 [  28634]   INFO - #c.i.o.w.StatusBar - Factory is not registered as `com.intellij.statusBarWidgetFactory` extension: com.intellij.openapi.vcs.changes.committed.IncomingChangesIndicatorFactory
+2022-04-18 17:15:10,039 [  28752]   INFO - #c.i.w.i.i.WorkspaceModelImpl - Load workspace model from cache in 313 ms
+2022-04-18 17:15:10,092 [  28805]   INFO - #c.i.p.c.ProjectCodeStyleSettingsManager - Initialized from default code style settings.
+2022-04-18 17:15:10,127 [  28840]   INFO - #c.j.r.p.c.x.P - sessionStatus: null
+2022-04-18 17:15:10,145 [  28858]   INFO - #c.j.r.p.c.x.P - freeSessionRemainingTimeMs: null null
+2022-04-18 17:15:10,322 [  29035]   INFO - #c.a.t.i.p.ProjectSystemService - DefaultProjectSystem project system has been detected
+2022-04-18 17:15:10,335 [  29048]   INFO - #c.i.i.n.e.NewToolbarRootPaneExtension - Show old main toolbar: false; show old navigation bar: true
+2022-04-18 17:15:10,340 [  29053]   INFO - #c.i.i.n.e.NewToolbarRootPaneExtension - Show new main toolbar: false
+2022-04-18 17:15:10,342 [  29055]   INFO - #c.i.o.w.StatusBar - Factory is not registered as `com.intellij.statusBarWidgetFactory` extension: git4idea.ui.branch.GitBranchWidget$Factory
+2022-04-18 17:15:11,383 [  30096]   INFO - PerformancePlugin - Performance Plugin is in silent mode
+2022-04-18 17:15:11,508 [  30221]   INFO - #g.c.GitHandler - [.] git version
+2022-04-18 17:15:11,523 [  30236]   INFO - #c.i.o.v.i.p.NewMappings - Mapped Roots: 1
+2022-04-18 17:15:11,534 [  30247]   INFO - #g.c.GitHandler - git version 2.32.0 (Apple Git-132)
+2022-04-18 17:15:11,529 [  30242]   INFO - #c.i.o.e.s.p.m.ExternalProjectsDataStorage - Load external projects data in 4 millis (read time: 1)
+2022-04-18 17:15:11,543 [  30256]   INFO - #g.c.GitExecutableManager - Git version for /usr/bin/git: 2.32.0.0 (UNIX)
+2022-04-18 17:15:11,717 [  30430]   WARN - #g.r.GitCommitTemplateTracker - Empty or blank commit template detected for repository /Users/ldd/simple_shop_v2 by path /Users/ldd/.stCommitMsg
+2022-04-18 17:15:11,918 [  30631]   INFO - #c.i.i.s.p.i.SharedIndexChunkConfigurationImpl - Chunk bundled-js-predefined-ffdd448c697d-504ef523a7eb-JavaScript-IU-221.5080.210 is registered for project 'simple_shop_v2: matching: (fb=42, stub=77), incompatible: (fb=0, stub=0), unknown: (fb=9, stub=9), 
+2022-04-18 17:15:12,037 [  30750]   INFO - #c.i.i.s.p.i.BundledSharedIndexPostStartupActivity - Attached 1 pre-built shared indexes: bundled-js-predefined-ffdd448c697d-504ef523a7eb-JavaScript-IU-221.5080.210
+2022-04-18 17:15:12,111 [  30824]   WARN - #g.r.GitUntrackedFilesHolder - Ignoring ignored file under another root: /Users/ldd/simple_shop_v2/android/.DS_Store; root: /Users/ldd/simple_shop_v2; mapped root: null
+2022-04-18 17:15:12,111 [  30824]   WARN - #g.r.GitUntrackedFilesHolder - Ignoring ignored file under another root: /Users/ldd/simple_shop_v2/assets/.DS_Store; root: /Users/ldd/simple_shop_v2; mapped root: null
+2022-04-18 17:15:12,112 [  30825]   WARN - #g.r.GitUntrackedFilesHolder - Ignoring ignored file under another root: /Users/ldd/simple_shop_v2/.DS_Store; root: /Users/ldd/simple_shop_v2; mapped root: null
+2022-04-18 17:15:12,112 [  30825]   WARN - #g.r.GitUntrackedFilesHolder - Ignoring ignored file under another root: /Users/ldd/simple_shop_v2/ios/.DS_Store; root: /Users/ldd/simple_shop_v2; mapped root: null
+2022-04-18 17:15:12,112 [  30825]   WARN - #g.r.GitUntrackedFilesHolder - Ignoring ignored file under another root: /Users/ldd/simple_shop_v2/lib/.DS_Store; root: /Users/ldd/simple_shop_v2; mapped root: null
+2022-04-18 17:15:12,168 [  30881]   INFO - #i.f.j.JxBrowserManager - simple_shop_v2: Installing JxBrowser
+2022-04-18 17:15:12,170 [  30883]   INFO - #c.j.r.f.FollowMeManager - Register new user 0:'ldd' with ClientId=ClientId(value=Host)
+2022-04-18 17:15:12,209 [  30922]   INFO - #i.f.s.FlutterCommand - /Users/ldd/flutter/bin/flutter [--no-color, config, --machine]
+2022-04-18 17:15:12,217 [  30930]   INFO - #i.f.s.FlutterSdk - Calling flutter config --machine
+2022-04-18 17:15:12,533 [  31246]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:12,585 [  31298]   INFO - #c.i.c.StatusBarInfoManager - === StatusBar.start create ===
+2022-04-18 17:15:12,785 [  31498]   INFO - #c.i.o.p.DumbServiceGuiTaskQueue - Running dumb mode task: OnDiskSharedIndexChunkLocator
+2022-04-18 17:15:12,787 [  31500]   WARN - #c.i.o.a.i.ActionUpdater - 255 ms to grab EDT for OpenFileAction#update (com.intellij.ide.actions.OpenFileAction)
+2022-04-18 17:15:12,814 [  31527]   INFO - #c.i.o.p.DumbServiceGuiTaskQueue - Running dumb mode task: UnindexedFilesUpdater[simple_shop_v2]
+2022-04-18 17:15:12,850 [  31563]   INFO - #c.i.u.i.UnindexedFilesUpdater - Started indexing of simple_shop_v2. Reason: On project open
+2022-04-18 17:15:12,873 [  31586]   INFO - #c.i.u.i.UnindexedFilesUpdater - Performing delayed pushing properties tasks for simple_shop_v2 took 3ms; general responsiveness: ok; EDT responsiveness: ok
+2022-04-18 17:15:12,926 [  31639]   INFO - #c.i.u.i.UnindexedFilesUpdater - Scanning of simple_shop_v2 uses 7 scanning threads
+2022-04-18 17:15:12,999 [  31712]   INFO - #c.i.d.u.SqlDialects - SQL dialects initialized in 1 ms
+2022-04-18 17:15:13,164 [  31877]   WARN - #c.i.o.a.i.ActionUpdater - 417 ms to grab EDT for CWMTelephonyGroup#update (com.jetbrains.rd.platform.codeWithMe.telephony.CWMTelephonyGroup)
+2022-04-18 17:15:13,256 [  31969]   INFO - #c.i.i.s.IdeStartupScripts - 0 startup script(s) found
+2022-04-18 17:15:13,637 [  32350]   WARN - #c.i.o.a.i.ActionUpdater - 832 ms to grab EDT for SaveAllAction#update (com.intellij.ide.actions.SaveAllAction)
+2022-04-18 17:15:13,647 [  32360]   WARN - #c.i.o.a.i.ActionUpdater - 476 ms to grab EDT for CodeWithMeUsersAction#update (com.jetbrains.rd.platform.codeWithMe.toolbar.CodeWithMeUsersAction)
+2022-04-18 17:15:14,056 [  32769]   INFO - #c.i.o.f.i.FileEditorManagerImpl - Project opening took 4395 ms
+2022-04-18 17:15:14,096 [  32809]   INFO - STDERR - java.lang.Throwable: Invocation timed out (1sec)
+2022-04-18 17:15:14,101 [  32814]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:818)
+2022-04-18 17:15:14,101 [  32814]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoopImpl(Native Method)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoop(LWCToolkit.java:1049)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:817)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoopImpl(Native Method)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoop(LWCToolkit.java:1049)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:817)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoopImpl(Native Method)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoop(LWCToolkit.java:1049)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:817)
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,102 [  32815]   INFO - #c.i.d.PerformanceWatcherImpl - Post-startup activities under progress took 2702ms; general responsiveness: ok; EDT responsiveness: 2/3 sluggish
+2022-04-18 17:15:14,102 [  32815]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,103 [  32816]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,103 [  32816]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - java.lang.Throwable: Invocation timed out (1sec)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:818)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoopImpl(Native Method)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoop(LWCToolkit.java:1049)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:817)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoopImpl(Native Method)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoop(LWCToolkit.java:1049)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:817)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,104 [  32817]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - java.lang.Throwable: Invocation timed out (1sec)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:818)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoopImpl(Native Method)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.doAWTRunLoop(LWCToolkit.java:1049)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:817)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,105 [  32818]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,109 [  32822]   INFO - STDERR - java.lang.Throwable: Invocation timed out (1sec)
+2022-04-18 17:15:14,126 [  32839]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:818)
+2022-04-18 17:15:14,126 [  32839]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.LWCToolkit.invokeAndWait(LWCToolkit.java:664)
+2022-04-18 17:15:14,126 [  32839]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:114)
+2022-04-18 17:15:14,126 [  32839]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.invokeAndWait(CAccessibility.java:108)
+2022-04-18 17:15:14,127 [  32840]   INFO - STDERR - 	at java.desktop/sun.lwawt.macosx.CAccessibility.getFocusOwner(CAccessibility.java:568)
+2022-04-18 17:15:14,294 [  33007]   INFO - #i.f.s.FlutterSdk - flutter config --machine: 2061ms
+2022-04-18 17:15:14,522 [  33235]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:14,674 [  33387]   INFO - #c.a.t.i.i.GMavenIndexRepository - HTTP not modified since the last request for URL: https://dl.google.com/android/studio/gmaven/index/release/v0.1/classes-v0.1.json.gz (etag: "d833c7").
+2022-04-18 17:15:14,674 [  33387]   INFO - #c.a.t.i.i.GMavenIndexRepository - Kept the old disk cache with an old ETag header: "d833c7".
+2022-04-18 17:15:14,781 [  33494]   INFO - #c.i.u.i.UnindexedFilesUpdater - Scanning completed for simple_shop_v2. Number of scanned files: 10414; Number of files for indexing: 1 took 1895ms; general responsiveness: ok; EDT responsiveness: 1/2 sluggish
+2022-04-18 17:15:14,837 [  33550]   INFO - #c.i.u.i.UnindexedFilesUpdater - Use 4 indexing threads for indexing of simple_shop_v2
+2022-04-18 17:15:14,899 [  33612]   INFO - #c.i.u.i.UnindexedFilesUpdater - Finished for simple_shop_v2. Unindexed files update took 65ms; general responsiveness: ok; EDT responsiveness: ok
+2022-04-18 17:15:14,908 [  33621]   INFO - #c.i.o.p.DumbServiceGuiTaskQueue - Running dumb mode task: com.android.tools.idea.res.ResourceFolderRepositoryFileCacheImpl$PruneTask@4def8f8b
+2022-04-18 17:15:14,924 [  33637]   INFO - #c.i.o.p.DumbServiceGuiTaskQueue - Running dumb mode task: com.android.tools.idea.res.ResourceFolderRepositoryFileCacheImpl$ManageLruProjectFilesTask@4053c045
+2022-04-18 17:15:14,951 [  33664]   INFO - #c.i.o.p.DumbServiceImpl - updateFinished
+2022-04-18 17:15:14,983 [  33696]   INFO - #c.i.u.i.ProjectFileBasedIndexStartupActivity - Has changed files: false; project=Project(name=simple_shop_v2, containerState=COMPONENT_CREATED, componentStore=/Users/ldd/simple_shop_v2)
+2022-04-18 17:15:15,019 [  33732]   INFO - c.i.s.v.a.s.d.SpaceKtsFileDetector - SpaceKtsFileDetector
+2022-04-18 17:15:15,165 [  33878]   INFO - #c.i.o.p.DumbServiceGuiTaskQueue - Running dumb mode task: com.android.tools.idea.res.ResourceFolderRegistry$PopulateCachesTask@3fcc7dde
+2022-04-18 17:15:15,226 [  33939]   INFO - STDOUT - 插件总数 22
+2022-04-18 17:15:15,239 [  33952]   INFO - STDOUT - 开始检测版本是否为最新
+2022-04-18 17:15:15,338 [  34051]   INFO - #i.f.r.d.DeviceDaemon - starting Flutter device daemon #1: /Users/ldd/flutter/bin/flutter daemon
+2022-04-18 17:15:15,365 [  34078]   INFO - #c.i.o.p.DumbServiceImpl - updateFinished
+2022-04-18 17:15:15,380 [  34093]   INFO - #c.i.u.i.ProjectFileBasedIndexStartupActivity - Has changed files: false; project=Project(name=simple_shop_v2, containerState=COMPONENT_CREATED, componentStore=/Users/ldd/simple_shop_v2)
+2022-04-18 17:15:15,573 [  34286]   WARN - #c.i.s.ComponentManagerImpl - Do not use constructor injection (requestorClass=io.flutter.editor.ActiveEditorsOutlineService)
+2022-04-18 17:15:15,794 [  34507]   INFO - #c.i.c.CompilerWorkspaceConfiguration - Available processors: 8
+2022-04-18 17:15:16,031 [  34744]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:16,766 [  35479]   INFO - #i.f.r.d.DeviceDaemon - flutter device daemon #1: Starting device daemon...
+2022-04-18 17:15:17,063 [  35776]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:18,187 [  36900]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:19,552 [  38265]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:20,062 [  38775]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:20,609 [  39322]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:20,666 [  39379]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:20,688 [  39401]   INFO - STDOUT - ===开始扫描未使用包===1650273320688 17:15:20.688515
+2022-04-18 17:15:21,077 [  39790]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:21,166 [  39879]   INFO - STDOUT - ==结束扫描未使用插件包====1650273321165   17:15:21.165846
+2022-04-18 17:15:23,622 [  42335]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:23,850 [  42563]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:23,854 [  42567]   INFO - STDOUT - ===开始扫描未使用包===1650273323854 17:15:23.854007
+2022-04-18 17:15:24,033 [  42746]   INFO - STDOUT - ==结束扫描未使用插件包====1650273324033   17:15:24.033532
+2022-04-18 17:15:24,150 [  42863]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:24,150 [  42863]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:24,585 [  43298]   INFO - #o.j.j.b.i.CompilerReferenceIndex - backward reference index version doesn't exist
+2022-04-18 17:15:24,599 [  43312]   INFO - #c.i.c.b.IsUpToDateCheckStartupActivity - suitable consumer is not found
+2022-04-18 17:15:24,618 [  43331]   INFO - #c.j.r.p.c.CodeWithMeCleanup - running activity to cleanup old thin clients... Root path is '/Users/ldd/Library/Caches/JetBrains'. JvmStartTimeMs=1650273281104
+2022-04-18 17:15:24,620 [  43333]   INFO - #c.j.r.p.c.CodeWithMeCleanup - found 0 Code With Me client system folders to check
+2022-04-18 17:15:24,637 [  43350]   INFO - #c.j.r.p.c.CodeWithMeCleanup - found 0 Code With Me client config folders to check
+2022-04-18 17:15:24,638 [  43351]   INFO - #c.j.r.p.c.CodeWithMeCleanup - keep only [] major versions
+2022-04-18 17:15:24,650 [  43363]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:24,794 [  43507]   INFO - #c.i.w.i.i.j.s.DelayedProjectSynchronizer - Workspace model loaded from cache. Syncing real project state into workspace model in 127 ms. Thread[ApplicationImpl pooled thread 2,4,main]
+2022-04-18 17:15:25,174 [  43887]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:25,528 [  44241]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:25,548 [  44261]   INFO - STDOUT - ===开始扫描未使用包===1650273325548 17:15:25.548176
+2022-04-18 17:15:25,581 [  44294]   INFO - STDOUT - ==结束扫描未使用插件包====1650273325581   17:15:25.581223
+2022-04-18 17:15:25,631 [  44344]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:28,137 [  46850]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:28,643 [  47356]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:31,008 [  49721]   INFO - STDOUT - 检测完毕,一共有0个插件可更新
+2022-04-18 17:15:31,249 [  49962]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:31,648 [  50361]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:34,197 [  52910]   INFO - #c.i.c.ComponentStoreImpl - Saving appFileTypeManager took 12 ms
+2022-04-18 17:15:34,226 [  52939]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:34,378 [  53091]   INFO - #c.i.c.ComponentStoreImpl - Saving Project(name=simple_shop_v2, containerState=COMPONENT_CREATED, componentStore=/Users/ldd/simple_shop_v2)RemoteTargetsManager took 40 ms, RunManager took 63 ms
+2022-04-18 17:15:34,801 [  53514]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:34,802 [  53515]   INFO - STDOUT - ===开始扫描未使用包===1650273334802 17:15:34.802862
+2022-04-18 17:15:34,956 [  53669]   INFO - STDOUT - ==结束扫描未使用插件包====1650273334956   17:15:34.956220
+2022-04-18 17:15:35,716 [  54429]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'File' preloaded at 'MainMenu' in 5 ms
+2022-04-18 17:15:35,777 [  54490]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Edit' preloaded at 'MainMenu' in 65 ms
+2022-04-18 17:15:35,786 [  54499]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'View' preloaded at 'MainMenu' in 75 ms
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 2
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 2
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 1
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 1
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 1
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 1
+2022-04-18 17:15:35,897 [  54610]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 0
+2022-04-18 17:15:35,898 [  54611]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 1
+2022-04-18 17:15:35,898 [  54611]   INFO - #c.i.c.t.i.MacroParser - Bad macro syntax: Not identifier: 1
+2022-04-18 17:15:35,906 [  54619]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Navigate' preloaded at 'MainMenu' in 194 ms
+2022-04-18 17:15:35,923 [  54636]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Code' preloaded at 'MainMenu' in 211 ms
+2022-04-18 17:15:35,940 [  54653]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Build' preloaded at 'MainMenu' in 229 ms
+2022-04-18 17:15:35,950 [  54663]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:36,017 [  54730]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Run' preloaded at 'MainMenu' in 306 ms
+2022-04-18 17:15:36,080 [  54793]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Tools' preloaded at 'MainMenu' in 368 ms
+2022-04-18 17:15:36,092 [  54805]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Window' preloaded at 'MainMenu' in 381 ms
+2022-04-18 17:15:36,115 [  54828]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Help' preloaded at 'MainMenu' in 404 ms
+2022-04-18 17:15:36,136 [  54849]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Refactor' preloaded at 'MainMenu' in 425 ms
+2022-04-18 17:15:36,286 [  54999]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Project View Popup Menu' preloaded at 'ProjectViewPopup' in 575 ms
+2022-04-18 17:15:36,287 [  55000]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Project View Popup Menu' preloaded at 'ProjectViewPopup' in 575 ms
+2022-04-18 17:15:36,319 [  55032]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Editor Popup Menu' preloaded at 'EditorPopup' in 607 ms
+2022-04-18 17:15:36,327 [  55040]   INFO - #c.i.o.a.i.PopupMenuPreloader - Popup menu 'Editor Popup Menu' preloaded at 'EditorPopup' in 615 ms
+2022-04-18 17:15:36,944 [  55657]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:40,476 [  59189]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:40,602 [  59315]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:40,602 [  59315]   INFO - STDOUT - ===开始扫描未使用包===1650273340602 17:15:40.602598
+2022-04-18 17:15:40,665 [  59378]   INFO - STDOUT - ==结束扫描未使用插件包====1650273340665   17:15:40.665707
+2022-04-18 17:15:40,978 [  59691]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:41,987 [  60700]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:42,528 [  61241]   WARN - #c.i.u.x.Binding - no accessors for org.jetbrains.idea.perforce.perforce.ConnectionId
+2022-04-18 17:15:42,998 [  61711]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:43,439 [  62152]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:43,439 [  62152]   INFO - STDOUT - ===开始扫描未使用包===1650273343439 17:15:43.439463
+2022-04-18 17:15:43,501 [  62214]   INFO - STDOUT - ==结束扫描未使用插件包====1650273343501   17:15:43.501817
+2022-04-18 17:15:43,507 [  62220]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:43,508 [  62221]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:44,005 [  62718]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:47,924 [  66637]   INFO - #i.f.j.JxBrowserManager - simple_shop_v2: JxBrowser file downloaded: /Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins/flutter-idea/jxbrowser/jxbrowser-mac-arm-7.22.jar
+2022-04-18 17:15:48,038 [  66751]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:48,542 [  67255]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:49,047 [  67760]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:49,552 [  68265]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:50,058 [  68771]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:50,563 [  69276]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:51,063 [  69776]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:52,579 [  71292]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:53,086 [  71799]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:54,089 [  72802]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:54,509 [  73222]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:15:54,509 [  73222]   INFO - STDOUT - ===开始扫描未使用包===1650273354509 17:15:54.509477
+2022-04-18 17:15:54,563 [  73276]   INFO - STDOUT - ==结束扫描未使用插件包====1650273354563   17:15:54.563162
+2022-04-18 17:15:54,593 [  73306]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:55,098 [  73811]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:56,106 [  74819]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:56,608 [  75321]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:56,711 [  75424]   INFO - #i.f.j.JxBrowserManager - simple_shop_v2: JxBrowser file downloaded: /Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins/flutter-idea/jxbrowser/jxbrowser-7.22.jar
+2022-04-18 17:15:57,113 [  75826]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:57,613 [  76326]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:15:58,117 [  76830]   INFO - #i.f.j.JxBrowserManager - simple_shop_v2: JxBrowser file downloaded: /Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins/flutter-idea/jxbrowser/jxbrowser-swing-7.22.jar
+2022-04-18 17:15:58,118 [  76831]   INFO - #i.f.j.JxBrowserManager - Loaded JxBrowser files successfully: [/Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins/flutter-idea/jxbrowser/jxbrowser-mac-arm-7.22.jar, /Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins/flutter-idea/jxbrowser/jxbrowser-7.22.jar, /Users/hlx/github/dd_flutter_idea_plugin/build/idea-sandbox/plugins/flutter-idea/jxbrowser/jxbrowser-swing-7.22.jar]
+2022-04-18 17:16:00,136 [  78849]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:16:00,675 [  79388]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:16:01,263 [  79976]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:16:01,263 [  79976]   INFO - STDOUT - ===开始扫描未使用包===1650273361263 17:16:01.263942
+2022-04-18 17:16:01,328 [  80041]   INFO - STDOUT - ==结束扫描未使用插件包====1650273361328   17:16:01.328928
+2022-04-18 17:16:05,659 [  84372]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:16:31,286 [ 109999]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:16:31,849 [ 110562]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:16:32,114 [ 110827]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:16:32,114 [ 110827]   INFO - STDOUT - ===开始扫描未使用包===1650273392114 17:16:32.114894
+2022-04-18 17:16:32,192 [ 110905]   INFO - STDOUT - ==结束扫描未使用插件包====1650273392192   17:16:32.192582
+2022-04-18 17:16:36,808 [ 115521]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:16:36,808 [ 115521]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:17:46,867 [ 185580]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:17:46,883 [ 185596]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:22:29,679 [ 468392]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:22:30,189 [ 468902]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:22:30,191 [ 468904]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:22:30,726 [ 469439]   INFO - #c.i.c.ComponentStoreImpl - Saving appSettingsSyncPlugins took 51 ms
+2022-04-18 17:22:30,729 [ 469442]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:22:30,730 [ 469443]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:22:31,174 [ 469887]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:22:31,174 [ 469887]   INFO - STDOUT - ===开始扫描未使用包===1650273751174 17:22:31.174845
+2022-04-18 17:22:31,456 [ 470169]   INFO - STDOUT - ==结束扫描未使用插件包====1650273751456   17:22:31.456262
+2022-04-18 17:22:35,683 [ 474396]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:23:45,751 [ 544464]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:09,592 [ 568305]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:10,096 [ 568809]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:10,600 [ 569313]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:12,113 [ 570826]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:12,615 [ 571328]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:17,661 [ 576374]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:18,674 [ 577387]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:19,198 [ 577911]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:19,456 [ 578169]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:24:19,456 [ 578169]   INFO - STDOUT - ===开始扫描未使用包===1650273859456 17:24:19.456400
+2022-04-18 17:24:19,539 [ 578252]   INFO - STDOUT - ==结束扫描未使用插件包====1650273859539   17:24:19.539519
+2022-04-18 17:24:24,175 [ 582888]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:24,178 [ 582891]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:48,332 [ 607045]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:48,835 [ 607548]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:49,235 [ 607948]   INFO - #c.i.o.u.LowMemoryWatcher - Low memory signal received: afterGc=false
+2022-04-18 17:24:49,339 [ 608052]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:49,339 [ 608052]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
+2022-04-18 17:24:49,505 [ 608218]   INFO - STDOUT - lib的文件数量:203
+2022-04-18 17:24:49,505 [ 608218]   INFO - STDOUT - ===开始扫描未使用包===1650273889505 17:24:49.505708
+2022-04-18 17:24:49,552 [ 608265]   INFO - STDOUT - ==结束扫描未使用插件包====1650273889552   17:24:49.552419
+2022-04-18 17:24:54,349 [ 613062]   WARN - #c.a.t.i.a.AvdManagerConnection - No Android SDK Found
