@@ -1,14 +1,29 @@
 <idea-plugin url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin">
-    <id>shop.itbug.dd_flutter_plugin</id>
+    <id>shop.itbug.FlutterCheckVersionX</id>
     <name>FlutterCheckVersionX</name>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
     <description><![CDATA[
-        典典的idea flutter 插件工具的使用封装,不定时更新一些小功能
-        已支持的功能:
-        <ul>
-            <li>选中插件名字跳转到pub</li>
+        梁典典的flutter插件工具包
+        Github: <a href="https://github.com/mdddj/dd_flutter_idea_plugin">https://github.com/mdddj/dd_flutter_idea_plugin</a>
+        建议反馈qq群: 667186542
+        功能列表:
             <ul>
+                <li>检测pub.dev版本更新</li>
+                <li>快捷跳转到pub.dev插件详情页面</li>
+                <li>检测未使用过的依赖</li>
+                <li>dart文件添加类型提示功能(存在问题,等待更新)</li>
+            <ul>
+
+                更新日志:
+                1.1
+                <ul>
+                    <li>dart文件增加类型提示(有bug,显示不准确)</li>
+                </ul>
+                1.0
+                <ul>
+                    <li>基本功能完成(检测依赖更新)</li>
+                </ul>
         ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
