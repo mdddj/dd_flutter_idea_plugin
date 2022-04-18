@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/sonar-intellij-plugin/sonar-intellij-plugin">
+<idea-plugin>
     <id>shop.itbug.FlutterCheckVersionX</id>
     <name>FlutterCheckVersionX</name>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
@@ -34,6 +34,11 @@
     <depends>com.intellij.modules.java</depends>
     <depends>Dart</depends>
     <depends>io.flutter</depends>
+
+    <applicationListeners>
+        <listener class="socket.ProjectOpenListeners" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+
     <extensions defaultExtensionNs="com.intellij">
         <localInspection
                 language="yaml"
@@ -49,9 +54,9 @@
         <notificationGroup id="plugin_new_version_notif" displayType="BALLOON"/>
         <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml"/>
         <codeInsight.inlayProvider implementationClass="inlay.dartfile.DartTypeInlayHintsProvider" language="Dart" />
-
-
+        <projectService serviceImplementation="socket.ProjectSocketService"/>
     </extensions>
+
 
     <actions>
         <action id="ToPub" class="actions.ToBrowser" text="前往PUB查看">
