@@ -111,13 +111,10 @@ class YamlElementVisitor(
             fun checkUnusedPlugin(project: Project, allPlugins: List<PluginVersion>) {
                 val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project))
                 val libFiles = files.filter { it.path.contains("/lib/") }
-                println("lib的文件数量:${libFiles.size}")
-
 
                 // 因为有大量的文件检测工作,这里使用携程来进行优化
                 GlobalScope.launch {
 
-                    println("===开始扫描未使用包===${System.currentTimeMillis()} ${LocalTime.now()}")
                     val usedArr = withContext(Dispatchers.IO) {
                         val used = arrayListOf<String>()
                         readAction {
@@ -135,7 +132,6 @@ class YamlElementVisitor(
                         }
                         used
                     }
-                    println("==结束扫描未使用插件包====${System.currentTimeMillis()}   ${LocalTime.now()}")
 
                     val unused = allPlugins.filter { item -> !usedArr.contains(item.name) }
 

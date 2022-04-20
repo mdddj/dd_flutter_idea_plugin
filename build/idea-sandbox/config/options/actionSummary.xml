@@ -6,35 +6,38 @@
     <e n="$SelectAll">
       <i c="1" l="1650210174576" />
     </e>
+    <e n="$Undo">
+      <i c="1" l="1650422187179" />
+    </e>
     <e n="CheckFlutterPluginVersionIsNew">
       <i c="1" l="1650138494028" />
     </e>
     <e n="EditorBackSpace">
-      <i c="75" l="1650271962067" />
+      <i c="113" l="1650422294875" />
     </e>
     <e n="EditorChooseLookupItem">
-      <i c="1" l="1650271038828" />
+      <i c="4" l="1650422214563" />
     </e>
     <e n="EditorCopy">
-      <i c="10" l="1650254395745" />
+      <i c="11" l="1650422244791" />
     </e>
     <e n="EditorDuplicate">
-      <i c="9" l="1650271959660" />
+      <i c="10" l="1650422254017" />
     </e>
     <e n="EditorEnter">
-      <i c="13" l="1650273324717" />
+      <i c="33" l="1650422223342" />
     </e>
     <e n="EditorLeft">
-      <i c="4" l="1650271052650" />
+      <i c="8" l="1650422161755" />
     </e>
     <e n="EditorPaste">
-      <i c="22" l="1650273325090" />
+      <i c="29" l="1650422253037" />
     </e>
     <e n="EditorRight">
-      <i c="4" l="1650271053095" />
+      <i c="9" l="1650422198022" />
     </e>
     <e n="EditorUp">
-      <i c="1" l="1650273324224" />
+      <i c="2" l="1650422210900" />
     </e>
     <e n="Find">
       <i c="7" l="1650248879606" />
@@ -52,7 +55,7 @@
       <i c="4" l="1650268780153" />
     </e>
     <e n="SaveAll">
-      <i c="29" l="1650273342435" />
+      <i c="30" l="1650422304417" />
     </e>
     <e n="SettingsEntryPoint">
       <i c="1" l="1650252920211" />
@@ -67,7 +70,7 @@
       <i c="2" l="1650252780805" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="19" l="1650279423653" />
+      <i c="22" l="1650360089310" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />

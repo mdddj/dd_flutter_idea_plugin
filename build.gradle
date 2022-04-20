@@ -24,6 +24,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.0.6'
     implementation 'cn.hutool:hutool-all:5.8.0.M3'
+    implementation("org.smartboot.socket:aio-core:1.5.17")
+
+
 }
 
 configure([compileKotlin, compileTestKotlin]) {
@@ -50,7 +53,7 @@ intellij {
     localPath = '/Applications/IntelliJ IDEA.app'
 
     // 插件的依赖项
-    plugins = ['org.jetbrains.plugins.yaml', 'java','yaml',"Dart:221.5480","io.flutter:66.0.4"]
+    plugins = ['org.jetbrains.plugins.yaml', 'java', 'yaml', "Dart:221.5480", "io.flutter:66.0.4"]
 
 //    sandboxDir = '/Users/hlx/idea-sandbox'
 

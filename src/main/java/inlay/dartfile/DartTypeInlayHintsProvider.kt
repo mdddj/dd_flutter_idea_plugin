@@ -7,9 +7,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.endOffset
 import com.jetbrains.lang.dart.DartElementType
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.ide.documentation.DartDocUtil
 import com.jetbrains.lang.dart.psi.DartType
 import com.jetbrains.lang.dart.psi.DartTypedFunctionType
 import com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl
+import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import com.jetbrains.lang.dart.psi.impl.DartListLiteralExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartLiteralExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarAccessDeclarationImpl
@@ -51,15 +53,18 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                     val nameComm = element.children.filterIsInstance<DartVarAccessDeclarationImpl>()
                     if (nameComm.isNotEmpty()) {
                         val filterIsInstanceWithName = nameComm[0]
-                            val varInit = element.varInit
-                            val expression = varInit?.expression?.tokenType?.toString()
-                            if (expression != null) {
-                                val type = expression.split("_")[0].lowercase()
-                                sink.addInlineElement(
-                                    filterIsInstanceWithName.endOffset, false,
-                                    hintsInlayPresentationFactory.simpleText(type, "类型:$type"), false
-                                )
-                            }
+                        val filterIsInstance =
+                            filterIsInstanceWithName.children.filterIsInstance<DartComponentNameImpl>()[0]
+                        val analysisGethover = DartAnalysisServerService.getInstance(file.project)
+                            .analysis_getHover(file.virtualFile, filterIsInstance.textOffset)
+                        println(analysisGethover)
+                        if(analysisGethover.isNotEmpty()){
+                            val staticType = analysisGethover[0].staticType
+                            sink.addInlineElement(
+                                filterIsInstanceWithName.endOffset, false,
+                                hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType"), false
+                            )
+                        }
                     }
                 }
                 return true

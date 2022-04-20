@@ -45,6 +45,7 @@
     <codeInsight.inlayProvider implementationClass="inlay.PluginInlayHintsProvider" language="yaml" />
     <codeInsight.inlayProvider implementationClass="inlay.dartfile.DartTypeInlayHintsProvider" language="Dart" />
     <projectService serviceImplementation="socket.ProjectSocketService" />
+    <toolWindow factoryClass="window.SocketWindow" id="Dio请求" anchor="bottom" />
   </extensions>
   <actions>
     <action id="ToPub" class="actions.ToBrowser" text="前往PUB查看">

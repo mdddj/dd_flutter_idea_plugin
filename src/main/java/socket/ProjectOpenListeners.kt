@@ -8,6 +8,6 @@ class ProjectOpenListeners: ProjectManagerListener {
     override fun projectOpened(project: Project) {
         super.projectOpened(project)
         val service = project.getService(ProjectSocketService::class.java)
-        service.onOpen();
+        service.onOpen(project)
     }
 }
