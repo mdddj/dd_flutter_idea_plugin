@@ -1,14 +1,19 @@
 <idea-plugin>
-  <version>1.1-SNAPSHOT</version>
-  <change-notes>Add change notes here.&lt;br&gt;
-      &lt;em&gt;most HTML tags may be used&lt;/em&gt;</change-notes>
+  <version>1.2-SNAPSHOT</version>
+  <change-notes>新增类型提示功能</change-notes>
   <idea-version since-build="221.5080" until-build="221.*" />
   <id>shop.itbug.FlutterCheckVersionX</id>
   <name>FlutterCheckVersionX</name>
   <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
   <description><![CDATA[梁典典的flutter插件工具包
-        Github: <a href="https://github.com/mdddj/dd_flutter_idea_plugin">https://github.com/mdddj/dd_flutter_idea_plugin</a>
+        Github:
+
+        <a href="https://github.com/mdddj/dd_flutter_idea_plugin">https://github.com/mdddj/dd_flutter_idea_plugin</a>
+
+
         建议反馈qq群: 667186542
+
+
         功能列表:
             <ul>
                 <li>检测pub.dev版本更新</li>
@@ -18,6 +23,10 @@
             <ul>
 
                 更新日志:
+                1.2
+                <ul>
+                    <li>新增dart变量提醒</li>
+                </ul>
                 1.1
                 <ul>
                     <li>dart文件增加类型提示(有bug,显示不准确)</li>

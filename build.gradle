@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'shop.itbug'
-version '1.1-SNAPSHOT'
+version '1.2-SNAPSHOT'
 
 
 repositories {
@@ -62,8 +62,8 @@ intellij {
 
 patchPluginXml {
     changeNotes = """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+      新增类型提示功能
+      """
 }
 test {
     useJUnitPlatform()

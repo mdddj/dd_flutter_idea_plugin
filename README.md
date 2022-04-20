@@ -6,6 +6,9 @@ Flutter版本检测插件 (Idea && Android Studio 通用)
 
 #### 功能演示
 
+* Dart `var`,`final`,`const`变量提示功能
+<img src='https://s1.ax1x.com/2022/04/20/LrZ978.png' />
+
 * 检测未使用过的依赖包 (1.0-release)
 
 <img width="551" alt="image" src="https://user-images.githubusercontent.com/29020213/163786791-8183a6ac-7e15-4fa0-b958-bada3ff320d3.png">
