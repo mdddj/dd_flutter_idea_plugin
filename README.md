@@ -6,6 +6,10 @@ Flutter版本检测插件 (Idea && Android Studio 通用)
 
 #### 功能演示
 
+* 插件版本号自动补全
+
+<img src="https://user-images.githubusercontent.com/29020213/164222888-8d50a2fd-da2d-4d9e-846f-9ebcb5e71cc9.gif" />
+
 * Dart `var`,`final`,`const`变量提示功能
 <img src='https://s1.ax1x.com/2022/04/20/LrZ978.png' />
 

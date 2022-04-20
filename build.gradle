@@ -62,7 +62,7 @@ intellij {
 
 patchPluginXml {
     changeNotes = """
-      新增类型提示功能
+      新增自动补全版本号功能
       """
 }
 test {

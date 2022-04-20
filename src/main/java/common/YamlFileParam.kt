@@ -2,6 +2,7 @@ package common
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -133,6 +134,8 @@ class YamlFileParser(
                                 mappingChild.map { it2 ->
                                     it2.accept(object : YamlPsiElementVisitor() {
                                         override fun visitKeyValue(keyValue2: YAMLKeyValue) {
+
+
 //                                            println("Plugin Name: ${keyValue2.keyText} , Version : ${keyValue2.valueText}  version type is ${keyValue2.value?.javaClass.toString()}")
                                             if (keyValue2.value is YAMLPlainTextImpl) {
                                                 allPlugins.add(

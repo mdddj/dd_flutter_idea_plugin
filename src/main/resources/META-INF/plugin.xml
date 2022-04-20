@@ -4,7 +4,9 @@
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
     <description><![CDATA[
+
         梁典典的flutter插件工具包
+
         Github:
 
         <a href="https://github.com/mdddj/dd_flutter_idea_plugin">https://github.com/mdddj/dd_flutter_idea_plugin</a>
@@ -22,6 +24,12 @@
             <ul>
 
                 更新日志:
+
+                1.3
+                <ul>
+                    <li>新增自动补全版本号</li>
+                </ul>
+
                 1.2
                 <ul>
                     <li>新增dart变量提醒</li>
@@ -50,15 +58,9 @@
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <localInspection
-                language="yaml"
-                displayName="Auto version show"
-                groupPath="Yaml"
-                groupBundle="messages.InspectionsBundle"
-                groupKey="group.names.probable.bugs"
-                enabledByDefault="true"
-                level="ERROR"
-                implementationClass="tools.AutoVersionTool"/>
+        <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml" groupBundle="messages.InspectionsBundle"
+                groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR" implementationClass="tools.AutoVersionTool"/>
+        <completion.contributor language="yaml" implementationClass="hints.PluginVersionHints" order="first" />
         <postStartupActivity implementation="activity.FlutterProjectOpenActivity"/>
         <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension"/>
         <notificationGroup id="plugin_new_version_notif" displayType="BALLOON"/>
@@ -66,6 +68,7 @@
         <codeInsight.inlayProvider implementationClass="inlay.dartfile.DartTypeInlayHintsProvider" language="Dart" />
         <projectService serviceImplementation="socket.ProjectSocketService"/>
         <toolWindow factoryClass="window.SocketWindow" id="Dio请求" anchor="bottom"/>
+
     </extensions>
 
 

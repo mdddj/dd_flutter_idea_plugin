@@ -48,6 +48,7 @@
   </applicationListeners>
   <extensions defaultExtensionNs="com.intellij">
     <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml" groupBundle="messages.InspectionsBundle" groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR" implementationClass="tools.AutoVersionTool" />
+    <completion.contributor language="yaml" implementationClass="hints.PluginVersionHints" order="first" />
     <postStartupActivity implementation="activity.FlutterProjectOpenActivity" />
     <codeInspection.InspectionExtension implementation="tools.MyInspectionExtension" id="MyInspectionExtension" />
     <notificationGroup id="plugin_new_version_notif" displayType="BALLOON" />

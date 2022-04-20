@@ -1,13 +1,12 @@
 package services
 
-import com.google.gson.JsonObject
+import PluginVersionModel
 import model.PubVersionDataModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
-import java.lang.RuntimeException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -15,7 +14,7 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * PUB Api 开放接口
  */
-const val PUBL_API_URL = "https://pub.dartlang.org/api/"
+const val PUBL_API_URL = "https://pub.dartlang.org/"
 
 /**
  * 访问pub开放Api接口
@@ -26,8 +25,14 @@ interface PubService {
     /**
      * 获取插件的相关数据
      */
-    @GET("packages/{plugName}")
+    @GET("api/packages/{plugName}")
     fun callPluginDetails(@Path("plugName") plugName:String) : Call<PubVersionDataModel>
+
+    /**
+     * 获取包的版本列表
+     */
+    @GET("packages/{pluginName}.json")
+    fun getPackageVersions(@Path("pluginName") pluginName: String) : Call<PluginVersionModel>
 }
 
 /**
@@ -39,7 +44,7 @@ suspend fun <T> Call<T>.await(): T {
             override fun onResponse(call: Call<T>, response: Response<T>) {
                 val body = response.body()
                 if(body!=null) continuation.resume(body)
-                else continuation.resumeWithException(RuntimeException("response body is null"))
+                else continuation.resumeWithException(MyException("请求数据出现错误:${response.isSuccessful} $response"))
             }
 
             override fun onFailure(call: Call<T>, t: Throwable) {
@@ -48,3 +53,6 @@ suspend fun <T> Call<T>.await(): T {
         })
     }
 }
+
+
+class MyException(msg: String) : Exception(msg)
