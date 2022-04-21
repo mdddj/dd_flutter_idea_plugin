@@ -1,12 +1,11 @@
 package common
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import model.PluginVersion
 import model.PubVersionDataModel
 import org.jetbrains.yaml.YAMLFileType
@@ -20,11 +19,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import services.PUBL_API_URL
 import services.PubService
 import services.await
+import util.CacheUtil
 
 /**
  * 开始请求数据时回调
  */
-typealias CheckPluginStartCallback = (pluginName: String,index: Int,count: Int) -> Unit
+typealias CheckPluginStartCallback = (pluginName: String, index: Int, count: Int) -> Unit
 
 /**
  * 处理yaml文件,处理项目使用的插件列表
@@ -32,35 +32,37 @@ typealias CheckPluginStartCallback = (pluginName: String,index: Int,count: Int) 
  */
 class YamlFileParser(
     private val file: PsiFile,
-)  {
+) : Disposable {
+
+
+    init {
+        Disposer.register(file.project, this)
+    }
+
+
+    /**
+     * 创建一个携程的作用域,当项目别关闭时,调用[dispose]方法进行取消任务,避免发生内存泄露
+     */
+    private val scope = CoroutineScope(Dispatchers.IO)
 
 
     private val pubDatas = mutableMapOf<String, PubVersionDataModel>()
-
-    /**
-     * 线程并发策略
-     * Dispatchers.IO 会使用一种较高的并发策略,当要执行的代码大多数时间是在阻塞和等待中,比如执行网络请求的时候为了能支持更高的并发数量
-     */
-
-
-
-
 
 
     /**
      * 检查文件
      */
-    suspend fun startCheckFile(pluginStart: CheckPluginStartCallback? ) :  List<PluginVersion> {
+    suspend fun startCheckFile(pluginStart: CheckPluginStartCallback?): List<PluginVersion> {
         if (isYamlFile()) {
             var allPlugins = emptyList<PluginVersion>()
             runReadAction {
-                 allPlugins = getAllPlugins()
+                allPlugins = getAllPlugins()
             }
 
             println("插件总数 ${allPlugins.size}")
 
             println("开始检测版本是否为最新")
-            val hasNewVersionPlugins = checkVersionFormPub(allPlugins,pluginStart)
+            val hasNewVersionPlugins = checkVersionFormPub(allPlugins, pluginStart)
             println("检测完毕,一共有${hasNewVersionPlugins.size}个插件可更新")
             return hasNewVersionPlugins
 
@@ -74,42 +76,44 @@ class YamlFileParser(
      * 从服务器中获得最新版本
      */
 
-    private suspend fun checkVersionFormPub(plugins: List<PluginVersion>,startCallback: CheckPluginStartCallback?): List<PluginVersion> {
+    private suspend fun checkVersionFormPub(
+        plugins: List<PluginVersion>,
+        startCallback: CheckPluginStartCallback?
+    ): List<PluginVersion> {
         val build = Retrofit.Builder().baseUrl(PUBL_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val pubService = build.create(PubService::class.java)
         val hasNewVersionPlugins = mutableListOf<PluginVersion>()
+
+
+
         plugins.map { plugin ->
 
-            coroutineScope {
-                async {
+            scope.async {
+                run {
                     try {
                         if (!pubDatas.containsKey(plugin.name)) {
-                            startCallback?.let { it(plugin.name,plugins.indexOf(plugin),plugins.size) }
+                            startCallback?.let { it(plugin.name, plugins.indexOf(plugin), plugins.size) }
                             val pubData = pubService.callPluginDetails(plugin.name).await()
                             pubDatas[plugin.name] = pubData
-//                      println("server version:${pubData.latest.version} <--> current:${plugin.currentVersion.replace("^","").trim()}")
                             if (pubData.latest.version.trim() != plugin.currentVersion.replace("^", "").trim()) {
                                 plugin.newVersion = pubData.latest.version
                                 hasNewVersionPlugins.add(plugin)
+                                CacheUtil.getCatch().put(plugin.name, plugin)
                             }
-                        }else{
-                            /// 如果数据存在则不重复请求
-                            println("have data , no get")
                         }
                     } catch (e: Exception) {
                         println("请求插件版本失败 :${e.message}")
                     }
                 }
             }
-        }.awaitAll()
+        }
         return hasNewVersionPlugins
     }
 
 
-
-    fun allPlugins()=  getAllPlugins()
+    fun allPlugins() = getAllPlugins()
 
     /**
      * 通过文件来获取项目中使用的插件列表
@@ -134,9 +138,6 @@ class YamlFileParser(
                                 mappingChild.map { it2 ->
                                     it2.accept(object : YamlPsiElementVisitor() {
                                         override fun visitKeyValue(keyValue2: YAMLKeyValue) {
-
-
-//                                            println("Plugin Name: ${keyValue2.keyText} , Version : ${keyValue2.valueText}  version type is ${keyValue2.value?.javaClass.toString()}")
                                             if (keyValue2.value is YAMLPlainTextImpl) {
                                                 allPlugins.add(
                                                     PluginVersion(
@@ -169,6 +170,13 @@ class YamlFileParser(
         return file.fileType.javaClass == YAMLFileType.YML.javaClass
     }
 
+
+    /**
+     * 销毁携程作用域,避免发生泄露
+     */
+    override fun dispose() {
+        scope.cancel()
+    }
 
 
 }

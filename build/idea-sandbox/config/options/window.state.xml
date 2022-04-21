@@ -8,14 +8,14 @@
     <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
   </component>
   <component name="WindowStateApplicationService">
-    <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow" timestamp="1650521827230">
+    <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow" timestamp="1650528781326">
       <screen x="0" y="44" width="1800" height="1076" />
     </state>
-    <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow/0.44.1800.1076" timestamp="1650521827230" />
-    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650522197278">
+    <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow/0.44.1800.1076" timestamp="1650528781326" />
+    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650528786839">
       <screen x="0" y="44" width="1800" height="1076" />
     </state>
     <state x="756" y="444" width="800" height="650" key="WELCOME_SCREEN/0.38.1512.895" timestamp="1650142548872" />
-    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650522197278" />
+    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650528786839" />
   </component>
 </application>

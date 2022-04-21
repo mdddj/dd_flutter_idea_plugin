@@ -2,29 +2,29 @@
   <component name="RecentProjectsManager">
     <option name="additionalInfo">
       <map>
-        <entry key="$USER_HOME$/girlmerry">
-          <value>
-            <RecentProjectMetaInfo frameTitle="girlmerry – pubspec.yaml" projectWorkspaceId="20ylqsLPeDN7ePmqJfSjnPafZkZ">
-              <option name="activationTimestamp" value="1650260753373" />
-              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
-              <option name="build" value="IU-221.5080.210" />
-              <option name="buildTimestamp" value="1649734343258" />
-              <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
-              <option name="productionCode" value="IU" />
-              <option name="projectOpenTimestamp" value="1650259799543" />
-            </RecentProjectMetaInfo>
-          </value>
-        </entry>
         <entry key="$USER_HOME$/simple_shop_v2">
           <value>
             <RecentProjectMetaInfo frameTitle="simple_shop_v2 – pubspec.yaml [simple_shop_v2]" projectWorkspaceId="20Fe7LPjEVkmyMaTh0EwWjFWta3">
-              <option name="activationTimestamp" value="1650522193416" />
+              <option name="activationTimestamp" value="1650528091922" />
               <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
               <option name="build" value="IU-221.5080.210" />
-              <option name="buildTimestamp" value="1649734327825" />
+              <option name="buildTimestamp" value="1649734361649" />
               <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
               <option name="productionCode" value="IU" />
-              <option name="projectOpenTimestamp" value="1650505212954" />
+              <option name="projectOpenTimestamp" value="1650527926695" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/girlmerry">
+          <value>
+            <RecentProjectMetaInfo frameTitle="girlmerry – pubspec.yaml" projectWorkspaceId="20ylqsLPeDN7ePmqJfSjnPafZkZ">
+              <option name="activationTimestamp" value="1650528760858" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="build" value="IU-221.5080.210" />
+              <option name="buildTimestamp" value="1649734350636" />
+              <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
+              <option name="productionCode" value="IU" />
+              <option name="projectOpenTimestamp" value="1650528755844" />
             </RecentProjectMetaInfo>
           </value>
         </entry>
