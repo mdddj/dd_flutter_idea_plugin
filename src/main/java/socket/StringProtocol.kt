@@ -13,7 +13,6 @@ class StringProtocol : Protocol<String?> {
         }
         readBuffer.mark()
         val length: Int = readBuffer.int
-        println("-->$length")
         if (length > readBuffer.remaining()) {
             readBuffer.reset()
             return null
@@ -22,7 +21,6 @@ class StringProtocol : Protocol<String?> {
         readBuffer.get(b)
         readBuffer.mark()
         val string = String(b)
-        println(string)
         return string
     }
 }

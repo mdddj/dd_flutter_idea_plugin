@@ -4,13 +4,12 @@ import cn.hutool.core.lang.Console
 import cn.hutool.json.JSONUtil
 import com.google.gson.Gson
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.intellij.util.messages.MessageBus
+import com.intellij.util.messages.MessageBusFactory
+import kotlinx.coroutines.*
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
-import org.smartboot.socket.transport.AioSession
-import org.smartboot.socket.transport.WriteBuffer
+import services.SokcetMessageBus
 import java.io.IOException
 
 
@@ -19,25 +18,29 @@ class ProjectSocketService {
 
    lateinit var server: AioQuickServer
 
-    companion object {
 
+   /// 请求列表
+   private val flutterRequests = mutableListOf<SocketResponseModel>()
+
+
+    fun getRequests(): List<SocketResponseModel> {
+        return flutterRequests
     }
 
+
     /// 项目打开,开启一个socket服务,进行接口监听传输
-    @OptIn(DelicateCoroutinesApi::class)
     fun onOpen(project: Project) {
-        GlobalScope.launch {
-            launch {
 
-                val processor: MessageProcessor<String?> =
-                    MessageProcessor<String?> { session, msg ->
-                        println("receive from client: $msg")
 
-                    }
+        CoroutineScope (Dispatchers.IO).launch{
+            val processor: MessageProcessor<String?> =
+                MessageProcessor<String?> { _, msg ->
+                    flutterClienJsonHandle(msg,project)
+                }
 
-                server = AioQuickServer(9999, StringProtocol(), processor)
-                server.start()
-            }
+            server = AioQuickServer(9999, StringProtocol(), processor)
+            server.setReadBufferSize(10485760) // 10m
+            server.start()
         }
     }
 
@@ -45,13 +48,13 @@ class ProjectSocketService {
     /**
      * flutter端穿过来的json数据
      */
-    private fun flutterClienJsonHandle(json: String){
-        Console.log(json)
+    private fun flutterClienJsonHandle(json: String,project: Project){
         try{
-            val resposneModel = JSONUtil.toBean(json, SocketResponseModel::class.java)
-            Console.log(resposneModel.url + "--" + resposneModel.methed)
+          val responseModel =   Gson().fromJson(json,SocketResponseModel::class.java)
+            flutterRequests.add(responseModel)
+            project.messageBus.syncPublisher(SokcetMessageBus.CHANGE_ACTION_TOPIC).handleData(responseModel)
         }catch (e: Exception){
-            Console.log("解析出错了");
+            Console.log("解析出错了:$e");
         }
     }
 

@@ -76,7 +76,7 @@ class FlutterProjectOpenActivity : StartupActivity {
 
                                     // 当开始执行插件网络请求时,会回调这个函数,来更新底部工具条的进度文本展示
                                     run {
-                                        indicator.text = "梁典典:正在检测-> $name ($index/$count) 版本中..."
+                                        indicator.text = "Check the version $name ($index/$count)"
                                         countPlugin = count
                                     }
 
@@ -91,12 +91,12 @@ class FlutterProjectOpenActivity : StartupActivity {
                                     // 弹出一个通知
                                     NotifUtils.showNewPluginTips(
                                         project,
-                                        "一共检测${countPlugin}个插件,有${plugins.size}个插件有新版本,$pluginNames"
+                                        "total detection${countPlugin}plugins,Have${plugins.size}plugins have new versions,$pluginNames"
                                     )
                                 } else {
 
                                     // 全部插件已经是最新的通知
-                                    NotifUtils.showNewPluginTips(project, "💐恭喜!!你的Flutter第三方依赖都是最新版!!")
+                                    NotifUtils.showNewPluginTips(project, "💐Congratulations!! Your Flutter third-party dependencies are all up to date!!")
                                 }
                                 plugins
                             }

@@ -8530,6 +8530,10 @@
           {
             "pluginIdString": "com.github.zzehring.intellijjsonnet",
             "nullablePluginName": "Jsonnet Language Server"
+          },
+          {
+            "pluginIdString": "today.movatech.plugins.jsonnet",
+            "nullablePluginName": "Jsonnet Templating Language Support"
           }
         ]
       },
@@ -11536,6 +11540,10 @@
           {
             "pluginIdString": "com.github.zzehring.intellijjsonnet",
             "nullablePluginName": "Jsonnet Language Server"
+          },
+          {
+            "pluginIdString": "today.movatech.plugins.jsonnet",
+            "nullablePluginName": "Jsonnet Templating Language Support"
           }
         ]
       },
@@ -14511,6 +14519,10 @@
           {
             "pluginIdString": "com.qalens.corr",
             "nullablePluginName": "Journey Prgramming"
+          },
+          {
+            "pluginIdString": "com.qalens.corr",
+            "nullablePluginName": "Journey Programming"
           }
         ]
       },
@@ -17125,9 +17137,33 @@
             "nullablePluginName": "Erlang"
           }
         ]
+      },
+      "*.bdl": {
+        "dataSet": [
+          {
+            "pluginIdString": "com.github.ceclin.bdlh",
+            "nullablePluginName": "BDLH"
+          }
+        ]
+      },
+      "*.job": {
+        "dataSet": [
+          {
+            "pluginIdString": "io.terminus.trantor.plugin",
+            "nullablePluginName": "Trantor"
+          }
+        ]
+      },
+      "*.workload": {
+        "dataSet": [
+          {
+            "pluginIdString": "com.qalens.corr",
+            "nullablePluginName": "Journey Programming"
+          }
+        ]
       }
     },
-    "lastUpdateTime": 1650422088591
+    "lastUpdateTime": 1650510323589
   },
   "dependencies": {
     "featureMap": {
@@ -17800,7 +17836,7 @@
         ]
       }
     },
-    "lastUpdateTime": 1650422088842
+    "lastUpdateTime": 1650510324450
   }
 }]]></component>
   <component name="PluginFeatureService">{

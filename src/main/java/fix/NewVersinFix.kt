@@ -18,7 +18,7 @@ class NewVersinFix(
 
 
     override fun getFamilyName(): String {
-        return "替换版本为:${newVersion}"
+        return "Repair $newVersion"
     }
 
 

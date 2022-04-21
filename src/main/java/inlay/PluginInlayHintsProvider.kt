@@ -55,6 +55,10 @@ dependencies:
                     }
 
                     sink.addInlineElement(element.textOffset,false,myFactory.menuActions(element,pluginName),false)
+
+
+
+
                 }
                 return true
             }

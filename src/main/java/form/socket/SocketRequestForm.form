@@ -8,22 +8,37 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="53f69" class="javax.swing.JTable" binding="table1" default-binding="true">
+      <scrollpane id="af561">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="53f69" class="javax.swing.JTable" binding="table1" custom-create="true" default-binding="true">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </scrollpane>
+      <toolbar id="7a332" binding="dioToolBar">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="20"/>
           </grid>
         </constraints>
         <properties/>
-      </component>
-      <component id="8f5a4" class="javax.swing.JLabel" binding="tips">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="梁典典:未完工,敬请期待"/>
-        </properties>
-      </component>
+        <border type="none"/>
+        <children>
+          <component id="df489" class="javax.swing.JLabel" binding="refreshLable">
+            <constraints/>
+            <properties>
+              <text value="Label"/>
+              <toolTipText value="清空全部数据"/>
+            </properties>
+          </component>
+        </children>
+      </toolbar>
     </children>
   </grid>
 </form>

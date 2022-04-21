@@ -74,7 +74,7 @@ class YamlElementVisitor(
                 findElementAt?.let {
                     holder.registerProblem(
                         it,
-                        "当前插件有新版本:${plugin.newVersion}",
+                        "New version:${plugin.newVersion}",
                         ProblemHighlightType.WARNING,
                         NewVersinFix(file.findElementAt(findWithNewPositionWithFile.startIndex)!!, plugin.newVersion){
                             CacheUtil.getCatch().invalidate(plugin.name)

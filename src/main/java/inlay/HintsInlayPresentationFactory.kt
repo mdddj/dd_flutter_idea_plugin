@@ -31,7 +31,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
     fun menuActions(psiElement: PsiElement, pluginName: String): InlayPresentation {
         return factory.mouseHandling(
-            base = dartIcon().addTip("点击可对插件包的操作").con(),
+            base = dartIcon().addTip("Click to operate on the plug-in package").con(),
             clickListener = object : InlayPresentationFactory.ClickListener {
 
                 // 插件图标项目被点击
@@ -89,9 +89,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
     private val actionMenus = listOf(
-        MenuItem("前往pub详情页面查看",AllIcons.Toolwindows.WebToolWindow,"pub"),
-        MenuItem("查看插件更新日志",AllIcons.Actions.Preview,"log"),
-        MenuItem("详细信息",AllIcons.Actions.More,"info"),
+        MenuItem("Details page",AllIcons.Toolwindows.WebToolWindow,"pub"),
     )
 
 
@@ -106,7 +104,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
             val titles = items.map { it.title }
             val icons = items.map { it.icon }
             super.init(
-                "请选择你的操作", titles ,icons
+                "Please select your action", titles ,icons
             )
         }
 
