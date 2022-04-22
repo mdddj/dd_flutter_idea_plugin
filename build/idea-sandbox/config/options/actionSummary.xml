@@ -4,7 +4,7 @@
       <i c="2" l="1650273340186" />
     </e>
     <e n="$SelectAll">
-      <i c="3" l="1650454538580" />
+      <i c="5" l="1650536632728" />
     </e>
     <e n="$Undo">
       <i c="15" l="1650454446182" />
@@ -13,10 +13,10 @@
       <i c="1" l="1650138494028" />
     </e>
     <e n="CodeCompletion">
-      <i c="35" l="1650458591265" />
+      <i c="37" l="1650536907493" />
     </e>
     <e n="EditorBackSpace">
-      <i c="227" l="1650454513095" />
+      <i c="232" l="1650536894334" />
     </e>
     <e n="EditorChooseLookupItem">
       <i c="11" l="1650446144761" />
@@ -31,7 +31,7 @@
       <i c="13" l="1650453982480" />
     </e>
     <e n="EditorEnter">
-      <i c="40" l="1650442922481" />
+      <i c="41" l="1650536343306" />
     </e>
     <e n="EditorLeft">
       <i c="10" l="1650442925899" />
@@ -41,6 +41,9 @@
     </e>
     <e n="EditorRight">
       <i c="13" l="1650442924770" />
+    </e>
+    <e n="EditorTab">
+      <i c="1" l="1650536359129" />
     </e>
     <e n="EditorUp">
       <i c="2" l="1650422210900" />
@@ -60,8 +63,11 @@
     <e n="PsiViewerForContext">
       <i c="6" l="1650443028845" />
     </e>
+    <e n="ReformatCode">
+      <i c="1" l="1650536354570" />
+    </e>
     <e n="SaveAll">
-      <i c="49" l="1650458595653" />
+      <i c="51" l="1650536360198" />
     </e>
     <e n="SettingsEntryPoint">
       <i c="1" l="1650252920211" />
@@ -75,11 +81,17 @@
     <e n="WelcomeScreen.OpenProject">
       <i c="2" l="1650138411648" />
     </e>
+    <e n="com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer$SettingsActionGroup">
+      <i c="1" l="1650536726197" />
+    </e>
+    <e n="com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer$ShowDocAction">
+      <i c="1" l="1650536729895" />
+    </e>
     <e n="com.intellij.diagnostic.IdeMessagePanel$4">
       <i c="4" l="1650521860268" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="25" l="1650528755166" />
+      <i c="26" l="1650529593499" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />
@@ -91,7 +103,7 @@
       <i c="1" l="1650445555241" />
     </e>
     <e n="com.intellij.toolWindow.ToolWindowHeader$HideAction">
-      <i c="4" l="1650521952652" />
+      <i c="5" l="1650536497191" />
     </e>
     <e n="io.flutter.FlutterInitializer$3">
       <i c="1" l="1650246903857" />

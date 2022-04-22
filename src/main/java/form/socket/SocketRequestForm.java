@@ -1,56 +1,105 @@
 package form.socket;
 
 import cn.hutool.core.lang.Console;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.IconButton;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.JBTable;
+import form.RequestDetailForm;
 import services.SokcetMessageBus;
 import socket.ProjectSocketService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 // 监听http请求的窗口
+
 public class SocketRequestForm {
     private JPanel myJanel;
     private JTable table1;
     private JToolBar dioToolBar;
-    private JLabel refreshLable;
+    private JButton cleanButton;
+    private JTextField searchKeyWorld;
+    private JButton search;
+    private JComboBox filterBox;
+    private JLabel filterLabelTip;
 
     private int columnLen = 4;
 
     DioRequestTableModel dioRequestTableModel;
 
 
+    Project project;
+
+
     public SocketRequestForm(ToolWindow toolWindow) {
         Project defaultProject = toolWindow.getProject();
-       refreshData(defaultProject);
+        this.project = defaultProject;
+        refreshData();
         defaultProject.getMessageBus().connect().subscribe(SokcetMessageBus.CHANGE_ACTION_TOPIC, data -> {
-            refreshData(defaultProject);
+            refreshData();
         });
 
 
         updateRowWidth();
+        dioToolBar.setFloatable(false);
 
 
+        //监听清空按钮的事件
+        cleanButton.addActionListener(e -> {
+            cleanData();
+        });
+
+        //监听表格的双击事件
+        table1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount()==2){
+                    //表示双击
+                    showRequestDetail(e);
+                }
+                super.mouseClicked(e);
+            }
+        });
+    }
+
+
+    /**
+     * 当用户双击后,弹出请求详情数据
+     */
+    private void showRequestDetail(MouseEvent e){
+        int selectedRow = table1.getSelectedRow(); // 用户选中的行数
+        if(selectedRow!=-1){
+            ProjectSocketService.SocketResponseModel socketResponseModel = dioRequestTableModel.getDatas().get(selectedRow);
+            Console.log("用户选中的是{},url:{}",selectedRow,socketResponseModel.getUrl());
+            JBPopupFactory.getInstance().createComponentPopupBuilder(new RequestDetailForm(socketResponseModel).getContent(), new JLabel("hello")).createPopup()
+                    .show(RelativePoint.fromScreen(e.getPoint()));
+        }
+    }
+
+    /**
+     * 清空表格数据
+     */
+    private void cleanData() {
+        SwingUtilities.invokeLater(() -> {
+            this.table1.setModel(new DioRequestTableModel(4, new ArrayList<>()));
+            project.getService(ProjectSocketService.class).clean();
+        });
     }
 
     /// 改变列宽
-    private void updateRowWidth(){
+    private void updateRowWidth() {
 
     }
 
 
-
     /// 刷新数据
-    public void refreshData(Project project){
+    public void refreshData() {
         SwingUtilities.invokeLater(() -> {
             ProjectSocketService service = project.getService(ProjectSocketService.class);
             dioRequestTableModel = new DioRequestTableModel(4, service.getRequests());
@@ -65,7 +114,7 @@ public class SocketRequestForm {
     }
 
     private void createUIComponents() {
-        table1 = new JBTable(new DioRequestTableModel(columnLen,new ArrayList<>()));
+        table1 = new JBTable(new DioRequestTableModel(columnLen, new ArrayList<>()));
     }
 }
 
@@ -76,7 +125,7 @@ class DioRequestTableModel extends AbstractTableModel {
     private List<ProjectSocketService.SocketResponseModel> datas; // 数据列表
 
 
-    public List<ProjectSocketService.SocketResponseModel> getDatas(){
+    public List<ProjectSocketService.SocketResponseModel> getDatas() {
         return datas;
     }
 

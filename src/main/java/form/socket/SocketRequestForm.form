@@ -30,11 +30,40 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="df489" class="javax.swing.JLabel" binding="refreshLable">
+          <component id="de06f" class="javax.swing.JButton" binding="cleanButton">
             <constraints/>
             <properties>
-              <text value="Label"/>
-              <toolTipText value="清空全部数据"/>
+              <text value="清空"/>
+            </properties>
+          </component>
+          <component id="a33c1" class="javax.swing.JLabel" binding="filterLabelTip">
+            <constraints/>
+            <properties>
+              <text value="  过滤:"/>
+            </properties>
+          </component>
+          <component id="1a749" class="javax.swing.JComboBox" binding="filterBox">
+            <constraints/>
+            <properties>
+              <model>
+                <item value="GET"/>
+                <item value="POST"/>
+                <item value="DELETE"/>
+                <item value="PUT"/>
+              </model>
+            </properties>
+          </component>
+          <component id="3b640" class="javax.swing.JTextField" binding="searchKeyWorld">
+            <constraints/>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="592c0" class="javax.swing.JButton" binding="search">
+            <constraints/>
+            <properties>
+              <label value="搜索接口"/>
+              <text value="搜索接口"/>
             </properties>
           </component>
         </children>

@@ -51,14 +51,10 @@ dependencies:
                 if(pluginName.isNotBlank()){
                     val get = CacheUtil.unredCaChe().asMap()[pluginName]
                     if(get!=null && get == pluginName){
-                        sink.addInlineElement(element.endOffset,false,myFactory.simpleText("从未使用","此插件包在项目中没有使用过,建议删除,可减少安装包体积"),true)
+                        sink.addInlineElement(element.endOffset,false,myFactory.simpleText("Never used (Chinese: 没有被使用过)","This plug-in package has not been used in the project, it is recommended to delete it to reduce the size of the installation package (此插件包从未使用过,建议删除,可减少安装包大小)"),true)
                     }
 
                     sink.addInlineElement(element.textOffset,false,myFactory.menuActions(element,pluginName),false)
-
-
-
-
                 }
                 return true
             }

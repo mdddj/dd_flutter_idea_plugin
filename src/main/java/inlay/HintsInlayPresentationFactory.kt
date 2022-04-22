@@ -38,7 +38,6 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
                 override fun onClick(event: MouseEvent, translated: Point) {
                     JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup{
                             when (it) {
-
                                 // 打开pub.dev对应的插件详细页面
                                 actionMenus[0].key -> BrowserUtil.browse("$PUB_URL$pluginName")
                             }

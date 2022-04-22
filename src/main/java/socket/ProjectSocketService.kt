@@ -3,7 +3,9 @@ package socket
 import cn.hutool.core.lang.Console
 import cn.hutool.json.JSONUtil
 import com.google.gson.Gson
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.MessageBusFactory
 import kotlinx.coroutines.*
@@ -14,7 +16,7 @@ import java.io.IOException
 
 
 // socket 连接flutter项目服务类
-class ProjectSocketService {
+class ProjectSocketService : Disposable {
 
    lateinit var server: AioQuickServer
 
@@ -22,17 +24,27 @@ class ProjectSocketService {
    /// 请求列表
    private val flutterRequests = mutableListOf<SocketResponseModel>()
 
+    private val scope = CoroutineScope (Dispatchers.IO)
+
 
     fun getRequests(): List<SocketResponseModel> {
         return flutterRequests
     }
 
 
+    /**
+     * 清空全部
+     */
+    fun clean(){
+        flutterRequests.clear();
+    }
+
     /// 项目打开,开启一个socket服务,进行接口监听传输
     fun onOpen(project: Project) {
 
+        Disposer.register(project,this)
 
-        CoroutineScope (Dispatchers.IO).launch{
+        scope.launch{
             val processor: MessageProcessor<String?> =
                 MessageProcessor<String?> { _, msg ->
                     flutterClienJsonHandle(msg,project)
@@ -89,6 +101,10 @@ class ProjectSocketService {
          val body: Any,
          val headers: Map<String, Any>,
          val responseHeaders: Map<String, Any>
-    );
+    )
+
+    override fun dispose() {
+        scope.cancel()
+    };
 
 }
