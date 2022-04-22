@@ -4,6 +4,7 @@ Flutter版本检测插件 (Idea && Android Studio 通用)
 
 下载地址: [releases](https://github.com/mdddj/dd_flutter_idea_plugin/releases)
 
+idea插件市场下载: [插件下载页](https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx)
 <p>
 <iframe frameborder="none" width="245px" height="48px" src="https://plugins.jetbrains.com/embeddable/install/18986"></iframe>
 </p>
