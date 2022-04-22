@@ -14,23 +14,19 @@ public class SokcetListItemLayout {
     private JLabel keyLable;
     private JLabel valueLabel;
 
-    private KeyValueObj model;
-
     public SokcetListItemLayout(KeyValueObj model){
-        this.model = model;
 
+        contentJPanel = new JPanel();
+
+        keyLable = new JLabel();
+        valueLabel = new JLabel();
 
         keyLable.setText(model.getKey());
-        if(model.getValue() instanceof String){
-            valueLabel.setText(model.getValue().toString());
-        }else{
-            valueLabel.setVisible(false);//设置不可见
-        }
+        valueLabel.setText(model.getValue().toString());
+
+        contentJPanel.add(keyLable);
+        contentJPanel.add(valueLabel);
     }
-
-
-
-
 
     public JComponent getContent(){
         return contentJPanel;

@@ -1,73 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="form.socket.SocketRequestForm">
-  <grid id="27dc6" binding="myJanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+  <grid id="27dc6" binding="contaner" layout-manager="CardLayout" hgap="0" vgap="0" show="6379b">
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <scrollpane id="af561">
+      <grid id="6379b" binding="myJanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <card name="Card1"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="53f69" class="javax.swing.JTable" binding="table1" custom-create="true" default-binding="true">
-            <constraints/>
+          <scrollpane id="e343d" binding="scrollPanel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
             <properties/>
-          </component>
+            <border type="none"/>
+            <children>
+              <component id="4ca45" class="javax.swing.JTable" binding="table1" custom-create="true" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
         </children>
-      </scrollpane>
-      <toolbar id="7a332" binding="dioToolBar">
+      </grid>
+      <grid id="3c9f7" binding="detailPanel" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="20"/>
-          </grid>
+          <card name="Card2"/>
         </constraints>
         <properties/>
         <border type="none"/>
-        <children>
-          <component id="de06f" class="javax.swing.JButton" binding="cleanButton">
-            <constraints/>
-            <properties>
-              <text value="清空"/>
-            </properties>
-          </component>
-          <component id="a33c1" class="javax.swing.JLabel" binding="filterLabelTip">
-            <constraints/>
-            <properties>
-              <text value="  过滤:"/>
-            </properties>
-          </component>
-          <component id="1a749" class="javax.swing.JComboBox" binding="filterBox">
-            <constraints/>
-            <properties>
-              <model>
-                <item value="GET"/>
-                <item value="POST"/>
-                <item value="DELETE"/>
-                <item value="PUT"/>
-              </model>
-            </properties>
-          </component>
-          <component id="3b640" class="javax.swing.JTextField" binding="searchKeyWorld">
-            <constraints/>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="592c0" class="javax.swing.JButton" binding="search">
-            <constraints/>
-            <properties>
-              <label value="搜索接口"/>
-              <text value="搜索接口"/>
-            </properties>
-          </component>
-        </children>
-      </toolbar>
+        <children/>
+      </grid>
     </children>
   </grid>
 </form>

@@ -4,13 +4,16 @@
       <i c="2" l="1650273340186" />
     </e>
     <e n="$SelectAll">
-      <i c="5" l="1650536632728" />
+      <i c="7" l="1650608046365" />
     </e>
     <e n="$Undo">
       <i c="15" l="1650454446182" />
     </e>
     <e n="CheckFlutterPluginVersionIsNew">
       <i c="1" l="1650138494028" />
+    </e>
+    <e n="CheckinProject">
+      <i c="2" l="1650591654672" />
     </e>
     <e n="CodeCompletion">
       <i c="37" l="1650536907493" />
@@ -22,7 +25,7 @@
       <i c="11" l="1650446144761" />
     </e>
     <e n="EditorCopy">
-      <i c="11" l="1650422244791" />
+      <i c="12" l="1650608047281" />
     </e>
     <e n="EditorDown">
       <i c="29" l="1650446144254" />
@@ -32,6 +35,9 @@
     </e>
     <e n="EditorEnter">
       <i c="41" l="1650536343306" />
+    </e>
+    <e n="EditorEscape">
+      <i c="1" l="1650591746921" />
     </e>
     <e n="EditorLeft">
       <i c="10" l="1650442925899" />
@@ -75,6 +81,12 @@
     <e n="ShowIntentionActions">
       <i c="1" l="1650259822623" />
     </e>
+    <e n="TestMessageBoxAction">
+      <i c="1" l="1650591559847" />
+    </e>
+    <e n="UiInspector">
+      <i c="13" l="1650608129572" />
+    </e>
     <e n="Vcs.QuickListPopupAction">
       <i c="2" l="1650446256863" />
     </e>
@@ -90,17 +102,23 @@
     <e n="com.intellij.diagnostic.IdeMessagePanel$4">
       <i c="4" l="1650521860268" />
     </e>
+    <e n="com.intellij.ide.ProjectGroupActionGroup">
+      <i c="1" l="1650616348840" />
+    </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="26" l="1650529593499" />
+      <i c="28" l="1650619182285" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />
     </e>
     <e n="com.intellij.openapi.fileEditor.impl.tabActions.CloseTab">
-      <i c="22" l="1650254908101" />
+      <i c="23" l="1650616343606" />
     </e>
     <e n="com.intellij.openapi.keymap.impl.ui.KeymapPanel$AddKeyboardShortcutAction">
       <i c="1" l="1650445555241" />
+    </e>
+    <e n="com.intellij.openapi.project.DumbAwareAction$SimpleDumbAwareAction">
+      <i c="1" l="1650591606901" />
     </e>
     <e n="com.intellij.toolWindow.ToolWindowHeader$HideAction">
       <i c="5" l="1650536497191" />

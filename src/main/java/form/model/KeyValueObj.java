@@ -2,8 +2,8 @@ package form.model;
 
 
 public  class KeyValueObj {
-    private String key;
-    private Object value;
+    private final String key;
+    private final Object value;
     public   KeyValueObj(String key,Object value){
         this.key = key;
         this.value = value;
@@ -15,5 +15,10 @@ public  class KeyValueObj {
 
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return this.getKey()+ ":" + this.getValue();
     }
 }

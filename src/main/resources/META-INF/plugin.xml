@@ -52,7 +52,6 @@
         <codeInsight.inlayProvider implementationClass="inlay.dartfile.DartTypeInlayHintsProvider" language="Dart" />
         <projectService serviceImplementation="socket.ProjectSocketService"/>
         <toolWindow factoryClass="window.SocketWindow" id="Dio请求" anchor="bottom"/>
-
     </extensions>
 
 

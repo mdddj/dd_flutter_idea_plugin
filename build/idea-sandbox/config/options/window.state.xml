@@ -1,23 +1,29 @@
 <application>
   <component name="DimensionService">
     <location key="find.popup.0.0.3600.2338@192dpi" x="1360" y="358" />
+    <location key="UiInspectorWindow.0.0.2704.1756@192dpi" x="312" y="438" />
     <size key="find.popup.0.0.3600.2338@192dpi" width="1148" height="1434" />
     <size key="#com.intellij.internal.psiView.PsiViewerDialog.0.0.3600.2338@192dpi" width="1600" height="1200" />
+    <size key="UiInspectorWindow.0.0.2704.1756@192dpi" width="2704" height="984" />
   </component>
   <component name="WindowManager">
-    <frame x="0" y="25" width="1280" height="726" extendedState="6" />
+    <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
   </component>
   <component name="WindowStateApplicationService">
     <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow" timestamp="1650528781326">
       <screen x="0" y="44" width="1800" height="1076" />
     </state>
     <state x="929" y="905" width="300" height="182" key="ProcessPopupWindow/0.44.1800.1076" timestamp="1650528781326" />
-    <state x="675" y="417" width="845" height="711" key="WELCOME_SCREEN" timestamp="1650589593560">
+    <state x="156" y="219" width="1352" height="492" key="UiInspectorWindow" timestamp="1650595342541">
       <screen x="0" y="35" width="1352" height="794" />
+    </state>
+    <state x="156" y="219" width="1352" height="492" key="UiInspectorWindow/0.35.1352.794" timestamp="1650595342541" />
+    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650619361504">
+      <screen x="0" y="44" width="1800" height="1076" />
     </state>
     <state x="755" y="426" width="800" height="650" key="WELCOME_SCREEN/0.25.1280.726" timestamp="1650537352304" />
     <state x="675" y="417" width="845" height="711" key="WELCOME_SCREEN/0.35.1352.794" timestamp="1650589593560" />
     <state x="756" y="444" width="800" height="650" key="WELCOME_SCREEN/0.38.1512.895" timestamp="1650142548872" />
-    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650529586777" />
+    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650619361504" />
   </component>
 </application>

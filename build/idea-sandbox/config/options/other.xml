@@ -18,14 +18,17 @@
   <component name="PropertyService"><![CDATA[{
   "keyToString": {
     "CWM_LOGGING_VERSION": "1",
+    "CommitChangeListDialog.DETAILS_SPLITTER_PROPORTION_2": "0.6027821",
     "Darcula.SavedEditorTheme": "_@user_Darcula",
     "FLUTTER_LAST_SURVEY_CONTENT_CHECK_KEY": "1650589867733",
     "MarketplacePluginsSearchHistory": "Flutter\nF\ndart\nda\nd",
+    "NonModalCommitPromotionState": "SHOWN",
     "RunOnceActivity.se.text.search": "true",
     "SettingsSearchHistory": "Completion\ntype\nhint\ndart.type.inlay.hints.provider\n111",
+    "UiInspector.splitter.proportion": "0.4314456",
     "bundled.plugins.list.saved.version": "IC-221.5080.210",
     "eclipse.projects.detected": "",
-    "file.gist.reindex.count": "6",
+    "file.gist.reindex.count": "7",
     "fileTypeChangedCounter": "8",
     "got.it.tooltip.cwm.invitation.notification": "1",
     "got.it.tooltip.reader.mode.got.it": "1",

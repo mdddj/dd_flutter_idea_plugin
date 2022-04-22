@@ -17,14 +17,14 @@
         </entry>
         <entry key="$USER_HOME$/simple_shop_v2">
           <value>
-            <RecentProjectMetaInfo frameTitle="simple_shop_v2 – base.dart [simple_shop_v2]" opened="true" projectWorkspaceId="20Fe7LPjEVkmyMaTh0EwWjFWta3">
-              <option name="activationTimestamp" value="1650589879737" />
+            <RecentProjectMetaInfo frameTitle="simple_shop_v2 – base.dart [simple_shop_v2]" projectWorkspaceId="20Fe7LPjEVkmyMaTh0EwWjFWta3">
+              <option name="activationTimestamp" value="1650619356629" />
               <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
               <option name="build" value="IU-221.5080.210" />
-              <option name="buildTimestamp" value="1649734350477" />
-              <frame x="0" y="25" width="1280" height="726" extendedState="6" />
+              <option name="buildTimestamp" value="1649734356238" />
+              <frame x="0" y="44" width="1800" height="1076" extendedState="6" />
               <option name="productionCode" value="IU" />
-              <option name="projectOpenTimestamp" value="1650589862870" />
+              <option name="projectOpenTimestamp" value="1650619183269" />
             </RecentProjectMetaInfo>
           </value>
         </entry>
@@ -34,6 +34,7 @@
       <list>
         <ProjectGroup>
           <option name="bottomGroup" value="true" />
+          <option name="expanded" value="true" />
           <option name="name" value="Eclipse Projects" />
           <option name="projects">
             <list>

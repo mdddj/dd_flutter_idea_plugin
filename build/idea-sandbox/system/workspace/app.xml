@@ -2440,6 +2440,10 @@
           {
             "pluginIdString": "com.github.camork.fileExpander",
             "nullablePluginName": "File Expander"
+          },
+          {
+            "pluginIdString": "ai.expert.studio",
+            "nullablePluginName": "Expert.ai Studio Core"
           }
         ]
       },
@@ -17163,7 +17167,7 @@
         ]
       }
     },
-    "lastUpdateTime": 1650510323589
+    "lastUpdateTime": 1650603650883
   },
   "dependencies": {
     "featureMap": {
@@ -17836,7 +17840,7 @@
         ]
       }
     },
-    "lastUpdateTime": 1650510324450
+    "lastUpdateTime": 1650603652234
   }
 }]]></component>
   <component name="PluginFeatureService">{

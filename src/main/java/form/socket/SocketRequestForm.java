@@ -1,17 +1,19 @@
 package form.socket;
 
 import cn.hutool.core.lang.Console;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.JBTable;
 import form.RequestDetailForm;
+import form.dialog.DetailDialog;
 import services.SokcetMessageBus;
 import socket.ProjectSocketService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -21,15 +23,10 @@ import java.util.List;
 
 public class SocketRequestForm {
     private JPanel myJanel;
+    private JPanel contaner;
+    private JPanel detailPanel;
     private JTable table1;
-    private JToolBar dioToolBar;
-    private JButton cleanButton;
-    private JTextField searchKeyWorld;
-    private JButton search;
-    private JComboBox filterBox;
-    private JLabel filterLabelTip;
-
-    private int columnLen = 4;
+    private JScrollPane scrollPanel;
 
     DioRequestTableModel dioRequestTableModel;
 
@@ -47,19 +44,26 @@ public class SocketRequestForm {
 
 
         updateRowWidth();
-        dioToolBar.setFloatable(false);
 
 
-        //监听清空按钮的事件
-        cleanButton.addActionListener(e -> {
-            cleanData();
-        });
+
+
+
+
+
+        Presentation presentation = new Presentation("清空");
+        presentation.setIcon(AllIcons.Actions.AddFile);
+
+
+
+
+
 
         //监听表格的双击事件
         table1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount()==2){
+                if (e.getClickCount() == 2) {
                     //表示双击
                     showRequestDetail(e);
                 }
@@ -72,13 +76,29 @@ public class SocketRequestForm {
     /**
      * 当用户双击后,弹出请求详情数据
      */
-    private void showRequestDetail(MouseEvent e){
+    private void showRequestDetail(MouseEvent e) {
+
+
+
         int selectedRow = table1.getSelectedRow(); // 用户选中的行数
-        if(selectedRow!=-1){
+        if (selectedRow != -1) {
+
+
+            detailPanel.removeAll();
+
+            ///设置模型
             ProjectSocketService.SocketResponseModel socketResponseModel = dioRequestTableModel.getDatas().get(selectedRow);
-            Console.log("用户选中的是{},url:{}",selectedRow,socketResponseModel.getUrl());
-            JBPopupFactory.getInstance().createComponentPopupBuilder(new RequestDetailForm(socketResponseModel).getContent(), new JLabel("hello")).createPopup()
-                    .show(RelativePoint.fromScreen(e.getPoint()));
+
+
+            if(socketResponseModel!=null){
+
+                new DetailDialog(project,socketResponseModel).show();
+            }else{
+                Console.log("双击了,但是没有获取到model");
+            }
+
+
+
         }
     }
 
@@ -110,15 +130,18 @@ public class SocketRequestForm {
 
 
     public JPanel getContent() {
-        return this.myJanel;
+        return this.contaner;
     }
 
     private void createUIComponents() {
+        int columnLen = 4;
+        detailPanel = new JPanel();
         table1 = new JBTable(new DioRequestTableModel(columnLen, new ArrayList<>()));
     }
 }
 
 
+/// 表格模型
 class DioRequestTableModel extends AbstractTableModel {
 
     private int column; // 列
@@ -180,3 +203,5 @@ class DioRequestTableModel extends AbstractTableModel {
         return "1";
     }
 }
+
+
