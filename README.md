@@ -9,6 +9,16 @@ idea插件市场下载: [插件下载页](https://plugins.jetbrains.com/plugin/1
 
 #### 功能演示
 
+* 监听dio请求
+
+
+  监听dio请求需要特殊操作,在你的项目中加入`dd_check_plugin: any`: [详细教程](https://github.com/mdddj/dd_check_plugin)
+ 
+  <img src="https://s1.ax1x.com/2022/04/23/Lfu8u6.png" >
+  <img src="https://s1.ax1x.com/2022/04/23/LfuIK0.png">
+
+
+
 * 插件版本号自动补全
 
 <img src="https://user-images.githubusercontent.com/29020213/164222888-8d50a2fd-da2d-4d9e-846f-9ebcb5e71cc9.gif" />

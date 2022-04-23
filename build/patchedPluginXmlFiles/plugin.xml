@@ -1,5 +1,5 @@
 <idea-plugin>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.4-SNAPSHOT</version>
   <change-notes>新增自动补全版本号功能</change-notes>
   <idea-version since-build="221.5080" until-build="221.*" />
   <id>shop.itbug.FlutterCheckVersionX</id>
