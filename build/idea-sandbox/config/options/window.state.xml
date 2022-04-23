@@ -18,12 +18,12 @@
       <screen x="0" y="35" width="1352" height="794" />
     </state>
     <state x="156" y="219" width="1352" height="492" key="UiInspectorWindow/0.35.1352.794" timestamp="1650595342541" />
-    <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650619361504">
-      <screen x="0" y="44" width="1800" height="1076" />
+    <state x="756" y="444" width="800" height="650" key="WELCOME_SCREEN" timestamp="1650676178296">
+      <screen x="0" y="38" width="1512" height="895" />
     </state>
     <state x="755" y="426" width="800" height="650" key="WELCOME_SCREEN/0.25.1280.726" timestamp="1650537352304" />
     <state x="675" y="417" width="845" height="711" key="WELCOME_SCREEN/0.35.1352.794" timestamp="1650589593560" />
-    <state x="756" y="444" width="800" height="650" key="WELCOME_SCREEN/0.38.1512.895" timestamp="1650142548872" />
+    <state x="756" y="444" width="800" height="650" key="WELCOME_SCREEN/0.38.1512.895" timestamp="1650676178296" />
     <state x="900" y="511" width="800" height="650" key="WELCOME_SCREEN/0.44.1800.1076" timestamp="1650619361504" />
   </component>
 </application>

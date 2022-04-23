@@ -6,14 +6,13 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.table.JBTable;
-import form.RequestDetailForm;
 import form.dialog.DetailDialog;
+import form.sub.CustomTableColumnRender;
 import services.SokcetMessageBus;
 import socket.ProjectSocketService;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -41,20 +40,13 @@ public class SocketRequestForm {
         defaultProject.getMessageBus().connect().subscribe(SokcetMessageBus.CHANGE_ACTION_TOPIC, data -> {
             refreshData();
         });
-
-
         updateRowWidth();
-
-
-
-
-
-
-
         Presentation presentation = new Presentation("清空");
         presentation.setIcon(AllIcons.Actions.AddFile);
 
 
+
+        table1.setDefaultRenderer(Object.class,new CustomTableColumnRender());
 
 
 
@@ -196,12 +188,14 @@ class DioRequestTableModel extends AbstractTableModel {
             case 2:
                 return data.getStatusCode();
             case 3:
-                return data.getData();
+                return data.getTimesatamp();
             default:
                 break;
         }
         return "1";
     }
+
+
 }
 
 

@@ -4,7 +4,7 @@
       <i c="2" l="1650273340186" />
     </e>
     <e n="$SelectAll">
-      <i c="7" l="1650608046365" />
+      <i c="8" l="1650693103804" />
     </e>
     <e n="$Undo">
       <i c="15" l="1650454446182" />
@@ -19,13 +19,13 @@
       <i c="37" l="1650536907493" />
     </e>
     <e n="EditorBackSpace">
-      <i c="232" l="1650536894334" />
+      <i c="239" l="1650693070039" />
     </e>
     <e n="EditorChooseLookupItem">
       <i c="11" l="1650446144761" />
     </e>
     <e n="EditorCopy">
-      <i c="12" l="1650608047281" />
+      <i c="14" l="1650685951374" />
     </e>
     <e n="EditorDown">
       <i c="29" l="1650446144254" />
@@ -106,7 +106,7 @@
       <i c="1" l="1650616348840" />
     </e>
     <e n="com.intellij.ide.ReopenProjectAction">
-      <i c="28" l="1650619182285" />
+      <i c="29" l="1650676183436" />
     </e>
     <e n="com.intellij.notification.NotificationAction$Simple">
       <i c="1" l="1650110211533" />

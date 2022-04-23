@@ -9,7 +9,7 @@ import javax.swing.JComponent
 
 
 ///请求的详细弹窗
-class DetailDialog(project: Project?, private val detail: ProjectSocketService.SocketResponseModel) :
+class DetailDialog(var project: Project, private val detail: ProjectSocketService.SocketResponseModel) :
     DialogWrapper(project) {
 
     init {
@@ -23,8 +23,10 @@ class DetailDialog(project: Project?, private val detail: ProjectSocketService.S
     }
 
 
+
+
     override fun createCenterPanel(): JComponent? {
-        return RequestDetailForm(detail).content
+        return RequestDetailForm(detail,project).content.rootPane
     }
 
     override fun setTitle(title: String?) {
