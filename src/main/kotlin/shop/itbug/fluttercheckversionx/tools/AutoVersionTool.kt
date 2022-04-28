@@ -50,7 +50,7 @@ class YamlElementVisitor(
                 newPlugins.add(u)
             }
         }
-        regProblem(newPlugins,file)
+        regProblem(newPlugins, file)
 
         val allPlugins = YamlFileParser(file).allPlugins()
 
@@ -67,14 +67,14 @@ class YamlElementVisitor(
     private fun regProblem(plugins: List<PluginVersion>, file: PsiFile) {
         plugins.map { plugin ->
             val findWithNewPositionWithFile = getPluginNameStartIndex(file, plugin.name)
-            if(findWithNewPositionWithFile!=null){
+            if (findWithNewPositionWithFile != null) {
                 val findElementAt = file.findElementAt(findWithNewPositionWithFile.startIndex)
                 findElementAt?.let {
                     holder.registerProblem(
                         it,
                         "New version:${plugin.newVersion}",
                         ProblemHighlightType.WARNING,
-                        NewVersinFix(file.findElementAt(findWithNewPositionWithFile.startIndex)!!, plugin.newVersion){
+                        NewVersinFix(file.findElementAt(findWithNewPositionWithFile.startIndex)!!, plugin.newVersion) {
                             CacheUtil.getCatch().invalidate(plugin.name)
                         }
                     )
@@ -87,46 +87,40 @@ class YamlElementVisitor(
     /**
      * 获取插件名字在编辑器中的定位
      */
-    private fun getPluginNameStartIndex(file: PsiFile,pluginName: String): PluginVersion? {
+    private fun getPluginNameStartIndex(file: PsiFile, pluginName: String): PluginVersion? {
         val yamlFileParser = YamlFileParser(file)
         val allPlugins = yamlFileParser.allPlugins()
         val filter = allPlugins.filter { it.name == pluginName }
-        if(filter.isEmpty()){
+        if (filter.isEmpty()) {
             return null
         }
         return filter[0]
     }
 
     /// 检测未使用包的类
-    class CheckUnusedPackage{
+    class CheckUnusedPackage {
 
         companion object {
 
             /**
              * 检测未使用的包
              */
-            @OptIn(DelicateCoroutinesApi::class)
             fun checkUnusedPlugin(project: Project, allPlugins: List<PluginVersion>) {
                 val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-                val libFiles = files.filter { it.path.contains("/lib/") }
-
                 // 因为有大量的文件检测工作,这里使用携程来进行优化
                 GlobalScope.launch {
-
                     val usedArr = withContext(Dispatchers.IO) {
                         val used = arrayListOf<String>()
-                        readAction {
-                            files.forEach {
-                                val psiTestFile =  PsiManager.getInstance(project).findFile(it)
-                                if (psiTestFile != null) {
-                                    launch {
-                                        val usedPlugins = psiFileHandle(psiTestFile)
-                                        used.addAll(usedPlugins.filter { i -> !used.contains(i) })
-                                    }
-
+                        files.forEach {
+                            val psiTestFile = PsiManager.getInstance(project).findFile(it)
+                            if (psiTestFile != null) {
+                                launch {
+                                    val usedPlugins = psiFileHandle(psiTestFile)
+                                    used.addAll(usedPlugins.filter { i -> !used.contains(i) })
                                 }
 
                             }
+
                         }
                         used
                     }
@@ -135,11 +129,11 @@ class YamlElementVisitor(
 
 
                     val unusedNames = unused.map { it.name }
-                    if(unusedNames.isNotEmpty()){
+                    if (unusedNames.isNotEmpty()) {
                         val unredCaChe = CacheUtil.unredCaChe()
                         unredCaChe.invalidateAll()
                         unusedNames.forEach { item ->
-                            if(!igScanPlugin.contains(item)){
+                            if (!igScanPlugin.contains(item)) {
                                 run {
                                     unredCaChe.put(item, item)
                                 }
@@ -150,25 +144,22 @@ class YamlElementVisitor(
                 }
             }
 
-            private suspend fun psiFileHandle(file: PsiFile): List<String> {
+            private fun psiFileHandle(file: PsiFile): List<String> {
                 val arr = arrayListOf<String>()
-                readAction {
-                    file.accept(object : PsiElementVisitor() {
-                        override fun visitElement(element: PsiElement) {
-                            val imports = element.children.filterIsInstance<DartImportStatementImpl>()
-                            imports.forEach {
-                                if (it.text.contains("package:")) {
-                                    val si = it.text.indexOf("package:")
-                                    val ei = it.text.indexOfFirst { c -> c == '/' }
-                                    val pc = it.text.substring(si + "package:".length, ei)
-                                    arr.add(pc)
-                                }
+                file.accept(object : PsiElementVisitor() {
+                    override fun visitElement(element: PsiElement) {
+                        val imports = element.children.filterIsInstance<DartImportStatementImpl>()
+                        imports.forEach {
+                            if (it.text.contains("package:")) {
+                                val si = it.text.indexOf("package:")
+                                val ei = it.text.indexOfFirst { c -> c == '/' }
+                                val pc = it.text.substring(si + "package:".length, ei)
+                                arr.add(pc)
                             }
-
-                            super.visitElement(element)
                         }
-                    })
-                }
+                        super.visitElement(element)
+                    }
+                })
                 return arr
             }
         }

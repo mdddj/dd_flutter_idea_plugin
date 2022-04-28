@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "shop.itbug"
-version = "1.6-SNAPSHOT"
+version = "1.6.2021.1-SNAPSHOT" // 对2021.1旧版本支持
 
 repositories {
     mavenCentral()
@@ -16,18 +16,19 @@ intellij {
 
 
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
-    /// 新版本 2022.1    Dart:221.5588  io.flutter:66.0.4
+    /// 新版本 2022.2    Dart:212.5742  io.flutter:66.0.2
     version.set("2021.1")
     type.set("IC")
-    plugins.set(listOf("java","yaml","Dart:211.7817","io.flutter:66.0.1"))
+    plugins.set(listOf("java", "yaml", "Dart:211.7817", "io.flutter:66.0.1"))
 }
 
 dependencies {
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.github.ben-manes.caffeine:caffeine:3.0.6")
-    implementation ("cn.hutool:hutool-all:5.8.0.M3")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.0.6")
+    implementation("cn.hutool:hutool-all:5.8.0.M3")
     implementation("org.smartboot.socket:aio-core:1.5.17")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 }
 
 
@@ -43,8 +44,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212")
-        untilBuild.set("222.*")
+        sinceBuild.set("211.*") //212
+        untilBuild.set("213.*")
     }
 
     signPlugin {

@@ -52,7 +52,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             if(staticType!=null){
                                 sink.addInlineElement(
                                     filterIsInstanceWithName.endOffset, false,
-                                    hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType"), false
+                                    hintsInlayPresentationFactory.simpleText(":$staticType", "类型:$staticType"), false
                                 )
                             }
                         }
@@ -99,7 +99,4 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
     override fun createConfigurable(settings: Setting): ImmediateConfigurable {
         return DefaulImmediateConfigurable()
     }
-
-    override val group: InlayGroup
-        get() = InlayGroup.TYPES_GROUP
 }

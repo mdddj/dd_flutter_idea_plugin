@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
-import shop.itbug.fluttercheckversionx.services.SokcetMessageBus
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import javax.swing.JComponent
 
@@ -20,9 +19,8 @@ class ProjectFilter(val selectItem: SelectProject): ComboBoxAction() {
     init {
 
         /// 监听新的请求到来,刷洗一下UI
-        ApplicationManager.getApplication().messageBus.connect().subscribe(SokcetMessageBus.CHANGE_ACTION_TOPIC,SokcetMessageBus{
-            this.createPopupActionGroup(null)
-        })
+//        ApplicationManager.getApplication().messageBus.connect().subscribe(SokcetMessageBus.CHANGE_ACTION_TOPIC)
+
 
     }
 

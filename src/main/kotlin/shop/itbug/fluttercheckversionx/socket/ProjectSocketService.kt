@@ -11,7 +11,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
-import shop.itbug.fluttercheckversionx.services.SokcetMessageBus
 import java.io.IOException
 
 
@@ -65,7 +64,7 @@ class ProjectSocketService : Disposable {
 
             val projectName = responseModel.projectName
 
-            project.messageBus.syncPublisher(SokcetMessageBus.CHANGE_ACTION_TOPIC).handleData(responseModel)
+//            project.messageBus.syncPublisher(SokcetMessageBus.CHANGE_ACTION_TOPIC).handleData(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e");
         }

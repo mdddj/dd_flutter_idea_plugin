@@ -11,7 +11,6 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBEmptyBorder
 import shop.itbug.fluttercheckversionx.form.components.DioTableToolbar
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
-import shop.itbug.fluttercheckversionx.services.SokcetMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
@@ -86,10 +85,6 @@ class SocketRequestForm(toolWindow: ToolWindow,val project: Project) : ListSelec
         containerJBSplitter.border = JBEmptyBorder(2, 2, 2, 2)
 
 
-        // 接收消息总线传来的对象,并刷新列表
-        ApplicationManager.getApplication().messageBus.connect().subscribe(
-            SokcetMessageBus.CHANGE_ACTION_TOPIC,
-            SokcetMessageBus { refreshData() })
 
     }
 

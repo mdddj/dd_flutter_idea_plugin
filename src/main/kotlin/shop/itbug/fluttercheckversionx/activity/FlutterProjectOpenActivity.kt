@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
 import com.intellij.psi.PsiManager
 import shop.itbug.fluttercheckversionx.common.YamlFileParser
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.util.CacheUtil
@@ -71,9 +70,7 @@ class FlutterProjectOpenActivity : StartupActivity {
             Disposer.register(project, this)
         }
 
-        @OptIn(DelicateCoroutinesApi::class)
         override fun run(p0: ProgressIndicator) {
-
 
 
             GlobalScope.launch {

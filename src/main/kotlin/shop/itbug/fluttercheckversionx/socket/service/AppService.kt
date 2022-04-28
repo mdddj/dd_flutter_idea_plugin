@@ -2,14 +2,12 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
 import com.google.gson.Gson
-import com.intellij.openapi.application.ApplicationManager
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
-import shop.itbug.fluttercheckversionx.services.SokcetMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 
@@ -69,8 +67,8 @@ class AppService {
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             flutterProjects[responseModel.projectName] = reqsAdded
-            ApplicationManager.getApplication().messageBus.syncPublisher(SokcetMessageBus.CHANGE_ACTION_TOPIC)
-                .handleData(responseModel)
+//            ApplicationManager.getApplication().messageBus.syncPublisher(SokcetMessageBus.CHANGE_ACTION_TOPIC)
+//                .handleData(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e")
         }
