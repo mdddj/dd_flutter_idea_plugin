@@ -1,0 +1,86 @@
+<idea-plugin>
+    <id>shop.itbug.FlutterCheckVersionX</id>
+    <name>FlutterCheckVersionX</name>
+    <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
+
+    <description><![CDATA[
+        <p>
+            Flutter automatic detection tool
+        </p>
+
+        <p>
+            Github:<a href="https://github.com/mdddj/dd_flutter_idea_plugin">https://github.com/mdddj/dd_flutter_idea_plugin</a>
+        </p>
+
+
+        <p>
+            QQ group: 667186542
+        </p>
+
+
+        <h3>Feature</h3>
+
+
+        <ul>
+            <li>1.Detect the latest plugin version and provide automatic repair function</li>
+            <li>2.Quickly jump to the pub.dev plugin details page</li>
+            <li>3.Detect packages that have never been used</li>
+            <li>4.`final`,`var`,`const` Inline type hints for variables</li>
+            <li>5.dio request listening</li>
+            <li>6.If the json field is an image, it can be previewed with focus</li>
+            <li>7.`Doc class annotation`The annotation content is automatically displayed</li>
+            <li>8.Plugin details display function, please move the mouse focus to the plugin name, the plugin details will be displayed</li>
+            <br/>
+            <li>1.检测最新插件版本并提供自动修复功能</li>
+            <li>2.快速跳转到 pub.dev 插件详情页面</li>
+            <li>3.检测从未使用过的包</li>
+            <li>4.`final`,`var`,`const` 变量的内联类型提示</li>
+            <li>5.dio请求监听</li>
+            <li>6.如果json字段是图片，可以带焦点预览</li>
+            <li>7.`Doc类注解`注释内容自动显示</li>
+            <li>8.插件详情面板展示,只需要将鼠标焦点移动到插件名字上面即可</li>
+            <ul>
+        ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>Dart</depends>
+    <depends>com.intellij.java</depends>
+    <depends>io.flutter</depends>
+
+    <applicationListeners>
+        <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
+                         groupBundle="messages.InspectionsBundle"
+                         groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
+                         implementationClass="shop.itbug.fluttercheckversionx.tools.AutoVersionTool"/>
+        <completion.contributor language="yaml" implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints" order="first"/>
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>
+        <codeInspection.InspectionExtension implementation="shop.itbug.fluttercheckversionx.tools.MyInspectionExtension" id="MyInspectionExtension"/>
+        <notificationGroup id="plugin_new_version_notif" displayType="BALLOON"/>
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider" language="yaml"/>
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay" language="JSON"/>
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider" language="Dart"/>
+        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.socket.ProjectSocketService"/>
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
+        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument" language="JSON"/>
+        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument" language="yaml" order="first"/>
+        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
+                    icon="AllIcons.Debugger.ThreadStates.Socket"/>
+    </extensions>
+
+
+    <actions>
+        <action id="ToPub" class="shop.itbug.fluttercheckversionx.actions.ToBrowser" text="前往PUB查看">
+            <add-to-group group-id="EditorPopupMenu.GoTo" anchor="first"/>
+        </action>
+    </actions>
+
+
+</idea-plugin>
