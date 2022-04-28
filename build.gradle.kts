@@ -16,10 +16,10 @@ intellij {
 
 
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
-    /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
-    version.set("2022.1")
+    /// 新版本 2022.1    Dart:221.5588  io.flutter:66.0.4
+    version.set("2021.1")
     type.set("IC")
-    plugins.set(listOf("java","yaml","Dart:221.5588","io.flutter:66.0.4"))
+    plugins.set(listOf("java","yaml","Dart:211.7817","io.flutter:66.0.1"))
 }
 
 dependencies {
