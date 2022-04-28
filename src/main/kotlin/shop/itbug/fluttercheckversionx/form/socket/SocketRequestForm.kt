@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
@@ -25,7 +24,7 @@ import javax.swing.event.ListSelectionListener
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(toolWindow: ToolWindow,val project: Project) : ListSelectionListener { /// 表格模型
+class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表格模型
 
 
 

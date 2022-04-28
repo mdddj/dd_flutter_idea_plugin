@@ -9,7 +9,6 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.Point
@@ -28,7 +27,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
         return text(text).con().bg().addTip(tip ?: text)
     }
 
-    fun menuActions(psiElement: PsiElement, pluginName: String): InlayPresentation {
+    fun menuActions(pluginName: String): InlayPresentation {
         return factory.mouseHandling(
             base = dartIcon().addTip("Click to operate on the plug-in package").con(),
             clickListener = object : InlayPresentationFactory.ClickListener {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "shop.itbug"
-version = "1.6-SNAPSHOT"
+version = "1.6.2022.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -43,7 +43,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212")
+        sinceBuild.set("222")
         untilBuild.set("222.*")
     }
 
