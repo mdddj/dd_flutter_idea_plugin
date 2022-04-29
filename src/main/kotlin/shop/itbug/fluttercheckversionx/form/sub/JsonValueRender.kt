@@ -41,6 +41,8 @@ class JsonValueRender(private val jsonObject: Any, var project: Project): JPanel
         if(json!=null){
             val changeJson = changeJson(json)
             jsonView.text = changeJson
+        }else{
+            jsonView.text = ""
         }
     }
 

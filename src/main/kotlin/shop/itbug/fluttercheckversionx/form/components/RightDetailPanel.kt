@@ -52,6 +52,13 @@ class RightDetailPanel: JPanel() {
         add(jbScrollPane,BorderLayout.CENTER)
     }
 
+    /**
+     * 清空显示
+     */
+    fun clean() {
+        jsonView?.changeValue(null)
+    }
+
 
 
 }

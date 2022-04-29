@@ -58,6 +58,8 @@ class AppService {
     }
 
 
+    val messageBus get() = ApplicationManager.getApplication().messageBus
+
     /**
      * flutter端穿过来的json数据
      * 对齐进一步处理
@@ -69,7 +71,7 @@ class AppService {
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             flutterProjects[responseModel.projectName] = reqsAdded
-            ApplicationManager.getApplication().messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
+            messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
                 .handleData(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e")
@@ -93,6 +95,8 @@ class AppService {
      */
     fun cleanAllRequest(){
         flutterProjects.clear()
+        messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
+            .handleData(null)
     }
 
 

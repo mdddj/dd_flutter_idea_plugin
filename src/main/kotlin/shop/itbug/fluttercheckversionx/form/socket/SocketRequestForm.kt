@@ -1,12 +1,15 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import shop.itbug.fluttercheckversionx.form.DioToolbar
+import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
+import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
@@ -16,6 +19,7 @@ import java.awt.Dimension
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JToolBar
 import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -24,7 +28,6 @@ typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
 class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表格模型
-
 
 
     /**
@@ -46,6 +49,16 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     private val rightPanel = RightDetailPanel()
 
 
+    /**
+     * 操作工具栏
+     */
+    private val dioToolbar = JToolBar()
+
+
+    private val projectFilterBox = ProjectFilter()
+
+    private val searchTextField = DioRequestSearch()
+
     init {
 
 
@@ -64,7 +77,26 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         jbScrollPane.border = BorderFactory.createEmptyBorder()
 
         leftPanel.add(jbScrollPane, BorderLayout.CENTER)
-        leftPanel.add(DioToolbar(),BorderLayout.PAGE_START)
+
+
+        // 工具条
+        val actionManager = ActionManager.getInstance()
+        val toolBar = actionManager.createActionToolbar(
+            "Dio action Toolbar",
+            actionManager.getAction("DioTool.CleanService") as DefaultActionGroup,
+            true
+        )
+
+
+        dioToolbar.add(toolBar.component)
+
+
+        dioToolbar.add(searchTextField)
+        dioToolbar.add(projectFilterBox)
+
+        dioToolbar.isFloatable = false
+
+        leftPanel.add(dioToolbar, BorderLayout.PAGE_START)
 
 
         leftPanel.minimumSize = Dimension(350, 0)
@@ -92,23 +124,8 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     }
 
 
-
-
-
-
     fun getContent(): JComponent {
         return containerJBSplitter
-    }
-
-
-    /**
-     * 清空表格数据
-     */
-    private fun cleanData() {
-        SwingUtilities.invokeLater {
-            service<AppService>().cleanAllRequest()
-            requestsJBList.model = MyDefaultListModel(datas = emptyList())
-        }
     }
 
     /**
@@ -119,15 +136,24 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             val service = service<AppService>()
             val allRequest = service.getAllRequest()
             requestsJBList.model = MyDefaultListModel(datas = allRequest)
+            if (allRequest.isEmpty()) {
+                rightPanel.clean()
+            }
+
+
+            val allProjectNames = service.getAllProjectNames()
+            projectFilterBox.change(allProjectNames)
+
+
         }
     }
 
     override fun valueChanged(e: ListSelectionEvent?) {
-        if (e?.valueIsAdjusting == false ) {
+        if (e?.valueIsAdjusting == false) {
             val firstIndex = requestsJBList.selectedIndex
-            if(firstIndex<0) return
+            if (firstIndex < 0) return
             val element = requestsJBList.model.getElementAt(firstIndex)
-            rightPanel.changeShowValue(element,project)
+            rightPanel.changeShowValue(element, project)
         }
 
 

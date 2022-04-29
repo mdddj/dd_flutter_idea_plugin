@@ -1,0 +1,16 @@
+<idea-plugin>
+
+    <actions>
+
+<!--    dio 请求里面的清空按钮    -->
+        <group id="DioTool.CleanService">
+            <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService"
+                    icon="AllIcons.Actions.GC"
+                    id="DioWindow.Clean"
+                    text="清空全部"/>
+            <separator />
+        </group>
+
+    </actions>
+
+</idea-plugin>
