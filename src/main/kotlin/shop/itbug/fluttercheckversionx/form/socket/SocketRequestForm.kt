@@ -1,20 +1,19 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
-import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.ui.JBSplitter
+import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.JBEmptyBorder
-import shop.itbug.fluttercheckversionx.form.components.DioTableToolbar
+import shop.itbug.fluttercheckversionx.form.DioToolbar
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
 import java.awt.Dimension
+import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
@@ -32,7 +31,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
      * 最外层的那个容器
      * idea的分割器
      */
-    private var containerJBSplitter = JBSplitter()
+    private var containerJBSplitter = OnePixelSplitter()
 
 
     /**
@@ -47,9 +46,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     private val rightPanel = RightDetailPanel()
 
 
-
     init {
-
 
 
         ///jlist初始化
@@ -63,26 +60,23 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         leftPanel.preferredSize = Dimension(400, 0)
         leftPanel.layout = BorderLayout(2, 2)
         val jbScrollPane = JBScrollPane(requestsJBList)
-        jbScrollPane.viewportBorder = null
+        jbScrollPane.isOpaque = true // 设置透明度
+        jbScrollPane.border = BorderFactory.createEmptyBorder()
 
         leftPanel.add(jbScrollPane, BorderLayout.CENTER)
-        leftPanel.add(geToolBar().component, BorderLayout.PAGE_START)
-        leftPanel.border = JBEmptyBorder(1, 1, 1, 1)
+        leftPanel.add(DioToolbar(),BorderLayout.PAGE_START)
 
 
-        val leftScrollPanel = JBScrollPane(leftPanel)
-        leftScrollPanel.minimumSize = Dimension(350, 0)
-        leftScrollPanel.viewportBorder = null
-
+        leftPanel.minimumSize = Dimension(350, 0)
+        leftPanel.border = BorderFactory.createEmptyBorder() // 清空边框
 
 
         ///构建右侧的面板
 
 
-
-        containerJBSplitter.firstComponent = leftScrollPanel
-        containerJBSplitter.secondComponent = JBScrollPane(rightPanel)
-        containerJBSplitter.border = JBEmptyBorder(2, 2, 2, 2)
+        containerJBSplitter.isOpaque = true
+        containerJBSplitter.firstComponent = leftPanel
+        containerJBSplitter.secondComponent = rightPanel
 
 
         // 接收消息总线传来的对象,并刷新列表
@@ -100,17 +94,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
 
 
-    private fun geToolBar(): ActionToolbar {
-        val toolBar = DioTableToolbar.create(
-            clean = {
-                cleanData()
-            },
-            projectfilter = {
-                println("筛选了项目:$it")
-            }
-        )
-        return toolBar
-    }
 
 
     fun getContent(): JComponent {
@@ -140,8 +123,9 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     }
 
     override fun valueChanged(e: ListSelectionEvent?) {
-        if (e?.valueIsAdjusting == false) {
+        if (e?.valueIsAdjusting == false ) {
             val firstIndex = requestsJBList.selectedIndex
+            if(firstIndex<0) return
             val element = requestsJBList.model.getElementAt(firstIndex)
             rightPanel.changeShowValue(element,project)
         }

@@ -5,6 +5,7 @@ import com.intellij.ui.components.JBScrollPane
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import java.awt.BorderLayout
+import javax.swing.BorderFactory
 import javax.swing.JPanel
 
 /**
@@ -45,7 +46,10 @@ class RightDetailPanel: JPanel() {
 
     private fun jsonViewInit(project: Project){
         jsonView = JsonValueRender(detail?.body!!,project)
-        add(JBScrollPane(jsonView),BorderLayout.CENTER)
+        val jbScrollPane = JBScrollPane(jsonView)
+        jbScrollPane.isOpaque = true
+        jbScrollPane.border = BorderFactory.createEmptyBorder()
+        add(jbScrollPane,BorderLayout.CENTER)
     }
 
 
