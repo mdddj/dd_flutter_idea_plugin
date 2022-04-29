@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
-import shop.itbug.fluttercheckversionx.services.SokcetMessageBus
+import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 
@@ -69,7 +69,7 @@ class AppService {
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             flutterProjects[responseModel.projectName] = reqsAdded
-            ApplicationManager.getApplication().messageBus.syncPublisher(SokcetMessageBus.CHANGE_ACTION_TOPIC)
+            ApplicationManager.getApplication().messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
                 .handleData(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e")

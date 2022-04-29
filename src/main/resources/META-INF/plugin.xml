@@ -67,7 +67,6 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider" language="yaml"/>
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay" language="JSON"/>
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider" language="Dart"/>
-        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.socket.ProjectSocketService"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument" language="JSON"/>
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument" language="yaml" order="first"/>
