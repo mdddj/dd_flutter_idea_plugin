@@ -89,7 +89,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {
-            println(it)
             refreshData(it)
         }
 

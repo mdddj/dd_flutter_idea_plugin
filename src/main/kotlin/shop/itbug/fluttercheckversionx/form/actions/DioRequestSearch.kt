@@ -5,6 +5,7 @@ import com.intellij.ui.SearchTextField
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import javax.swing.BorderFactory
+import javax.swing.JLabel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -18,6 +19,7 @@ class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextFi
     init {
         border = BorderFactory.createEmptyBorder()
         addDocumentListener(this)
+
     }
 
 
@@ -27,6 +29,11 @@ class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextFi
      * 提取用户输入的字符串
      */
     override fun insertUpdate(e: DocumentEvent?) {
+        handleDocument(e)
+    }
+
+
+    private fun handleDocument(e: DocumentEvent?){
         if(e!=null){
             val document = e.document
             val text = document.getText(0, document.length)
@@ -34,10 +41,16 @@ class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextFi
             val results = allRequest.filter { it.url.uppercase().contains(text.uppercase()) }
             if(results.isNotEmpty()){
                 filterUrlHandler.invoke(results)
+                history = results.map { it.url }
+            }else{
+                filterUrlHandler.invoke(allRequest)
+                setEmptyHistory()
             }
         }
     }
+
     override fun removeUpdate(e: DocumentEvent?) {
+        handleDocument(e)
     }
     override fun changedUpdate(e: DocumentEvent?) {
     }
