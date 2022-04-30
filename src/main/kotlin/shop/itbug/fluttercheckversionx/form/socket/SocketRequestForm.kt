@@ -57,10 +57,9 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
     private val projectFilterBox = ProjectFilter()
 
-    private val searchTextField = DioRequestSearch()
+    private var  searchTextField: DioRequestSearch
 
     init {
-
 
         ///jlist初始化
         requestsJBList.model = MyDefaultListModel(datas = emptyList())
@@ -86,6 +85,13 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             actionManager.getAction("DioTool.CleanService") as DefaultActionGroup,
             true
         )
+
+
+        /// 接口搜索过滤
+        searchTextField = DioRequestSearch {
+            println(it)
+            refreshData(it)
+        }
 
 
         dioToolbar.add(toolBar.component)
@@ -115,7 +121,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         ApplicationManager.getApplication().messageBus.connect().subscribe(
             SocketMessageBus.CHANGE_ACTION_TOPIC, object : SocketMessageBus {
                 override fun handleData(data: SocketResponseModel?) {
-                    refreshData()
+                    refreshData(null)
                 }
 
             }
@@ -128,19 +134,22 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         return containerJBSplitter
     }
 
+    private val service get() = service<AppService>()
     /**
      * 刷新列表的数据
      */
-    private fun refreshData() {
+    private fun refreshData(list: List<Request>?) {
         SwingUtilities.invokeLater {
-            val service = service<AppService>()
-            val allRequest = service.getAllRequest()
-            requestsJBList.model = MyDefaultListModel(datas = allRequest)
-            if (allRequest.isEmpty()) {
-                rightPanel.clean()
+
+            if(list==null){
+                val allRequest = service.getAllRequest()
+                requestsJBList.model = MyDefaultListModel(datas = allRequest)
+                if (allRequest.isEmpty()) {
+                    rightPanel.clean()
+                }
+            }else{
+                requestsJBList.model = MyDefaultListModel(datas = list)
             }
-
-
             val allProjectNames = service.getAllProjectNames()
             projectFilterBox.change(allProjectNames)
 
@@ -155,8 +164,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             val element = requestsJBList.model.getElementAt(firstIndex)
             rightPanel.changeShowValue(element, project)
         }
-
-
     }
 
 }
