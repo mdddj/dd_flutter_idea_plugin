@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.6.20"
     id("org.jetbrains.intellij") version "1.5.3"
+    id("org.jetbrains.compose") version "1.2.0-alpha01-dev683"
 }
 
 group = "shop.itbug"
@@ -9,6 +10,11 @@ version = "1.6.2022.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    google()
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    maven {
+        url = uri("https://plugins.gradle.org/m2/")
+    }
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
@@ -25,7 +31,7 @@ intellij {
 dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.github.ben-manes.caffeine:caffeine:3.0.6")
+    implementation ("com.github.ben-manes.caffeine:caffeine:3.1.0")
     implementation ("cn.hutool:hutool-all:5.8.0.M3")
     implementation("org.smartboot.socket:aio-core:1.5.17")
 }

@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
+import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
@@ -54,8 +55,15 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
      */
     private val dioToolbar = JToolBar()
 
-
+    /**
+     * 项目级别的筛选
+     */
     private val projectFilterBox = ProjectFilter()
+
+    /**
+     * 状态码级别的筛选
+     */
+    private val stateCodeFilterBox = StateCodeFilterBox()
 
     private var  searchTextField: DioRequestSearch
 
@@ -86,6 +94,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             true
         )
 
+        toolBar.targetComponent = dioToolbar
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {
@@ -98,6 +107,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
         dioToolbar.add(searchTextField)
         dioToolbar.add(projectFilterBox)
+        dioToolbar.add(stateCodeFilterBox)
 
         dioToolbar.isFloatable = false
 
