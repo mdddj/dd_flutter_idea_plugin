@@ -10,6 +10,9 @@ import javax.swing.JPanel
 
 /**
  * 请求详情
+ * ```dart
+ * print("hello world");
+ * ```
  */
 class RightDetailPanel: JPanel() {
 

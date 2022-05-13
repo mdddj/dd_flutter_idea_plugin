@@ -70,6 +70,7 @@
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument" language="JSON"/>
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument" language="yaml" order="first"/>
+        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt" language="Dart" />
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
                     icon="AllIcons.Debugger.ThreadStates.Socket"/>
     </extensions>

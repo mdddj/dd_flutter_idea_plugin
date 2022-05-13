@@ -1,6 +1,8 @@
+import org.jetbrains.compose.compose
+
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
+    id("org.jetbrains.kotlin.jvm") version "1.6.21"
     id("org.jetbrains.intellij") version "1.5.3"
     id("org.jetbrains.compose") version "1.2.0-alpha01-dev683"
 }
@@ -25,15 +27,17 @@ intellij {
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
     version.set("2022.1")
     type.set("IC")
-    plugins.set(listOf("java","yaml","Dart:221.5588","io.flutter:66.0.4"))
+    plugins.set(listOf("java", "yaml", "Dart:221.5588", "io.flutter:66.0.4"))
 }
 
 dependencies {
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.github.ben-manes.caffeine:caffeine:3.1.0")
-    implementation ("cn.hutool:hutool-all:5.8.0.M3")
+    implementation(compose.desktop.currentOs)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.0")
+    implementation("cn.hutool:hutool-all:5.8.0.M3")
     implementation("org.smartboot.socket:aio-core:1.5.17")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 }
 
 

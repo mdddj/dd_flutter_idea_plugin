@@ -3,23 +3,19 @@ package shop.itbug.fluttercheckversionx.socket.service
 import cn.hutool.core.lang.Console
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
-import shop.itbug.fluttercheckversionx.form.socket.Request
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
+import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 
 class AppService {
 
-
-    /**
-     * socket服务,在携程中运行,避免阻塞UI
-     */
-    private val scope = CoroutineScope(Dispatchers.IO)
 
 
     /**
@@ -39,9 +35,10 @@ class AppService {
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
      */
+    @OptIn(DelicateCoroutinesApi::class)
     fun initSocketService() {
         if (server == null) {
-            scope.launch {
+            GlobalScope.launch(Dispatchers.IO) {
                 val processor: MessageProcessor<String?> =
                     MessageProcessor<String?> { _, msg ->
                         flutterClienJsonHandle(msg)
@@ -58,7 +55,7 @@ class AppService {
     }
 
 
-    val messageBus get() = ApplicationManager.getApplication().messageBus
+    private val messageBus get() = ApplicationManager.getApplication().messageBus
 
     /**
      * flutter端穿过来的json数据
