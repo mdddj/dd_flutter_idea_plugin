@@ -21,7 +21,9 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
         get() = "dart.type.inlay.hints.provider"
     override val previewText: String
         get() = """
-            预览
+            var a = 0;
+            final b = false;
+            const c = "hello world";
         """.trimIndent()
 
     override fun createSettings(): Setting {

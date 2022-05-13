@@ -27,7 +27,7 @@ intellij {
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
     version.set("2022.1")
     type.set("IC")
-    plugins.set(listOf("java", "yaml", "Dart:221.5588", "io.flutter:66.0.4"))
+    plugins.set(listOf("java", "yaml", "Dart:221.5588", "io.flutter:66.0.4","org.intellij.plugins.markdown:221.5080.126"))
 }
 
 dependencies {
