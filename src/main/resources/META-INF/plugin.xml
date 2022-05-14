@@ -9,7 +9,7 @@
         </p>
 
         <p>
-            Github:<a href="https://github.com/mdddj/dd_flutter_idea_plugin">https://github.com/mdddj/dd_flutter_idea_plugin</a>
+            Github:<a href="https://github.com/mdddj/dd_flutter_idea_plugin">GITHUB</a>
         </p>
 
 
@@ -30,6 +30,7 @@
             <li>6.If the json field is an image, it can be previewed with focus</li>
             <li>7.`Doc class annotation`The annotation content is automatically displayed</li>
             <li>8.Plugin details display function, please move the mouse focus to the plugin name, the plugin details will be displayed</li>
+            <li>9.Add markdown type parsing to the document</li>
             <br/>
             <li>1.检测最新插件版本并提供自动修复功能</li>
             <li>2.快速跳转到 pub.dev 插件详情页面</li>
@@ -39,6 +40,7 @@
             <li>6.如果json字段是图片，可以带焦点预览</li>
             <li>7.`Doc类注解`注释内容自动显示</li>
             <li>8.插件详情面板展示,只需要将鼠标焦点移动到插件名字上面即可</li>
+            <li>9.文档添加markdown类型解析</li>
             <ul>
         ]]></description>
 
