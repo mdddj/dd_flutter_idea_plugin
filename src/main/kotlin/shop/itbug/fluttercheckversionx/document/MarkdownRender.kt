@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.document
 
-import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationSettings
 import com.intellij.openapi.editor.HighlighterColors
@@ -16,9 +15,9 @@ import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.flavours.gfm.GFMElementTypes
-import org.intellij.markdown.parser.MarkdownParser
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
+import org.intellij.markdown.parser.MarkdownParser
 
 /**
  * markdown节点
@@ -71,6 +70,7 @@ class MarkdownRender {
     }
 }
 
+///处理表格行
 private fun processTableRow(
     sb: StringBuilder,
     node: MarkdownNode,
@@ -303,6 +303,7 @@ fun MarkdownNode.toHtml(project: Project): String {
                             addedBody = true
                         }
 
+                        //处理表格行
                         processTableRow(sb, child, "td", alignment, project)
                     }
                 }
