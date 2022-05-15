@@ -7,6 +7,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
+import shop.itbug.fluttercheckversionx.model.PubSearchResult
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -33,6 +35,12 @@ interface PubService {
      */
     @GET("packages/{pluginName}.json")
     fun getPackageVersions(@Path("pluginName") pluginName: String) : Call<PluginVersionModel>
+
+    /**
+     * 搜索包
+     */
+    @GET("api/search")
+    fun search(@Query("q") pluginName: String): Call<PubSearchResult>
 }
 
 /**

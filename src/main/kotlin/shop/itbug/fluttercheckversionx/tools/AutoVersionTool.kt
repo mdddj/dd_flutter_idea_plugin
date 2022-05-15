@@ -108,8 +108,6 @@ class YamlElementVisitor(
             @OptIn(DelicateCoroutinesApi::class)
             fun checkUnusedPlugin(project: Project, allPlugins: List<PluginVersion>) {
                 val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-                val libFiles = files.filter { it.path.contains("/lib/") }
-
                 // 因为有大量的文件检测工作,这里使用携程来进行优化
                 GlobalScope.launch {
 

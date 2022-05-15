@@ -27,16 +27,11 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         )
         if (result.isEmpty()) return ""
         val docInfo = result.first()
-        println(docInfo)
-        val doc = docInfo.dartdoc // 获取到注释,然后再进行代码高亮
-//        if (doc != null) {
-//            val renderText = MarkdownRender.renderText(doc, element.project)
-//            println(renderText)
-//            return renderText
-//        }
         return renderView(docInfo,element.project)
 
     }
+
+
 
 
     ///渲染doc文档

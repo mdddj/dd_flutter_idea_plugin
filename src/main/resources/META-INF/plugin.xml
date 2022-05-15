@@ -84,6 +84,10 @@
         <action id="ToPub" class="shop.itbug.fluttercheckversionx.actions.ToBrowser" text="前往PUB查看">
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="first"/>
         </action>
+        <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
+                text="搜索pub包">
+            <add-to-group group-id="Flutter.MenuActions.Run" anchor="after" relative-to-action="AttachDebuggerAction"/>
+        </action>
     </actions>
 
 

@@ -3,10 +3,10 @@ import org.jetbrains.compose.compose
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.6.21"
-    id("org.jetbrains.intellij") version "1.5.3"
+    id("org.jetbrains.intellij") version "1.6.0-SNAPSHOT"
     id("org.jetbrains.compose") version "1.2.0-alpha01-dev683"
 }
-
+//028486
 group = "shop.itbug"
 version = "1.7.2022.1-SNAPSHOT"
 

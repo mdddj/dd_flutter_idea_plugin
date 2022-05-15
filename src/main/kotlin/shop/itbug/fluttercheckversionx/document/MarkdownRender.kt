@@ -95,8 +95,6 @@ private fun processTableRow(
 fun MarkdownNode.toHtml(project: Project): String {
 
 
-    println("进来了")
-
     ///不要删除尾随空格
     if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
         return text
