@@ -15,6 +15,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.util.CacheUtil
+import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.io.File
 import javax.swing.SwingUtilities
 
@@ -32,39 +33,30 @@ class FlutterProjectOpenActivity : StartupActivity {
      */
     override fun runActivity(project: Project) {
 
-        // 拿到项目中的pubspec.yaml文件,如果不存在说明不是flutter的项目,则不进行相关操作
-        val pubspecYamlFile =
-            LocalFileSystem.getInstance().findFileByIoFile(File("${project.stateStore.projectBasePath}/pubspec.yaml"))
 
+        val psiFile = MyPsiElementUtil.getPubSecpYamlFile(project)
 
         // 判断是否有插件文件
-        if (pubspecYamlFile != null) {
+        if (psiFile != null) {
 
 
-            // idea的虚拟文件系统转换成psi文件系统,获取psi文件,psi文件可以用来遍历节点,获取定位这些信息
-            val psiFile = PsiManager.getInstance(project).findFile(pubspecYamlFile)
+            // Yaml相关操作的类
+            val yamlFileParser = YamlFileParser(psiFile)
+
+            // 清理旧的版本信息缓存
+            CacheUtil.getCatch().invalidateAll()
 
 
-            // 如果转换失败了,不进行任何操作
-            if (psiFile != null) {
-
-                // Yaml相关操作的类
-                val yamlFileParser = YamlFileParser(psiFile)
-
-                // 清理旧的版本信息缓存
-                CacheUtil.getCatch().invalidateAll()
-
-
-                /// 启动一个后台进程,这个是idea的开发api,直接拿来用
-                ProgressManager.getInstance().run(MyTask(project,"checking-version",yamlFileParser))
-            }
+            /// 启动一个后台进程,这个是idea的开发api,直接拿来用
+            ProgressManager.getInstance().run(MyTask(project, "checking-version", yamlFileParser))
 
         }
 
     }
 
 
-    class MyTask(project: Project, title: String, private val yamlFileParser: YamlFileParser): Task.Backgroundable(project, title),
+    class MyTask(project: Project, title: String, private val yamlFileParser: YamlFileParser) :
+        Task.Backgroundable(project, title),
         Disposable {
 
         init {
@@ -73,7 +65,6 @@ class FlutterProjectOpenActivity : StartupActivity {
 
         @OptIn(DelicateCoroutinesApi::class)
         override fun run(p0: ProgressIndicator) {
-
 
 
             GlobalScope.launch {
@@ -88,11 +79,8 @@ class FlutterProjectOpenActivity : StartupActivity {
 //                    }
 
 
-
                 }
             }
-
-
 
 
             ////============== 取消相关无用操作
@@ -159,7 +147,6 @@ class FlutterProjectOpenActivity : StartupActivity {
 //        }
 
         override fun dispose() {
-
 
 
         }
