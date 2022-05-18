@@ -6,6 +6,8 @@ import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReferenceFactory
+import com.intellij.psi.impl.source.resolve.reference.PsiReferenceUtil
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import org.dartlang.analysis.server.protocol.HoverInformation
 
@@ -14,13 +16,16 @@ import org.dartlang.analysis.server.protocol.HoverInformation
  */
 class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationProvider {
 
-
-    /**
-     * 重构dart的文档,原生的太丑了
-     */
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
 
+
+
         if (element == null) return ""
+
+
+        println(element.reference)
+
+
         val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
             element.containingFile.virtualFile,
             element.textOffset

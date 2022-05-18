@@ -43,7 +43,6 @@ class MarkdownRender {
         fun renderText(comment: String, project: Project): String {
             val markdownTree =
                 MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(comment)
-            println(markdownTree)
             val markdownNode = MarkdownNode(markdownTree, null, comment)
 
 
@@ -166,6 +165,10 @@ fun MarkdownNode.toHtml(project: Project): String {
             //笔记类型
             MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
 
+
+            // 文档注释里面的变量
+            MarkdownElementTypes.SHORT_REFERENCE_LINK -> sb.append("<code>$nodeText</code>")
+
             //段落p类型
             MarkdownElementTypes.PARAGRAPH -> {
                 sb.trimEnd()
@@ -259,7 +262,7 @@ fun MarkdownNode.toHtml(project: Project): String {
                 if (parentType == MarkdownElementTypes.CODE_BLOCK || parentType == MarkdownElementTypes.CODE_FENCE) {
                     sb.append("\n")
                 } else {
-                    sb.append(" ")
+                    sb.append("<div style=\"height: 4px\"/>")
                 }
             }
             MarkdownTokenTypes.GT -> sb.append("&gt;")
