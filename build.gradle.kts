@@ -8,7 +8,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "1.7.2022.1-SNAPSHOT"
+version = "1.8.0"
 
 repositories {
     mavenCentral()
@@ -27,7 +27,7 @@ intellij {
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
     version.set("2022.1")
     type.set("IC")
-    plugins.set(listOf("java", "yaml", "Dart:221.5588", "io.flutter:66.0.4","org.intellij.plugins.markdown:221.5080.126"))
+    plugins.set(listOf("java", "yaml", "Dart:221.5588", "io.flutter:67.1.4","org.intellij.plugins.markdown:221.5080.126"))
 }
 
 dependencies {
@@ -35,7 +35,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.0")
-    implementation("cn.hutool:hutool-all:5.8.0.M3")
+    implementation("cn.hutool:hutool-all:5.8.0")
     implementation("org.smartboot.socket:aio-core:1.5.17")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 }
