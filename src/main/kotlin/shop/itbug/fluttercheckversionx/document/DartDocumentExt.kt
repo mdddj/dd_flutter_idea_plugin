@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.DartDefaultFormalNamedParameterImpl
+import com.jetbrains.lang.dart.psi.impl.DartFormalParameterListImpl
 import com.jetbrains.lang.dart.psi.impl.DartNormalFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartOptionalFormalParametersImpl
 import org.dartlang.analysis.server.protocol.HoverInformation
@@ -32,7 +33,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         )
         if (result.isEmpty()) return ""
         val docInfo = result.first()
-        return renderView(docInfo, element.project, reference?.nextSibling)
+        val dartFormalParameterList = reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
+        return renderView(docInfo, element.project, if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first())
 
     }
 
@@ -111,8 +113,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         sb.append("\n")
         sb.append("|  ----  | ----  | ----  | ----  |")
         sb.append("\n")
-        paramsArr.forEach {
-            sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional)  "{}" else "()"} |")
+        paramsArr.forEachIndexed { index, it ->
+            sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional) "{}" else "(必填参数${index+1})"} |")
             sb.append("\n")
         }
         return sb.toString()
