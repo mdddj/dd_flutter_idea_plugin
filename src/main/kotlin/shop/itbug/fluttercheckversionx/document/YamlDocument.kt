@@ -64,13 +64,20 @@ class YamlDocument : DocumentationProvider {
         contextElement: PsiElement?,
         targetOffset: Int
     ): PsiElement? {
+
+        val parentElement = contextElement?.parent?.parent?.parent
+        if (parentElement is YAMLKeyValueImpl) {
+            if(parentElement.keyText != "dependencies"){
+                return null
+            }
+        }
+
         if (contextElement is YAMLKeyValueImpl) {
-            println(contextElement.elementType)
+
             return contextElement
         }
         return null
     }
-
 
 
     /**

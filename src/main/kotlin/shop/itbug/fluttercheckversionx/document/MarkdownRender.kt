@@ -48,9 +48,15 @@ class MarkdownRender {
 
             val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
 
+            println("类型:"+maybeSingleParagraph?.type)
+
             val firstParagraphOmitted = when {
+                maybeSingleParagraph?.type == GFMElementTypes.TABLE -> {
+                    return maybeSingleParagraph.toHtml(project)
+                }
                 maybeSingleParagraph != null -> {
-                    maybeSingleParagraph.children.joinToString("") { if (it.text == "\n") " " else it.toHtml(project) }
+                    maybeSingleParagraph.children.joinToString("") {
+                        if (it.text == "\n") { ""} else it.toHtml(project) }
                 }
                 else -> markdownNode.toHtml(project)
             }
@@ -80,8 +86,8 @@ private fun processTableRow(
     sb.append("<tr>")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
         val alignValue = alignment.getOrElse(i) { "" }
-        val alignTag = if (alignValue.isEmpty()) "" else " align=\"$alignValue\""
-        sb.append("<$cellTag$alignTag>")
+        val alignTag = if (alignValue.isEmpty()) "" else " align=\"$alignValue\" "
+        sb.append("<$cellTag$alignTag style=\"padding: 4px 12px;margin:1px;border:1px solid black${if (cellTag=="td") "" else ""}\">")
         sb.append(child.toHtml(project))
         sb.append("</$cellTag>")
     }
@@ -95,9 +101,9 @@ fun MarkdownNode.toHtml(project: Project): String {
 
 
     ///不要删除尾随空格
-    if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
-        return text
-    }
+//    if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
+//        return text
+//    }
 
 
     /// 当前项目的主要语言
@@ -122,6 +128,7 @@ fun MarkdownNode.toHtml(project: Project): String {
 
         ///节点的文本内容
         val nodeText = node.text
+
 
         //对节点的每一项单独处理
         when (nodeType) {
@@ -291,7 +298,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             GFMElementTypes.TABLE -> {
                 val alignment: List<String> = getTableAlignment(node)
                 var addedBody = false
-                sb.append("<table>")
+                sb.append("<table style=\"width:100%;border:1px solid black\">")
 
                 for (child in node.children) {
                     if (child.type == GFMElementTypes.HEADER) {

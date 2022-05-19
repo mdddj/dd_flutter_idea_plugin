@@ -104,7 +104,6 @@ class YamlFileParser(
                             }
                         }
                     } catch (e: Exception) {
-                        println("请求插件版本失败 :${e.message}")
                     }
                 }
             }
