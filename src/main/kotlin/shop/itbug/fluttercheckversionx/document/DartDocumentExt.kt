@@ -31,10 +31,16 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             element.containingFile.virtualFile,
             element.textOffset
         )
-        if (result.isEmpty()) return ""
+        println(result)
+        if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
         val docInfo = result.first()
-        val dartFormalParameterList = reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
-        return renderView(docInfo, element.project, if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first())
+        val dartFormalParameterList =
+            reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
+        return renderView(
+            docInfo,
+            element.project,
+            if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first()
+        )
 
     }
 
@@ -114,7 +120,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         sb.append("|  ----  | ----  | ----  | ----  |")
         sb.append("\n")
         paramsArr.forEachIndexed { index, it ->
-            sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional) "{}" else "(必填参数${index+1})"} |")
+            sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional) "{}" else "(必填参数${index + 1})"} |")
             sb.append("\n")
         }
         return sb.toString()
@@ -125,11 +131,29 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         val sb = StringBuilder()
 
         sb.append(DocumentationMarkup.SECTIONS_START)
-        if (info.containingClassDescription != null) {
-            Helper.addKeyValueSection("类型", info.containingClassDescription, sb)
+
+        ///获取类型提示文本
+        fun getElementKinkText(): String {
+            val str = when (info.elementKind.toString()) {
+                "class" -> "对象"
+                "parameter" -> "参数"
+                "method" -> "方法"
+                "local variable" -> "局部变量"
+                "function type alias" -> "typedef 函数定义"
+                "field" -> "类变量"
+                "getter" -> "getter 变量"
+                "top level variable" -> "顶级变量 (注解)"
+                "enum" -> "是个枚举"
+                else -> info.elementKind.toString()
+            }
+            return str
         }
 
-        if (info.elementDescription != null) {
+
+
+        Helper.addKeyValueSection("类型", getElementKinkText(), sb)
+
+        if (referenceElement != null) {
             Helper.addKeyValueSection("属性", Helper.markdown2Html(renderParams(referenceElement), project), sb)
         }
 
@@ -137,6 +161,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             Helper.addKeyValueSection("文档", Helper.markdown2Html(info.dartdoc, project), sb)
         }
         sb.append(DocumentationMarkup.SECTIONS_END)
+
+
         return sb.toString()
     }
 
