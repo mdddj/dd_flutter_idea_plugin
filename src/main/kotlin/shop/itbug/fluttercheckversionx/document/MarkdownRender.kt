@@ -83,12 +83,12 @@ private fun processTableRow(
     alignment: List<String>,
     project: Project
 ) {
-    sb.append("<tr style=\"display: table-row;${if (cellTag == "th") "background-color: #212529" else "background-color: #373b3e"}\">")
+    sb.append("<tr style=\"${if (cellTag == "th") "background-color: #212529" else "background-color: #373b3e"}\">")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
         val alignValue = alignment.getOrElse(i) { "" }
         val alignTag = if (alignValue.isEmpty()) "" else " align=\"$alignValue\" "
-        sb.append("<$cellTag$alignTag style=\"padding: 4px 12px;margin:1px;${if (cellTag=="td") "" else ""}\">")
-        sb.append(child.toHtml(project))
+        sb.append("<$cellTag$alignTag style=\"padding: 4px 12px;white-space: nowrap;margin:1px;${if (cellTag=="td") "" else ""}\">")
+        sb.append("<code>${child.toHtml(project)}</code>")
         sb.append("</$cellTag>")
     }
     sb.append("</tr>")
