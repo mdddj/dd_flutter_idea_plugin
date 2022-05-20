@@ -60,6 +60,7 @@
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
+        <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools" />
         <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
                          groupBundle="messages.InspectionsBundle"
                          groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
