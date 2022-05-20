@@ -62,6 +62,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             return ""
         }
 
+
+        ///处理节点,如果有引用的对象,需要去引用的对象里面获取属性名字
         fun dartNormalElementHandle(
             element: DartNormalFormalParameterImpl,
             isRequired: Boolean,
@@ -144,6 +146,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
                 "getter" -> "getter 变量"
                 "top level variable" -> "顶级变量 (注解)"
                 "enum" -> "是个枚举"
+                "constructor" -> "构造方法"
                 else -> info.elementKind.toString()
             }
             return str
