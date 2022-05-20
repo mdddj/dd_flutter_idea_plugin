@@ -2,13 +2,21 @@
 
     <actions>
 
-<!--    dio 请求里面的清空按钮    -->
+        <!--    dio 请求里面的清空按钮    -->
         <group id="DioTool.CleanService">
             <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService"
                     icon="AllIcons.Actions.GC"
                     id="DioWindow.Clean"
                     text="清空全部"/>
-            <separator />
+            <separator/>
+        </group>
+
+
+        <group id="Yaml.Search">
+            <action class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
+                    icon="AllIcons.Actions.DependencyAnalyzer"
+                    id="Yaml.Search.Icon" text="搜索Pub Dart 包"
+            />
         </group>
 
     </actions>

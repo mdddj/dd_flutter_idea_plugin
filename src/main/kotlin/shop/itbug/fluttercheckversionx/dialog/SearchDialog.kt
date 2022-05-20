@@ -12,6 +12,7 @@ import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -64,6 +65,15 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
                     Surface(modifier = Modifier.fillMaxSize()) {
                         Box {
                             Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text("包搜索功能还在测试中,欢迎提出意见", modifier = Modifier.weight(1f))
+                                    TextButton(onClick = {
+                                        BrowserUtil.browse("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
+                                    }){
+                                        Text("意见反馈")
+                                    }
+                                }
+                                Divider()
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     TextField(
                                         value = name,
