@@ -4,6 +4,7 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.nextLeaf
 import com.intellij.refactoring.suggested.endOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
@@ -74,8 +75,15 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                     val args = children[0].children.filterIsInstance<DartNamedArgumentImpl>() /// 参数列表
                                     for(arg in args){
                                         if(arg.firstChild.text=="message"){
-                                            val docMessage = arg.lastChild.text.replace("\"","")
+//                                            val docMessage = arg.lastChild.text.replace("\"","")
+                                            val docMessage = (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText
+
                                             if(element.parent.nextSibling!=null){
+
+                                                ///向上查找
+
+
+                                                println(element.parent.nextSibling.javaClass)
                                                 sink.addInlineElement(element.parent.nextSibling.endOffset,
                                                     false,
                                                     hintsInlayPresentationFactory.simpleText(docMessage,""),
