@@ -4,6 +4,7 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.nextLeaf
@@ -81,12 +82,10 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
 //                                            val docMessage = arg.lastChild.text.replace("\"","")
                                             val docMessage = (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText.replace("\"","").replace("\'","")
 
-                                            if(element.parent.nextSibling!=null){
                                                 //判断是否有";"
-                                                val semicolonElement = element.parent.nextSibling.nextLeaf();
-
+                                                val semicolonElement = element.parent.nextSibling;
                                                 ///忽略掉换行符号
-                                                if(semicolonElement!=null && !(semicolonElement is PsiWhiteSpaceImpl)) {
+                                                if(semicolonElement is LeafPsiElement) {
                                                     sink.addInlineElement(semicolonElement.endOffset,
                                                         false,
                                                         hintsInlayPresentationFactory.simpleText(docMessage,""),
@@ -95,7 +94,6 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                                 }
 
 
-                                            }
                                         }
                                     }
                                 }
