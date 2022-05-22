@@ -4,8 +4,11 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
+import com.intellij.psi.util.elementType
 import com.intellij.psi.util.nextLeaf
 import com.intellij.refactoring.suggested.endOffset
+import com.jetbrains.lang.dart.DartElementType
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
@@ -76,19 +79,22 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                     for(arg in args){
                                         if(arg.firstChild.text=="message"){
 //                                            val docMessage = arg.lastChild.text.replace("\"","")
-                                            val docMessage = (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText
+                                            val docMessage = (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText.replace("\"","").replace("\'","")
 
                                             if(element.parent.nextSibling!=null){
+                                                //判断是否有";"
+                                                val semicolonElement = element.parent.nextSibling.nextLeaf();
 
-                                                ///向上查找
+                                                ///忽略掉换行符号
+                                                if(semicolonElement!=null && !(semicolonElement is PsiWhiteSpaceImpl)) {
+                                                    sink.addInlineElement(semicolonElement.endOffset,
+                                                        false,
+                                                        hintsInlayPresentationFactory.simpleText(docMessage,""),
+                                                        false
+                                                    )
+                                                }
 
 
-                                                println(element.parent.nextSibling.javaClass)
-                                                sink.addInlineElement(element.parent.nextSibling.endOffset,
-                                                    false,
-                                                    hintsInlayPresentationFactory.simpleText(docMessage,""),
-                                                    false
-                                                )
                                             }
                                         }
                                     }
