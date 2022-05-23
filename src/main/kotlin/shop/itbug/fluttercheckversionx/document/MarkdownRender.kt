@@ -48,7 +48,6 @@ class MarkdownRender {
 
             val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
 
-            println("类型:"+maybeSingleParagraph?.type)
 
             val firstParagraphOmitted = when {
                 maybeSingleParagraph?.type == GFMElementTypes.TABLE -> {

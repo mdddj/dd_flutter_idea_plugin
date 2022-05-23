@@ -6,7 +6,6 @@ import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 
 class FlutterPubPackageSearch : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        print("搜索包")
         e.project?.let { SearchDialog(it).show() }
     }
 }

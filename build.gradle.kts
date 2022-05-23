@@ -8,7 +8,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "1.8.2"
+version = "1.8.3"
 
 repositories {
     mavenCentral()

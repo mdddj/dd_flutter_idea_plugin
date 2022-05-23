@@ -90,7 +90,6 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
                                                 searchLoading = false
                                             }
                                         } catch (e: Exception) {
-                                            println("请求失败:$e")
                                             searchLoading = false
                                         }
 
@@ -176,7 +175,6 @@ fun pluginDetailView(pluginName: String, project: Project,onAdded: ()->Unit,plug
                                 qualifiedKeyInFile?.add(blockElement)
                                 onAdded.invoke()
                             } catch (e: IncorrectOperationException) {
-                                println("导入失败:${e.localizedMessage}")
                             }
                         }
 

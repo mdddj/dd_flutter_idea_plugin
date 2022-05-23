@@ -26,7 +26,6 @@ class PluginVersionHints : CompletionContributor() {
                            result.addElement(LookupElementBuilder.create(it))
                        }
                    }catch (e: Exception){
-                       println("无法加载版本号")
                    }
 
                 }

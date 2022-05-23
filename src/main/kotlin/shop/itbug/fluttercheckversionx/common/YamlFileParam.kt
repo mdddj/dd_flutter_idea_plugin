@@ -59,15 +59,10 @@ class YamlFileParser(
                 allPlugins = getAllPlugins()
             }
 
-            println("插件总数 ${allPlugins.size}")
-
-            println("开始检测版本是否为最新")
             val hasNewVersionPlugins = checkVersionFormPub(allPlugins, pluginStart)
-            println("检测完毕,一共有${hasNewVersionPlugins.size}个插件可更新")
             return hasNewVersionPlugins
 
         } else {
-            print("不是yaml文件取消检测")
         }
         return emptyList()
     }

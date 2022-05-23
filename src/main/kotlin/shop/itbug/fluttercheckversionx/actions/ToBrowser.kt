@@ -16,7 +16,6 @@ class ToBrowser : AnAction() {
         if (psiElement != null) {
             val text = psiElement.text
             if (text != null) {
-                print(text)
                 if (text.contains(": ^") || text.contains(": any")) {
                     val pluginName = text.split(":")[0];
                     BrowserUtil.browse("$PUB_URL$pluginName")

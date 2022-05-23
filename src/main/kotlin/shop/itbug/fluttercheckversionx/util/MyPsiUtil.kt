@@ -58,9 +58,7 @@ class MyPsiElementUtil {
             if(pubSecpYamlFile!=null){
                 val deps = YAMLUtil.getQualifiedKeyInFile(pubSecpYamlFile as YAMLFile, "dependencies")
                 if (deps != null) {
-                    println(deps.children.first().children.size)
                     val plugins = deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
-                    println("获取项目的所有插件:$plugins")
                     return plugins
                 }
             }

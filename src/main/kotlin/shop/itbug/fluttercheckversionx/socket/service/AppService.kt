@@ -48,7 +48,6 @@ class AppService {
                 try {
                     server!!.start()
                 }catch (e: Exception){
-                    println("Socket服务启动失败,原因是:${e.localizedMessage}")
                 }
             }
         }

@@ -92,8 +92,6 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                                         false
                                                     )
                                                 }
-
-
                                         }
                                     }
                                 }

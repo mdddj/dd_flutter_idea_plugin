@@ -11,7 +11,9 @@ import com.jetbrains.lang.dart.psi.impl.DartDefaultFormalNamedParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartFormalParameterListImpl
 import com.jetbrains.lang.dart.psi.impl.DartNormalFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartOptionalFormalParametersImpl
+import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
 import org.dartlang.analysis.server.protocol.HoverInformation
+import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 /**
  * dart 文件的文档注释扩展
@@ -31,7 +33,6 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             element.containingFile.virtualFile,
             element.textOffset
         )
-        println(result)
         if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
         val docInfo = result.first()
         val dartFormalParameterList =
@@ -70,7 +71,14 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             optional: Boolean
         ): DartParams {
             val or = element.children.first()
-            val keyText = or.firstChild.text
+            val keyText: String
+            val childrens = or.children.filterIsInstance<DartReferenceExpressionImpl>()
+            keyText = if (childrens.isNotEmpty()) {
+                MyDartPsiElementUtil.getRefreshMethedName(childrens.first())
+            } else {
+                or.firstChild.text
+            }
+
             val valueText = or.lastChild.text
             return DartParams(
                 key = keyText,
