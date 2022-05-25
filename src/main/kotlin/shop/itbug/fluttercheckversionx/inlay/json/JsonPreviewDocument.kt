@@ -17,7 +17,7 @@ class JsonPreviewDocument: DocumentationProvider {
         if(element.elementType == DOUBLE_QUOTED_STRING) {
             val url = element!!.text.replace("\"","")
             if(isImgUrl(url)){
-                return "<img src='$url'  />"
+                return "<div style=\"display: table-cell;background-size: contain;height: 400px;width: 500px;\"><img src='$url' style=\"display: block;\" /></div>"
             }
         }
         return super.generateDoc(element, originalElement)
