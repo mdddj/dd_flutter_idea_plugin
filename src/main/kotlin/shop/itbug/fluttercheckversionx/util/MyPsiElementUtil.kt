@@ -1,8 +1,7 @@
 package shop.itbug.fluttercheckversionx.util
 
-import com.intellij.psi.util.elementType
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
-import com.jetbrains.lang.dart.psi.impl.DartTypeImpl
 
 /**
  * psi 工具类类
@@ -16,19 +15,12 @@ class MyDartPsiElementUtil {
          * @param referenceResolve 引用节点
          */
         fun getRefreshMethedName(referenceResolve: DartReferenceExpressionImpl): String {
-            val resolve = referenceResolve.resolveScope
-            val ref = referenceResolve.reference?.resolve()
-            println(" referenceResolve: ${referenceResolve.elementType} resolve: ${resolve.javaClass} ref: $ref ")
-//            if(resolve != null) {
-//                val childrens = resolve.parent.children.filterIsInstance<DartTypeImpl>()
-//                if(childrens.isNotEmpty()) {
-//                    return  childrens.first().text
-//                }
-//            }
-            return "dyanmic"
+           val dartData =   DartAnalysisServerService.getInstance(referenceResolve.project).analysis_getHover(
+                referenceResolve.containingFile.virtualFile,
+                referenceResolve.textOffset
+            )
+            return dartData.firstOrNull()?.staticType.toString()
         }
-
-
     }
 
 }

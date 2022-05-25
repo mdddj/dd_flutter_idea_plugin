@@ -3,7 +3,7 @@ import org.jetbrains.compose.compose
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.6.21"
-    id("org.jetbrains.intellij") version "1.6.0-SNAPSHOT"
+    id("org.jetbrains.intellij") version "1.6.0"
     id("org.jetbrains.compose") version "1.2.0-alpha01-dev683"
 }
 //028486
@@ -27,7 +27,15 @@ intellij {
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
     version.set("2022.1")
     type.set("IC")
-    plugins.set(listOf("java", "yaml", "Dart:221.5588", "io.flutter:67.1.4","org.intellij.plugins.markdown:221.5080.126"))
+    plugins.set(
+        listOf(
+            "java",
+            "yaml",
+            "Dart:221.5588",
+            "io.flutter:67.1.4",
+            "org.intellij.plugins.markdown:221.5080.126"
+        )
+    )
 }
 
 dependencies {
@@ -54,7 +62,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("221")
-        untilBuild.set("222.*")
+        untilBuild.set("221.*")
 
     }
 
