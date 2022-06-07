@@ -7,16 +7,12 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.project.stateStore
-import com.intellij.psi.PsiManager
-import shop.itbug.fluttercheckversionx.common.YamlFileParser
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import shop.itbug.fluttercheckversionx.common.YamlFileParser
 import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
-import java.io.File
 import javax.swing.SwingUtilities
 
 /**

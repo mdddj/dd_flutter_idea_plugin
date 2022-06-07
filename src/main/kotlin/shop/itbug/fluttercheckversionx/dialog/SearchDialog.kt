@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.intellij.ide.BrowserUtil
@@ -49,7 +48,7 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
     }
 
 
-    fun getAllPlugins(){
+    private fun getAllPlugins(){
         allPlugins = MyPsiElementUtil.getAllPlugins(project)
     }
 
@@ -174,7 +173,7 @@ fun pluginDetailView(pluginName: String, project: Project,onAdded: ()->Unit,plug
                                 qualifiedKeyInFile?.add(eolElement)
                                 qualifiedKeyInFile?.add(blockElement)
                                 onAdded.invoke()
-                            } catch (e: IncorrectOperationException) {
+                            } catch (_: IncorrectOperationException) {
                             }
                         }
 

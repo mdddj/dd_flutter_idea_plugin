@@ -78,6 +78,8 @@
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt" language="Dart" order="first" />
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
                     icon="AllIcons.Debugger.ThreadStates.Socket"/>
+
+        <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory" />
     </extensions>
 
 

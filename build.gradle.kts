@@ -32,7 +32,7 @@ intellij {
             "java",
             "yaml",
             "Dart:221.5588",
-            "io.flutter:67.1.4",
+            "io.flutter:68.1.4",
             "org.intellij.plugins.markdown:221.5080.126"
         )
     )
