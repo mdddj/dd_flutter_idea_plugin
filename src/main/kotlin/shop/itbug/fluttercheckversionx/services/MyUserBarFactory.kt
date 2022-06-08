@@ -6,7 +6,6 @@ import com.intellij.openapi.wm.CustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
-import com.intellij.ui.components.DialogManager
 import shop.itbug.fluttercheckversionx.dialog.LoginDialog
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener

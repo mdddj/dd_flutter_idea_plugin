@@ -1,15 +1,36 @@
 package shop.itbug.fluttercheckversionx.services
 
-import com.intellij.openapi.components.PersistentStateComponent
-import shop.itbug.fluttercheckversionx.model.PluginVersion
+import com.intellij.openapi.components.*
 
-class PluginStateService: PersistentStateComponent<List<PluginVersion>> {
+@State(
+    name = "user",
+    storages = [Storage("my-user.xml")]
+)
+class PluginStateService: PersistentStateComponent<MyUserState> {
 
-    override fun getState(): List<PluginVersion>? {
-        TODO("Not yet implemented")
+    private var token = MyUserState()
+
+    override fun getState(): MyUserState {
+        return token
     }
 
-    override fun loadState(state: List<PluginVersion>) {
-        TODO("Not yet implemented")
+    override fun loadState(state: MyUserState) {
+        token = state
+    }
+
+    companion object {
+        fun getInstance(): PersistentStateComponent<MyUserState> {
+            return service<PluginStateService>()
+        }
+    }
+}
+
+class MyUserState {
+    var token  = ""
+
+    var username = ""
+
+    override fun toString(): String {
+        return "token===$token \n用户名:$username\n"
     }
 }

@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.socket.service
 import cn.hutool.core.lang.Console
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -47,7 +48,7 @@ class AppService {
                 server!!.setReadBufferSize(10485760) // 10m
                 try {
                     server!!.start()
-                }catch (e: Exception){
+                }catch (_: Exception){
                 }
             }
         }

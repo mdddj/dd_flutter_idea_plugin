@@ -19,6 +19,11 @@ import kotlin.coroutines.suspendCoroutine
 const val PUBL_API_URL = "https://pub.dartlang.org/"
 
 /**
+ * 我的服务接口
+ */
+const val MY_SERVICE_HOST = "https://itbug.shop"
+
+/**
  * 访问pub开放Api接口
  * 接口url: [https://pub.dartlang.org/api/packages/插件名字]
  */

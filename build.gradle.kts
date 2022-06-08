@@ -43,8 +43,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.0")
-    implementation("cn.hutool:hutool-all:5.8.0")
+    implementation("cn.hutool:hutool-all:5.8.1")
     implementation("org.smartboot.socket:aio-core:1.5.17")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 }
 

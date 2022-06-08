@@ -80,6 +80,7 @@
                     icon="AllIcons.Debugger.ThreadStates.Socket"/>
 
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory" />
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService" />
     </extensions>
 
 
