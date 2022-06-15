@@ -5,11 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Surface
-import androidx.compose.runtime.*
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,8 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.compose.theme.typography
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.services.*
@@ -47,7 +46,6 @@ class LoginDialog(project: Project) : DialogWrapper(project) {
     private  fun login(username: String, password: String) {
         println("进来了...${username} $password")
         stateModel?.username = username
-        stateModel = stateModel
         runBlocking {
             launch {
                 val result = ServiceCreateWithMe.create<ItbugService>().login(LoginParam(
