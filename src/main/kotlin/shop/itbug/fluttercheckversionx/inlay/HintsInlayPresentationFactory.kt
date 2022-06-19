@@ -86,7 +86,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
     private val actionMenus = listOf(
-        MenuItem("Details page",AllIcons.Toolwindows.WebToolWindow,"pub"),
+        MenuItem("Go to the pub.dev page",AllIcons.Toolwindows.WebToolWindow,"pub"),
     )
 
 

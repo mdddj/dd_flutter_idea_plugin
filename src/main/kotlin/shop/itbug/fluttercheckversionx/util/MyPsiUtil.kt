@@ -10,6 +10,7 @@ import com.intellij.psi.util.elementType
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
+import org.jetbrains.yaml.psi.impl.YAMLMappingImpl
 import java.io.File
 
 /**
@@ -27,24 +28,24 @@ class MyPsiElementUtil {
          * 返回 flutter_launcher_icons
          */
         fun getPluginNameWithPsi(psiElement: PsiElement?): String {
-            if (psiElement != null) {
-                val text = psiElement.text
-                if (text != null) {
-                    if ( psiElement is YAMLKeyValueImpl && (text.contains(": ^") || text.contains(": any")) ) {
-                        return text.split(":")[0]
-                    }
-                }
+            if(psiElement is YAMLKeyValueImpl){
+                return psiElement.keyText
             }
             return ""
+        }
+
+        fun hasYamlMapping(element: PsiElement): Boolean {
+            return element.children.filterIsInstance<YAMLMappingImpl>().isNotEmpty()
         }
 
         /**
          * 获取项目pubspec.yaml 文件
          */
-        fun getPubSecpYamlFile(project: Project) : PsiFile? {
+        fun getPubSecpYamlFile(project: Project): PsiFile? {
             val pubspecYamlFile =
-                LocalFileSystem.getInstance().findFileByIoFile(File("${project.stateStore.projectBasePath}/pubspec.yaml"))
-            if(pubspecYamlFile!=null) {
+                LocalFileSystem.getInstance()
+                    .findFileByIoFile(File("${project.stateStore.projectBasePath}/pubspec.yaml"))
+            if (pubspecYamlFile != null) {
                 return PsiManager.getInstance(project).findFile(pubspecYamlFile)
             }
             return null
@@ -55,7 +56,7 @@ class MyPsiElementUtil {
          */
         fun getAllPlugins(project: Project): List<String> {
             val pubSecpYamlFile = getPubSecpYamlFile(project)
-            if(pubSecpYamlFile!=null){
+            if (pubSecpYamlFile != null) {
                 val deps = YAMLUtil.getQualifiedKeyInFile(pubSecpYamlFile as YAMLFile, "dependencies")
                 if (deps != null) {
                     val plugins = deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }

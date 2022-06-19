@@ -25,7 +25,7 @@ intellij {
 
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
-    version.set("2022.1")
+    version.set("2022.1.2")
     type.set("IC")
     plugins.set(
         listOf(
