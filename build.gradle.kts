@@ -8,7 +8,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "1.8.4"
+version = "1.8.6"
 
 repositories {
     mavenCentral()
@@ -31,7 +31,7 @@ intellij {
         listOf(
             "java",
             "yaml",
-            "Dart:221.5588",
+            "Dart:221.5787.37",
             "io.flutter:68.1.4",
             "org.intellij.plugins.markdown:221.5080.126"
         )

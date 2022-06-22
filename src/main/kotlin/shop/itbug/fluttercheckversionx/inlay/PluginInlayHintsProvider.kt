@@ -1,13 +1,20 @@
 package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.codeInsight.hints.presentation.InlayPresentation
+import com.intellij.codeInsight.hints.presentation.PresentationListener
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorCustomElementRenderer
+import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.findParentOfType
 import com.intellij.psi.util.parents
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.yaml.YAMLElementTypes
 import org.jetbrains.yaml.YAMLTextUtil
 import org.jetbrains.yaml.YAMLUtil
@@ -17,6 +24,10 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Graphics2D
+import java.awt.Rectangle
 import javax.xml.crypto.dsig.keyinfo.KeyValue
 
 class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider.Settings> {
@@ -34,7 +45,7 @@ class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider.Set
         get() = KEY
     override val name: String
         get() = "settings.inlay.menus"
-    override val previewText: String?
+    override val previewText: String
         get() = """
 dependencies:
   extended_image: ^6.0.2+1
@@ -72,8 +83,9 @@ dependencies:
                         if (pluginName.isNotBlank()) {
                             val get = CacheUtil.unredCaChe().asMap()[pluginName]
                             if (get != null && get == pluginName) {
+
                                 sink.addInlineElement(
-                                    element.endOffset+1,
+                                    element.endOffset,
                                     false,
                                     myFactory.simpleText(
                                         "Never used",
@@ -83,7 +95,15 @@ dependencies:
                                 )
                             }
 
-                            sink.addInlineElement(element.endOffset, false, myFactory.menuActions(pluginName), false)
+                            sink.addBlockElement(
+                                 element.textRange.startOffset,
+                                relatesToPrecedingText = true,
+                                showAbove = true,
+                                priority = 1,
+                                presentation = myFactory.menuActions(pluginName)
+
+                            )
+//                            sink.addInlineElement(element.endOffset, false, myFactory.menuActions(pluginName), false)
                         }
                     }
                 }

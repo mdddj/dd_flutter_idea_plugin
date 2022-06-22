@@ -30,19 +30,17 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     fun menuActions(pluginName: String): InlayPresentation {
         return factory.mouseHandling(
             base = dartIcon().addTip("Click to operate on the plug-in package").con(),
-            clickListener = object : InlayPresentationFactory.ClickListener {
+            clickListener = { event, _ ->
+
 
                 // 插件图标项目被点击
-                override fun onClick(event: MouseEvent, translated: Point) {
-                    JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup{
-                            when (it) {
-                                // 打开pub.dev对应的插件详细页面
-                                actionMenus[0].key -> BrowserUtil.browse("$PUB_URL$pluginName")
-                            }
-                    })
-                        .show(RelativePoint(event.locationOnScreen))
-                }
-
+                JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup{
+                    when (it) {
+                        // 打开pub.dev对应的插件详细页面
+                        actionMenus[0].key -> BrowserUtil.browse("$PUB_URL$pluginName")
+                    }
+                })
+                    .show(RelativePoint(event.locationOnScreen))
             },
             hoverListener = object : InlayPresentationFactory.HoverListener {
                 override fun onHover(event: MouseEvent, translated: Point) {
