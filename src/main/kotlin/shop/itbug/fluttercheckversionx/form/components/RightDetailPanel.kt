@@ -31,6 +31,7 @@ class RightDetailPanel: JPanel() {
 
     init {
         layout = BorderLayout()
+        border = BorderFactory.createEmptyBorder()
     }
 
 

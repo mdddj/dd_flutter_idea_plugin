@@ -1,10 +1,7 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
 import java.awt.Component
-import javax.swing.JComboBox
-import javax.swing.JLabel
-import javax.swing.JList
-import javax.swing.ListCellRenderer
+import javax.swing.*
 
 
 /**
@@ -12,22 +9,58 @@ import javax.swing.ListCellRenderer
  */
 class StateCodeFilterBox : JComboBox<String>() {
 
+    private  var methedTypes = listOf("All","Get","Post","Delete","Put")
 
     init {
+
+        val renderModel = CellRender()
+        setRenderer(renderModel)
+
+        val myModel = CellModel(methedTypes = methedTypes)
+        myModel.selectedItem = "All"
+        model = myModel
 
 
 
     }
+
+    override fun getItemCount(): Int {
+        return methedTypes.size
+    }
+
+
+
 
 
 
 }
 
 
+
+
+class CellModel (private var methedTypes: List<String>): DefaultComboBoxModel<String>() {
+
+    override fun getSize(): Int {
+        return methedTypes.size
+    }
+
+
+    override fun getElementAt(index: Int): String {
+        return methedTypes[index]
+    }
+
+
+
+
+}
+
 /**
  * item渲染
  */
-class CellRenderModel : ListCellRenderer<String> {
+class CellRender : ListCellRenderer<String> {
+
+
+
 
     override fun getListCellRendererComponent(
         list: JList<out String>?,

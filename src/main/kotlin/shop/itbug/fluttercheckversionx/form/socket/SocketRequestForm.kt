@@ -8,11 +8,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
+import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
@@ -70,7 +72,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     init {
 
         ///jlist初始化
-        requestsJBList.model = MyDefaultListModel(datas = emptyList())
+        requestsJBList.model = MyDefaultListModel(datas = listOf(ProjectSocketService.gen()))
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true
         requestsJBList.addListSelectionListener(this)
@@ -119,6 +121,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
 
         ///构建右侧的面板
+        rightPanel.border = BorderFactory.createEmptyBorder()
 
 
         containerJBSplitter.isOpaque = true

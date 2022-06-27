@@ -2,7 +2,8 @@ package shop.itbug.fluttercheckversionx.form.socket
 
 import cn.hutool.core.net.url.UrlBuilder
 import com.intellij.icons.AllIcons
-import shop.itbug.fluttercheckversionx.form.socket.Request
+import com.intellij.ui.ColorUtil
+import com.intellij.util.ui.UIUtil
 import java.awt.*
 import javax.swing.*
 
@@ -45,7 +46,7 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         //路径 label
         val urlLabel = JLabel()
         urlLabel.text = url.pathStr
-        urlLabel.foreground = Color.WHITE
+        urlLabel.foreground = UIUtil.getLabelForeground()
         urlPanel.add(urlLabel)
 
         val timerLabel = JLabel()
@@ -66,7 +67,7 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         if(statusCode!="200"){
             statusCodeLabel.foreground = Color.RED
         }else {
-            statusCodeLabel.foreground = Color.GREEN
+            statusCodeLabel.foreground = ColorUtil.fromHex("#79bf2d")
         }
         urlPanel.add(statusCodeLabel)
 
@@ -78,8 +79,8 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         rootPanel.add(JLabel(AllIcons.Javaee.WebService),BorderLayout.LINE_START)
 
         if(isSelected){
-            rootPanel.background = Color.GRAY
-            urlPanel.background = Color.blue
+            rootPanel.background =  UIUtil.getListSelectionBackground(false)
+            urlPanel.background = UIUtil.getListSelectionBackground(false)
         }
 
         return rootPanel

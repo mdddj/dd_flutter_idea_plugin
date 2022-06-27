@@ -22,4 +22,21 @@ class ProjectSocketService  {
         var projectName:String
     )
 
+    companion object {
+        fun gen() : SocketResponseModel {
+            return  SocketResponseModel(
+                data = mapOf(Pair("hello",1)),
+                methed = "post",
+                queryParams = emptyMap(),
+                url = "https://itbug.shop/api/test",
+                statusCode = 200,
+                body = mapOf(Pair("hello",1)),
+                headers = emptyMap(),
+                responseHeaders = emptyMap(),
+                timesatamp = 2000,
+                projectName = "test"
+            )
+        }
+    }
+
 }

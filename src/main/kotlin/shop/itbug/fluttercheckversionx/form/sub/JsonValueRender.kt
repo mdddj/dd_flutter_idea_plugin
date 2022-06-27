@@ -83,6 +83,5 @@ class JsonValueRender(private val jsonObject: Any, var project: Project): JPanel
         jsonView = LanguageTextField(JsonLanguage.INSTANCE, project, changeJson(jsonObject), false)
         jsonView.border = BorderFactory.createEmptyBorder()
 
-
     }
 }
