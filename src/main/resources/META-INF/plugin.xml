@@ -29,7 +29,9 @@
             <li>5.dio request listening</li>
             <li>6.If the json field is an image, it can be previewed with focus</li>
             <li>7.`Doc class annotation`The annotation content is automatically displayed</li>
-            <li>8.Plugin details display function, please move the mouse focus to the plugin name, the plugin details will be displayed</li>
+            <li>8.Plugin details display function, please move the mouse focus to the plugin name, the plugin details
+                will be displayed
+            </li>
             <li>9.Add markdown type parsing to the document</li>
             <br/>
             <li>1.检测最新插件版本并提供自动修复功能</li>
@@ -56,31 +58,44 @@
     <depends>org.intellij.plugins.markdown</depends>
 
     <applicationListeners>
-        <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools" />
+        <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools"/>
         <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
                          groupBundle="messages.InspectionsBundle"
                          groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
                          implementationClass="shop.itbug.fluttercheckversionx.tools.AutoVersionTool"/>
-        <completion.contributor language="yaml" implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints" order="first"/>
+        <localInspection language="Dart" displayName="Dart Public Api Fix" groupPath="Dart" enabledByDefault="true"
+                         implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
+                         groupKey="group.names.probable.bugs" groupName="Dart Public Api Fix" />
+        <completion.contributor language="yaml"
+                                implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
+                                order="first"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>
-        <codeInspection.InspectionExtension implementation="shop.itbug.fluttercheckversionx.tools.MyInspectionExtension" id="MyInspectionExtension"/>
+        <codeInspection.InspectionExtension implementation="shop.itbug.fluttercheckversionx.tools.MyInspectionExtension"
+                                            id="MyInspectionExtension"/>
         <notificationGroup id="plugin_new_version_notif" displayType="BALLOON"/>
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider" language="yaml"/>
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay" language="JSON"/>
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider" language="Dart"/>
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
+                                   language="yaml"/>
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
+                                   language="JSON"/>
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
+                language="Dart"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
-        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument" language="JSON"/>
-        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument" language="yaml" order="first"/>
-        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt" language="Dart" order="first" />
+        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
+                                    language="JSON"/>
+        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument"
+                                    language="yaml" order="first"/>
+        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
+                                    language="Dart" order="first"/>
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
                     icon="AllIcons.Debugger.ThreadStates.Socket"/>
-
-        <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory" />
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService" />
+        <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"/>
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"/>
     </extensions>
 
 

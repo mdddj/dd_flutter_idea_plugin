@@ -72,7 +72,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     init {
 
         ///jlist初始化
-        requestsJBList.model = MyDefaultListModel(datas = listOf(ProjectSocketService.gen()))
+        requestsJBList.model = MyDefaultListModel(datas = emptyList())
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true
         requestsJBList.addListSelectionListener(this)
