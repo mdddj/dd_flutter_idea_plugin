@@ -9,7 +9,9 @@ import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartLanguage
+import com.siyeh.ig.ui.UiUtils
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -55,7 +57,10 @@ class MarkdownRender {
                 }
                 maybeSingleParagraph != null -> {
                     maybeSingleParagraph.children.joinToString("") {
-                        if (it.text == "\n") { ""} else it.toHtml(project) }
+                        if (it.text == "\n") {
+                            ""
+                        } else it.toHtml(project)
+                    }
                 }
                 else -> markdownNode.toHtml(project)
             }
@@ -82,11 +87,12 @@ private fun processTableRow(
     alignment: List<String>,
     project: Project
 ) {
-    sb.append("<tr style=\"${if (cellTag == "th") "background-color: #212529" else "background-color: #373b3e"}\">")
+    val bg = UIUtil.colorToHex(UIUtil.getTableBackground())
+    sb.append("<tr style=\"${if (cellTag == "th") "background-color: $bg" else "background-color: $bg"}\">")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
         val alignValue = alignment.getOrElse(i) { "" }
         val alignTag = if (alignValue.isEmpty()) "" else " align=\"$alignValue\" "
-        sb.append("<$cellTag$alignTag style=\"padding: 4px 12px;white-space: nowrap;margin:1px;${if (cellTag=="td") "" else ""}\">")
+        sb.append("<$cellTag$alignTag style=\"padding: 2px 8px;white-space: nowrap;margin:1px;${if (cellTag == "td") "" else ""}\">")
         sb.append("<code>${child.toHtml(project)}</code>")
         sb.append("</$cellTag>")
     }
@@ -128,12 +134,15 @@ fun MarkdownNode.toHtml(project: Project): String {
         ///节点的文本内容
         val nodeText = node.text
 
+        println("$nodeType -> $nodeText")
 
         //对节点的每一项单独处理
         when (nodeType) {
 
             //无符号列表
-            MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
+            MarkdownElementTypes.UNORDERED_LIST -> {
+                wrapChildren("ul", newline = true)
+            }
 
             //顺序列表
             MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
@@ -171,9 +180,18 @@ fun MarkdownNode.toHtml(project: Project): String {
             //笔记类型
             MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
 
+            //图片
+            MarkdownElementTypes.IMAGE -> {
+                val text = node.text
+                val url = text.substring(text.indexOf("(") + 1, text.indexOf(")"))
+                println(url)
+                sb.append("<img src=\"$url\" />")
+                sb.appendLine()
+            }
+
 
             // 文档注释里面的变量
-            MarkdownElementTypes.SHORT_REFERENCE_LINK -> sb.append("<code>$nodeText</code>")
+            MarkdownElementTypes.SHORT_REFERENCE_LINK -> sb.append("<b><code>$nodeText</code></b>")
 
             //段落p类型
             MarkdownElementTypes.PARAGRAPH -> {
@@ -237,7 +255,6 @@ fun MarkdownNode.toHtml(project: Project): String {
                     sb.append(node.text)
                 }
             }
-            MarkdownTokenTypes.TEXT,
             MarkdownTokenTypes.WHITE_SPACE,
             MarkdownTokenTypes.COLON,
             MarkdownTokenTypes.SINGLE_QUOTE,
@@ -250,6 +267,12 @@ fun MarkdownNode.toHtml(project: Project): String {
             GFMTokenTypes.CHECK_BOX,
             GFMTokenTypes.GFM_AUTOLINK -> {
                 sb.append(nodeText)
+            }
+            MarkdownTokenTypes.TEXT -> {
+                sb.append(nodeText)
+            }
+            MarkdownTokenTypes.AUTOLINK -> {
+                sb.append("<a href=\"$nodeText\">$nodeText</a>")
             }
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
@@ -288,6 +311,7 @@ fun MarkdownNode.toHtml(project: Project): String {
                 }
             }
 
+
             GFMTokenTypes.TILDE -> {
                 if (node.parent?.type != GFMElementTypes.STRIKETHROUGH) {
                     sb.append(node.text)
@@ -297,7 +321,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             GFMElementTypes.TABLE -> {
                 val alignment: List<String> = getTableAlignment(node)
                 var addedBody = false
-                sb.append("<table style=\"width:100%;border:1px solid black\">")
+                sb.append("<table>")
 
                 for (child in node.children) {
                     if (child.type == GFMElementTypes.HEADER) {
