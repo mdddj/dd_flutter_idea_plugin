@@ -8,7 +8,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "1.9.0"
+version = "1.9.1"
 
 repositories {
     mavenCentral()
@@ -26,6 +26,10 @@ intellij {
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
     version.set("2022.1.2")
+
+
+    /// Android studio 是 AI
+    /// Idea 社区办 IC
     type.set("IC")
     plugins.set(
         listOf(
@@ -38,13 +42,14 @@ intellij {
     )
 }
 
+
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.0")
-    implementation("cn.hutool:hutool-all:5.8.1")
-    implementation("org.smartboot.socket:aio-core:1.5.17")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
+    implementation("cn.hutool:hutool-all:5.8.3")
+    implementation("org.smartboot.socket:aio-core:1.5.18")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
