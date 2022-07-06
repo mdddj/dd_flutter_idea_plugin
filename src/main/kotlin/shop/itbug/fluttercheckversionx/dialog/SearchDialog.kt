@@ -1,195 +1,254 @@
 package shop.itbug.fluttercheckversionx.dialog
 
-import WidgetTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposePanel
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
-import com.intellij.ide.BrowserUtil
+import PluginVersionModel
+import cn.hutool.http.HttpRequest
+import com.google.gson.Gson
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBList
+import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextField
 import com.intellij.util.IncorrectOperationException
-import com.jetbrains.compose.theme.typography
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.launch
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
-import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
-import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
+import java.awt.BorderLayout
+import java.awt.Button
+import java.awt.Component
 import java.awt.Dimension
-import javax.swing.JComponent
+import javax.swing.*
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.ListSelectionListener
+
+
+data class PubSearchResult(
+    val packages: List<Package>,
+    val next: String
+)
+
+data class Package(
+    val `package`: String
+)
 
 
 class SearchDialog(val project: Project) : DialogWrapper(project) {
 
 
-    //项目所有插件
-    var allPlugins = emptyList<String>()
+    private var selectedModel: Package? = null
+    private var selectLabel: JLabel = JLabel()
 
+
+    private var versionSelect: VersionSelect = VersionSelect()
+    private var bottomPanel = Box.createHorizontalBox()
+    private val resultList = SearchListResultShow {
+        myOKAction.isEnabled = false
+        bottomPanel.add(versionSelect)
+        selectedModel = it
+        selectLabel.text = it.`package` + ":"
+        versionSelect.doRequest(it.`package`)
+        myOKAction.isEnabled = true
+    }
+
+    //项目所有插件
+    private var allPlugins = emptyList<String>()
 
     init {
         title = "搜索包"
         init()
         getAllPlugins()
+        setOKButtonText("添加包")
+        setCancelButtonText("取消")
+        setOKButtonTooltip("点击确定后会在pubspec.yaml文件后添加选中对应的包")
+        myOKAction.isEnabled = false
     }
+
+
+    override fun doOKAction() {
+        doInset()
+        super.doOKAction()
+    }
+
+
+    //执行插入
+    private fun doInset() {
+        selectedModel?.let {
+            val pluginName = it.`package`
+
+
+            val psiFile = MyPsiElementUtil.getPubSecpYamlFile(project)
+            if (psiFile != null) {
+                val qualifiedKeyInFile = YAMLUtil.getQualifiedKeyInFile(psiFile as YAMLFile, "dependencies")
+                val version = "^" + versionSelect.item
+                val blockElement = YAMLElementGenerator.getInstance(project)
+                    .createYamlKeyValue(pluginName, version)
+                val eolElement = YAMLElementGenerator.getInstance(project).createEol()
+                WriteCommandAction.runWriteCommandAction(project) {
+                    try {
+                        qualifiedKeyInFile?.add(eolElement)
+                        qualifiedKeyInFile?.add(blockElement)
+                    } catch (_: IncorrectOperationException) {
+                    }
+                }
+
+            }
+        }
+    }
+
 
     override fun getPreferredSize(): Dimension {
         return Dimension(600, 380)
     }
 
 
-    private fun getAllPlugins(){
+    override fun isOKActionEnabled(): Boolean {
+        return false
+    }
+
+    private fun getAllPlugins() {
         allPlugins = MyPsiElementUtil.getAllPlugins(project)
     }
 
     override fun createCenterPanel(): JComponent {
-        return ComposePanel().apply {
-            setBounds(0, 0, 600, 380)
-            setContent {
-                var name by remember { mutableStateOf(TextFieldValue("")) }
-                var searchLoading by remember { mutableStateOf(false) }
-                var results by remember { mutableStateOf(emptyList<shop.itbug.fluttercheckversionx.model.Package>()) }
-                var pluginsState by remember { mutableStateOf(allPlugins) }
-                WidgetTheme(darkTheme = true) {
-                    Surface(modifier = Modifier.fillMaxSize()) {
-                        Box {
-                            Column {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("包搜索功能还在测试中,欢迎提出意见", modifier = Modifier.weight(1f))
-                                    TextButton(onClick = {
-                                        BrowserUtil.browse("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
-                                    }){
-                                        Text("意见反馈")
-                                    }
-                                }
-                                Divider()
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    TextField(
-                                        value = name,
-                                        onValueChange = { v: TextFieldValue -> name = v },
-                                        placeholder = { Text("输入包名搜索") }, modifier = Modifier.weight(1f).padding(8.dp)
-                                    )
-                                    Box(Modifier.width(12.dp))
-                                    Button(onClick = {
-                                        searchLoading = true
-                                        val api = ServiceCreate.create<PubService>().search(name.text)
-                                        try {
-                                            api.execute().apply {
-                                                results = body()?.packages ?: emptyList()
-                                                searchLoading = false
-                                            }
-                                        } catch (e: Exception) {
-                                            searchLoading = false
-                                        }
+        val corePanel = JPanel(BorderLayout())
+        corePanel.preferredSize = Dimension(500, 300)
+        corePanel.add(MySearchField {
+            resultList.model = ResultModel(it.packages)
+        }, BorderLayout.NORTH)
+        corePanel.add(JBScrollPane(resultList), BorderLayout.CENTER)
 
-                                    }) {
-                                        if (searchLoading) {
-                                            Text("搜索中")
-                                        } else {
-                                            Text("搜索包")
-                                        }
-                                    }
-                                    if (searchLoading)
-                                        CircularProgressIndicator()
-                                }
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(2),
-                                ) {
-                                    items(results.size) {
-                                        pluginDetailView(results[it].`package`, project, onAdded = {
-                                            pluginsState = MyPsiElementUtil.getAllPlugins(project)
-                                        }, plugins = pluginsState)
-                                    }
 
-                                }
-                            }
-                        }
-                    }
-                }
+
+        bottomPanel.add(selectLabel)
+        corePanel.add(bottomPanel, BorderLayout.PAGE_END)
+        return corePanel
+    }
+
+}
+
+
+/**
+ * 获取输入的搜索包
+ */
+typealias SearchResultHandle = (obj: PubSearchResult) -> Unit
+
+class MySearchField(val handle: SearchResultHandle) : JPanel() {
+
+    private val searchTextField = JBTextField()
+
+    private val searchButton = Button("搜索")
+
+    init {
+        layout = BoxLayout(this, BoxLayout.X_AXIS)
+        add(JBLabel("插件名:"))
+        add(searchTextField)
+        add(searchButton)
+
+        searchButton.addActionListener {
+            doSearch()
+        }
+    }
+
+    //执行搜索
+    private fun doSearch() {
+        searchButton.label = "搜索中..."
+        val keyWorlds = searchTextField.text
+        try {
+            val response = HttpRequest.get("https://pub.dartlang.org/api/search?q=${keyWorlds}").execute()
+            val result = Gson().fromJson(response.body(), PubSearchResult::class.java)
+
+            handle(result)
+        } catch (e: Exception) {
+            println("搜索失败")
+        }
+        searchButton.label = "搜索"
+    }
+
+}
+
+
+typealias DoSelectChange = (model: Package) -> Unit
+
+class SearchListResultShow(val doSelect: DoSelectChange) : JBList<Package>(), ListSelectionListener {
+
+    init {
+        cellRenderer = ReultItemRender()
+        setEmptyText("空空如也")
+        addListSelectionListener(this)
+    }
+
+    override fun valueChanged(e: ListSelectionEvent?) {
+        if (e?.valueIsAdjusting == false) {
+            if (leadSelectionIndex != -1) {
+                val selectedModel = model.getElementAt(leadSelectionIndex)
+                doSelect(selectedModel)
             }
         }
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
-@Composable
-fun pluginDetailView(pluginName: String, project: Project,onAdded: ()->Unit,plugins: List<String>) {
 
-
-    var detail by mutableStateOf<PubVersionDataModel?>(null)
-
-
-
-
-    fun fetchDetail() {
-        if (detail == null) {
-            kotlinx.coroutines.GlobalScope.launch {
-                ServiceCreate.create<PubService>().callPluginDetails(pluginName).execute().apply {
-                    detail = body()
-                }
-            }
-        }
+class ResultModel(private val packages: List<Package>) : DefaultListModel<Package>() {
+    override fun get(index: Int): Package {
+        return packages[index]
     }
 
-
-    Column(modifier = Modifier.padding(12.dp)) {
-        Card(modifier = Modifier.fillMaxWidth(), elevation = 10.dp) {
-            Column {
-
-                    Text(pluginName, modifier = Modifier.padding(12.dp), style = typography.h6)
-
-                if (detail != null) {
-                    Text(
-                        "最新版本:${detail!!.latest.version}",
-                        modifier = Modifier.padding(start = 12.dp, top = 4.dp, bottom = 4.dp),
-                        style = typography.body1
-                    )
-                }
-
-                TextButton(onClick = {
-                    val psiFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-                    if (psiFile != null) {
-                        val qualifiedKeyInFile = YAMLUtil.getQualifiedKeyInFile(psiFile as YAMLFile, "dependencies")
-                        val version = detail?.latest?.version
-                        var versionText = "any"
-                        if (version != null) {
-                            versionText = "^$version"
-                        }
-                        val blockElement = YAMLElementGenerator.getInstance(project)
-                            .createYamlKeyValue(pluginName, versionText)
-                        val eolElement=  YAMLElementGenerator.getInstance(project).createEol()
-                        WriteCommandAction.runWriteCommandAction(project) {
-                            try {
-                                qualifiedKeyInFile?.add(eolElement)
-                                qualifiedKeyInFile?.add(blockElement)
-                                onAdded.invoke()
-                            } catch (_: IncorrectOperationException) {
-                            }
-                        }
-
-                    }
-                }, modifier = Modifier.padding(start = 12.dp), enabled = !plugins.contains(pluginName)) {
-                    if(plugins.contains(pluginName)){
-                        Text("已存在")
-                    }else{
-                        Text("导包到当前项目")
-                    }
-                }
-            }
-        }
-        LaunchedEffect(pluginName) {
-            fetchDetail()
-        }
-
+    override fun getSize(): Int {
+        return packages.size
     }
+
+    override fun getElementAt(index: Int): Package {
+        return packages[index]
+    }
+}
+
+class ReultItemRender : ListCellRenderer<Package> {
+    override fun getListCellRendererComponent(
+        list: JList<out Package>?,
+        value: Package?,
+        index: Int,
+        isSelected: Boolean,
+        cellHasFocus: Boolean
+    ): Component {
+        return JLabel(value?.`package`)
+    }
+}
+
+
+class VersionSelect : ComboBox<String>() {
+
+    init {
+        isEnabled = false
+        model = VersionSelectModel(emptyList())
+    }
+
+    fun doRequest(pluginName: String) {
+
+        model = VersionSelectModel(emptyList())
+        try {
+            val response = HttpRequest.get("https://pub.dartlang.org/packages/$pluginName.json").execute()
+            val result = Gson().fromJson(response.body(), PluginVersionModel::class.java)
+            model = VersionSelectModel(versions = result.versions)
+            isEnabled = true
+            model.selectedItem = result.versions.first()
+        } catch (e: Exception) {
+            println("搜索失败")
+        }
+    }
+}
+
+class VersionSelectModel(val versions: List<String>) : DefaultComboBoxModel<String>() {
+    override fun getSize(): Int {
+        return versions.size
+    }
+
+    override fun getElementAt(index: Int) = versions.get(index)
+
+    override fun getIndexOf(anObject: Any?) = versions.indexOf(anObject as String)
+
+
 }
