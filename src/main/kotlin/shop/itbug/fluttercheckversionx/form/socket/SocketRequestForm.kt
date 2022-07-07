@@ -63,9 +63,22 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     private val projectFilterBox = ProjectFilter()
 
     /**
-     * 状态码级别的筛选
+     * 状态码级别的筛选 get,post,等等
      */
-    private val stateCodeFilterBox = StateCodeFilterBox()
+    private val stateCodeFilterBox = StateCodeFilterBox { type ->
+        run {
+            val currentProject = projectFilterBox.model.selectedItem.toString()
+            val reqs = service.getRequestsWithProjectName(currentProject)
+            if(type == "All"){
+                requestsJBList.model = MyDefaultListModel(datas = reqs)
+            }else{
+                //执行过滤
+                val filters = reqs.filter { it.methed.uppercase() == type.uppercase() }
+                requestsJBList.model = MyDefaultListModel(datas = filters)
+            }
+
+        }
+    }
 
     private var  searchTextField: DioRequestSearch
 

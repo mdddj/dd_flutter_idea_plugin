@@ -25,7 +25,7 @@ class AppService {
      */
     private var server: AioQuickServer? = null
 
-     var examples = emptyList<ResourceModel>()
+    var examples = emptyList<ResourceModel>()
 
     /**
      * 存储了flutter项目
@@ -91,6 +91,13 @@ class AppService {
         }
     }
 
+    fun getRequestsWithProjectName(projectName: String): List<Request> {
+        val d = flutterProjects.filter { it.key == projectName }
+        if (d.isNotEmpty()) {
+            return d.getValue(projectName)
+        }
+        return emptyList()
+    }
 
     /**
      * 获取全部的请求,不区分项目

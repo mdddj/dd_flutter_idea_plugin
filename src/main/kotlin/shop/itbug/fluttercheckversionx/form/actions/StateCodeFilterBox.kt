@@ -7,7 +7,7 @@ import javax.swing.*
 /**
  * 筛选状态码
  */
-class StateCodeFilterBox : JComboBox<String>() {
+class StateCodeFilterBox(val filter: (type: String)->Unit) : JComboBox<String>()  {
 
     private  var methedTypes = listOf("All","Get","Post","Delete","Put")
 
@@ -15,12 +15,19 @@ class StateCodeFilterBox : JComboBox<String>() {
 
         val renderModel = CellRender()
         setRenderer(renderModel)
-
         val myModel = CellModel(methedTypes = methedTypes)
         myModel.selectedItem = "All"
         model = myModel
 
 
+
+        //添加选择监听器
+        addActionListener { e ->
+            e?.let {
+                val item = model.selectedItem
+                filter.invoke(item.toString())
+            }
+        }
 
     }
 
