@@ -7,7 +7,7 @@ import javax.swing.*
 /**
  * 筛选状态码
  */
-class StateCodeFilterBox(val filter: (type: String)->Unit) : JComboBox<String>()  {
+class StateCodeFilterBox(private val filter: (type: String)->Unit) : JComboBox<String>()  {
 
     private  var methedTypes = listOf("All","Get","Post","Delete","Put")
 

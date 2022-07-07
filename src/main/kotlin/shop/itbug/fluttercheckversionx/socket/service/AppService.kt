@@ -36,6 +36,9 @@ class AppService {
     private var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
 
 
+    init {
+        setTestData()
+    }
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
      */
@@ -127,4 +130,11 @@ class AppService {
         return ArrayList(flutterProjects.keys)
     }
 
+
+    fun setTestData(){
+        flutterProjects = mutableMapOf(
+            Pair(
+                "test",ProjectSocketService.genList()
+        ))
+    }
 }

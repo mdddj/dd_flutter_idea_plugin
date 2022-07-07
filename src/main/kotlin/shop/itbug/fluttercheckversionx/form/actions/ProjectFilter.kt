@@ -22,7 +22,6 @@ class ProjectFilter : JComboBox<String>() {
     init {
         change(emptyList())
         setRenderer(MyCustomListRender())
-
     }
 
 

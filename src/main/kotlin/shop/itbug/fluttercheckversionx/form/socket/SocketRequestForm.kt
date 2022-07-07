@@ -69,9 +69,9 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         run {
             val currentProject = projectFilterBox.model.selectedItem.toString()
             val reqs = service.getRequestsWithProjectName(currentProject)
-            if(type == "All"){
+            if (type == "All") {
                 requestsJBList.model = MyDefaultListModel(datas = reqs)
-            }else{
+            } else {
                 //执行过滤
                 val filters = reqs.filter { it.methed.uppercase() == type.uppercase() }
                 requestsJBList.model = MyDefaultListModel(datas = filters)
@@ -80,12 +80,28 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         }
     }
 
-    private var  searchTextField: DioRequestSearch
+    private var searchTextField: DioRequestSearch
 
     init {
 
+        val initProjects = service.getAllProjectNames()
+        if (initProjects.isNotEmpty()) {
+            projectFilterBox.change(initProjects)
+        }
+
+        if (projectFilterBox.selectedItem != null) {
+            requestsJBList.model =
+                projectFilterBox.selectedItem?.let { service.getRequestsWithProjectName(it.toString()) }?.let {
+                    MyDefaultListModel(
+                        datas =
+                        it
+                    )
+                }
+        } else {
+            requestsJBList.model = MyDefaultListModel(datas = emptyList())
+        }
+
         ///jlist初始化
-        requestsJBList.model = MyDefaultListModel(datas = emptyList())
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true
         requestsJBList.addListSelectionListener(this)
@@ -160,19 +176,20 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     }
 
     private val service get() = service<AppService>()
+
     /**
      * 刷新列表的数据
      */
     private fun refreshData(list: List<Request>?) {
         SwingUtilities.invokeLater {
 
-            if(list==null){
+            if (list == null) {
                 val allRequest = service.getAllRequest()
                 requestsJBList.model = MyDefaultListModel(datas = allRequest)
                 if (allRequest.isEmpty()) {
                     rightPanel.clean()
                 }
-            }else{
+            } else {
                 requestsJBList.model = MyDefaultListModel(datas = list)
             }
             val allProjectNames = service.getAllProjectNames()

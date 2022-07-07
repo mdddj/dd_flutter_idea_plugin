@@ -23,10 +23,10 @@ class ProjectSocketService  {
     )
 
     companion object {
-        fun gen() : SocketResponseModel {
+        fun gen(methed: String) : SocketResponseModel {
             return  SocketResponseModel(
                 data = mapOf(Pair("hello",1)),
-                methed = "post",
+                methed = methed,
                 queryParams = emptyMap(),
                 url = "https://itbug.shop/api/test",
                 statusCode = 200,
@@ -35,6 +35,16 @@ class ProjectSocketService  {
                 responseHeaders = emptyMap(),
                 timesatamp = 2000,
                 projectName = "test"
+            )
+        }
+
+        fun genList(): List<SocketResponseModel>{
+            return listOf(
+                gen("post"),
+                gen("get"),
+                gen("delete"),
+                gen("post")
+
             )
         }
     }
