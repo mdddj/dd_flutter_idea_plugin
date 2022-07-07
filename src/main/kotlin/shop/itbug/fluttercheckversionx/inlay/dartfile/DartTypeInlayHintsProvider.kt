@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -9,11 +10,16 @@ import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.nextLeaf
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.ui.components.DialogManager
 import com.jetbrains.lang.dart.DartElementType
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
+import shop.itbug.fluttercheckversionx.dialog.ExampleModelDialog
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
+import shop.itbug.fluttercheckversionx.socket.service.AppService
+import java.awt.Point
+import java.awt.event.MouseEvent
 
 class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider.Setting> {
 
@@ -51,12 +57,12 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                         val filterIsInstanceWithName = nameComm[0]
                         val filterIsInstance =
                             filterIsInstanceWithName.children.filterIsInstance<DartComponentNameImpl>()[0]
-                       filterIsInstance.parent.nextSibling ?: return true
+                        filterIsInstance.parent.nextSibling ?: return true
                         val analysisGethover = DartAnalysisServerService.getInstance(file.project)
                             .analysis_getHover(file.virtualFile, filterIsInstance.textOffset)
                         if (analysisGethover.isNotEmpty()) {
                             val staticType = analysisGethover[0].staticType
-                            if(staticType!=null){
+                            if (staticType != null) {
                                 sink.addInlineElement(
                                     filterIsInstanceWithName.endOffset, false,
                                     hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType"), false
@@ -69,29 +75,34 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                 /// Doc 类型的超级注解
                 if (element is DartReferenceExpressionImpl) {
                     val resolve = element.reference?.resolve()
-                    if(resolve!=null){
+                    if (resolve != null) {
                         val firstChild = resolve.parent.firstChild
-                        if(firstChild is DartMetadataImpl){
+                        if (firstChild is DartMetadataImpl) {
                             val doc = firstChild.firstChild.nextSibling
-                            if(doc!=null && doc.text == "Doc"){
+                            if (doc != null && doc.text == "Doc") {
                                 val children = doc.nextSibling.children.filterIsInstance<DartArgumentListImpl>()
-                                if(children.isNotEmpty()){
+                                if (children.isNotEmpty()) {
                                     val args = children[0].children.filterIsInstance<DartNamedArgumentImpl>() /// 参数列表
-                                    for(arg in args){
-                                        if(arg.firstChild.text=="message"){
+                                    for (arg in args) {
+                                        if (arg.firstChild.text == "message") {
 //                                            val docMessage = arg.lastChild.text.replace("\"","")
-                                            val docMessage = (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText.replace("\"","").replace("\'","")
+                                            val docMessage =
+                                                (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText.replace(
+                                                    "\"",
+                                                    ""
+                                                ).replace("\'", "")
 
-                                                //判断是否有";"
-                                                val semicolonElement = element.parent.nextSibling;
-                                                ///忽略掉换行符号
-                                                if(semicolonElement is LeafPsiElement) {
-                                                    sink.addInlineElement(semicolonElement.endOffset,
-                                                        false,
-                                                        hintsInlayPresentationFactory.simpleText(docMessage,""),
-                                                        false
-                                                    )
-                                                }
+                                            //判断是否有";"
+                                            val semicolonElement = element.parent.nextSibling;
+                                            ///忽略掉换行符号
+                                            if (semicolonElement is LeafPsiElement) {
+                                                sink.addInlineElement(
+                                                    semicolonElement.endOffset,
+                                                    false,
+                                                    hintsInlayPresentationFactory.simpleText(docMessage, ""),
+                                                    false
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -101,6 +112,23 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                     }
 
                 }
+
+
+                if (element is DartReferenceExpressionImpl) {
+                    val models = service<AppService>().examples
+                    val strKeys = models.map { it.label }
+                    if (strKeys.contains(element.text)) {
+                        sink.addInlineElement(
+                            element.endOffset,
+                            false,
+                            hintsInlayPresentationFactory.simpleTextWithClick("查看示例", "查看使用示例"
+                            ) { event, translated -> ExampleModelDialog(project = element.project,
+                            exampleModel = models.first { it.label == element.text }).show() },
+                            false
+                        )
+                    }
+                }
+
                 return true
             }
 

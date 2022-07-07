@@ -15,6 +15,8 @@ import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.Icon
 
+
+
 /**
  * 悬浮提示的工厂类
  * 提供了一些的悬浮提示工具函数
@@ -22,9 +24,17 @@ import javax.swing.Icon
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
+    fun InlayPresentation.doClick(click: InlayPresentationFactory.ClickListener): InlayPresentation {
+        val s = factory.button(this, this, click, null, false)
+        return s.first
+    }
 
-    fun simpleText(text: String,tip: String?): InlayPresentation{
+    fun simpleText(text: String, tip: String?): InlayPresentation {
         return text(text).con().bg().addTip(tip ?: text)
+    }
+
+    fun simpleTextWithClick(text: String, tip: String?,click: InlayPresentationFactory.ClickListener): InlayPresentation {
+        return text(text).con().bg().addTip(tip ?: text).doClick(click)
     }
 
     fun menuActions(pluginName: String): InlayPresentation {
@@ -34,7 +44,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
                 // 插件图标项目被点击
-                JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup{
+                JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup {
                     when (it) {
                         // 打开pub.dev对应的插件详细页面
                         actionMenus[0].key -> BrowserUtil.browse("$PUB_URL$pluginName")
@@ -70,43 +80,45 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
     private fun InlayPresentation.con(): InlayPresentation = factory.container(
         this,
-            InlayPresentationFactory.Padding(
-                5,5,2,2,
-            ),
+        InlayPresentationFactory.Padding(
+            5, 5, 2, 2,
+        ),
         InlayPresentationFactory.RoundedCorners(
 
-            10,10
+            10, 10
         ),
 
 
-
-    )
+        )
 
 
     private val actionMenus = listOf(
-        MenuItem("Go to the pub.dev page",AllIcons.Toolwindows.WebToolWindow,"pub"),
+        MenuItem("Go to the pub.dev page", AllIcons.Toolwindows.WebToolWindow, "pub"),
     )
 
 
 
-    fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> = MyPluginMenusAvtionPopup(actionMenus,itemSelected)
+
+    fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> =
+        MyPluginMenusAvtionPopup(actionMenus, itemSelected)
 
 
     /// 自定义菜单弹窗
-    class MyPluginMenusAvtionPopup(private val items: List<MenuItem>, private val itemSelected: (key: String)-> Unit) : BaseListPopupStep<String>() {
+    class MyPluginMenusAvtionPopup(private val items: List<MenuItem>, private val itemSelected: (key: String) -> Unit) :
+        BaseListPopupStep<String>() {
 
         init {
             val titles = items.map { it.title }
             val icons = items.map { it.icon }
             super.init(
-                "Please select your action", titles ,icons
+                "Please select your action", titles, icons
             )
         }
 
         override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
-            if (selectedValue!=null) {
+            if (selectedValue != null) {
                 val find: MenuItem? = items.find { it.title == selectedValue }
-                if (find!=null){
+                if (find != null) {
                     itemSelected(find.key)
                 }
             }
@@ -118,7 +130,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
     data class MenuItem(
         val title: String,
-         val icon: Icon,
-         val key: String,
+        val icon: Icon,
+        val key: String,
     )
 }

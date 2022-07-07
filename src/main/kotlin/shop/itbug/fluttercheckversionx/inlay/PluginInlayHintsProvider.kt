@@ -1,34 +1,15 @@
 package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.codeInsight.hints.*
-import com.intellij.codeInsight.hints.presentation.InlayPresentation
-import com.intellij.codeInsight.hints.presentation.PresentationListener
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
-import com.intellij.openapi.editor.ex.util.EditorUtil
-import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
-import com.intellij.psi.util.findParentOfType
 import com.intellij.psi.util.parents
 import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
-import org.jetbrains.yaml.YAMLElementTypes
-import org.jetbrains.yaml.YAMLTextUtil
-import org.jetbrains.yaml.YAMLUtil
-import org.jetbrains.yaml.psi.YAMLFile
-import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Graphics2D
-import java.awt.Rectangle
-import javax.xml.crypto.dsig.keyinfo.KeyValue
 
 class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider.Settings> {
 
@@ -74,7 +55,9 @@ dependencies:
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
 
 
-                if (element is YAMLKeyValueImpl && element.parents(false).iterator().hasNext() && element.parents(false).iterator().next().parent is YAMLKeyValueImpl) {
+                if (element is YAMLKeyValueImpl && element.parents(false).iterator().hasNext() && element.parents(false)
+                        .iterator().next().parent is YAMLKeyValueImpl
+                ) {
                     val ds = listOf("dependencies", "dev_dependencies", "dependency_overrides")
                     val parentKeyText = (element.parents(false).iterator().next().parent as YAMLKeyValueImpl).keyText
                     if (ds.contains(parentKeyText) && element.keyText != "flutter" && element.keyText != "flutter_test") {
@@ -96,7 +79,7 @@ dependencies:
                             }
 
                             sink.addBlockElement(
-                                 element.textRange.startOffset,
+                                element.textRange.startOffset,
                                 relatesToPrecedingText = true,
                                 showAbove = true,
                                 priority = 1,

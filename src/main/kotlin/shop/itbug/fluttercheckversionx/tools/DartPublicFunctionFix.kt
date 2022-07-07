@@ -149,7 +149,6 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
 
     }
 
-
 }
 
 

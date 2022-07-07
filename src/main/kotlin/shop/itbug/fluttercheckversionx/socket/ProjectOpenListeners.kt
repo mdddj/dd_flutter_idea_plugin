@@ -11,12 +11,8 @@ class ProjectOpenListeners: ProjectManagerListener {
 
     override fun projectOpened(project: Project) {
         super.projectOpened(project)
-//        val service = project.getService(ProjectSocketService::class.java)
-//        service.onOpen(project)
-        service<AppService>().initSocketService()
-
-
-
-
+        val appService = service<AppService>()
+        appService.initSocketService()
+        appService.initExampleLabels()
     }
 }

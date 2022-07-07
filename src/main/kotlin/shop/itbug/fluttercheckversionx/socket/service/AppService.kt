@@ -1,9 +1,9 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
+import cn.hutool.http.HttpUtil
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.EDT
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.model.example.ExampleResult
+import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
@@ -18,11 +20,12 @@ import shop.itbug.fluttercheckversionx.socket.StringProtocol
 class AppService {
 
 
-
     /**
      * 全局的socket监听服务
      */
     private var server: AioQuickServer? = null
+
+     var examples = emptyList<ResourceModel>()
 
     /**
      * 存储了flutter项目
@@ -30,7 +33,7 @@ class AppService {
      * 键是项目名称
      * 值是请求列表
      */
-    private var flutterProjects = mutableMapOf<String,List<ProjectSocketService.SocketResponseModel>>()
+    private var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
 
 
     /**
@@ -48,9 +51,22 @@ class AppService {
                 server!!.setReadBufferSize(10485760) // 10m
                 try {
                     server!!.start()
-                }catch (_: Exception){
+                } catch (_: Exception) {
                 }
             }
+        }
+    }
+
+    fun initExampleLabels() {
+        GlobalScope.launch {
+            try {
+                val response = HttpUtil.get("http://127.0.0.1/api/resource/labels")
+                val model = Gson().fromJson(response, ExampleResult::class.java)
+                examples = model.data
+            } catch (e: Exception) {
+                Console.error(e)
+            }
+
         }
     }
 
@@ -81,16 +97,16 @@ class AppService {
      */
     fun getAllRequest(): List<Request> {
         val all = mutableListOf<Request>()
-         flutterProjects.values.forEach {
-             all.addAll(it)
-         }
+        flutterProjects.values.forEach {
+            all.addAll(it)
+        }
         return all
     }
 
     /**
      * 清空全部的请求
      */
-    fun cleanAllRequest(){
+    fun cleanAllRequest() {
         flutterProjects.clear()
         messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
             .handleData(null)
