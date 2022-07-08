@@ -1,20 +1,26 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
+import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
-import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
@@ -62,6 +68,9 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
      */
     private val projectFilterBox = ProjectFilter()
 
+    ///左侧区域操作栏
+    private val leftActionTools = LeftActionTools.create()
+
     /**
      * 状态码级别的筛选 get,post,等等
      */
@@ -102,6 +111,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         }
 
         ///jlist初始化
+        addHelpText()
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true
         requestsJBList.addListSelectionListener(this)
@@ -115,17 +125,19 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         jbScrollPane.border = BorderFactory.createEmptyBorder()
 
         leftPanel.add(jbScrollPane, BorderLayout.CENTER)
+        leftPanel.add(leftActionTools.component, BorderLayout.LINE_START)
 
 
         // 工具条
         val actionManager = ActionManager.getInstance()
-        val toolBar = actionManager.createActionToolbar(
+        val toolBar: ActionToolbar = actionManager.createActionToolbar(
             "Dio action Toolbar",
             actionManager.getAction("DioTool.CleanService") as DefaultActionGroup,
             true
         )
-
-        toolBar.targetComponent = dioToolbar
+        val bottomToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Dio Request")
+        toolBar.targetComponent = bottomToolWindow?.component
+        leftActionTools.targetComponent = bottomToolWindow?.component
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {
@@ -205,6 +217,28 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             if (firstIndex < 0) return
             val element = requestsJBList.model.getElementAt(firstIndex)
             rightPanel.changeShowValue(element, project)
+        }
+    }
+
+
+    private fun addHelpText(){
+        requestsJBList.setEmptyText("暂时没有监听到请求.")
+        requestsJBList.emptyText.appendLine("此功能需要搭配flutter插件使用.")
+        requestsJBList.emptyText.appendLine("")
+        requestsJBList.emptyText.appendLine(
+            AllIcons.Actions.Help, "使用教程?", SimpleTextAttributes(
+                SimpleTextAttributes.STYLE_PLAIN,
+                JBUI.CurrentTheme.Link.Foreground.ENABLED
+            )
+        ) {
+            DioHelpDialog(project).show()
+        }
+        requestsJBList.emptyText.appendLine("")
+        requestsJBList.emptyText.appendText("请梁典典喝咖啡(打赏)", SimpleTextAttributes(
+            SimpleTextAttributes.STYLE_PLAIN,
+            JBUI.CurrentTheme.Link.Foreground.ENABLED
+        )){
+            RewardDialog(project).show()
         }
     }
 

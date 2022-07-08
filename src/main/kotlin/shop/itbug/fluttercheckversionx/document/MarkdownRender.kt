@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartLanguage
-import com.siyeh.ig.ui.UiUtils
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -24,10 +23,10 @@ import org.intellij.markdown.parser.MarkdownParser
 /**
  * markdown节点
  */
-class MarkdownNode(val node: ASTNode, val parent: MarkdownNode?, val comment: String) {
+class MarkdownNode(private val node: ASTNode, val parent: MarkdownNode?, private val comment: String) {
     val children: List<MarkdownNode> = node.children.map { MarkdownNode(it, this, comment) }
-    val endOffset: Int get() = node.endOffset
-    val startOffset: Int get() = node.startOffset
+    private val endOffset: Int get() = node.endOffset
+    private val startOffset: Int get() = node.startOffset
     val type: IElementType get() = node.type
     val text: String get() = comment.substring(startOffset, endOffset)
     fun child(type: IElementType): MarkdownNode? = children.firstOrNull { it.type == type }

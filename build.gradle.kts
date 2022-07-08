@@ -6,7 +6,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "1.9.2"
+version = "1.9.3"
 
 repositories {
     mavenCentral()
@@ -48,7 +48,7 @@ dependencies {
     implementation("cn.hutool:hutool-all:5.8.3")
     implementation("org.smartboot.socket:aio-core:1.5.18")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 }

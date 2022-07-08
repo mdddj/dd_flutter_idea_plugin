@@ -30,7 +30,6 @@ class MyCustomItemRender : ListCellRenderer<Request> {
 
         val url = UrlBuilder.ofHttp(value!!.url)
 
-
         ///最外层的panel
         val rootPanel = JPanel()
         rootPanel.layout = BorderLayout()

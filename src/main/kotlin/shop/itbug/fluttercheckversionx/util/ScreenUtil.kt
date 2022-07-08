@@ -7,7 +7,7 @@ class ScreenUtil {
 
 
    companion object {
-       fun getScreenSize(): Dimension {
+       private fun getScreenSize(): Dimension {
            return Toolkit.getDefaultToolkit().screenSize
        }
 
