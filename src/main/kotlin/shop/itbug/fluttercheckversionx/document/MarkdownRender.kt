@@ -1,16 +1,10 @@
 package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.Language
-import com.intellij.lang.documentation.DocumentationSettings
-import com.intellij.openapi.editor.HighlighterColors
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -86,7 +80,7 @@ private fun processTableRow(
     alignment: List<String>,
     project: Project
 ) {
-    val bg = UIUtil.colorToHex(UIUtil.getTableBackground())
+    val bg = UIUtil.getTableBackground()
     sb.append("<tr style=\"${if (cellTag == "th") "background-color: $bg" else "background-color: $bg"}\">")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
         val alignValue = alignment.getOrElse(i) { "" }
@@ -108,10 +102,6 @@ fun MarkdownNode.toHtml(project: Project): String {
 //    if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
 //        return text
 //    }
-
-
-    /// 当前项目的主要语言
-    var currentCodeFenceLang = "dart"
 
     /// 字符串构建器
     val sb = StringBuilder()
@@ -203,11 +193,8 @@ fun MarkdownNode.toHtml(project: Project): String {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append("<code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                    sb.append("<code>")
                     sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                        DocumentationSettings.getInlineCodeHighlightingMode(),
-                        project,
-                        DartLanguage.INSTANCE,
                         text
                     )
                     sb.append("</code>")
@@ -218,15 +205,11 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
                 sb.trimEnd()
-                sb.append("<pre><code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                sb.append("<pre><code>")
                 processChildren()
                 sb.append("</code></pre>")
             }
 
-
-            MarkdownTokenTypes.FENCE_LANG -> {
-                currentCodeFenceLang = nodeText
-            }
 
             //长短链接
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
@@ -276,12 +259,6 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
                 sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                    when (DocumentationSettings.isHighlightingOfCodeBlocksEnabled()) {
-                        true -> DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING
-                        false -> DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING
-                    },
-                    project,
-                    guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE,
                     nodeText
                 )
             }
@@ -365,58 +342,12 @@ private fun MarkdownNode.visit(action: (MarkdownNode, () -> Unit) -> Unit) {
 }
 
 private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-    highlightingMode: DocumentationSettings.InlineCodeHighlightingMode,
-    project: Project,
-    language: Language,
     codeSnippet: String
 ): StringBuilder {
     val codeSnippetBuilder = StringBuilder()
-    if (highlightingMode == DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING) { // highlight code by lexer
-        HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-            codeSnippetBuilder,
-            project,
-            language,
-            codeSnippet,
-            false,
-            DocumentationSettings.getHighlightingSaturation(true)
-        )
-    } else {
-        codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
-    }
-    if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
-        // set code text color as editor default code color instead of doc component text color
-        val codeAttributes =
-            EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
-        codeAttributes.backgroundColor = null
-        appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
-    } else {
-        append(codeSnippetBuilder.toString())
-    }
+    codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
+    append(codeSnippetBuilder.toString())
     return this
-}
-
-private fun StringBuilder.appendStyledSpan(
-    doHighlighting: Boolean,
-    attributes: TextAttributes,
-    value: String?
-): StringBuilder {
-    if (doHighlighting) {
-        HtmlSyntaxInfoUtil.appendStyledSpan(
-            this,
-            attributes,
-            value,
-            DocumentationSettings.getHighlightingSaturation(true)
-        )
-    } else {
-        append(value)
-    }
-    return this
-}
-
-private fun guessLanguage(name: String): Language? {
-    val lower = StringUtil.toLowerCase(name)
-    return Language.findLanguageByID(lower)
-        ?: Language.getRegisteredLanguages().firstOrNull { StringUtil.toLowerCase(it.id) == lower }
 }
 
 private fun getTableAlignment(node: MarkdownNode): List<String> {

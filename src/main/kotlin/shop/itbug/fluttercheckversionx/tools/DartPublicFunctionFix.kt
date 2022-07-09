@@ -7,17 +7,11 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.PsiShortNamesCache
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiElementFilter
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.childrenOfType
 import com.jetbrains.lang.dart.DartTokenTypes
-import com.jetbrains.lang.dart.psi.DartCallExpression
-import com.jetbrains.lang.dart.psi.DartVisitor
 import com.jetbrains.lang.dart.psi.impl.*
 
 
@@ -38,14 +32,14 @@ class DartPublicFunctionFix : LocalInspectionTool() {
 
 class DartPublicFunctionApiFixVisitor(val holder: ProblemsHolder) : PsiElementVisitor() {
 
-    fun getMethodCallRefre(dmdElement: DartMethodDeclarationImpl): PsiElement? {
+    private fun getMethodCallRefre(dmdElement: DartMethodDeclarationImpl): PsiElement? {
         ///获取返回值
-        val dartFuntionBodyList = dmdElement.childrenOfType<DartFunctionBodyImpl>()
+        val dartFuntionBodyList = dmdElement.children.filterIsInstance<DartFunctionBodyImpl>()
         if (dartFuntionBodyList.isNotEmpty()) {
-            val dartCallExpressionList = dartFuntionBodyList.first().childrenOfType<DartCallExpressionImpl>()
+            val dartCallExpressionList = dartFuntionBodyList.first().children.filterIsInstance<DartCallExpressionImpl>()
             if (dartCallExpressionList.isNotEmpty()) {
                 val dartReferenceExpessionList =
-                    dartCallExpressionList.first().childrenOfType<DartReferenceExpressionImpl>()
+                    dartCallExpressionList.first().children.filterIsInstance<DartReferenceExpressionImpl>()
                 if (dartReferenceExpessionList.isNotEmpty()) {
                     return dartReferenceExpessionList.first()
                 }
@@ -59,21 +53,24 @@ class DartPublicFunctionApiFixVisitor(val holder: ProblemsHolder) : PsiElementVi
         if (element is DartClassDefinitionImpl) {
 
             //判断是不是继承自StatefulWidget类
-            val superClassList = element.childrenOfType<DartSuperclassImpl>()
+            val superClassList = element.children.filterIsInstance<DartSuperclassImpl>()
             if (superClassList.isNotEmpty()) {
-                val superClassName = superClassList.first().childrenOfType<DartTypeImpl>().first().text
+                val superClassName = superClassList.first().children.filterIsInstance<DartTypeImpl>().first().text
                 if (checkSuperClassNames.contains(superClassName)) {
                     ///包含需要待检测的类
                     val methods =
-                        element.childrenOfType<DartClassBodyImpl>().first().childrenOfType<DartClassMembersImpl>()
-                            .first().childrenOfType<DartMethodDeclarationImpl>()
+                        element.children.filterIsInstance<DartClassBodyImpl>()
+                            .first().children.filterIsInstance<DartClassMembersImpl>()
+                            .first().children.filterIsInstance<DartMethodDeclarationImpl>()
                     val names =
-                        methods.filter { it.childrenOfType<DartComponentNameImpl>().first().text == "createState" }
+                        methods.filter {
+                            it.children.filterIsInstance<DartComponentNameImpl>().first().text == "createState"
+                        }
                     if (names.isNotEmpty()) {
                         val dmdElement = names.first() //DartMethodDeclarationImpl节点
-                        val name = dmdElement.childrenOfType<DartComponentNameImpl>().first().text
+                        val name = dmdElement.children.filterIsInstance<DartComponentNameImpl>().first().text
                         if (name.equals("createState")) {
-                            val returnTypes = dmdElement.childrenOfType<DartReturnTypeImpl>()
+                            val returnTypes = dmdElement.children.filterIsInstance<DartReturnTypeImpl>()
                             if (returnTypes.isNotEmpty()) {
                                 val returnTypeEle = returnTypes.first()
 
@@ -138,10 +135,10 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
         }
 
 
-        val classfind = PsiTreeUtil.collectElementsOfType(file.originalElement,DartComponentNameImpl::class.java)
+        val classfind = PsiTreeUtil.collectElementsOfType(file.originalElement, DartComponentNameImpl::class.java)
         println(classfind.size)
-        for(c in classfind){
-            if(c.text.equals(className)){
+        for (c in classfind) {
+            if (c.text.equals(className)) {
                 val newEl = factory.createDummyHolder(renameText, DartTokenTypes.COMPONENT_NAME, null)
                 c.replace(newEl)
             }
@@ -153,7 +150,7 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
 
 
 inline fun <reified T : PsiElement> findElementWithType(element: PsiElement): T? {
-    val childrens = element.childrenOfType<T>();
+    val childrens = element.children.filterIsInstance<T>();
     if (childrens.isNotEmpty()) {
         return childrens.first()
     }

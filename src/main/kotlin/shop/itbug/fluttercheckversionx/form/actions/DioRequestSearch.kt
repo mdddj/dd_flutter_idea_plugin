@@ -38,7 +38,7 @@ class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextFi
             val document = e.document
             val text = document.getText(0, document.length)
             val allRequest = appService.getAllRequest()
-            val results = allRequest.filter { it.url.uppercase().contains(text.uppercase()) }
+            val results = allRequest.filter { it.url.toUpperCase().contains(text.toUpperCase()) }
             if(results.isNotEmpty()){
                 filterUrlHandler.invoke(results)
                 history = results.map { it.url }

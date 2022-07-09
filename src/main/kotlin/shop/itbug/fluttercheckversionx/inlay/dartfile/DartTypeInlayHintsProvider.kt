@@ -140,6 +140,4 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
         return DefaulImmediateConfigurable()
     }
 
-    override val group: InlayGroup
-        get() = InlayGroup.TYPES_GROUP
 }

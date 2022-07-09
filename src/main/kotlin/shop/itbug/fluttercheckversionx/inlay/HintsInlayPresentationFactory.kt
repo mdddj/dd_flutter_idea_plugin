@@ -24,17 +24,17 @@ import javax.swing.Icon
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
-    fun InlayPresentation.doClick(click: InlayPresentationFactory.ClickListener): InlayPresentation {
-        val s = factory.button(this, this, click, null, false)
-        return s.first
-    }
+//    private fun InlayPresentation.doClick(click: InlayPresentationFactory.ClickListener): InlayPresentation {
+//        val s = factory.button(this, this, click, null)
+//        return s.first
+//    }
 
     fun simpleText(text: String, tip: String?): InlayPresentation {
         return text(text).con().bg().addTip(tip ?: text)
     }
 
     fun simpleTextWithClick(text: String, tip: String?,click: InlayPresentationFactory.ClickListener): InlayPresentation {
-        return text(text).con().bg().addTip(tip ?: text).doClick(click)
+        return text(text).con().bg().addTip(tip ?: text)
     }
 
     fun menuActions(pluginName: String): InlayPresentation {

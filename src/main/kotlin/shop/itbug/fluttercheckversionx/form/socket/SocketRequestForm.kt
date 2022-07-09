@@ -13,7 +13,6 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
@@ -82,7 +81,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
                 requestsJBList.model = MyDefaultListModel(datas = reqs)
             } else {
                 //执行过滤
-                val filters = reqs.filter { it.methed.uppercase() == type.uppercase() }
+                val filters = reqs.filter { it.methed.equals(type, ignoreCase = true) }
                 requestsJBList.model = MyDefaultListModel(datas = filters)
             }
 
@@ -136,8 +135,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             true
         )
         val bottomToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Dio Request")
-        toolBar.targetComponent = bottomToolWindow?.component
-        leftActionTools.targetComponent = bottomToolWindow?.component
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {

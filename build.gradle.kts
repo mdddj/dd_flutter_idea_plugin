@@ -23,7 +23,7 @@ intellij {
 
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
-    version.set("2022.1.2")
+    version.set("2021.2.1")
 
 
     /// Android studio 是 AI
@@ -33,9 +33,9 @@ intellij {
         listOf(
             "java",
             "yaml",
-            "Dart:221.5787.37",
-            "io.flutter:68.1.4",
-            "org.intellij.plugins.markdown:221.5080.126"
+            "Dart:212.5080.8",
+            "io.flutter:61.2.4",
+            "org.intellij.plugins.markdown:212.5080.22"
         )
     )
 }
@@ -65,10 +65,18 @@ tasks {
         kotlinOptions.jvmTarget = "11"
     }
 
-    patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("221.*")
 
+    listProductsReleases {
+//        sinceVersion.set("2021.2.1")
+//        untilVersion.set("2021.2.1")
+        sinceBuild.set("212.5712.43.2112.8609683")
+        untilBuild.set("212.5712.43.2112.8609683")
+    }
+
+    patchPluginXml {
+        changeNotes.set("""
+            优化dio请求窗口
+        """.trimIndent())
     }
 
     signPlugin {
