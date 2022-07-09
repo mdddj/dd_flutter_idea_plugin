@@ -2,7 +2,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.6.21"
-    id("org.jetbrains.intellij") version "1.6.0"
+    id("org.jetbrains.intellij") version "1.7.0"
 }
 //028486
 group = "shop.itbug"
@@ -23,7 +23,7 @@ intellij {
 
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
-    version.set("2022.1.2")
+    version.set("2022.1.3")
 
 
     /// Android studio 是 AI
@@ -38,6 +38,7 @@ intellij {
             "org.intellij.plugins.markdown:221.5080.126"
         )
     )
+
 }
 
 
@@ -65,10 +66,15 @@ tasks {
         kotlinOptions.jvmTarget = "11"
     }
 
+    listProductsReleases {
+    }
+
     patchPluginXml {
         sinceBuild.set("221")
         untilBuild.set("221.*")
-
+        changeNotes.set("""
+            
+        """.trimIndent())
     }
 
     signPlugin {
