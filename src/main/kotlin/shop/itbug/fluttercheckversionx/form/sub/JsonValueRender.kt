@@ -1,6 +1,9 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
-import com.google.gson.GsonBuilder
+import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONObject
+import com.alibaba.fastjson2.JSONReader
+import com.alibaba.fastjson2.JSONWriter
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
@@ -15,21 +18,20 @@ import javax.swing.JPanel
  *
  *
  */
-class JsonValueRender(private val jsonObject: Any, var project: Project): JPanel() {
+
+class JsonValueRender(private val jsonObject: Any, var project: Project) : JPanel() {
 
 
     private lateinit var jsonView: LanguageTextField
 
     init {
 
-        layout = BorderLayout(0,12)
+        layout = BorderLayout(0, 12)
         border = BorderFactory.createEmptyBorder()
-
 
         //创建展示json区域
         createJsonEditer()
-
-        add(jsonView,BorderLayout.CENTER)
+        add(jsonView, BorderLayout.CENTER)
 
     }
 
@@ -37,11 +39,11 @@ class JsonValueRender(private val jsonObject: Any, var project: Project): JPanel
     /**
      * 外部调用,改变json内容
      */
-    fun changeValue(json: Any?){
-        if(json!=null){
+    fun changeValue(json: Any?) {
+        if (json != null) {
             val changeJson = changeJson(json)
             jsonView.text = changeJson
-        }else{
+        } else {
             jsonView.text = ""
         }
     }
@@ -51,27 +53,17 @@ class JsonValueRender(private val jsonObject: Any, var project: Project): JPanel
      *
      * 返回要显示的json string
      */
-   private fun changeJson(json:Any): String{
-
-        val gsonBuilder = GsonBuilder()
-        gsonBuilder.setPrettyPrinting()
-        val create = gsonBuilder.create()
-
-
-        var obj = json
-        var isJson = true
-        if(json is String){
-            try {
-                obj = create.fromJson(json,Map::class.java)
-            }catch (e: Exception){
-                ///说明返回的数据不是json类型的数据
-                isJson = false
-            }
-        }
-        return if(isJson) {
-            create.toJson(obj)
-        }else{
-            json.toString()
+    private fun changeJson(json: Any): String {
+        val isJson = if (json is String) JSON.isValid(json) else false
+        return if (isJson) {
+            JSON.toJSONString(
+                JSON.parseObject(
+                    json as String
+                ),
+                JSONWriter.Feature.PrettyFormat
+            )
+        } else {
+            JSON.toJSONString(json, JSONWriter.Feature.PrettyFormat)
         }
     }
 

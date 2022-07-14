@@ -13,7 +13,6 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
@@ -55,7 +54,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     /**
      * 右侧面板
      */
-    private val rightPanel = RightDetailPanel()
+    private val rightPanel = RightDetailPanel(project)
 
 
     /**
@@ -216,7 +215,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             val firstIndex = requestsJBList.selectedIndex
             if (firstIndex < 0) return
             val element = requestsJBList.model.getElementAt(firstIndex)
-            rightPanel.changeShowValue(element, project)
+            rightPanel.changeShowValue(element)
         }
     }
 

@@ -6,7 +6,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "1.9.3"
+version = "1.9.4"
 
 repositories {
     mavenCentral()
@@ -33,8 +33,8 @@ intellij {
         listOf(
             "java",
             "yaml",
-            "Dart:221.5787.37",
-            "io.flutter:68.1.4",
+            "Dart:221.5921.27",
+            "io.flutter:69.0.4",
             "org.intellij.plugins.markdown:221.5080.126"
         )
     )
@@ -48,7 +48,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
     implementation("cn.hutool:hutool-all:5.8.3")
     implementation("org.smartboot.socket:aio-core:1.5.18")
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.alibaba:fastjson:2.0.8.graal")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
@@ -64,6 +64,10 @@ tasks {
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "11"
+    }
+
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
 
     listProductsReleases {

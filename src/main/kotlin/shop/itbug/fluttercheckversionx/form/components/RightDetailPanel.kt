@@ -14,7 +14,7 @@ import javax.swing.JPanel
  * print("hello world");
  * ```
  */
-class RightDetailPanel: JPanel() {
+class RightDetailPanel(project: Project) : JPanel() {
 
 
     /**
@@ -25,44 +25,40 @@ class RightDetailPanel: JPanel() {
     /**
      * json视图
      */
-    private var jsonView: JsonValueRender? = null
-
+    private var jsonView: JsonValueRender
 
 
     init {
         layout = BorderLayout()
         border = BorderFactory.createEmptyBorder()
+        jsonView = JsonValueRender(jsonObject = "", project = project)
+        jsonViewInit()
     }
 
 
     /**
      * 显示详情信息
      */
-    fun changeShowValue(detail: Request, project: Project){
+    fun changeShowValue(detail: Request) {
         this.detail = detail
-        if(jsonView==null){
-            jsonViewInit(project)
-        }
-        jsonView!!.changeValue(detail.body)
+        jsonView.changeValue(detail.body)
 
 
     }
 
-    private fun jsonViewInit(project: Project){
-        jsonView = JsonValueRender(detail?.body!!,project)
+    private fun jsonViewInit() {
         val jbScrollPane = JBScrollPane(jsonView)
         jbScrollPane.isOpaque = true
         jbScrollPane.border = BorderFactory.createEmptyBorder()
-        add(jbScrollPane,BorderLayout.CENTER)
+        add(jbScrollPane, BorderLayout.CENTER)
     }
 
     /**
      * 清空显示
      */
     fun clean() {
-        jsonView?.changeValue(null)
+        jsonView.changeValue("")
     }
-
 
 
 }

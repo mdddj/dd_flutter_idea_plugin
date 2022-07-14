@@ -37,7 +37,7 @@ class AppService {
 
 
 //    init {
-////        setTestData()
+//        setTestData()
 //    }
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
@@ -60,6 +60,7 @@ class AppService {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun initExampleLabels() {
         GlobalScope.launch {
             try {
