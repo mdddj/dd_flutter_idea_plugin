@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.JBScrollPane
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import java.awt.BorderLayout
@@ -25,13 +24,12 @@ class RightDetailPanel(project: Project) : JPanel() {
     /**
      * json视图
      */
-    private var jsonView: JsonValueRender
+    private var jsonView: JsonValueRender = JsonValueRender(jsonObject = "", project = project)
 
 
     init {
         layout = BorderLayout()
         border = BorderFactory.createEmptyBorder()
-        jsonView = JsonValueRender(jsonObject = "", project = project)
         jsonViewInit()
     }
 
@@ -42,15 +40,10 @@ class RightDetailPanel(project: Project) : JPanel() {
     fun changeShowValue(detail: Request) {
         this.detail = detail
         jsonView.changeValue(detail.body)
-
-
     }
 
     private fun jsonViewInit() {
-        val jbScrollPane = JBScrollPane(jsonView)
-        jbScrollPane.isOpaque = true
-        jbScrollPane.border = BorderFactory.createEmptyBorder()
-        add(jbScrollPane, BorderLayout.CENTER)
+        add(jsonView, BorderLayout.CENTER)
     }
 
     /**

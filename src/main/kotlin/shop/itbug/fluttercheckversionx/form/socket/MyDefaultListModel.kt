@@ -35,6 +35,7 @@ class MyCustomItemRender : ListCellRenderer<Request> {
 
         val box = Box.createHorizontalBox()
 
+        box.background = UIUtil.getListBackground()
         val url = UrlBuilder.ofHttp(value!!.url)
 
         ///最外层的panel
@@ -55,10 +56,6 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         urlLabel.foreground = UIUtil.getLabelForeground()
         urlPanel.add(urlLabel)
 
-        val timerLabel = JLabel()
-        timerLabel.text = (value.timesatamp).toString() + "ms"
-        timerLabel.foreground = Color.GRAY
-        urlPanel.add(timerLabel)
 
         //请求方法 label
         val methedLabel = JLabel()
@@ -87,55 +84,25 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         if (isSelected) {
             rootPanel.background = UIUtil.getListSelectionBackground(false)
             urlPanel.background = UIUtil.getListSelectionBackground(false)
+            box.background = UIUtil.getListSelectionBackground(false)
+
         }
 
         box.add(rootPanel)
         box.add(Box.createHorizontalGlue())
 
 
-        ///操作区域,比如查看请求头,查看请求参数等
-        box.add(RightActionPanel(request = value))
+        ///请求耗时label
+        val timerLabel = JLabel()
+        timerLabel.text = (value.timesatamp).toString() + "毫秒"
+        timerLabel.foreground = Color.GRAY
+        if(isSelected){
+            timerLabel.background = UIUtil.getListSelectionBackground(false)
+        }else{
+            timerLabel.background = UIUtil.getListBackground()
+        }
+        box.add(timerLabel)
         return box
     }
 }
-
-
-class RightActionPanel(request: Request) : JPanel() {
-
-    init {
-
-        add(getHeaderViewer())
-
-    }
-
-
-    private fun getHeaderViewer(): JComponent {
-        val header = JLabel(AllIcons.FileTypes.Html)
-        header.addMouseListener(object : MouseListener {
-            override fun mouseClicked(e: MouseEvent?) {
-                println("进来被点击了---")
-                if (e != null) {
-                    JBPopupFactory.getInstance().createComponentPopupBuilder(JLabel("111"), JLabel("222"))
-                        .createPopup().show(RelativePoint(e))
-                }
-
-            }
-
-            override fun mousePressed(e: MouseEvent?) {
-            }
-
-            override fun mouseReleased(e: MouseEvent?) {
-            }
-
-            override fun mouseEntered(e: MouseEvent?) {
-            }
-
-            override fun mouseExited(e: MouseEvent?) {
-            }
-        })
-        return header
-    }
-
-}
-
 

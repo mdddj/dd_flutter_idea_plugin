@@ -1,12 +1,9 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
 import com.alibaba.fastjson2.JSON
-import com.alibaba.fastjson2.JSONObject
-import com.alibaba.fastjson2.JSONReader
 import com.alibaba.fastjson2.JSONWriter
-import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
-import com.intellij.ui.LanguageTextField
+import shop.itbug.fluttercheckversionx.myjsonview.json.gui.JsonViewerPanel
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -22,17 +19,12 @@ import javax.swing.JPanel
 class JsonValueRender(private val jsonObject: Any, var project: Project) : JPanel() {
 
 
-    private lateinit var jsonView: LanguageTextField
+    private var jsonView : JsonViewerPanel = JsonViewerPanel.instance
 
     init {
-
-        layout = BorderLayout(0, 12)
+        layout = BorderLayout()
         border = BorderFactory.createEmptyBorder()
-
-        //创建展示json区域
-        createJsonEditer()
         add(jsonView, BorderLayout.CENTER)
-
     }
 
 
@@ -42,9 +34,7 @@ class JsonValueRender(private val jsonObject: Any, var project: Project) : JPane
     fun changeValue(json: Any?) {
         if (json != null) {
             val changeJson = changeJson(json)
-            jsonView.text = changeJson
-        } else {
-            jsonView.text = ""
+            jsonView.changeText(changeJson)
         }
     }
 
@@ -67,13 +57,5 @@ class JsonValueRender(private val jsonObject: Any, var project: Project) : JPane
         }
     }
 
-    /**
-     * 创建一个json viewer
-     */
-    private fun createJsonEditer() {
 
-        jsonView = LanguageTextField(JsonLanguage.INSTANCE, project, changeJson(jsonObject), false)
-        jsonView.border = BorderFactory.createEmptyBorder()
-
-    }
 }
