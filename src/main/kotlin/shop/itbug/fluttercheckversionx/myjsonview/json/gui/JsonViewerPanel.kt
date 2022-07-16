@@ -42,7 +42,7 @@ class JsonViewerPanel : AbstractPanel() {
         textPane.background = UIUtil.getPanelBackground()
         size = maximumSize
         layout = BorderLayout()
-        val settingPanel = JPanel()
+        val settingPanel = JToolBar()
         settingPanel.add(jsonIndicator)
         settingPanel.add(loadFileButton)
         settingPanel.add(formatButton)
