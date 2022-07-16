@@ -12,7 +12,7 @@ class ProjectOpenListeners: ProjectManagerListener {
     override fun projectOpened(project: Project) {
         super.projectOpened(project)
         val appService = service<AppService>()
-        appService.initSocketService()
+        appService.initSocketService(project)
         appService.initExampleLabels()
     }
 }

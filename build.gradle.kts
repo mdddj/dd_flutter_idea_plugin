@@ -77,7 +77,7 @@ tasks {
         sinceBuild.set("221")
         untilBuild.set("221.*")
         changeNotes.set("""
-            
+            修复了一些bug
         """.trimIndent())
     }
 

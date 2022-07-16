@@ -4,22 +4,27 @@ import cn.hutool.core.lang.Console
 import cn.hutool.http.HttpUtil
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
+import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
+import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.model.example.ExampleResult
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
+import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
 
 class AppService {
 
 
+    lateinit var project: Project
     /**
      * 全局的socket监听服务
      */
@@ -43,14 +48,30 @@ class AppService {
      * 初始化socket服务,并处理flutter端传输过来的值
      */
     @OptIn(DelicateCoroutinesApi::class)
-    fun initSocketService() {
+    fun initSocketService(p: Project) {
+        project = p
         if (server == null) {
             GlobalScope.launch(Dispatchers.IO) {
-                val processor: MessageProcessor<String?> =
-                    MessageProcessor<String?> { _, msg ->
-                        flutterClienJsonHandle(msg)
+                server = AioQuickServer(9999, StringProtocol(), object : MessageProcessor<String?> {
+                    override fun process(session: AioSession?, msg: String?) {
+                        msg?.let { flutterClienJsonHandle(msg) }
                     }
-                server = AioQuickServer(9999, StringProtocol(), processor)
+
+                    override fun stateEvent(
+                        session: AioSession?,
+                        stateMachineEnum: StateMachineEnum?,
+                        throwable: Throwable?
+                    ) {
+                        super.stateEvent(session, stateMachineEnum, throwable)
+                        println("状态机:${stateMachineEnum}")
+                        when(stateMachineEnum){
+                            StateMachineEnum.NEW_SESSION -> {
+                                newSessionHandle(session)
+                            }
+                            else -> {}
+                        }
+                    }
+                })
                 server!!.setReadBufferSize(10485760) // 10m
                 try {
                     server!!.start()
@@ -58,6 +79,13 @@ class AppService {
                 }
             }
         }
+    }
+
+    /**
+     * 当有新连接进来的时候处理函数
+     */
+    private fun newSessionHandle(session: AioSession?) {
+        MyNotifactionUtil.socketNotif("梁典典: 检测到APP连接成功,现在可以在底部工具栏监听dio请求了", project = project)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -68,7 +96,7 @@ class AppService {
                 val model = Gson().fromJson(response, ExampleResult::class.java)
                 examples = model.data
             } catch (e: Exception) {
-                Console.error(e)
+                Console.error(e.localizedMessage)
             }
 
         }

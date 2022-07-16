@@ -70,7 +70,7 @@
                          implementationClass="shop.itbug.fluttercheckversionx.tools.AutoVersionTool"/>
         <localInspection language="Dart" displayName="Dart Public Api Fix" groupPath="Dart" enabledByDefault="true"
                          implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
-                         groupKey="group.names.probable.bugs" groupName="Dart Public Api Fix" />
+                         groupKey="group.names.probable.bugs" groupName="Dart Public Api Fix"/>
         <completion.contributor language="yaml"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
                                 order="first"/>
@@ -78,6 +78,8 @@
         <codeInspection.InspectionExtension implementation="shop.itbug.fluttercheckversionx.tools.MyInspectionExtension"
                                             id="MyInspectionExtension"/>
         <notificationGroup id="plugin_new_version_notif" displayType="BALLOON"/>
+        <!--   dio socket 相关通知    -->
+        <notificationGroup displayType="BALLOON" id="dio_socket_notif"/>
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
                                    language="yaml"/>
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
