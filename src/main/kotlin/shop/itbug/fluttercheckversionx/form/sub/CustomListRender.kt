@@ -33,12 +33,12 @@ class CustomListRender(private val model: ProjectSocketService.SocketResponseMod
         add(StringValueRender("Status Code",model.statusCode.toString()))
         if(model.data!=null){
             add(Box.createVerticalStrut(6))
-            add(JsonValueRender(model.data,project))
+            add(JsonValueRender(project))
         }
         add(Box.createVerticalStrut(6))
-        add(JsonValueRender(model.headers,project))
+        add(JsonValueRender(project))
         add(Box.createVerticalStrut(6))
-        add(JsonValueRender(model.responseHeaders,project))
+        add(JsonValueRender(project))
     }
 
 

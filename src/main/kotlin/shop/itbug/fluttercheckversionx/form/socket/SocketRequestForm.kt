@@ -24,11 +24,7 @@ import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketRespons
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
 import java.awt.Dimension
-import javax.swing.BorderFactory
-import javax.swing.JComponent
-import javax.swing.JPanel
-import javax.swing.JToolBar
-import javax.swing.SwingUtilities
+import javax.swing.*
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
@@ -67,8 +63,14 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
      */
     private val projectFilterBox = ProjectFilter()
 
+    ///左侧竖行工具栏
+    private  var  leftToolBarCore: LeftActionTools = LeftActionTools {
+        val datas = (requestsJBList.model as MyDefaultListModel).list
+        requestsJBList.model = MyDefaultListModel(datas = datas.asReversed().asReversed())
+    }
+
     ///左侧区域操作栏
-    private val leftActionTools = LeftActionTools.create()
+    private val leftActionTools = LeftActionTools.create(leftToolBarCore)
 
     /**
      * 状态码级别的筛选 get,post,等等
@@ -100,10 +102,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         if (projectFilterBox.selectedItem != null) {
             requestsJBList.model =
                 projectFilterBox.selectedItem?.let { service.getRequestsWithProjectName(it.toString()) }?.let {
-                    MyDefaultListModel(
-                        datas =
-                        it
-                    )
+                    MyDefaultListModel(datas = it)
                 }
         } else {
             requestsJBList.model = MyDefaultListModel(datas = emptyList())
@@ -175,7 +174,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
                 override fun handleData(data: SocketResponseModel?) {
                     refreshData(null)
                 }
-
             }
         )
 
@@ -193,7 +191,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
      */
     private fun refreshData(list: List<Request>?) {
         SwingUtilities.invokeLater {
-
             if (list == null) {
                 val allRequest = service.getAllRequest()
                 requestsJBList.model = MyDefaultListModel(datas = allRequest)
@@ -220,7 +217,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     }
 
 
-    private fun addHelpText(){
+    private fun addHelpText() {
         requestsJBList.setEmptyText("暂时没有监听到请求.")
         requestsJBList.emptyText.appendLine("此功能需要搭配flutter插件使用.")
         requestsJBList.emptyText.appendLine("")
@@ -233,10 +230,12 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             DioHelpDialog(project).show()
         }
         requestsJBList.emptyText.appendLine("")
-        requestsJBList.emptyText.appendText("请梁典典喝咖啡(打赏)", SimpleTextAttributes(
-            SimpleTextAttributes.STYLE_PLAIN,
-            JBUI.CurrentTheme.Link.Foreground.ENABLED
-        )){
+        requestsJBList.emptyText.appendText(
+            "请梁典典喝咖啡(打赏)", SimpleTextAttributes(
+                SimpleTextAttributes.STYLE_PLAIN,
+                JBUI.CurrentTheme.Link.Foreground.ENABLED
+            )
+        ) {
             RewardDialog(project).show()
         }
     }

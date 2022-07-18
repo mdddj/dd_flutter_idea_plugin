@@ -2,24 +2,31 @@ package shop.itbug.fluttercheckversionx.form.socket
 
 import cn.hutool.core.net.url.UrlBuilder
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.ColorUtil
-import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import java.awt.*
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
 import javax.swing.*
 
-class MyDefaultListModel(private val datas: List<Request>) : AbstractListModel<Request>() {
+class MyDefaultListModel(private val datas: List<Request>) :
+    AbstractListModel<Request>() {
+    var list = datas
+
+
     override fun getSize(): Int {
-        return datas.size
+        return list.size
     }
 
     override fun getElementAt(index: Int): Request {
-        return datas[index]
+        return list[index]
     }
+
+    fun getReverseDataList(): List<Request> {
+        val copy = datas.toMutableList()
+        copy.reverse()
+        return copy
+    }
+
+
 }
 
 ///渲染请求列表
@@ -96,9 +103,9 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         val timerLabel = JLabel()
         timerLabel.text = (value.timesatamp).toString() + "毫秒"
         timerLabel.foreground = Color.GRAY
-        if(isSelected){
+        if (isSelected) {
             timerLabel.background = UIUtil.getListSelectionBackground(false)
-        }else{
+        } else {
             timerLabel.background = UIUtil.getListBackground()
         }
         box.add(timerLabel)

@@ -3,14 +3,16 @@ package shop.itbug.fluttercheckversionx.form.sub
 import com.alibaba.fastjson.JSON
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.ToNumberPolicy
 import com.google.gson.TypeAdapter
 import com.google.gson.internal.LinkedTreeMap
-import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
-import shop.itbug.fluttercheckversionx.myjsonview.json.gui.JsonViewerPanel
+import com.intellij.ui.LanguageTextField
+import com.intellij.ui.components.JBScrollPane
 import java.awt.BorderLayout
 import java.io.IOException
 import javax.swing.BorderFactory
@@ -25,15 +27,20 @@ import javax.swing.JPanel
  *
  */
 
-class JsonValueRender(private val jsonObject: Any, var project: Project) : JPanel() {
+class JsonValueRender(var project: Project) : JPanel() {
 
 
-    private var jsonView: JsonViewerPanel = JsonViewerPanel.instance
+    private var jsonView: LanguageTextField = LanguageTextField(
+        JsonLanguage.INSTANCE,
+        project,
+        "",
+        false
+    )
 
     init {
         layout = BorderLayout()
         border = BorderFactory.createEmptyBorder()
-        add(jsonView, BorderLayout.CENTER)
+        add(JBScrollPane(jsonView), BorderLayout.CENTER)
     }
 
 
@@ -43,7 +50,7 @@ class JsonValueRender(private val jsonObject: Any, var project: Project) : JPane
     fun changeValue(json: Any?) {
         if (json != null) {
             val changeJson = changeJson(json)
-            jsonView.changeText(changeJson)
+            jsonView.text = changeJson
         }
     }
 
@@ -54,7 +61,7 @@ class JsonValueRender(private val jsonObject: Any, var project: Project) : JPane
      */
     private fun changeJson(json: Any): String {
         val gsonBuilder =
-            GsonBuilder()
+            GsonBuilder().setPrettyPrinting().disableHtmlEscaping().setObjectToNumberStrategy(ToNumberPolicy.LAZILY_PARSED_NUMBER)
                 .create()
 
         val isJson = if (json is String) JSON.isValid(json) else false

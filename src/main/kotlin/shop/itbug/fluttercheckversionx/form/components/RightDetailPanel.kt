@@ -24,7 +24,7 @@ class RightDetailPanel(project: Project) : JPanel() {
     /**
      * json视图
      */
-    private var jsonView: JsonValueRender = JsonValueRender(jsonObject = "", project = project)
+    private var jsonView: JsonValueRender = JsonValueRender( project = project)
 
 
     init {
