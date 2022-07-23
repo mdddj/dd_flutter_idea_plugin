@@ -7,7 +7,7 @@ import com.intellij.util.ui.UIUtil
 import java.awt.*
 import javax.swing.*
 
-class MyDefaultListModel(private val datas: List<Request>) :
+class MyDefaultListModel(datas: List<Request>) :
     AbstractListModel<Request>() {
     var list = datas
 
@@ -39,58 +39,51 @@ class MyCustomItemRender : ListCellRenderer<Request> {
 
 
 ///请求列表item布局
-class MyRequestItemPanel(request: Request, isSelected: Boolean) : JPanel() {
+class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.X_AXIS) {
     init {
+
+
+        //icon
+        add(JLabel(AllIcons.Javaee.WebService))
+        add(createHorizontalStrut(4))
+
         val url = UrlBuilder.ofHttp(request.url)
-        layout = BorderLayout()
-        /// 中间一层的panel
-        val centerPanel = JPanel()
-        centerPanel.layout = BoxLayout(centerPanel, BoxLayout.Y_AXIS)
 
-        /// url + methed panel
-        val urlPanel = JPanel(FlowLayout(FlowLayout.LEADING))
-
-        //路径 label
-        val urlLabel = JLabel()
-        urlLabel.text = url.pathStr
-        urlLabel.foreground = UIUtil.getLabelForeground()
-        urlPanel.add(urlLabel)
+        //path
+        val pathLabel = JLabel(request.url).apply {
+            foreground = UIUtil.getLabelForeground()
+        }
+        add(pathLabel)
+        add(createHorizontalStrut(4))
 
 
-        //请求方法 label
-        val methedLabel = JLabel()
-        methedLabel.text = "[${request.methed}]"
-        methedLabel.foreground = Color.GRAY
-        urlPanel.add(methedLabel)
+        //method
+        val methodLabel = JLabel(request.methed).apply {
+            foreground = Color.GRAY
+        }
+        add(methodLabel)
+        add(createHorizontalStrut(4))
 
         //状态码
-        val statusCodeLabel = JLabel()
-        val statusCode = request.statusCode.toString()
-        statusCodeLabel.text = statusCode
-        if (statusCode != "200") {
-            statusCodeLabel.foreground = Color.RED
-        } else {
-            statusCodeLabel.foreground = ColorUtil.fromHex("#79bf2d")
+        val codeLabel = JLabel("${request.statusCode}").apply {
+            foreground = if (request.statusCode != 200) {
+                Color.RED
+            } else {
+                ColorUtil.fromHex("#79bf2d")
+            }
         }
-        urlPanel.add(statusCodeLabel)
+        add(codeLabel)
+        add(createHorizontalStrut(4))
 
 
-        urlPanel.minimumSize = Dimension(200, 0)
-        centerPanel.add(urlPanel)
-
-        add(centerPanel, BorderLayout.CENTER)
-        add(JLabel(AllIcons.Javaee.WebService), BorderLayout.LINE_START)
 
         if (isSelected) {
             background = UIUtil.getListSelectionBackground(false)
-            urlPanel.background = UIUtil.getListSelectionBackground(false)
-
         }
 
 
         ///请求耗时label
-        val timerLabel = JLabel()
-        timerLabel.text = (request.timesatamp).toString() + "毫秒"
+        val timerLabel = JLabel((request.timesatamp).toString() + "毫秒")
         timerLabel.foreground = Color.GRAY
         if (isSelected) {
             timerLabel.background = UIUtil.getListSelectionBackground(false)

@@ -13,7 +13,7 @@ import javax.swing.JPanel
  * print("hello world");
  * ```
  */
-class RightDetailPanel(project: Project) : JPanel() {
+class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
 
 
     /**
@@ -28,7 +28,6 @@ class RightDetailPanel(project: Project) : JPanel() {
 
 
     init {
-        layout = BorderLayout()
         border = BorderFactory.createEmptyBorder()
         jsonViewInit()
     }

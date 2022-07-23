@@ -14,6 +14,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
+import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
@@ -47,14 +48,14 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
      */
     private var requestsJBList = JBList<Request>()
 
+    private val jbScrollPane = JBScrollPane(requestsJBList)
 
     /**
      * 右侧面板
      */
     private val rightPanel = JPanel(CardLayout())
-
-
     private val rightFirstPanel = RightDetailPanel(project)
+    private val rightNextPanel = RequestDetailPanel(project)
 
 
     /**
@@ -68,10 +69,11 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     private val projectFilterBox = ProjectFilter()
 
     ///左侧竖行工具栏
-    private  var  leftToolBarCore: LeftActionTools = LeftActionTools (project,requestsJBList) {
-        val datas = (requestsJBList.model as MyDefaultListModel).list
-        requestsJBList.model = MyDefaultListModel(datas = datas.asReversed().asReversed())
-    }
+    private var leftToolBarCore: LeftActionTools =
+        LeftActionTools(project,requestsJBList, rightPanel, rightNextPanel, rightFirstPanel) {
+            val datas = (requestsJBList.model as MyDefaultListModel).list
+            requestsJBList.model = MyDefaultListModel(datas = datas)
+        }
 
     ///左侧区域操作栏
     private val leftActionTools = LeftActionTools.create(leftToolBarCore)
@@ -93,6 +95,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
         }
     }
+
 
     private var searchTextField: DioRequestSearch
 
@@ -122,7 +125,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         val leftPanel = JPanel()
         leftPanel.preferredSize = Dimension(400, 0)
         leftPanel.layout = BorderLayout(2, 2)
-        val jbScrollPane = JBScrollPane(requestsJBList)
+
         jbScrollPane.isOpaque = true // 设置透明度
         jbScrollPane.border = BorderFactory.createEmptyBorder()
 
@@ -134,7 +137,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         val actionManager = ActionManager.getInstance()
         val toolBar: ActionToolbar = actionManager.createActionToolbar(
             "Dio action Toolbar",
-            actionManager.getAction("DioTool.CleanService") as DefaultActionGroup,
+            DefaultActionGroup.EMPTY_GROUP,
             true
         )
         val bottomToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Dio Request")
@@ -165,7 +168,9 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
         ///构建右侧的面板
         rightPanel.border = BorderFactory.createEmptyBorder()
-        rightPanel.add(rightFirstPanel)
+
+        rightPanel.add(rightFirstPanel, "response_body_panel")
+        rightPanel.add(rightNextPanel, "right_detail_panel")
 
 
         containerJBSplitter.isOpaque = true
@@ -185,6 +190,14 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     }
 
 
+    /**
+     * 滚动到底部
+     */
+    private fun autoScrollToBottom() {
+        jbScrollPane.verticalScrollBar.value = jbScrollPane.verticalScrollBar.maximum + 20
+    }
+
+
     fun getContent(): JComponent {
         return containerJBSplitter
     }
@@ -198,23 +211,20 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         SwingUtilities.invokeLater {
             if (list == null) {
                 val allRequest = service.getAllRequest()
-                if(leftToolBarCore.isSelect()){
-                    allRequest.reversed()
-                }
                 requestsJBList.model = MyDefaultListModel(datas = allRequest)
                 if (allRequest.isEmpty()) {
                     rightFirstPanel.clean()
                 }
             } else {
-                if(leftToolBarCore.isSelect()){
-                    list.reversed()
-                }
                 requestsJBList.model = MyDefaultListModel(datas = list)
             }
             val allProjectNames = service.getAllProjectNames()
             projectFilterBox.change(allProjectNames)
 
-
+            //自动滚动到最底部
+            if (leftToolBarCore.isSelect()) {
+                autoScrollToBottom()
+            }
         }
     }
 
@@ -223,31 +233,37 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             val firstIndex = requestsJBList.selectedIndex
             if (firstIndex < 0) return
             val element = requestsJBList.model.getElementAt(firstIndex)
-            rightFirstPanel.changeShowValue(element)
+            if (leftToolBarCore.isInDetailView) {
+                leftToolBarCore.changeRequestInDetail(element)
+            } else {
+                rightFirstPanel.changeShowValue(element)
+            }
         }
     }
 
 
     private fun addHelpText() {
         requestsJBList.setEmptyText("暂时没有监听到请求.")
-        requestsJBList.emptyText.appendLine("此功能需要搭配flutter插件使用.")
-        requestsJBList.emptyText.appendLine("")
-        requestsJBList.emptyText.appendLine(
-            AllIcons.Actions.Help, "使用教程?", SimpleTextAttributes(
-                SimpleTextAttributes.STYLE_PLAIN,
-                JBUI.CurrentTheme.Link.Foreground.ENABLED
-            )
-        ) {
-            DioHelpDialog(project).show()
-        }
-        requestsJBList.emptyText.appendLine("")
-        requestsJBList.emptyText.appendText(
-            "请梁典典喝咖啡(打赏)", SimpleTextAttributes(
-                SimpleTextAttributes.STYLE_PLAIN,
-                JBUI.CurrentTheme.Link.Foreground.ENABLED
-            )
-        ) {
-            RewardDialog(project).show()
+        requestsJBList.emptyText.apply {
+            appendLine("此功能需要搭配flutter插件使用.")
+            appendLine("")
+            appendLine(
+                AllIcons.Actions.Help, "使用教程?", SimpleTextAttributes(
+                    SimpleTextAttributes.STYLE_PLAIN,
+                    JBUI.CurrentTheme.Link.Foreground.ENABLED
+                )
+            ) {
+                DioHelpDialog(project).show()
+            }
+            appendLine("")
+            appendText(
+                "请梁典典喝咖啡(打赏)", SimpleTextAttributes(
+                    SimpleTextAttributes.STYLE_PLAIN,
+                    JBUI.CurrentTheme.Link.Foreground.ENABLED
+                )
+            ) {
+                RewardDialog(project).show()
+            }
         }
     }
 
