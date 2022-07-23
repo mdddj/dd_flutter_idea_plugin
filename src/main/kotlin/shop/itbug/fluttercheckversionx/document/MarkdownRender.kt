@@ -133,7 +133,7 @@ fun MarkdownNode.toHtml(project: Project): String {
         ///节点的文本内容
         val nodeText = node.text
 
-        println("$nodeType -> $nodeText")
+        println("类型:${node.type}  文本:${node.text}")
 
         //对节点的每一项单独处理
         when (nodeType) {
@@ -183,7 +183,6 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.IMAGE -> {
                 val text = node.text
                 val url = text.substring(text.indexOf("(") + 1, text.indexOf(")"))
-                println(url)
                 sb.append("<img src=\"$url\" />")
                 sb.appendLine()
             }

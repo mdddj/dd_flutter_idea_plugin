@@ -33,6 +33,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             element.containingFile.virtualFile,
             element.textOffset
         )
+        print("====> result == null ?  ${result == null}")
         if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
         val docInfo = result.first()
         val dartFormalParameterList =
@@ -125,10 +126,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         }
 
         val sb = StringBuilder()
-        sb.append("|  类型   | 名称  | 必填  | 位置 |")
-        sb.append("\n")
-        sb.append("|  ----  | ----  | ----  | ----  |")
-        sb.append("\n")
+        Helper.addMarkdownTableHeader("类型","名称","必填","位置", sb = sb)
         paramsArr.forEachIndexed { index, it ->
             sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional) "{}" else "(必填参数${index + 1})"} |")
             sb.append("\n")

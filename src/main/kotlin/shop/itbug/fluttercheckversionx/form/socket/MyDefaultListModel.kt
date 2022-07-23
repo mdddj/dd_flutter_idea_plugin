@@ -20,13 +20,6 @@ class MyDefaultListModel(private val datas: List<Request>) :
         return list[index]
     }
 
-    fun getReverseDataList(): List<Request> {
-        val copy = datas.toMutableList()
-        copy.reverse()
-        return copy
-    }
-
-
 }
 
 ///渲染请求列表
@@ -39,17 +32,17 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
-
-        val box = Box.createHorizontalBox()
-
-        box.background = UIUtil.getListBackground()
-        val url = UrlBuilder.ofHttp(value!!.url)
-
-        ///最外层的panel
-        val rootPanel = JPanel()
-        rootPanel.layout = BorderLayout()
+        if (value == null) return JLabel("未知请求")
+        return MyRequestItemPanel(value, isSelected)
+    }
+}
 
 
+///请求列表item布局
+class MyRequestItemPanel(request: Request, isSelected: Boolean) : JPanel() {
+    init {
+        val url = UrlBuilder.ofHttp(request.url)
+        layout = BorderLayout()
         /// 中间一层的panel
         val centerPanel = JPanel()
         centerPanel.layout = BoxLayout(centerPanel, BoxLayout.Y_AXIS)
@@ -66,13 +59,13 @@ class MyCustomItemRender : ListCellRenderer<Request> {
 
         //请求方法 label
         val methedLabel = JLabel()
-        methedLabel.text = "[${value.methed}]"
+        methedLabel.text = "[${request.methed}]"
         methedLabel.foreground = Color.GRAY
         urlPanel.add(methedLabel)
 
         //状态码
         val statusCodeLabel = JLabel()
-        val statusCode = value.statusCode.toString()
+        val statusCode = request.statusCode.toString()
         statusCodeLabel.text = statusCode
         if (statusCode != "200") {
             statusCodeLabel.foreground = Color.RED
@@ -85,31 +78,27 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         urlPanel.minimumSize = Dimension(200, 0)
         centerPanel.add(urlPanel)
 
-        rootPanel.add(centerPanel, BorderLayout.CENTER)
-        rootPanel.add(JLabel(AllIcons.Javaee.WebService), BorderLayout.LINE_START)
+        add(centerPanel, BorderLayout.CENTER)
+        add(JLabel(AllIcons.Javaee.WebService), BorderLayout.LINE_START)
 
         if (isSelected) {
-            rootPanel.background = UIUtil.getListSelectionBackground(false)
+            background = UIUtil.getListSelectionBackground(false)
             urlPanel.background = UIUtil.getListSelectionBackground(false)
-            box.background = UIUtil.getListSelectionBackground(false)
 
         }
-
-        box.add(rootPanel)
-        box.add(Box.createHorizontalGlue())
 
 
         ///请求耗时label
         val timerLabel = JLabel()
-        timerLabel.text = (value.timesatamp).toString() + "毫秒"
+        timerLabel.text = (request.timesatamp).toString() + "毫秒"
         timerLabel.foreground = Color.GRAY
         if (isSelected) {
             timerLabel.background = UIUtil.getListSelectionBackground(false)
         } else {
             timerLabel.background = UIUtil.getListBackground()
         }
-        box.add(timerLabel)
-        return box
+        add(timerLabel)
     }
-}
 
+
+}

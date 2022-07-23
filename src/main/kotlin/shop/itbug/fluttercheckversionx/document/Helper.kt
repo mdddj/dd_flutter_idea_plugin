@@ -19,6 +19,16 @@ class Helper {
             sb.append(DocumentationMarkup.SECTION_END)
         }
 
+        //头
+        fun addKeyValueHeader(sb: java.lang.StringBuilder){
+            sb.append(DocumentationMarkup.SECTIONS_START)
+        }
+
+        //尾
+        fun addKeyValueFoot(sb: java.lang.StringBuilder){
+            sb.append(DocumentationMarkup.SECTIONS_END)
+        }
+
         // markdown表格类型
         fun addTablevalue(key: String, value: String, sb: java.lang.StringBuilder) {
             sb.append("| ")
@@ -32,6 +42,32 @@ class Helper {
         // markdown转成html
         fun markdown2Html(markdownText: String, project: Project): String {
            return MarkdownRender.renderText(markdownText, project)
+        }
+
+
+
+        fun addMarkdownTableHeader(vararg headers: String,sb: java.lang.StringBuilder){
+            var headerStr = "|"
+            headers.forEach {
+                headerStr += " $it |"
+            }
+            sb.append(headerStr)
+            sb.append("\n")
+            var divStr = "|"
+            headers.forEach { _ ->
+                divStr += " ---- | "
+            }
+            sb.append(divStr)
+            sb.append("\n")
+        }
+
+        fun addMarkdownTableLine(vararg values: String,sb: java.lang.StringBuilder){
+            var headerStr = "|"
+            values.forEach {
+                headerStr += " $it |"
+            }
+            sb.append(headerStr)
+            sb.append("\n")
         }
 
     }

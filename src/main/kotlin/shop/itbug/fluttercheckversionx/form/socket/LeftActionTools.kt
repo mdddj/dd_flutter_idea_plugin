@@ -4,23 +4,38 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.ui.components.JBList
+import shop.itbug.fluttercheckversionx.dialog.RequestDetailDialog
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.util.function.Supplier
 
 typealias RequestSort = (state: Boolean) -> Unit
 
+
+//左侧工具栏操作区域
 class LeftActionTools(
-    requestSort: RequestSort
+    project: Project,
+    reqList: JBList<Request>,
+    requestSort: RequestSort,
 ) : DefaultActionGroup() {
 
     private val deletButton = DeleButton()
     private var sortAction = MySortToggleAction(requestSort)
-
     private val sortOption = SortAction(action = sortAction)
 
     init {
         add(deletButton.action)
         add(sortOption.action)
+        addSeparator()
+        add(object : AnAction("查看请求头","查看详细信息",AllIcons.Ide.ConfigFile){
+            override fun actionPerformed(e: AnActionEvent) {
+                val selectItem = reqList.selectedValue
+                selectItem?.let {
+                    RequestDetailDialog.show(project,selectItem)
+                }
+            }
+        })
     }
 
     fun isSelect(): Boolean{ return sortAction.s}
@@ -35,6 +50,7 @@ class LeftActionTools(
         }
     }
 }
+
 
 
 class DeleButton : ActionButton(

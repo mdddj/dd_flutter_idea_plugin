@@ -23,6 +23,7 @@ import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
+import java.awt.CardLayout
 import java.awt.Dimension
 import javax.swing.*
 import javax.swing.event.ListSelectionEvent
@@ -50,7 +51,10 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     /**
      * 右侧面板
      */
-    private val rightPanel = RightDetailPanel(project)
+    private val rightPanel = JPanel(CardLayout())
+
+
+    private val rightFirstPanel = RightDetailPanel(project)
 
 
     /**
@@ -64,7 +68,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     private val projectFilterBox = ProjectFilter()
 
     ///左侧竖行工具栏
-    private  var  leftToolBarCore: LeftActionTools = LeftActionTools {
+    private  var  leftToolBarCore: LeftActionTools = LeftActionTools (project,requestsJBList) {
         val datas = (requestsJBList.model as MyDefaultListModel).list
         requestsJBList.model = MyDefaultListModel(datas = datas.asReversed().asReversed())
     }
@@ -161,6 +165,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
 
         ///构建右侧的面板
         rightPanel.border = BorderFactory.createEmptyBorder()
+        rightPanel.add(rightFirstPanel)
 
 
         containerJBSplitter.isOpaque = true
@@ -193,11 +198,17 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         SwingUtilities.invokeLater {
             if (list == null) {
                 val allRequest = service.getAllRequest()
+                if(leftToolBarCore.isSelect()){
+                    allRequest.reversed()
+                }
                 requestsJBList.model = MyDefaultListModel(datas = allRequest)
                 if (allRequest.isEmpty()) {
-                    rightPanel.clean()
+                    rightFirstPanel.clean()
                 }
             } else {
+                if(leftToolBarCore.isSelect()){
+                    list.reversed()
+                }
                 requestsJBList.model = MyDefaultListModel(datas = list)
             }
             val allProjectNames = service.getAllProjectNames()
@@ -212,7 +223,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             val firstIndex = requestsJBList.selectedIndex
             if (firstIndex < 0) return
             val element = requestsJBList.model.getElementAt(firstIndex)
-            rightPanel.changeShowValue(element)
+            rightFirstPanel.changeShowValue(element)
         }
     }
 

@@ -30,8 +30,8 @@ class ProjectSocketService  {
                 queryParams = emptyMap(),
                 url = "https://itbug.shop/api/test",
                 statusCode = 200,
-                body = mapOf(Pair("hello",1)),
-                headers = emptyMap(),
+                body = mapOf(Pair("page",1),Pair("pageSize",2)),
+                headers = mapOf(Pair("auth_token","113432423423")),
                 responseHeaders = emptyMap(),
                 timesatamp = 2000,
                 projectName = "test"

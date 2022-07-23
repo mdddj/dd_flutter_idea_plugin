@@ -4,6 +4,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
+import java.awt.Dimension
 import javax.swing.*
 
 
@@ -42,9 +43,16 @@ class DioHelpDialog(val project: Project) : DialogWrapper(project) {
         isResizable = false
     }
 
+
+    override fun getInitialSize(): Dimension {
+        return  Dimension(370,420)
+    }
     override fun createCenterPanel(): JComponent? {
         val box = Box.createVerticalBox()
-        box.add(MarkdownShowComponent(helpText, project))
+        val html = MarkdownShowComponent.getDocComp(helpText, project,htmlText = false)
+        html.preferredSize = Dimension(this.preferredSize.width,340)
+        html.removeCornerMenu()
+        box.add(html)
         box.add(Box.createVerticalGlue())
         box.add(Box.createVerticalGlue())
         box.add(createButtons())
