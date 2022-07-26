@@ -142,7 +142,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
 
         ///获取类型提示文本
         fun getElementKinkText(): String {
-            val str = when (info.elementKind.toString()) {
+            return when (info.elementKind?.toString() ?: "") {
                 "class" -> "对象"
                 "parameter" -> "参数"
                 "method" -> "方法"
@@ -153,9 +153,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
                 "top level variable" -> "顶级变量 (注解)"
                 "enum" -> "是个枚举"
                 "constructor" -> "构造方法"
-                else -> info.elementKind.toString()
+                else -> "未知"
             }
-            return str
         }
 
 
