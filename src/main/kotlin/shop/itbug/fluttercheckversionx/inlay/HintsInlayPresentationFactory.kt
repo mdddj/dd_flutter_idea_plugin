@@ -39,9 +39,8 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
     fun menuActions(pluginName: String): InlayPresentation {
         return factory.mouseHandling(
-            base = dartIcon().addTip("Click to operate on the plug-in package").con(),
+            base = dartIcon().addTip("Click to operate on the plug-in package"),
             clickListener = { event, _ ->
-
 
                 // 插件图标项目被点击
                 JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup {

@@ -133,7 +133,6 @@ fun MarkdownNode.toHtml(project: Project): String {
         ///节点的文本内容
         val nodeText = node.text
 
-        println("类型:${node.type}  文本:${node.text}")
 
         //对节点的每一项单独处理
         when (nodeType) {

@@ -2,35 +2,49 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
+import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.elementType
 import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
+import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.services.ServiceCreate
 import shop.itbug.fluttercheckversionx.services.await
+import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 
 /**
  * pub包自动提示的文档
  */
-class YamlDocument : DocumentationProvider {
+class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
+
+    private val logger = LoggerFactory.getLogger(YamlDocument::class.java)
 
 
     /**
      * 生成插件版本的提示
      */
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
+
+
+        if (element == null) return ""
+        if (element !is YAMLKeyValueImpl) return "无法获取该插件版本信息"
+
+
+        val allPlugins = MyPsiElementUtil.getAllPlugins(element.project)
+        val devPlugins = MyPsiElementUtil.getAllPlugins(element.project,"dev_dependencies")
+
         var tips: String? = null
-        var pluginName = element?.firstChild?.text ?: ""
-        if (element is LeafPsiElement) {
-            pluginName = element.parent.firstChild.text ?: ""
-        }
+        val pluginName = element.keyText
+        if (!allPlugins.contains(pluginName) && !devPlugins.contains(pluginName)) return "无法获取该插件版本信息"
+
+
         if (pluginName.isNotEmpty()) {
             var detail: PubVersionDataModel? = null
             runBlocking {
@@ -38,7 +52,7 @@ class YamlDocument : DocumentationProvider {
                 try {
                     detail = service.callPluginDetails(pluginName).await()
                 } catch (e: Exception) {
-                    tips = "捕获到异常:" + e.localizedMessage
+                    tips = "无法获取该插件版本信息:" + e.localizedMessage
                 }
             }
             if (detail != null) {
@@ -52,7 +66,7 @@ class YamlDocument : DocumentationProvider {
             }
 
         }
-        return tips ?: "None"
+        return tips ?: "无法获取该插件版本信息"
     }
 
     /**
@@ -67,7 +81,7 @@ class YamlDocument : DocumentationProvider {
 
         val parentElement = contextElement?.parent?.parent?.parent
         if (parentElement is YAMLKeyValueImpl) {
-            if(parentElement.keyText != "dependencies"){
+            if (parentElement.keyText != "dependencies") {
                 return null
             }
         }
@@ -113,6 +127,19 @@ class YamlDocument : DocumentationProvider {
         sb.append("<br/>")
         sb.append("<p style='color:gray;padding: 6px;font-size: 10px;'>梁典典: 欢迎加入Flutter自学交流群:667186542</p>")
         return sb.toString()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
+        logger.info("hasDocumentationFor >> ${element.elementType}")
+        return false
+    }
+
+    override fun canPromptToConfigureDocumentation(element: PsiElement?): Boolean {
+        return true
+    }
+
+    override fun promptToConfigureDocumentation(element: PsiElement?) {
     }
 
 }

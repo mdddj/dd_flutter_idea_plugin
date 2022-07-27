@@ -6,7 +6,6 @@ import com.intellij.project.stateStore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.util.elementType
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
@@ -54,13 +53,12 @@ class MyPsiElementUtil {
         /**
          * 获取项目的所有插件
          */
-        fun getAllPlugins(project: Project): List<String> {
+        fun getAllPlugins(project: Project,key: String = "dependencies"): List<String> {
             val pubSecpYamlFile = getPubSecpYamlFile(project)
             if (pubSecpYamlFile != null) {
-                val deps = YAMLUtil.getQualifiedKeyInFile(pubSecpYamlFile as YAMLFile, "dependencies")
+                val deps = YAMLUtil.getQualifiedKeyInFile(pubSecpYamlFile as YAMLFile, key)
                 if (deps != null) {
-                    val plugins = deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
-                    return plugins
+                    return deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
                 }
             }
             return emptyList()

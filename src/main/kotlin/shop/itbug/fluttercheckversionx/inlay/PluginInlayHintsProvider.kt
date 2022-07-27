@@ -2,10 +2,13 @@ package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parents
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import shop.itbug.fluttercheckversionx.util.CacheUtil
@@ -78,13 +81,11 @@ dependencies:
                                 )
                             }
 
-                            sink.addBlockElement(
-                                element.textRange.startOffset,
+                            sink.addInlineElement(
+                                element.startOffset,
                                 relatesToPrecedingText = true,
-                                showAbove = true,
-                                priority = 1,
-                                presentation = myFactory.menuActions(pluginName)
-
+                                presentation = myFactory.menuActions(pluginName),
+                                placeAtTheEndOfLine = false
                             )
 //                            sink.addInlineElement(element.endOffset, false, myFactory.menuActions(pluginName), false)
                         }

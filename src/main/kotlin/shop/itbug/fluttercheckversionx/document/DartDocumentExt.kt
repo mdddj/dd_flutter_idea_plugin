@@ -1,24 +1,32 @@
 package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
-import com.intellij.lang.documentation.CompositeDocumentationProvider
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
+import com.jetbrains.lang.dart.DartElementType
+import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.psi.DartType
 import com.jetbrains.lang.dart.psi.impl.DartDefaultFormalNamedParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartFormalParameterListImpl
 import com.jetbrains.lang.dart.psi.impl.DartNormalFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartOptionalFormalParametersImpl
 import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
 import org.dartlang.analysis.server.protocol.HoverInformation
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 /**
  * dart 文件的文档注释扩展
  */
+
 class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationProvider {
+
+    private val logger: Logger = LoggerFactory.getLogger(DartDocumentExt::class.java)
 
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
 
@@ -33,7 +41,6 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             element.containingFile.virtualFile,
             element.textOffset
         )
-        print("====> result == null ?  ${result == null}")
         if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
         val docInfo = result.first()
         val dartFormalParameterList =
@@ -174,14 +181,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         return sb.toString()
     }
 
-    @Deprecated(
-        "Deprecated in Java", ReplaceWith(
-            "CompositeDocumentationProvider.hasUrlsFor(this, element, originalElement)",
-            "com.intellij.lang.documentation.CompositeDocumentationProvider"
-        )
-    )
     override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
-        return CompositeDocumentationProvider.hasUrlsFor(this, element, originalElement)
+        return true
     }
 
     override fun canPromptToConfigureDocumentation(element: PsiElement?): Boolean {
@@ -189,5 +190,6 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     }
 
     override fun promptToConfigureDocumentation(element: PsiElement?) {
+        logger.info("promptToConfigureDocumentation 执行了")
     }
 }
