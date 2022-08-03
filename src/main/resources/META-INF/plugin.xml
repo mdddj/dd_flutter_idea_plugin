@@ -98,6 +98,9 @@
                     icon="AllIcons.Debugger.ThreadStates.Socket"/>
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"/>
+
+        <defaultLiveTemplates file="/temp/Flutter.xml" />
+        <liveTemplateContext implementation="shop.itbug.fluttercheckversionx.temp.ConsumerfulTemp"/>
     </extensions>
 
 

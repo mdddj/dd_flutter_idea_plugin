@@ -1,0 +1,17 @@
+<templateSet group="Flutter">
+  <template name="conf" value="class $NAME$ extends ConsumerStatefulWidget {&#10;  const $NAME$({Key? key}) : super(key: key);&#10;&#10;  @override&#10;  ConsumerState&lt;ConsumerStatefulWidget&gt; createState() {&#10;    return $SNAME$();&#10;  }&#10;}&#10;&#10;class $SNAME$ extends ConsumerState&lt;$NAME$&gt; {&#10;  @override&#10;  Widget build(BuildContext context) {&#10;    return const Scaffold($END$);&#10;  }&#10;}" description="riverpod ConsumerStatefulWidget" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="SNAME" expression="regularExpression(concat(&quot;_&quot;, NAME, &quot;State&quot;), &quot;^__&quot;, &quot;_&quot;)" defaultValue="" alwaysStopAt="false" />
+    <context>
+      <option name="DART" value="true" />
+      <option name="FLUTTER" value="true" />
+    </context>
+  </template>
+  <template name="conl" value="class $NAME$ extends ConsumerWidget {&#10;  const $NAME$({Key? key}) : super(key: key);&#10;&#10;  @override&#10;  Widget build(BuildContext context, WidgetRef ref) {&#10;    return const Scaffold($END$);&#10;  }&#10;&#10;}" description="riverpod ConsumerWidget" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="DART" value="true" />
+      <option name="FLUTTER" value="true" />
+    </context>
+  </template>
+</templateSet>

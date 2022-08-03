@@ -6,7 +6,7 @@ plugins {
 }
 //028486
 group = "shop.itbug"
-version = "2.0.0"
+version = "2.0.1"
 
 repositories {
     mavenCentral()
@@ -81,7 +81,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("221")
-        untilBuild.set("221.*")
+        untilBuild.set("222.*")
         changeNotes.set("""
             修复了一些bug
         """.trimIndent())
