@@ -6,20 +6,12 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
-import com.intellij.psi.util.elementType
-import com.intellij.psi.util.nextLeaf
 import com.intellij.refactoring.suggested.endOffset
-import com.intellij.ui.components.DialogManager
-import com.jetbrains.lang.dart.DartElementType
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
-import shop.itbug.fluttercheckversionx.dialog.ExampleModelDialog
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import shop.itbug.fluttercheckversionx.socket.service.AppService
-import java.awt.Point
-import java.awt.event.MouseEvent
 
 class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider.Setting> {
 
@@ -34,7 +26,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
         get() = """
             var a = 0;
             final b = false;
-            const c = "hello world";
+            const c = "梁典典 😙 QQ群 667186542";
         """.trimIndent()
 
     override fun createSettings(): Setting {
@@ -121,9 +113,9 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                         sink.addInlineElement(
                             element.endOffset,
                             false,
-                            hintsInlayPresentationFactory.simpleTextWithClick("查看示例", "查看使用示例"
-                            ) { event, translated -> ExampleModelDialog(project = element.project,
-                            exampleModel = models.first { it.label == element.text }).show() },
+                            hintsInlayPresentationFactory.simpleTextWithClick(
+                                "查看示例", "查看使用示例"
+                            ),
                             false
                         )
                     }
@@ -140,6 +132,4 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
         return DefaulImmediateConfigurable()
     }
 
-    override val group: InlayGroup
-        get() = InlayGroup.TYPES_GROUP
 }

@@ -13,7 +13,7 @@
 
         <group id="Yaml.Search">
             <action class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
-                    icon="AllIcons.Actions.DependencyAnalyzer"
+                    icon="AllIcons.Actions.Search"
                     id="Yaml.Search.Icon" text="搜索Pub Dart 包"
             />
         </group>

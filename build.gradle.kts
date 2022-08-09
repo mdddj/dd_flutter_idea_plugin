@@ -2,11 +2,11 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.6.21"
-    id("org.jetbrains.intellij") version "1.7.0"
+    id("org.jetbrains.intellij") version "1.8.0"
 }
 //028486
 group = "shop.itbug"
-version = "2.0.2"
+version = "2.0.3"
 
 repositories {
     mavenCentral()
@@ -23,7 +23,7 @@ intellij {
 
     /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
     /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588
-    version.set("2022.1.3")
+    version.set("2021.2.4")
 
 
     /// Android studio 是 AI
@@ -33,9 +33,9 @@ intellij {
         listOf(
             "java",
             "yaml",
-            "Dart:221.5921.27",
-            "io.flutter:69.0.4",
-            "org.intellij.plugins.markdown:221.5080.126"
+            "Dart:212.5744",
+            "io.flutter:69.0.2",
+            "org.intellij.plugins.markdown:212.5457.16"
         )
     )
 
@@ -48,10 +48,10 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
     implementation("cn.hutool:hutool-all:5.8.3")
     implementation("org.smartboot.socket:aio-core:1.5.18")
-    implementation("com.alibaba:fastjson:2.0.8.graal")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("com.alibaba:fastjson:2.0.10.graal")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation ("com.fifesoft:rsyntaxtextarea:3.2.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
@@ -84,6 +84,7 @@ tasks {
         untilBuild.set("222.*")
         changeNotes.set("""
             v2.0.2: 新增riverpod代码模板 `conf`和`conl` 
+            v2.0.3: 修复了一些小错误
         """.trimIndent())
     }
 

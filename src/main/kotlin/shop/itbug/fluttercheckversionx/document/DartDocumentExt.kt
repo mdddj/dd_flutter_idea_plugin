@@ -30,27 +30,31 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
 
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
 
+        try {
 
-        if (element == null) return ""
-
-
-        val reference = originalElement?.parent?.parent?.reference?.resolve()
+            if (element == null) return ""
 
 
-        val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
-            element.containingFile.virtualFile,
-            element.textOffset
-        )
-        if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
-        val docInfo = result.first()
-        val dartFormalParameterList =
-            reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
-        return renderView(
-            docInfo,
-            element.project,
-            if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first()
-        )
+            val reference = originalElement?.parent?.parent?.reference?.resolve()
 
+
+            val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
+                element.containingFile.virtualFile,
+                element.textOffset
+            )
+            if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
+            val docInfo = result.first()
+            val dartFormalParameterList =
+                reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
+            return renderView(
+                docInfo,
+                element.project,
+                if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first()
+            )
+
+        } catch (e: Exception) {
+            return "";
+        }
     }
 
 
@@ -133,7 +137,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         }
 
         val sb = StringBuilder()
-        Helper.addMarkdownTableHeader("类型","名称","必填","位置", sb = sb)
+        Helper.addMarkdownTableHeader("类型", "名称", "必填", "位置", sb = sb)
         paramsArr.forEachIndexed { index, it ->
             sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional) "{}" else "(必填参数${index + 1})"} |")
             sb.append("\n")

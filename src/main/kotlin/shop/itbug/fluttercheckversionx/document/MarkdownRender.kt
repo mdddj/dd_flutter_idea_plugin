@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.Language
-import com.intellij.lang.documentation.DocumentationSettings
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -86,8 +85,7 @@ private fun processTableRow(
     alignment: List<String>,
     project: Project
 ) {
-    val bg = UIUtil.colorToHex(UIUtil.getTableBackground())
-    sb.append("<tr style=\"${if (cellTag == "th") "background-color: $bg" else "background-color: $bg"}\">")
+    sb.append("<tr style=\"${if (cellTag == "th") "" else ""}\">")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
         val alignValue = alignment.getOrElse(i) { "" }
         val alignTag = if (alignValue.isEmpty()) "" else " align=\"$alignValue\" "
@@ -201,13 +199,8 @@ fun MarkdownNode.toHtml(project: Project): String {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append("<code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
-                    sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                        DocumentationSettings.getInlineCodeHighlightingMode(),
-                        project,
-                        DartLanguage.INSTANCE,
-                        text
-                    )
+                    sb.append("<code>")
+                    sb.append(text)
                     sb.append("</code>")
                 }
             }
@@ -216,7 +209,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
                 sb.trimEnd()
-                sb.append("<pre><code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                sb.append("<pre><code>")
                 processChildren()
                 sb.append("</code></pre>")
             }
@@ -273,15 +266,16 @@ fun MarkdownNode.toHtml(project: Project): String {
             }
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
-                sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                    when (DocumentationSettings.isHighlightingOfCodeBlocksEnabled()) {
-                        true -> DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING
-                        false -> DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING
-                    },
-                    project,
-                    guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE,
-                    nodeText
-                )
+//                sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
+//                    when (DocumentationSettings.isHighlightingOfCodeBlocksEnabled()) {
+//                        true -> DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING
+//                        false -> DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING
+//                    },
+//                    project,
+//                    guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE,
+//                    nodeText
+//                )
+                sb.append("<code>${nodeText}</code>")
             }
             MarkdownTokenTypes.EOL -> {
                 val parentType = node.parent?.type
@@ -362,52 +356,43 @@ private fun MarkdownNode.visit(action: (MarkdownNode, () -> Unit) -> Unit) {
     }
 }
 
-private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-    highlightingMode: DocumentationSettings.InlineCodeHighlightingMode,
-    project: Project,
-    language: Language,
-    codeSnippet: String
-): StringBuilder {
-    val codeSnippetBuilder = StringBuilder()
-    if (highlightingMode == DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING) { // highlight code by lexer
-        HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-            codeSnippetBuilder,
-            project,
-            language,
-            codeSnippet,
-            false,
-            DocumentationSettings.getHighlightingSaturation(true)
-        )
-    } else {
-        codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
-    }
-    if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
-        // set code text color as editor default code color instead of doc component text color
-        val codeAttributes =
-            EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
-        codeAttributes.backgroundColor = null
-        appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
-    } else {
-        append(codeSnippetBuilder.toString())
-    }
-    return this
-}
+//private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
+//    highlightingMode: DocumentationSettings.InlineCodeHighlightingMode,
+//    project: Project,
+//    language: Language,
+//    codeSnippet: String
+//): StringBuilder {
+//    val codeSnippetBuilder = StringBuilder()
+//    if (highlightingMode == DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING) { // highlight code by lexer
+//        HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
+//            codeSnippetBuilder,
+//            project,
+//            language,
+//            codeSnippet,
+//            false,
+//            DocumentationSettings.getHighlightingSaturation(true)
+//        )
+//    } else {
+//        codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
+//    }
+//    if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
+//        // set code text color as editor default code color instead of doc component text color
+//        val codeAttributes =
+//            EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
+//        codeAttributes.backgroundColor = null
+//        appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
+//    } else {
+//        append(codeSnippetBuilder.toString())
+//    }
+//    return this
+//}
 
 private fun StringBuilder.appendStyledSpan(
     doHighlighting: Boolean,
     attributes: TextAttributes,
     value: String?
 ): StringBuilder {
-    if (doHighlighting) {
-        HtmlSyntaxInfoUtil.appendStyledSpan(
-            this,
-            attributes,
-            value,
-            DocumentationSettings.getHighlightingSaturation(true)
-        )
-    } else {
-        append(value)
-    }
+    append(value)
     return this
 }
 

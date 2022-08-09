@@ -7,17 +7,11 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.PsiShortNamesCache
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiElementFilter
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.childrenOfType
 import com.jetbrains.lang.dart.DartTokenTypes
-import com.jetbrains.lang.dart.psi.DartCallExpression
-import com.jetbrains.lang.dart.psi.DartVisitor
 import com.jetbrains.lang.dart.psi.impl.*
 
 
@@ -76,9 +70,6 @@ class DartPublicFunctionApiFixVisitor(val holder: ProblemsHolder) : PsiElementVi
                             val returnTypes = dmdElement.childrenOfType<DartReturnTypeImpl>()
                             if (returnTypes.isNotEmpty()) {
                                 val returnTypeEle = returnTypes.first()
-
-                                val returnEx = getMethodCallRefre(dmdElement)
-
                                 if (returnTypeEle.text.indexOf("_") == 0) {
                                     holder.registerProblem(
                                         returnTypes.first(),
@@ -138,10 +129,10 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
         }
 
 
-        val classfind = PsiTreeUtil.collectElementsOfType(file.originalElement,DartComponentNameImpl::class.java)
+        val classfind = PsiTreeUtil.collectElementsOfType(file.originalElement, DartComponentNameImpl::class.java)
         println(classfind.size)
-        for(c in classfind){
-            if(c.text.equals(className)){
+        for (c in classfind) {
+            if (c.text.equals(className)) {
                 val newEl = factory.createDummyHolder(renameText, DartTokenTypes.COMPONENT_NAME, null)
                 c.replace(newEl)
             }
@@ -152,10 +143,6 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
 }
 
 
-inline fun <reified T : PsiElement> findElementWithType(element: PsiElement): T? {
-    val childrens = element.childrenOfType<T>();
-    if (childrens.isNotEmpty()) {
-        return childrens.first()
-    }
-    return null
+inline fun <reified T : PsiElement> PsiElement.childrenOfType(): List<PsiElement> {
+    return this.children.filterIsInstance<T>()
 }

@@ -141,8 +141,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             true
         )
         val bottomToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Dio Request")
-        toolBar.targetComponent = bottomToolWindow?.component
-        leftActionTools.targetComponent = bottomToolWindow?.component
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {
