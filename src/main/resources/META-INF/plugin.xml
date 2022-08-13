@@ -63,6 +63,7 @@
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider language="yaml" implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
         <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools"/>
         <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
                          groupBundle="messages.InspectionsBundle"

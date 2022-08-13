@@ -94,7 +94,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
 
-    fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> =
+    private fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> =
         MyPluginMenusAvtionPopup(actionMenus, itemSelected)
 
 

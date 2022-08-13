@@ -81,12 +81,12 @@ dependencies:
                                 )
                             }
 
-                            sink.addInlineElement(
-                                element.startOffset,
-                                relatesToPrecedingText = true,
-                                presentation = myFactory.menuActions(pluginName),
-                                placeAtTheEndOfLine = false
-                            )
+//                            sink.addInlineElement(
+//                                element.startOffset,
+//                                relatesToPrecedingText = true,
+//                                presentation = myFactory.menuActions(pluginName),
+//                                placeAtTheEndOfLine = false
+//                            )
 //                            sink.addInlineElement(element.endOffset, false, myFactory.menuActions(pluginName), false)
                         }
                     }
