@@ -55,36 +55,40 @@ class DartPublicFunctionApiFixVisitor(val holder: ProblemsHolder) : PsiElementVi
             //判断是不是继承自StatefulWidget类
             val superClassList = element.childrenOfType<DartSuperclassImpl>()
             if (superClassList.isNotEmpty()) {
-                val superClassName = superClassList.first().childrenOfType<DartTypeImpl>().first().text
-                if (checkSuperClassNames.contains(superClassName)) {
-                    ///包含需要待检测的类
-                    val methods =
-                        element.childrenOfType<DartClassBodyImpl>().first().childrenOfType<DartClassMembersImpl>()
-                            .first().childrenOfType<DartMethodDeclarationImpl>()
-                    val names =
-                        methods.filter { it.childrenOfType<DartComponentNameImpl>().first().text == "createState" }
-                    if (names.isNotEmpty()) {
-                        val dmdElement = names.first() //DartMethodDeclarationImpl节点
-                        val name = dmdElement.childrenOfType<DartComponentNameImpl>().first().text
-                        if (name.equals("createState")) {
-                            val returnTypes = dmdElement.childrenOfType<DartReturnTypeImpl>()
-                            if (returnTypes.isNotEmpty()) {
-                                val returnTypeEle = returnTypes.first()
-                                if (returnTypeEle.text.indexOf("_") == 0) {
-                                    holder.registerProblem(
-                                        returnTypes.first(),
-                                        "dart建议将返回类型修改为公有变量. Flutter自学群:667186542",
-                                        ProblemHighlightType.WARNING,
-                                        PublicApiRenameFix(returnTypeEle, returnTypeEle.text, dmdElement)
-                                    )
+                val c2 = superClassList.first().childrenOfType<DartTypeImpl>()
+                if (c2.isNotEmpty()) {
+                    val superClassName = c2.first().text
+                    if (checkSuperClassNames.contains(superClassName)) {
+                        ///包含需要待检测的类
+                        val methods =
+                            element.childrenOfType<DartClassBodyImpl>().first().childrenOfType<DartClassMembersImpl>()
+                                .first().childrenOfType<DartMethodDeclarationImpl>()
+                        val names =
+                            methods.filter { it.childrenOfType<DartComponentNameImpl>().first().text == "createState" }
+                        if (names.isNotEmpty()) {
+                            val dmdElement = names.first() //DartMethodDeclarationImpl节点
+                            val name = dmdElement.childrenOfType<DartComponentNameImpl>().first().text
+                            if (name.equals("createState")) {
+                                val returnTypes = dmdElement.childrenOfType<DartReturnTypeImpl>()
+                                if (returnTypes.isNotEmpty()) {
+                                    val returnTypeEle = returnTypes.first()
+                                    if (returnTypeEle.text.indexOf("_") == 0) {
+                                        holder.registerProblem(
+                                            returnTypes.first(),
+                                            "dart建议将返回类型修改为公有变量. Flutter自学群:667186542",
+                                            ProblemHighlightType.WARNING,
+                                            PublicApiRenameFix(returnTypeEle, returnTypeEle.text, dmdElement)
+                                        )
+                                    }
+
                                 }
-
                             }
+
+
                         }
-
-
                     }
                 }
+
             }
         }
         super.visitElement(element)

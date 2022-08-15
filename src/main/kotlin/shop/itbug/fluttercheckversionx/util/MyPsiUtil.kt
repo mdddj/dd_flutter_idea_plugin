@@ -6,6 +6,7 @@ import com.intellij.project.stateStore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.util.parents
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
@@ -63,5 +64,24 @@ class MyPsiElementUtil {
             }
             return emptyList()
         }
+
+
     }
+}
+
+///是否为dart插件
+fun PsiElement.isDartPluginElement() : Boolean{
+    if (this is YAMLKeyValueImpl && this.parents(false).iterator().hasNext() && this.parents(false)
+            .iterator().next().parent is YAMLKeyValueImpl
+    ) {
+        val ds = listOf("dependencies", "dev_dependencies", "dependency_overrides")
+        val parentKeyText = (this.parents(false).iterator().next().parent as YAMLKeyValueImpl).keyText
+        if (ds.contains(parentKeyText) && this.keyText != "flutter" && this.keyText != "flutter_test") {
+            return true
+        }
+    }
+    return false
+}
+fun PsiElement.getPluginName(): String{
+    return MyPsiElementUtil.getPluginNameWithPsi(this)
 }
