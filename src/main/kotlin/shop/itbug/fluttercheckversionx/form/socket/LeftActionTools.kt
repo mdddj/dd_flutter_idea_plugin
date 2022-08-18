@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import cn.hutool.core.net.url.UrlBuilder
+import com.alibaba.fastjson2.JSON
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.*
@@ -7,7 +9,9 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
+import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
+import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -55,18 +59,21 @@ class LeftActionTools(
     }
 
     //复制api url 到剪贴板
-    private val copyAction = object : AnAction("复制接口", "将选中的请求的接口链接复制到系统的剪贴板", AllIcons.Actions.Copy) {
-        override fun actionPerformed(e: AnActionEvent) {
-            val url = reqList.selectedValue?.url
-            url?.copyTextToClipboard()
-            MyNotifactionUtil.socketNotif(
-                if (url == null) "复制失败(未选中接口)" else "复制成功:${url}",
-                project = project,
-                type = if (url == null) NotificationType.WARNING
-                else NotificationType.INFORMATION
-            )
+    private val copyAction =
+        object : AnAction("复制接口", "将选中的请求的接口链接复制到系统的剪贴板", AllIcons.Actions.Copy) {
+            override fun actionPerformed(e: AnActionEvent) {
+                val url = reqList.selectedValue?.url
+                url?.copyTextToClipboard()
+                MyNotifactionUtil.socketNotif(
+                    if (url == null) "复制失败(未选中接口)" else "复制成功:${url}",
+                    project = project,
+                    type = if (url == null) NotificationType.WARNING
+                    else NotificationType.INFORMATION
+                )
+            }
         }
-    }
+
+    private val viewQueryParamsAction = ViewGetQueryParamsAction(request = reqList.selectedValue, project = project)
 
     /**
      * 更新详情面板的html数据
@@ -81,6 +88,7 @@ class LeftActionTools(
         addSeparator()
         add(detailAction)
         add(copyAction)
+        add(viewQueryParamsAction)
     }
 
 
@@ -140,3 +148,21 @@ class SortAction(action: MySortToggleAction) : ActionButton(
     ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
 )
 
+
+///查看get方法下,queryparams参数的功能
+class ViewGetQueryParamsAction(private val request: Request?, private val project: Project) :
+    AnAction("查看 GET Query 参数", "如果API列表选中某个接口,点击此按钮,会弹出改接口URL后面query参数的json类型", AllIcons.Ide.ConfigFile) {
+    override fun actionPerformed(e: AnActionEvent) {
+        if (request != null) {
+            val url = UrlBuilder.ofHttp(request.url)
+            val queryMap = url.query.queryMap
+            mylogger().info("参数:${JSON.toJSONString(queryMap)}")
+            SimpleJsonViewDialog.show(queryMap, project)
+        }
+    }
+
+}
+
+fun Any.mylogger() : org.slf4j.Logger {
+   return LoggerFactory.getLogger(this::class.java)
+}
