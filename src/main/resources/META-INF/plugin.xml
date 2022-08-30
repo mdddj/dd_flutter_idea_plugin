@@ -69,9 +69,9 @@
                          groupBundle="messages.InspectionsBundle"
                          groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
                          implementationClass="shop.itbug.fluttercheckversionx.tools.AutoVersionTool"/>
-        <localInspection language="Dart" displayName="Dart Public Api Fix" groupPath="Dart" enabledByDefault="true"
+        <localInspection language="Dart" displayName="Dart public api fix" groupPath="Dart" enabledByDefault="true"
                          implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
-                         groupKey="group.names.probable.bugs" groupName="Dart Public Api Fix"/>
+                         groupKey="group.names.probable.bugs" groupName="Dart public api fix"/>
         <completion.contributor language="yaml"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
                                 order="first"/>

@@ -1,8 +1,8 @@
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.6.21"
-    id("org.jetbrains.intellij") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    id("org.jetbrains.intellij") version "1.8.1"
 }
 //028486
 group = "shop.itbug"
@@ -47,8 +47,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
     implementation("cn.hutool:hutool-all:5.8.5")
-    implementation("org.smartboot.socket:aio-core:1.5.18")
-    implementation("com.alibaba:fastjson:2.0.10.graal")
+    implementation("org.smartboot.socket:aio-core:1.6.0")
+    implementation("com.alibaba:fastjson:2.0.12.graal")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")

@@ -5,16 +5,8 @@ import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.elementType
-import com.jetbrains.lang.dart.DartElementType
-import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
-import com.jetbrains.lang.dart.psi.DartType
-import com.jetbrains.lang.dart.psi.impl.DartDefaultFormalNamedParameterImpl
-import com.jetbrains.lang.dart.psi.impl.DartFormalParameterListImpl
-import com.jetbrains.lang.dart.psi.impl.DartNormalFormalParameterImpl
-import com.jetbrains.lang.dart.psi.impl.DartOptionalFormalParametersImpl
-import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
+import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -53,7 +45,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             )
 
         } catch (e: Exception) {
-            return "";
+            return ""
         }
     }
 
@@ -114,7 +106,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         val requirdParams = element.children.filterIsInstance<DartNormalFormalParameterImpl>()
         if (requirdParams.isNotEmpty()) {
             requirdParams.forEach {
-                val dartRequiredParams = dartNormalElementHandle(it, true, false)
+                val dartRequiredParams = dartNormalElementHandle(it, isRequired = true, optional = false)
                 paramsArr.add(dartRequiredParams)
             }
         }
@@ -185,6 +177,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         return sb.toString()
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith("true"))
     override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
         return true
     }
