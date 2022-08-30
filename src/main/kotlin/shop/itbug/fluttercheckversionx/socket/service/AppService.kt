@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.socket.service
 import cn.hutool.core.lang.Console
 import cn.hutool.http.HttpUtil
 import com.google.gson.Gson
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -14,6 +15,7 @@ import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.form.socket.mylogger
 import shop.itbug.fluttercheckversionx.model.example.ExampleResult
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
@@ -25,11 +27,16 @@ class AppService {
 
 
     lateinit var project: Project
+
     /**
      * 全局的socket监听服务
      */
     private var server: AioQuickServer? = null
 
+
+    /**
+     * 组件示例
+     */
     var examples = emptyList<ResourceModel>()
 
     /**
@@ -39,6 +46,12 @@ class AppService {
      * 值是请求列表
      */
     private var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
+
+
+    /**
+     * socket服务是否已经正常运行
+     */
+     var socketIsInit = false
 
 
 //    init {
@@ -64,10 +77,11 @@ class AppService {
                     ) {
                         super.stateEvent(session, stateMachineEnum, throwable)
                         println("状态机:${stateMachineEnum}")
-                        when(stateMachineEnum){
+                        when (stateMachineEnum) {
                             StateMachineEnum.NEW_SESSION -> {
                                 newSessionHandle(session)
                             }
+
                             else -> {}
                         }
                     }
@@ -75,7 +89,14 @@ class AppService {
                 server!!.setReadBufferSize(10485760) // 10m
                 try {
                     server!!.start()
-                } catch (_: Exception) {
+                    socketIsInit = true
+                } catch (e: Exception) {
+                    socketIsInit = false
+                    mylogger().error("启动socket服务失败:${e.localizedMessage}")
+                    MyNotifactionUtil.socketNotif(
+                        message = "启动dio监听模块失败,异常:${e.localizedMessage}", project = project,
+                        NotificationType.ERROR
+                    )
                 }
             }
         }
@@ -85,7 +106,10 @@ class AppService {
      * 当有新连接进来的时候处理函数
      */
     private fun newSessionHandle(session: AioSession?) {
-        MyNotifactionUtil.socketNotif("梁典典: 检测到APP连接成功,现在可以在底部工具栏监听dio请求了", project = project)
+        MyNotifactionUtil.socketNotif(
+            "梁典典: 检测到APP连接成功,现在可以在底部工具栏监听dio请求了,${session?.sessionID}",
+            project = project
+        )
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -160,10 +184,11 @@ class AppService {
     }
 
 
-    fun setTestData(){
+    fun setTestData() {
         flutterProjects = mutableMapOf(
             Pair(
-                "test",ProjectSocketService.genList()
-        ))
+                "test", ProjectSocketService.genList()
+            )
+        )
     }
 }

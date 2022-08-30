@@ -166,3 +166,4 @@ class ViewGetQueryParamsAction(private val request: Request?, private val projec
 fun Any.mylogger() : org.slf4j.Logger {
    return LoggerFactory.getLogger(this::class.java)
 }
+

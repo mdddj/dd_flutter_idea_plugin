@@ -262,6 +262,13 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             ) {
                 RewardDialog(project).show()
             }
+            val socketIsInited = service.socketIsInit;
+            if(socketIsInited.not()){
+                appendLine("")
+                appendText("Socket(端口9999)没有正常启动,请检查网络连接或者本地代理,点我重连",SimpleTextAttributes(SimpleTextAttributes.STYLE_CLICKABLE,JBUI.CurrentTheme.Link.Foreground.ENABLED)){
+                    service.initSocketService(project)
+                }
+            }
         }
     }
 

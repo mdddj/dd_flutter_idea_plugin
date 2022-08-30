@@ -34,14 +34,12 @@ class PluginDartIconLineMark : LineMarkerProvider {
 
 ///处理点击
 class PluginDartIconLineMarkNavHandler(val element: YAMLKeyValueImpl) : GutterIconNavigationHandler<PsiElement> {
-
     override fun navigate(e: MouseEvent?, elt: PsiElement?) {
         if (e != null && e.clickCount == 1) {
             JBPopupFactory.getInstance().createListPopup(PluginDartIconActioinMenuList(element = element))
                 .show(RelativePoint(e.locationOnScreen))
         }
     }
-
 }
 
 data class PluginDartIconActionMenuItem(val title: String, val type: String, val icon: Icon)
@@ -58,13 +56,12 @@ class PluginDartIconActioinMenuList(val element: YAMLKeyValueImpl) : BaseListPop
     }
 
 
-
     override fun getTextFor(value: PluginDartIconActionMenuItem?): String {
         return value?.title ?: "未知选项"
     }
 
     override fun onChosen(selectedValue: PluginDartIconActionMenuItem?, finalChoice: Boolean): PopupStep<*>? {
-        when(selectedValue?.type){
+        when (selectedValue?.type) {
             menus[0].type -> {
                 BrowserUtil.browse("$PUB_URL${element.keyText}")
             }
