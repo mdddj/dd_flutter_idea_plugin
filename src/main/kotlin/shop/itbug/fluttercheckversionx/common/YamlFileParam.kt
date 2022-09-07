@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.common
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.startOffset
@@ -45,7 +46,7 @@ class YamlFileParser(
     /**
      * 检查文件
      */
-    suspend fun startCheckFile(pluginStart: CheckPluginStartCallback?): List<PluginVersion> {
+     fun startCheckFile(pluginStart: CheckPluginStartCallback?): List<PluginVersion> {
         if (isYamlFile()) {
             val allPlugins: List<PluginVersion> = getAllPlugins()
             return checkVersionFormPub(allPlugins, pluginStart)
@@ -58,7 +59,7 @@ class YamlFileParser(
      * 从服务器中获得最新版本
      */
 
-    private suspend fun checkVersionFormPub(
+    private  fun checkVersionFormPub(
         plugins: List<PluginVersion>,
         startCallback: CheckPluginStartCallback?
     ): List<PluginVersion> {
@@ -105,33 +106,34 @@ class YamlFileParser(
          * 全部的插件列表
          */
         val allPlugins = mutableListOf<PluginVersion>()
-
         val yamlFile = file as YAMLFileImpl
-        val topLevelValue = yamlFile.documents[0].topLevelValue
-        if (topLevelValue != null) {
-            val chillers = topLevelValue.children
-            if (chillers.isNotEmpty()) {
-                chillers.map {
-                    it.accept(object : YamlPsiElementVisitor() {
-                        override fun visitElement(element: PsiElement) {
-                            if(element.isDartPluginElement() && element is YAMLKeyValue){
-                                allPlugins.add(
-                                    PluginVersion(
-                                        element.keyText,
-                                        element.valueText,
-                                        "",
-                                        element.value!!.textOffset,
-                                        element.value!!.startOffset
+        runReadAction {
+            val topLevelValue = yamlFile.documents[0].topLevelValue
+            if (topLevelValue != null) {
+                val chillers = topLevelValue.children
+                if (chillers.isNotEmpty()) {
+                    chillers.map {
+                        it.accept(object : YamlPsiElementVisitor() {
+                            override fun visitElement(element: PsiElement) {
+                                if(element.isDartPluginElement() && element is YAMLKeyValue){
+                                    allPlugins.add(
+                                        PluginVersion(
+                                            element.keyText,
+                                            element.valueText,
+                                            "",
+                                            element.value!!.textOffset,
+                                            element.value!!.startOffset
+                                        )
                                     )
-                                )
+                                }
+                                super.visitElement(element)
                             }
-                            super.visitElement(element)
-                        }
-                    })
+                        })
+                    }
                 }
             }
-        }
 
+        }
         return allPlugins
     }
 

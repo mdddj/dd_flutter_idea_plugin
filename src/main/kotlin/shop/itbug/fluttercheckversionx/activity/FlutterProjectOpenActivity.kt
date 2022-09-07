@@ -63,20 +63,11 @@ class FlutterProjectOpenActivity : StartupActivity {
         override fun run(p0: ProgressIndicator) {
 
 
-            GlobalScope.launch {
                 yamlFileParser.startCheckFile { name, index, count ->
                     SwingUtilities.invokeLater {
                         p0.text = "Check the version $name ($index/$count)"
                     }
-//                    // 当开始执行插件网络请求时,会回调这个函数,来更新底部工具条的进度文本展示
-//                    run {
-//                        p0.text = "Check the version $name ($index/$count)"
-//                        countPlugin = count
-//                    }
-
-
                 }
-            }
 
 
             ////============== 取消相关无用操作

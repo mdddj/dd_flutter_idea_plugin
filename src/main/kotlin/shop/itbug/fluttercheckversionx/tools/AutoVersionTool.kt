@@ -104,46 +104,47 @@ class YamlElementVisitor(
 
             /**
              * 检测未使用的包
+             * //todo 检测未使用过的包
              */
             @OptIn(DelicateCoroutinesApi::class)
             fun checkUnusedPlugin(project: Project, allPlugins: List<PluginVersion>) {
                 val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project))
                 // 因为有大量的文件检测工作,这里使用携程来进行优化
-                GlobalScope.launch {
-
-                    val usedArr = withContext(Dispatchers.IO) {
-                        val used = arrayListOf<String>()
-                            files.forEach {
-                                val psiTestFile =  PsiManager.getInstance(project).findFile(it)
-                                if (psiTestFile != null) {
-                                    launch {
-                                        val usedPlugins = psiFileHandle(psiTestFile)
-                                        used.addAll(usedPlugins.filter { i -> !used.contains(i) })
-                                    }
-
-                                }
-
-                            }
-                        used
-                    }
-
-                    val unused = allPlugins.filter { item -> !usedArr.contains(item.name) }
-
-
-                    val unusedNames = unused.map { it.name }
-                    if(unusedNames.isNotEmpty()){
-                        val unredCaChe = CacheUtil.unredCaChe()
-                        unredCaChe.invalidateAll()
-                        unusedNames.forEach { item ->
-                            if(!igScanPlugin.contains(item)){
-                                run {
-                                    unredCaChe.put(item, item)
-                                }
-                            }
-                        }
-                    }
-
-                }
+//                GlobalScope.launch {
+//
+//                    val usedArr = withContext(Dispatchers.IO) {
+//                        val used = arrayListOf<String>()
+//                            files.forEach {
+//                                val psiTestFile =  PsiManager.getInstance(project).findFile(it)
+//                                if (psiTestFile != null) {
+//                                    launch {
+//                                        val usedPlugins = psiFileHandle(psiTestFile)
+//                                        used.addAll(usedPlugins.filter { i -> !used.contains(i) })
+//                                    }
+//
+//                                }
+//
+//                            }
+//                        used
+//                    }
+//
+//                    val unused = allPlugins.filter { item -> !usedArr.contains(item.name) }
+//
+//
+//                    val unusedNames = unused.map { it.name }
+//                    if(unusedNames.isNotEmpty()){
+//                        val unredCaChe = CacheUtil.unredCaChe()
+//                        unredCaChe.invalidateAll()
+//                        unusedNames.forEach { item ->
+//                            if(!igScanPlugin.contains(item)){
+//                                run {
+//                                    unredCaChe.put(item, item)
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                }
             }
 
             private fun psiFileHandle(file: PsiFile): List<String> {

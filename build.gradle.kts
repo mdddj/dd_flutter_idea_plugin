@@ -50,8 +50,6 @@ dependencies {
     implementation("org.smartboot.socket:aio-core:1.6.0")
     implementation("com.alibaba:fastjson:2.0.12.graal")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation ("com.fifesoft:rsyntaxtextarea:3.2.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
@@ -83,7 +81,10 @@ tasks {
         sinceBuild.set("212.*")
         untilBuild.set("222.*")
         changeNotes.set("""
-            v2.0.2: 新增riverpod代码模板 `conf`和`conl` 
+            v2.0.4: 更新pubspec.yaml的快捷图标位置
+            
+            v2.0.2: 新增riverpod代码模板 `conf`和`conl`
+             
             v2.0.3: 修复了一些小错误
         """.trimIndent())
     }

@@ -1,22 +1,14 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
-import cn.hutool.http.HttpUtil
 import com.google.gson.Gson
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.socket.Request
-import shop.itbug.fluttercheckversionx.form.socket.mylogger
-import shop.itbug.fluttercheckversionx.model.example.ExampleResult
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
@@ -31,7 +23,7 @@ class AppService {
     /**
      * 全局的socket监听服务
      */
-    private var server: AioQuickServer? = null
+    private lateinit var server: AioQuickServer
 
 
     /**
@@ -51,7 +43,7 @@ class AppService {
     /**
      * socket服务是否已经正常运行
      */
-     var socketIsInit = false
+    var socketIsInit = false
 
 
 //    init {
@@ -60,46 +52,35 @@ class AppService {
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
      */
-    @OptIn(DelicateCoroutinesApi::class)
     fun initSocketService(p: Project) {
+        if(socketIsInit) return
         project = p
-        if (server == null) {
-            GlobalScope.launch(Dispatchers.IO) {
-                server = AioQuickServer(9999, StringProtocol(), object : MessageProcessor<String?> {
-                    override fun process(session: AioSession?, msg: String?) {
-                        msg?.let { flutterClienJsonHandle(msg) }
+        server = AioQuickServer(9999, StringProtocol(), object : MessageProcessor<String?> {
+            override fun process(session: AioSession?, msg: String?) {
+                msg?.let { flutterClienJsonHandle(msg) }
+            }
+
+            override fun stateEvent(
+                session: AioSession?,
+                stateMachineEnum: StateMachineEnum?,
+                throwable: Throwable?
+            ) {
+                super.stateEvent(session, stateMachineEnum, throwable)
+                println("状态机:${stateMachineEnum}")
+                when (stateMachineEnum) {
+                    StateMachineEnum.NEW_SESSION -> {
+                        newSessionHandle(session)
                     }
 
-                    override fun stateEvent(
-                        session: AioSession?,
-                        stateMachineEnum: StateMachineEnum?,
-                        throwable: Throwable?
-                    ) {
-                        super.stateEvent(session, stateMachineEnum, throwable)
-                        println("状态机:${stateMachineEnum}")
-                        when (stateMachineEnum) {
-                            StateMachineEnum.NEW_SESSION -> {
-                                newSessionHandle(session)
-                            }
-
-                            else -> {}
-                        }
-                    }
-                })
-                server!!.setReadBufferSize(10485760) // 10m
-                try {
-                    server!!.start()
-                    socketIsInit = true
-                } catch (e: Exception) {
-                    socketIsInit = false
-                    mylogger().error("启动socket服务失败:${e.localizedMessage}")
-                    MyNotifactionUtil.socketNotif(
-                        message = "启动dio监听模块失败,异常:${e.localizedMessage}", project = project,
-                        NotificationType.ERROR
-                    )
+                    else -> {}
                 }
             }
+        })
+        server.setReadBufferSize(10485760) // 10m
+        val thread = AppSocketThread(server, project) {
+            socketIsInit = it
         }
+        Thread(thread).start()
     }
 
     /**
@@ -110,20 +91,6 @@ class AppService {
             "梁典典: 检测到APP连接成功,现在可以在底部工具栏监听dio请求了,${session?.sessionID}",
             project = project
         )
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun initExampleLabels() {
-        GlobalScope.launch {
-            try {
-                val response = HttpUtil.get("http://127.0.0.1/api/resource/labels")
-                val model = Gson().fromJson(response, ExampleResult::class.java)
-                examples = model.data
-            } catch (e: Exception) {
-                Console.error(e.localizedMessage)
-            }
-
-        }
     }
 
 
@@ -184,11 +151,11 @@ class AppService {
     }
 
 
-    fun setTestData() {
-        flutterProjects = mutableMapOf(
-            Pair(
-                "test", ProjectSocketService.genList()
-            )
-        )
-    }
+//    fun setTestData() {
+//        flutterProjects = mutableMapOf(
+//            Pair(
+//                "test", ProjectSocketService.genList()
+//            )
+//        )
+//    }
 }

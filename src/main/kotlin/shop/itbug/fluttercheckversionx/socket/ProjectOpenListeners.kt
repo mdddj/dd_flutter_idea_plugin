@@ -13,6 +13,5 @@ class ProjectOpenListeners: ProjectManagerListener {
         super.projectOpened(project)
         val appService = service<AppService>()
         appService.initSocketService(project)
-        appService.initExampleLabels()
     }
 }
