@@ -66,15 +66,16 @@ dependencies:
                         val get = CacheUtil.unredCaChe().asMap()[pluginName]
                         if (get != null && get == pluginName) {
 
-                            sink.addInlineElement(
-                                element.endOffset,
-                                false,
-                                myFactory.simpleText(
-                                    "Never used",
-                                    "This plug-in package has not been used in the project, it is recommended to delete it to reduce the size of the installation package (此插件包从未使用过,建议删除,可减少安装包大小)"
-                                ),
-                                true
-                            )
+                            ///TODO 检测插件是否在项目中使用过
+//                            sink.addInlineElement(
+//                                element.endOffset,
+//                                false,
+//                                myFactory.simpleText(
+//                                    "Never used",
+//                                    "This plug-in package has not been used in the project, it is recommended to delete it to reduce the size of the installation package (此插件包从未使用过,建议删除,可减少安装包大小)"
+//                                ),
+//                                true
+//                            )
                         }
                     }
                 }

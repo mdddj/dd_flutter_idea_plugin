@@ -113,7 +113,6 @@ class YamlElementVisitor(
 
                     val usedArr = withContext(Dispatchers.IO) {
                         val used = arrayListOf<String>()
-                        readAction {
                             files.forEach {
                                 val psiTestFile =  PsiManager.getInstance(project).findFile(it)
                                 if (psiTestFile != null) {
@@ -125,7 +124,6 @@ class YamlElementVisitor(
                                 }
 
                             }
-                        }
                         used
                     }
 
@@ -148,9 +146,8 @@ class YamlElementVisitor(
                 }
             }
 
-            private suspend fun psiFileHandle(file: PsiFile): List<String> {
+            private fun psiFileHandle(file: PsiFile): List<String> {
                 val arr = arrayListOf<String>()
-                readAction {
                     file.accept(object : PsiElementVisitor() {
                         override fun visitElement(element: PsiElement) {
                             val imports = element.children.filterIsInstance<DartImportStatementImpl>()
@@ -166,7 +163,6 @@ class YamlElementVisitor(
                             super.visitElement(element)
                         }
                     })
-                }
                 return arr
             }
         }

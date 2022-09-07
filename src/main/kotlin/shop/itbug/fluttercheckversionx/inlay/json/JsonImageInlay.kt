@@ -10,7 +10,6 @@ import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import java.util.regex.Pattern
 import javax.swing.JComponent
 import javax.swing.JLabel
-import javax.swing.JPanel
 
 class JsonImageInlay : InlayHintsProvider<JsonImageInlay.Setting> {
 

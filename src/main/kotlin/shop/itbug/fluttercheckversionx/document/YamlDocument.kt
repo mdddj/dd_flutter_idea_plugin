@@ -7,16 +7,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementType
-import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
-import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.services.ServiceCreate
-import shop.itbug.fluttercheckversionx.services.await
-import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.getPluginName
+import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
 
 /**
@@ -32,41 +29,32 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
      */
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
 
-
-        if (element == null) return ""
-        if (element !is YAMLKeyValueImpl) return "无法获取该插件版本信息"
-
-
-        val allPlugins = MyPsiElementUtil.getAllPlugins(element.project)
-        val devPlugins = MyPsiElementUtil.getAllPlugins(element.project,"dev_dependencies")
-
-        var tips: String? = null
-        val pluginName = element.keyText
-        if (!allPlugins.contains(pluginName) && !devPlugins.contains(pluginName)) return "无法获取该插件版本信息"
-
-
-        if (pluginName.isNotEmpty()) {
-            var detail: PubVersionDataModel? = null
-            runBlocking {
-                val service = ServiceCreate.create(PubService::class.java)
-                try {
-                    detail = service.callPluginDetails(pluginName).await()
-                } catch (e: Exception) {
-                    tips = "无法获取该插件版本信息:" + e.localizedMessage
+        if(element?.isDartPluginElement() == true){
+            val pluginName = element.getPluginName()
+            if (pluginName.isNotEmpty()) {
+                var detail: PubVersionDataModel? = null
+                    val service = ServiceCreate.create(PubService::class.java)
+                    try {
+                        detail = service.callPluginDetails(pluginName).execute().body()
+                    } catch (_: Exception) {
+                    }
+                if (detail != null) {
+                    return renderFullDoc(
+                        pluginName = detail.name,
+                        lastVersion = detail.latest.version,
+                        githubUrl = detail.latest.pubspec.homepage,
+                        desc = detail.latest.pubspec.description,
+                        lastUpdate = detail.latest.published
+                    )
                 }
-            }
-            if (detail != null) {
-                return renderFullDoc(
-                    pluginName = detail!!.name,
-                    lastVersion = detail!!.latest.version,
-                    githubUrl = detail!!.latest.pubspec.homepage,
-                    desc = detail!!.latest.pubspec.description,
-                    lastUpdate = detail!!.latest.published
-                )
-            }
 
+            }
         }
-        return tips ?: "无法获取该插件版本信息"
+
+
+
+
+        return  "无法获取该插件版本信息"
     }
 
     /**
@@ -79,16 +67,8 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
 
-        val parentElement = contextElement?.parent?.parent?.parent
-        if (parentElement is YAMLKeyValueImpl) {
-            if (parentElement.keyText != "dependencies") {
-                return null
-            }
-        }
-
-        if (contextElement is YAMLKeyValueImpl) {
-
-            return contextElement
+        if(contextElement!=null && contextElement.isDartPluginElement()){
+            return  contextElement
         }
         return null
     }

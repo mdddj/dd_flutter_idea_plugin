@@ -21,7 +21,7 @@ import javax.swing.Icon
 class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        if (element is YAMLKeyValueImpl && element.isDartPluginElement()) {
+        if (element is YAMLKeyValueImpl && element.isDartPluginElement() && element.nextSibling!=null) {
             return LineMarkerInfo(
                 element.nextSibling, element.textRange,
                 MyIcons.dartPluginIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),

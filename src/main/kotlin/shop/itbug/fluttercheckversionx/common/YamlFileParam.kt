@@ -1,8 +1,7 @@
 package shop.itbug.fluttercheckversionx.common
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.startOffset
 import kotlinx.coroutines.*
@@ -12,14 +11,13 @@ import org.jetbrains.yaml.YAMLFileType
 import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YamlPsiElementVisitor
 import org.jetbrains.yaml.psi.impl.YAMLFileImpl
-import org.jetbrains.yaml.psi.impl.YAMLMappingImpl
-import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import shop.itbug.fluttercheckversionx.services.PUBL_API_URL
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.services.await
 import shop.itbug.fluttercheckversionx.util.CacheUtil
+import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
 /**
  * 开始请求数据时回调
@@ -33,11 +31,6 @@ typealias CheckPluginStartCallback = (pluginName: String, index: Int, count: Int
 class YamlFileParser(
     private val file: PsiFile,
 ) : Disposable {
-
-
-    init {
-        Disposer.register(file.project, this)
-    }
 
 
     /**
@@ -54,15 +47,9 @@ class YamlFileParser(
      */
     suspend fun startCheckFile(pluginStart: CheckPluginStartCallback?): List<PluginVersion> {
         if (isYamlFile()) {
-            var allPlugins = emptyList<PluginVersion>()
-            runReadAction {
-                allPlugins = getAllPlugins()
-            }
+            val allPlugins: List<PluginVersion> = getAllPlugins()
+            return checkVersionFormPub(allPlugins, pluginStart)
 
-            val hasNewVersionPlugins = checkVersionFormPub(allPlugins, pluginStart)
-            return hasNewVersionPlugins
-
-        } else {
         }
         return emptyList()
     }
@@ -98,7 +85,7 @@ class YamlFileParser(
                                 CacheUtil.getCatch().put(plugin.name, plugin)
                             }
                         }
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                     }
                 }
             }
@@ -126,28 +113,19 @@ class YamlFileParser(
             if (chillers.isNotEmpty()) {
                 chillers.map {
                     it.accept(object : YamlPsiElementVisitor() {
-                        override fun visitKeyValue(keyValue: YAMLKeyValue) {
-                            if (keyValue.keyText == "dependencies") {
-                                val mappingChild = (keyValue.value as YAMLMappingImpl).children
-                                mappingChild.map { it2 ->
-                                    it2.accept(object : YamlPsiElementVisitor() {
-                                        override fun visitKeyValue(keyValue2: YAMLKeyValue) {
-                                            if (keyValue2.value is YAMLPlainTextImpl) {
-                                                allPlugins.add(
-                                                    PluginVersion(
-                                                        keyValue2.keyText,
-                                                        keyValue2.valueText,
-                                                        "",
-                                                        keyValue2.value!!.textOffset,
-                                                        keyValue2.value!!.startOffset
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    })
-                                }
-
+                        override fun visitElement(element: PsiElement) {
+                            if(element.isDartPluginElement() && element is YAMLKeyValue){
+                                allPlugins.add(
+                                    PluginVersion(
+                                        element.keyText,
+                                        element.valueText,
+                                        "",
+                                        element.value!!.textOffset,
+                                        element.value!!.startOffset
+                                    )
+                                )
                             }
+                            super.visitElement(element)
                         }
                     })
                 }

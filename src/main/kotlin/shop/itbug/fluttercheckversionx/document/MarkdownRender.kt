@@ -1,15 +1,7 @@
 package shop.itbug.fluttercheckversionx.document
 
-import com.intellij.lang.Language
-import com.intellij.openapi.editor.HighlighterColors
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ui.UIUtil
-import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -102,14 +94,7 @@ private fun processTableRow(
 fun MarkdownNode.toHtml(project: Project): String {
 
 
-    ///不要删除尾随空格
-//    if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
-//        return text
-//    }
 
-
-    /// 当前项目的主要语言
-    var currentCodeFenceLang = "dart"
 
     /// 字符串构建器
     val sb = StringBuilder()
@@ -215,12 +200,8 @@ fun MarkdownNode.toHtml(project: Project): String {
             }
 
 
-            MarkdownTokenTypes.FENCE_LANG -> {
-                currentCodeFenceLang = nodeText
-            }
 
             //长短链接
-            MarkdownElementTypes.SHORT_REFERENCE_LINK,
             MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                 val linkLabelNode = node.child(MarkdownElementTypes.LINK_LABEL)
                 val linkLabelContent = linkLabelNode?.children
@@ -356,51 +337,6 @@ private fun MarkdownNode.visit(action: (MarkdownNode, () -> Unit) -> Unit) {
     }
 }
 
-//private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-//    highlightingMode: DocumentationSettings.InlineCodeHighlightingMode,
-//    project: Project,
-//    language: Language,
-//    codeSnippet: String
-//): StringBuilder {
-//    val codeSnippetBuilder = StringBuilder()
-//    if (highlightingMode == DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING) { // highlight code by lexer
-//        HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-//            codeSnippetBuilder,
-//            project,
-//            language,
-//            codeSnippet,
-//            false,
-//            DocumentationSettings.getHighlightingSaturation(true)
-//        )
-//    } else {
-//        codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
-//    }
-//    if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
-//        // set code text color as editor default code color instead of doc component text color
-//        val codeAttributes =
-//            EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
-//        codeAttributes.backgroundColor = null
-//        appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
-//    } else {
-//        append(codeSnippetBuilder.toString())
-//    }
-//    return this
-//}
-
-private fun StringBuilder.appendStyledSpan(
-    doHighlighting: Boolean,
-    attributes: TextAttributes,
-    value: String?
-): StringBuilder {
-    append(value)
-    return this
-}
-
-private fun guessLanguage(name: String): Language? {
-    val lower = StringUtil.toLowerCase(name)
-    return Language.findLanguageByID(lower)
-        ?: Language.getRegisteredLanguages().firstOrNull { StringUtil.toLowerCase(it.id) == lower }
-}
 
 private fun getTableAlignment(node: MarkdownNode): List<String> {
     val separatorRow = node.child(GFMTokenTypes.TABLE_SEPARATOR)
