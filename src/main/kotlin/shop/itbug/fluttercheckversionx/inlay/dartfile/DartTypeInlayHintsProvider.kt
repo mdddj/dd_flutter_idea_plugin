@@ -1,15 +1,19 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
+import com.intellij.codeInsight.documentation.render.DocRenderItem
 import com.intellij.codeInsight.hints.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
+import shop.itbug.fluttercheckversionx.inlay.custom.MyCustomDocRender
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 
@@ -54,11 +58,27 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             .analysis_getHover(file.virtualFile, filterIsInstance.textOffset)
                         if (analysisGethover.isNotEmpty()) {
                             val staticType = analysisGethover[0].staticType
+                            val docText = analysisGethover[0].dartdoc
                             if (staticType != null) {
+                                val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType")
                                 sink.addInlineElement(
-                                    filterIsInstanceWithName.endOffset, false,
-                                    hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType"), false
+                                    filterIsInstanceWithName.endOffset, false, ins, false
                                 )
+//                                sink.addBlockElement(
+//                                    filterIsInstanceWithName.startOffset,
+//                                    true,
+//                                    showAbove = true,
+//                                    priority = 1,
+//
+//                                )
+//                                ApplicationManager.getApplication().invokeLater{
+//                                    val item =  DocRenderItem.getItemAroundOffset(editor,filterIsInstanceWithName.textOffset)
+//                                    editor.inlayModel.addBlockElement(
+//                                        filterIsInstanceWithName.startOffset,
+//                                        true, true, 1, MyCustomDocRender(docText,editor)
+//                                    )
+//                                }
+
                             }
                         }
                     }
@@ -94,6 +114,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                                     hintsInlayPresentationFactory.simpleText(docMessage, ""),
                                                     false
                                                 )
+
                                             }
                                         }
                                     }

@@ -20,15 +20,15 @@ import javax.swing.Icon
 
 class PluginDartIconLineMark : LineMarkerProvider {
 
-    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*> {
+    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
         if (element is YAMLKeyValueImpl && element.isDartPluginElement()) {
             return LineMarkerInfo(
-                element, element.textRange,
+                element.nextSibling, element.textRange,
                 MyIcons.dartPluginIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),
                 GutterIconRenderer.Alignment.LEFT
             ) { "111" }
         }
-        return LineMarkerInfo(element, element.textRange)
+        return null
     }
 }
 

@@ -102,6 +102,8 @@
 
         <defaultLiveTemplates file="/temp/Flutter.xml" />
         <liveTemplateContext implementation="shop.itbug.fluttercheckversionx.temp.ConsumerfulTemp"/>
+
+        <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language" />
     </extensions>
 
 

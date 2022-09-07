@@ -2,11 +2,11 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.10"
-    id("org.jetbrains.intellij") version "1.8.1"
+    id("org.jetbrains.intellij") version "1.9.0"
 }
 //028486
 group = "shop.itbug"
-version = "2.0.3"
+version = "2.0.4"
 
 repositories {
     mavenCentral()
@@ -55,9 +55,9 @@ dependencies {
     implementation ("com.fifesoft:rsyntaxtextarea:3.2.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
-    testImplementation("org.slf4j:slf4j-simple:2.0.0-alpha7")
-    implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    testImplementation("org.slf4j:slf4j-simple:2.0.0")
+    implementation("org.slf4j:slf4j-api:2.0.0")
 }
 
 
