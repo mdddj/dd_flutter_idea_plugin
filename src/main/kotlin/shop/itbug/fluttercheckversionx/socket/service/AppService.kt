@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
 import com.google.gson.Gson
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.smartboot.socket.MessageProcessor
@@ -71,7 +72,9 @@ class AppService {
                     StateMachineEnum.NEW_SESSION -> {
                         newSessionHandle(session)
                     }
-
+                    StateMachineEnum.SESSION_CLOSED -> {
+                        MyNotifactionUtil.socketNotif("典典:dio监听模块意外断开,请重新连接",project, NotificationType.WARNING)
+                    }
                     else -> {}
                 }
             }
