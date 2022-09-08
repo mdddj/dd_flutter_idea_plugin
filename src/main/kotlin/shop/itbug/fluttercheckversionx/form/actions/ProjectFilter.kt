@@ -1,14 +1,9 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.ui.components.JBLabel
 import java.awt.Component
-import javax.swing.BoxLayout
-import javax.swing.DefaultComboBoxModel
-import javax.swing.JComboBox
-import javax.swing.JLabel
-import javax.swing.JList
-import javax.swing.JPanel
-import javax.swing.ListCellRenderer
+import javax.swing.*
 
 
 /**
@@ -69,11 +64,7 @@ class MyCustomListRender : ListCellRenderer<String> {
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
-        val panel = JPanel()
-        panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
-        panel.add(JLabel(AllIcons.Actions.ProjectDirectory))
-        panel.add(JLabel(value))
-        return panel
+        return JBLabel(value?: "未知项目", AllIcons.Actions.ProjectDirectory, SwingConstants.LEFT)
     }
 
 }
