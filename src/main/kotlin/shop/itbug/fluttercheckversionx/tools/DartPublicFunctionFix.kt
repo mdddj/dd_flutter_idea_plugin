@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiElementFilter
@@ -110,37 +109,37 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
 
-        val factory = PsiElementFactory.getInstance(project)
 
-        val newNamePsi = factory.createDummyHolder(renameText, DartTokenTypes.RETURN_TYPE, null)
-        startElement.replace(newNamePsi)
-
-
-        val find = PsiTreeUtil.collectElements(functionElement, object : PsiElementFilter {
-            override fun isAccepted(element: PsiElement): Boolean {
-                if (element is DartReferenceExpressionImpl && element.text.equals(className)) {
-                    return true
-                }
-                return false
-            }
-        })
-
-        if (find.isNotEmpty()) {
-            for (i in find) {
-                val newEl = factory.createDummyHolder(renameText, DartTokenTypes.REFERENCE_EXPRESSION, null)
-                i.replace(newEl)
-            }
-        }
-
-
-        val classfind = PsiTreeUtil.collectElementsOfType(file.originalElement, DartComponentNameImpl::class.java)
-        println(classfind.size)
-        for (c in classfind) {
-            if (c.text.equals(className)) {
-                val newEl = factory.createDummyHolder(renameText, DartTokenTypes.COMPONENT_NAME, null)
-                c.replace(newEl)
-            }
-        }
+        // todo 替换类
+//        val newNamePsi = factory.createDummyHolder(renameText, DartTokenTypes.RETURN_TYPE, null)
+//        startElement.replace(newNamePsi)
+//
+//
+//        val find = PsiTreeUtil.collectElements(functionElement, object : PsiElementFilter {
+//            override fun isAccepted(element: PsiElement): Boolean {
+//                if (element is DartReferenceExpressionImpl && element.text.equals(className)) {
+//                    return true
+//                }
+//                return false
+//            }
+//        })
+//
+//        if (find.isNotEmpty()) {
+//            for (i in find) {
+//                val newEl = factory.createDummyHolder(renameText, DartTokenTypes.REFERENCE_EXPRESSION, null)
+//                i.replace(newEl)
+//            }
+//        }
+//
+//
+//        val classfind = PsiTreeUtil.collectElementsOfType(file.originalElement, DartComponentNameImpl::class.java)
+//        println(classfind.size)
+//        for (c in classfind) {
+//            if (c.text.equals(className)) {
+//                val newEl = factory.createDummyHolder(renameText, DartTokenTypes.COMPONENT_NAME, null)
+//                c.replace(newEl)
+//            }
+//        }
 
     }
 

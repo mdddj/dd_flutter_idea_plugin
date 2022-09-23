@@ -11,6 +11,7 @@ import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
+import shop.itbug.fluttercheckversionx.services.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
@@ -68,9 +69,11 @@ class AppService {
             ) {
                 super.stateEvent(session, stateMachineEnum, throwable)
                 println("状态机:${stateMachineEnum}")
+                messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC).statusChange(aioSession = session,stateMachineEnum = stateMachineEnum)
                 when (stateMachineEnum) {
                     StateMachineEnum.NEW_SESSION -> {
                         newSessionHandle(session)
+
                     }
                     StateMachineEnum.SESSION_CLOSED -> {
                         MyNotifactionUtil.socketNotif("典典:dio监听模块意外断开,请重新连接",project, NotificationType.WARNING)
@@ -153,12 +156,4 @@ class AppService {
         return ArrayList(flutterProjects.keys)
     }
 
-
-//    fun setTestData() {
-//        flutterProjects = mutableMapOf(
-//            Pair(
-//                "test", ProjectSocketService.genList()
-//            )
-//        )
-//    }
 }

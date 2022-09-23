@@ -20,7 +20,6 @@ class StringProtocol : Protocol<String?> {
         val b = ByteArray(length)
         readBuffer.get(b)
         readBuffer.mark()
-        val string = String(b)
-        return string
+        return String(b)
     }
 }

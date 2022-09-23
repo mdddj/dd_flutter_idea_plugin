@@ -1,13 +1,10 @@
-
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.10"
     id("org.jetbrains.intellij") version "1.9.0"
 }
-//028486
 group = "shop.itbug"
 version = "2.0.4"
-
 repositories {
     mavenCentral()
     google()
@@ -16,30 +13,22 @@ repositories {
         url = uri("https://plugins.gradle.org/m2/")
     }
 }
-
-// Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-
-
-    /// 旧版本支持 idea: 2021.1  Dart:211.7817  io.flutter:66.0.1
-    /// 新版本 2022.1   io.flutter:66.0.4 Dart:221.5588 markdown221.5080.126
-    version.set("2022.1")
-
-
-    /// Android studio 是 AI
-    /// Idea 社区办 IC
-    type.set("IC")
+    version.set("2021.2.1.16")
+    type.set("AI")
     plugins.set(
         listOf(
-            "java",
             "yaml",
-            "Dart:221.5588",
-            "io.flutter:66.0.4",
-            "org.intellij.plugins.markdown:221.5080.126"
+            "Dart:212.5744",
+            "org.intellij.plugins.markdown:212.5457.16"
         )
     )
 
 }
+
+
+
+
 
 
 dependencies {
@@ -48,7 +37,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
     implementation("cn.hutool:hutool-all:5.8.6")
     implementation("org.smartboot.socket:aio-core:1.6.0")
-    implementation("com.alibaba:fastjson:2.0.12.graal")
+    implementation("com.alibaba:fastjson:2.0.13.graal")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation ("com.fifesoft:rsyntaxtextarea:3.2.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
@@ -58,16 +47,13 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.0")
 }
 
-
-
 tasks {
-    // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "18"
+        targetCompatibility = "18"
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "18"
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -78,8 +64,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212.*")
-        untilBuild.set("222.*")
+//        sinceBuild.set("212.*")
+//        untilBuild.set("222.*")
         changeNotes.set("""
             v2.0.4: 更新pubspec.yaml的快捷图标位置
             
@@ -97,5 +83,10 @@ tasks {
 
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
+    }
+
+    runIde {
+        jbrVariant.set("dcevm")
+        autoReloadPlugins.set(true)
     }
 }

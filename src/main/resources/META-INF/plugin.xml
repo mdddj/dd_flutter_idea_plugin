@@ -13,11 +13,6 @@
         </p>
 
 
-        <p>
-            QQ group: 667186542
-        </p>
-
-
         <h3>Feature</h3>
 
 
@@ -46,16 +41,14 @@
             <ul>
         ]]></description>
 
-    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
-         on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.androidstudio</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
-    <depends>com.intellij.java</depends>
-    <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
+
 
     <applicationListeners>
         <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"
@@ -63,8 +56,9 @@
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.lineMarkerProvider language="yaml" implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
-<!--        <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools"/>-->
+        <codeInsight.lineMarkerProvider language="yaml"
+                                        implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
+        <!--        <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools"/>-->
         <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
                          groupBundle="messages.InspectionsBundle"
                          groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
@@ -81,30 +75,56 @@
         <notificationGroup id="plugin_new_version_notif" displayType="BALLOON"/>
         <!--   dio socket 相关通知    -->
         <notificationGroup displayType="BALLOON" id="dio_socket_notif"/>
+
+        <!--    检查插件是否在项目中已经使用过     -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
                                    language="yaml"/>
+
+        <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
                                    language="JSON"/>
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartPluginTimeDateHintsProvider" language="yaml" />
+
+        <!--    插件更新更新时间内联提示     -->
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.DartPluginTimeDateHintsProvider"
+                language="yaml"/>
+
+        <!--   dart变量的内联显示     -->
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
+
+        <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
+
+        <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
+
+        <!--    pubspec.yaml插鼠标悬停显示插件信息     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument"
                                     language="yaml" order="first"/>
+
+        <!--    dart文档的HTML实现    -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
                                     language="Dart" order="first"/>
+
+        <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
                     icon="AllIcons.Debugger.ThreadStates.Socket"/>
+
+        <!--   底部状态栏展示小部件     -->
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"/>
+
+        <!--        状态管理个保存-->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"/>
 
-        <defaultLiveTemplates file="/temp/Flutter.xml" />
+        <!--     自定义模板 riverpod   -->
+        <defaultLiveTemplates file="/temp/Flutter.xml"/>
         <liveTemplateContext implementation="shop.itbug.fluttercheckversionx.temp.ConsumerfulTemp"/>
 
-        <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language" />
+        <!--        系统设置-->
+        <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"/>
     </extensions>
 
 
@@ -114,7 +134,6 @@
         </action>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
-            <add-to-group group-id="Flutter.MenuActions.Run" anchor="after" relative-to-action="AttachDebuggerAction"/>
         </action>
     </actions>
 

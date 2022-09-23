@@ -5,6 +5,11 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
+import com.jetbrains.lang.dart.psi.DartPsiCompositeElement
+import com.jetbrains.lang.dart.util.DartElementGenerator
+import com.jetbrains.lang.dart.util.DartPsiImplUtil
+import org.jetbrains.yaml.YAMLElementGenerator
+import org.jetbrains.yaml.psi.YAMLPsiElement
 
 
 /**
@@ -27,16 +32,14 @@ class NewVersinFix(
     }
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
-        val factory = JavaPsiFacade.getInstance(project).elementFactory
-        val psiExpression =
-            factory.createDummyHolder(
-                "^$newVersion", IElementType(
-                    "text",
-                    Language.findLanguageByID("yaml")
-                ), null
-            )
-        startElement.replace(psiExpression)
-        fixed()
+
+       val newElement =  DartElementGenerator.createStatementFromText(project,"^$newVersion")
+
+        newElement?.let {
+            startElement.replace(it)
+            fixed()
+        }
+
     }
 
 }

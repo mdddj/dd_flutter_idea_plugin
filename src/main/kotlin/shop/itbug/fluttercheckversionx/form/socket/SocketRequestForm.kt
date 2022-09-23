@@ -7,12 +7,14 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
+import org.smartboot.socket.StateMachineEnum
+import org.smartboot.socket.StateMachineEnum.*
+import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
@@ -20,6 +22,7 @@ import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
+import shop.itbug.fluttercheckversionx.services.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -140,7 +143,6 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             DefaultActionGroup.EMPTY_GROUP,
             true
         )
-        val bottomToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Dio Request")
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {
@@ -176,11 +178,34 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
         containerJBSplitter.secondComponent = rightPanel
 
 
-        // 接收消息总线传来的对象,并刷新列表
-        ApplicationManager.getApplication().messageBus.connect().subscribe(
+        listenData()
+
+    }
+
+    private val messageBus get() = ApplicationManager.getApplication().messageBus
+
+
+    private fun listenData(){
+        // api消息进入
+        messageBus.connect().subscribe(
             SocketMessageBus.CHANGE_ACTION_TOPIC, object : SocketMessageBus {
                 override fun handleData(data: SocketResponseModel?) {
                     refreshData(null)
+                }
+            }
+        )
+        // socket连接状态变更
+        messageBus.connect().subscribe(
+            SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC,object : SocketConnectStatusMessageBus {
+                override fun statusChange(aioSession: AioSession?, stateMachineEnum: StateMachineEnum?) {
+                    when(stateMachineEnum){
+                        NEW_SESSION -> {
+                            print("新连接")
+                        }
+                        else -> {
+
+                        }
+                    }
                 }
             }
         )
@@ -240,6 +265,7 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
     }
 
 
+    ///添加帮助性文档
     private fun addHelpText() {
         requestsJBList.setEmptyText("暂时没有监听到请求.")
         requestsJBList.emptyText.apply {

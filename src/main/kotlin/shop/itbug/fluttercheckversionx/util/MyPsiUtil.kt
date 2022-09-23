@@ -6,6 +6,8 @@ import com.intellij.project.stateStore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
@@ -31,7 +33,10 @@ class MyPsiElementUtil {
             if(psiElement is YAMLKeyValueImpl){
                 return psiElement.keyText
             }
-            return ""
+            if(psiElement is LeafPsiElement){
+                psiElement.text
+            }
+            return psiElement?.text ?: ""
         }
 
         fun hasYamlMapping(element: PsiElement): Boolean {
@@ -71,7 +76,18 @@ class MyPsiElementUtil {
 
 ///是否为dart插件
 fun PsiElement.isDartPluginElement() : Boolean{
-    if (this is YAMLKeyValueImpl && this.parents(false).iterator().hasNext() && this.parents(false)
+    if(this is LeafPsiElement){
+       val parent = this.parentOfType<YAMLKeyValueImpl>()
+        parent?.let {
+            return it.isDartPluginElementWithKeyValue()
+        }
+    }
+    return false
+}
+
+
+fun  YAMLKeyValueImpl.isDartPluginElementWithKeyValue() : Boolean{
+    if (this.parents(false).iterator().hasNext() && this.parents(false)
             .iterator().next().parent is YAMLKeyValueImpl
     ) {
         val ds = listOf("dependencies", "dev_dependencies", "dependency_overrides")
@@ -82,6 +98,7 @@ fun PsiElement.isDartPluginElement() : Boolean{
     }
     return false
 }
+
 fun PsiElement.getPluginName(): String{
     return MyPsiElementUtil.getPluginNameWithPsi(this)
 }

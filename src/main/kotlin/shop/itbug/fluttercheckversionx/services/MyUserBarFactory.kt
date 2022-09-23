@@ -1,17 +1,26 @@
 package shop.itbug.fluttercheckversionx.services
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.JBPopup
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.CustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
-import shop.itbug.fluttercheckversionx.dialog.LoginDialog
+import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.JBLabel
+import shop.itbug.fluttercheckversionx.dialog.SearchDialog
+import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.PluginActions.*
+import java.awt.Point
+import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
 import javax.swing.JComponent
-import javax.swing.JLabel
 
+
+enum class PluginActions(val title: String) {
+    SearchPlugin("搜索pub包"),CheckVersion("检测版本更新")
+}
 
 ///用户面板
 class MyUserBarFactory : StatusBarWidgetFactory {
@@ -42,37 +51,61 @@ class MyUserBarFactory : StatusBarWidgetFactory {
 
 ///底部状态栏的组件
 class MyUserAccountBar(var project: Project): CustomStatusBarWidget {
+
+    val icon = MyIcons.dartPluginIcon
+    val iconLabel = JBLabel(icon)
+
+
     override fun dispose() {
     }
 
     override fun ID(): String {
-        return "ldd accout"
+        return "dart plugin actions"
     }
 
     override fun install(statusBar: StatusBar) {
     }
 
     override fun getComponent(): JComponent {
-        val jLabel = JLabel(AllIcons.General.User)
-        jLabel.addMouseListener(object : MouseListener{
+
+
+        iconLabel.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent?) {
-                LoginDialog(project = project ).show()
+                e?.let {
+                    showPop()
+                }
+                super.mouseClicked(e)
             }
-
-            override fun mousePressed(e: MouseEvent?) {
-            }
-
-            override fun mouseReleased(e: MouseEvent?) {
-            }
-
-            override fun mouseEntered(e: MouseEvent?) {
-            }
-
-            override fun mouseExited(e: MouseEvent?) {
-            }
-
         })
-        return jLabel
+        return iconLabel
+    }
+
+
+
+    fun showPop(){
+        val pop = createPop()
+        val h = pop.content.preferredSize.height
+        val w = pop.content.preferredSize.width
+        pop.show(RelativePoint(Point(iconLabel.locationOnScreen.x-w+iconLabel.preferredSize.width,iconLabel.locationOnScreen.y-h)))
+    }
+
+    private fun createPop():JBPopup {
+       return JBPopupFactory.getInstance().createPopupChooserBuilder(values().asList())
+            .setItemChosenCallback {
+                when(it){
+                    SearchPlugin -> {
+                        SearchDialog(project).show()
+                    }
+                    CheckVersion -> {
+
+                    }
+                }
+            }
+           .setRenderer { list, value, index, isSelected, cellHasFocus ->
+               return@setRenderer JBLabel(value.title)
+           }
+           .setTitle("Flutter工具12")
+            .createPopup()
     }
 
 
