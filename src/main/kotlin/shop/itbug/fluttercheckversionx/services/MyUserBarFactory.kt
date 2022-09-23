@@ -12,6 +12,7 @@ import com.intellij.ui.components.JBLabel
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginActions.*
+import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -97,7 +98,11 @@ class MyUserAccountBar(var project: Project): CustomStatusBarWidget {
                         SearchDialog(project).show()
                     }
                     CheckVersion -> {
-
+                      val pubsecpFile =   MyPsiElementUtil.getPubSecpYamlFile(project)
+                        pubsecpFile?.let {
+                           val plugins = MyPsiElementUtil.getAllPlugins(project)
+                            print(plugins)
+                        }
                     }
                 }
             }
