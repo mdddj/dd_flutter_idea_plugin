@@ -20,7 +20,7 @@ import javax.swing.JComponent
 
 
 enum class PluginActions(val title: String) {
-    SearchPlugin("搜索pub包"),CheckVersion("检测版本更新"),GetAllPlugins("获取全部插件")
+    SearchPlugin("搜索pub包"), CheckVersion("检测版本更新"), GetAllPlugins("获取全部插件")
 }
 
 ///用户面板
@@ -50,11 +50,13 @@ class MyUserBarFactory : StatusBarWidgetFactory {
 }
 
 
-///底部状态栏的组件
-class MyUserAccountBar(var project: Project): CustomStatusBarWidget {
+/**
+ * 底部工具栏中的扩展操作
+ */
+class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
 
     val icon = MyIcons.dartPluginIcon
-    val iconLabel = JBLabel(icon)
+    private val iconLabel = JBLabel(icon)
 
 
     override fun dispose() {
@@ -82,39 +84,53 @@ class MyUserAccountBar(var project: Project): CustomStatusBarWidget {
     }
 
 
-
-    fun showPop(){
+    fun showPop() {
         val pop = createPop()
         val h = pop.content.preferredSize.height
         val w = pop.content.preferredSize.width
-        pop.show(RelativePoint(Point(iconLabel.locationOnScreen.x-w+iconLabel.preferredSize.width,iconLabel.locationOnScreen.y-h)))
+        pop.show(
+            RelativePoint(
+                Point(
+                    iconLabel.locationOnScreen.x - w + iconLabel.preferredSize.width,
+                    iconLabel.locationOnScreen.y - h
+                )
+            )
+        )
     }
 
-    private fun createPop():JBPopup {
-       return JBPopupFactory.getInstance().createPopupChooserBuilder(values().asList())
-            .setItemChosenCallback {
-                when(it){
-                    SearchPlugin -> {
-                        SearchDialog(project).show()
-                    }
-                    CheckVersion -> {
-                      val pubsecpFile =   MyPsiElementUtil.getPubSecpYamlFile(project)
-                        pubsecpFile?.let {
-                           val plugins = MyPsiElementUtil.getAllPlugins(project)
-                            print(plugins)
-                        }
-                    }
-                    GetAllPlugins -> {
-                        MyPsiElementUtil.getAllFlutters(project)
-                    }
-                }
+    private fun createPop(): JBPopup {
+        return JBPopupFactory.getInstance().createPopupChooserBuilder(values().asList())
+            .setItemChosenCallback { doActions(it) }
+            .setRenderer { _, value, _, _, _ ->
+                return@setRenderer JBLabel(value.title)
             }
-           .setRenderer { list, value, index, isSelected, cellHasFocus ->
-               return@setRenderer JBLabel(value.title)
-           }
-           .setTitle("Flutter工具")
+            .setTitle("Flutter工具")
             .createPopup()
     }
 
+
+    /**
+     * 扩展操作
+     * @param action 选择的操作
+     */
+    private fun doActions(action: PluginActions) {
+        when (action) {
+            SearchPlugin -> {
+                SearchDialog(project).show()
+            }
+
+            CheckVersion -> {
+                val pubsecpFile = MyPsiElementUtil.getPubSecpYamlFile(project)
+                pubsecpFile?.let {
+                    val plugins = MyPsiElementUtil.getAllPlugins(project)
+                    print(plugins)
+                }
+            }
+
+            GetAllPlugins -> {
+                MyPsiElementUtil.getAllFlutters(project)
+            }
+        }
+    }
 
 }

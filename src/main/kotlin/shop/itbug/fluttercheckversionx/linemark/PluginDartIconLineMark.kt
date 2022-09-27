@@ -15,20 +15,24 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.getPluginName
+import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 import java.awt.event.MouseEvent
 import javax.swing.Icon
 
 class PluginDartIconLineMark : LineMarkerProvider {
 
-    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement> {
-        if (element is YAMLKeyValueImpl) {
+    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
+        ///element instanceof PsiIdentifier &&
+        // (parent = element.getParent()) instanceof PsiMethod &&
+        // ((PsiMethod)parent).getMethodIdentifier() == element)
+        if ( element.isDartPluginElement() && element is YAMLKeyValueImpl) {
             return LineMarkerInfo(
-                element.nextSibling, element.textRange,
+                element, element.textRange,
                 MyIcons.dartPackageIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),
                 GutterIconRenderer.Alignment.LEFT
             ) { "111" }
         }
-        return LineMarkerInfo(element,element.textRange)
+        return null
     }
 }
 
