@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -11,8 +12,12 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
+import org.jetbrains.yaml.psi.YAMLKeyValue
+import org.jetbrains.yaml.psi.YamlPsiElementVisitor
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLMappingImpl
+import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
+import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import java.io.File
 
 /**
@@ -60,15 +65,33 @@ class MyPsiElementUtil {
          * 获取项目的所有插件
          */
         fun getAllPlugins(project: Project,key: String = "dependencies"): List<String> {
-            val pubSecpYamlFile = getPubSecpYamlFile(project)
-            if (pubSecpYamlFile != null) {
-                val deps = YAMLUtil.getQualifiedKeyInFile(pubSecpYamlFile as YAMLFile, key)
-                if (deps != null) {
-                    return deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
-                }
+            val yamlFile = project.getPubspecYAMLFile()
+            yamlFile?.let { file ->
+                    val deps = YAMLUtil.getQualifiedKeyInFile(file, key)
+                    if (deps != null) {
+                        return deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
+                    }
             }
             return emptyList()
         }
+
+        /**
+         * 获取项目插件列表
+         */
+        fun getAllFlutters(project: Project) : Map<FlutterPluginType,List<FlutterPluginElementModel>> {
+            val yamlFile = project.getPubspecYAMLFile()
+            yamlFile?.let {
+                yamlFile.acceptChildren(object : YamlPsiElementVisitor() {
+                    override fun visitKeyValue(keyValue: YAMLKeyValue) {
+                        super.visitKeyValue(keyValue)
+                        println("进来了变量: ${keyValue.keyText}")
+                    }
+                })
+            }
+            return emptyMap()
+        }
+
+
 
 
     }
@@ -101,4 +124,11 @@ fun  YAMLKeyValueImpl.isDartPluginElementWithKeyValue() : Boolean{
 
 fun PsiElement.getPluginName(): String{
     return MyPsiElementUtil.getPluginNameWithPsi(this)
+}
+
+/**
+ * 获取项目下的pubspec.yaml文件的yamlfile对象
+ */
+fun Project.getPubspecYAMLFile() : YAMLFile? {
+    return MyPsiElementUtil.getPubSecpYamlFile(this) as? YAMLFile
 }

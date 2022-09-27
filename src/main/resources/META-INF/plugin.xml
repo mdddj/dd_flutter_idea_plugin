@@ -42,7 +42,6 @@
         ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.androidstudio</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>

@@ -20,7 +20,7 @@ import javax.swing.JComponent
 
 
 enum class PluginActions(val title: String) {
-    SearchPlugin("搜索pub包"),CheckVersion("检测版本更新")
+    SearchPlugin("搜索pub包"),CheckVersion("检测版本更新"),GetAllPlugins("获取全部插件")
 }
 
 ///用户面板
@@ -104,12 +104,15 @@ class MyUserAccountBar(var project: Project): CustomStatusBarWidget {
                             print(plugins)
                         }
                     }
+                    GetAllPlugins -> {
+                        MyPsiElementUtil.getAllFlutters(project)
+                    }
                 }
             }
            .setRenderer { list, value, index, isSelected, cellHasFocus ->
                return@setRenderer JBLabel(value.title)
            }
-           .setTitle("Flutter工具12")
+           .setTitle("Flutter工具")
             .createPopup()
     }
 

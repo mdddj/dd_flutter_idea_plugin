@@ -14,22 +14,17 @@ repositories {
     }
 }
 intellij {
-    version.set("2021.2.1.16")
-    type.set("AI")
+    version.set("2022.2.2")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:212.5744",
-            "org.intellij.plugins.markdown:212.5457.16"
+            "Dart:222.4167.21",
+            "org.intellij.plugins.markdown:222.4167.22"
         )
     )
 
 }
-
-
-
-
-
 
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -49,11 +44,11 @@ dependencies {
 
 tasks {
     withType<JavaCompile> {
-        sourceCompatibility = "18"
-        targetCompatibility = "18"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "18"
+        kotlinOptions.jvmTarget = "17"
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -64,8 +59,8 @@ tasks {
     }
 
     patchPluginXml {
-//        sinceBuild.set("212.*")
-//        untilBuild.set("222.*")
+        sinceBuild.set("212.*")
+        untilBuild.set("223.*")
         changeNotes.set("""
             v2.0.4: 更新pubspec.yaml的快捷图标位置
             
@@ -86,7 +81,7 @@ tasks {
     }
 
     runIde {
-        jbrVariant.set("dcevm")
-        autoReloadPlugins.set(true)
+//        jbrVariant.set("dcevm")
+//        autoReloadPlugins.set(true)
     }
 }
