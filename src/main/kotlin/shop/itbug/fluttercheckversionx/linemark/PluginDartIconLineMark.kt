@@ -39,7 +39,7 @@ class PluginDartIconLineMark : LineMarkerProvider {
 ///处理点击
 class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavigationHandler<PsiElement> {
     override fun navigate(e: MouseEvent?, elt: PsiElement?) {
-        if (e != null && e.clickCount == 1) {
+        if ((e != null) && (e.clickCount == 1)) {
             JBPopupFactory.getInstance().createListPopup(PluginDartIconActioinMenuList(element = element))
                 .show(RelativePoint(e.locationOnScreen))
         }

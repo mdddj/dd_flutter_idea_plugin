@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    id("org.jetbrains.kotlin.jvm") version "1.7.20"
     id("org.jetbrains.intellij") version "1.9.0"
 }
 group = "shop.itbug"
@@ -14,12 +14,12 @@ repositories {
     }
 }
 intellij {
-    version.set("2022.2.2")
+    version.set("2022.2.3")
     type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:222.4167.21",
+            "Dart:222.4345.14",
             "org.intellij.plugins.markdown:222.4167.22"
         )
     )

@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
@@ -36,7 +37,7 @@ import javax.swing.event.ListSelectionListener
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表格模型
+class SocketRequestForm(val project: Project,val toolWindow: ToolWindow) : ListSelectionListener { /// 表格模型
 
 
     /**
@@ -143,6 +144,8 @@ class SocketRequestForm(val project: Project) : ListSelectionListener { /// 表�
             DefaultActionGroup.EMPTY_GROUP,
             true
         )
+        toolBar.targetComponent = toolWindow.component
+        leftActionTools.targetComponent = toolWindow.component
 
         /// 接口搜索过滤
         searchTextField = DioRequestSearch {

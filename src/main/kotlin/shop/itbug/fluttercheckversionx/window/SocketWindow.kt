@@ -14,9 +14,9 @@ import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 class SocketWindow : ToolWindowFactory {
 
     override fun createToolWindowContent(p0: Project, p1: ToolWindow) {
-        val socketRequestForm = SocketRequestForm(p0)
-        val instance = ContentFactory.SERVICE.getInstance()
-        val createContent = instance.createContent(socketRequestForm.getContent(), "", false)
+        val socketRequestForm = SocketRequestForm(p0,p1)
+        val instance = ContentFactory.getInstance()
+        val createContent = instance.createContent(socketRequestForm.getContent(), "Dio Request Apis Window", false)
         p1.contentManager.addContent(createContent)
 
     }
