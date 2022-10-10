@@ -14,10 +14,17 @@ import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 class SocketWindow : ToolWindowFactory {
 
     override fun createToolWindowContent(p0: Project, p1: ToolWindow) {
+        //dio 监听窗口
         val socketRequestForm = SocketRequestForm(p0,p1)
         val instance = ContentFactory.getInstance()
         val createContent = instance.createContent(socketRequestForm.getContent(), "Dio Request Apis Window", false)
         p1.contentManager.addContent(createContent)
+
+        //在线聊天窗口
+        val flutterChatWindow = FlutterChatMessageWindow(p0)
+        val flutterChatWindowContent = instance.createContent(flutterChatWindow,"Flutter交流",false)
+        p1.contentManager.addContent(flutterChatWindowContent)
+
 
     }
 

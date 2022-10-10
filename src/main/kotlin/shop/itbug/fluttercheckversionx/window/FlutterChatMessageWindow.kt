@@ -1,0 +1,29 @@
+package shop.itbug.fluttercheckversionx.window
+
+import com.intellij.openapi.project.Project
+import com.intellij.ui.components.JBPanel
+import java.awt.BorderLayout
+import javax.swing.BoxLayout
+import javax.swing.JLabel
+import javax.swing.JPanel
+
+/**
+ * Flutter聊天窗口
+ */
+class FlutterChatMessageWindow(val project: Project) : JPanel(BorderLayout()) {
+
+
+    private val topMessageLabel = JLabel("和中国Flutter开发者在线交流,请文明发言")
+
+    init {
+        compentInit()
+    }
+
+
+    /**
+     * 初始化组件
+     */
+    private fun compentInit() {
+        add(topMessageLabel,BorderLayout.NORTH)
+    }
+}
