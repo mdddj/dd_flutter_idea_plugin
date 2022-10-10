@@ -22,12 +22,9 @@ import javax.swing.Icon
 class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        ///element instanceof PsiIdentifier &&
-        // (parent = element.getParent()) instanceof PsiMethod &&
-        // ((PsiMethod)parent).getMethodIdentifier() == element)
         if ( element.isDartPluginElement() && element is YAMLKeyValueImpl) {
             return LineMarkerInfo(
-                element, element.textRange,
+                element.firstChild, element.firstChild.textRange,
                 MyIcons.dartPackageIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),
                 GutterIconRenderer.Alignment.LEFT
             ) { "111" }
