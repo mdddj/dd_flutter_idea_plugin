@@ -38,8 +38,6 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
-    testImplementation("org.slf4j:slf4j-simple:2.0.0")
-    implementation("org.slf4j:slf4j-api:2.0.0")
 }
 
 tasks {
