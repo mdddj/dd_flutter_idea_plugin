@@ -85,15 +85,17 @@ class MyPsiElementUtil {
             yamlFile?.let { yaml ->
                 val coreElement = yaml.firstChild.firstChild
                 val coreElementChildrens = coreElement.childrenOfType<YAMLKeyValueImpl>()
-                FlutterPluginType.values().forEach { type ->
-                    val pluginDevs = coreElementChildrens.filter { it.keyText == type.type }.toList().first()
-                    val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
-                    map[type] = mapping.childrenOfType<YAMLKeyValueImpl>().map { psi ->
-                        FlutterPluginElementModel(
-                            name = psi.keyText,
-                            type = type,
-                            element = psi
-                        )
+                if(coreElementChildrens.isNotEmpty()){
+                    FlutterPluginType.values().forEach { type ->
+                        val pluginDevs = coreElementChildrens.filter { it.keyText == type.type }.toList().first()
+                        val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
+                        map[type] = mapping.childrenOfType<YAMLKeyValueImpl>().map { psi ->
+                            FlutterPluginElementModel(
+                                name = psi.keyText,
+                                type = type,
+                                element = psi
+                            )
+                        }
                     }
                 }
             }

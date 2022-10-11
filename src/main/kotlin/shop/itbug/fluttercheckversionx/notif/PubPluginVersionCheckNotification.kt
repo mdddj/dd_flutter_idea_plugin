@@ -1,14 +1,10 @@
 package shop.itbug.fluttercheckversionx.notif
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
-import com.intellij.ui.EditorNotifications
-import com.intellij.ui.JBSplitter
-import com.intellij.ui.components.JBLabel
 import icons.FlutterIcons
 import io.flutter.utils.UIUtils
 import java.util.function.Function
