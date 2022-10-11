@@ -3,12 +3,13 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import shop.itbug.fluttercheckversionx.constance.qqGroup
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
 import java.awt.Dimension
 import javax.swing.*
 
 
-const val helpText = """
+ val helpText = """
 # 安装依赖
 
 在你的项目中添加插件依赖
@@ -25,7 +26,7 @@ await DdCheckPlugin.instance.init(Dio());
 
 接入完成.
 注意:第一次安装插件需要重启Idea
-有问题请加Flutter自学QQ群:__667186542__
+有问题请加Flutter自学QQ群:__${qqGroup.qqGroupNumber}__
 
 """
 
@@ -51,7 +52,6 @@ class DioHelpDialog(val project: Project) : DialogWrapper(project) {
         val box = Box.createVerticalBox()
         val html = MarkdownShowComponent.getDocComp(helpText, project,htmlText = false)
         html.preferredSize = Dimension(this.preferredSize.width,340)
-        html.removeCornerMenu()
         box.add(html)
         box.add(Box.createVerticalGlue())
         box.add(Box.createVerticalGlue())

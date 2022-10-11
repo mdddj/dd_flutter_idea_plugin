@@ -19,7 +19,6 @@ import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import java.io.File
 
-typealias FindYamlKeyValueExpression = (keyValueElement: YAMLKeyValueImpl) -> Boolean
 
 /**
  * PSI 操作相关类
@@ -87,14 +86,17 @@ class MyPsiElementUtil {
                 val coreElementChildrens = coreElement.childrenOfType<YAMLKeyValueImpl>()
                 if(coreElementChildrens.isNotEmpty()){
                     FlutterPluginType.values().forEach { type ->
-                        val pluginDevs = coreElementChildrens.filter { it.keyText == type.type }.toList().first()
-                        val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
-                        map[type] = mapping.childrenOfType<YAMLKeyValueImpl>().map { psi ->
-                            FlutterPluginElementModel(
-                                name = psi.keyText,
-                                type = type,
-                                element = psi
-                            )
+                        val l = coreElementChildrens.filter { it.keyText == type.type }.toList()
+                        if(l.isNotEmpty()){
+                            val pluginDevs = l.first()
+                            val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
+                            map[type] = mapping.childrenOfType<YAMLKeyValueImpl>().map { psi ->
+                                FlutterPluginElementModel(
+                                    name = psi.keyText,
+                                    type = type,
+                                    element = psi
+                                )
+                            }
                         }
                     }
                 }

@@ -4,11 +4,7 @@ import cn.hutool.http.HttpUtil
 import com.google.gson.Gson
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
-import shop.itbug.fluttercheckversionx.dialog.components.changeMarkdownText
 import shop.itbug.fluttercheckversionx.model.TextModelResult
 import javax.swing.Box
 import javax.swing.JButton

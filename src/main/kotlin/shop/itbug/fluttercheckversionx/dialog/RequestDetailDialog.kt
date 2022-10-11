@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
-import shop.itbug.fluttercheckversionx.dialog.components.changeMarkdownText
 import shop.itbug.fluttercheckversionx.document.Helper
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import java.awt.BorderLayout
@@ -24,7 +23,7 @@ class RequestDetailPanel(val project: Project): JPanel(BorderLayout()) {
      * 更新html内容
      */
     fun changeRequest(request: Request) {
-        htmlView.changeMarkdownText(getContentText(request),project,true)
+        htmlView.changeMarkdown(getContentText(request))
     }
 
 

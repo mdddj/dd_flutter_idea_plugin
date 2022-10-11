@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.dialog
 import PluginVersionModel
 import cn.hutool.http.HttpRequest
 import com.google.gson.Gson
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
