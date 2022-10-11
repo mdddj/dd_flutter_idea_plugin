@@ -20,6 +20,7 @@ intellij {
         listOf(
             "yaml",
             "Dart:222.4345.14",
+            "io.flutter:70.2.5",
             "org.intellij.plugins.markdown:222.4167.22"
         )
     )

@@ -45,6 +45,7 @@
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
+    <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
 
@@ -135,6 +136,9 @@
 
         <!--        系统设置-->
         <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"/>
+
+        <editorNotificationProvider implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification" />
+
     </extensions>
 
 
