@@ -8,8 +8,12 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.awt.RelativePoint
+import com.jetbrains.lang.dart.DartFileType
+import com.jetbrains.lang.dart.psi.DartFile
 import icons.FlutterIcons
 import io.flutter.utils.UIUtils
+import shop.itbug.fluttercheckversionx.dialog.SearchDialog
+import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
 import java.util.function.Function
 import javax.swing.JComponent
@@ -24,6 +28,10 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
         file: VirtualFile
     ): Function<in FileEditor, out JComponent?> {
         return Function<FileEditor, JComponent?> {
+            project.getPubspecYAMLFile() ?: return@Function null
+            if(file.fileType is DartFileType){
+                return@Function null
+            }
             YamlFileNotificationPanel(it, project)
         }
     }
@@ -50,14 +58,14 @@ class YamlFileNotificationPanel(val fileEditor: FileEditor, val project: Project
 
 
         //添加一个分割线
-        myLinksPanel.add(JSeparator(SwingConstants.VERTICAL))
-
-
-        val settingLabel = createActionLabel("设置") {
-            openSetting()
-        }
-
-        myLinksPanel.add(settingLabel)
+//        myLinksPanel.add(JSeparator(SwingConstants.VERTICAL))
+//
+//
+//        val settingLabel = createActionLabel("设置") {
+//            openSetting()
+//        }
+//
+//        myLinksPanel.add(settingLabel)
     }
 
     private fun checkNewVersions() {
@@ -67,7 +75,7 @@ class YamlFileNotificationPanel(val fileEditor: FileEditor, val project: Project
     }
 
     private fun search() {
-
+        SearchDialog(project).show()
     }
 
     private fun openSetting() {
