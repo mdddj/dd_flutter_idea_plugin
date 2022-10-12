@@ -8,13 +8,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.childrenOfType
-import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLMappingImpl
+import shop.itbug.fluttercheckversionx.constance.igFlutterPlugin
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import java.io.File
@@ -69,6 +69,7 @@ class MyPsiElementUtil {
             yamlFile?.let { file ->
                 val deps = YAMLUtil.getQualifiedKeyInFile(file, key)
                 if (deps != null) {
+
                     return deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
                 }
             }
@@ -90,7 +91,10 @@ class MyPsiElementUtil {
                         if(l.isNotEmpty()){
                             val pluginDevs = l.first()
                             val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
-                            map[type] = mapping.childrenOfType<YAMLKeyValueImpl>().map { psi ->
+                            var psis = mapping.childrenOfType<YAMLKeyValueImpl>()
+                            val igs = igFlutterPlugin.igPlugins
+                            psis = psis.filter { p -> !igs.contains(p.keyText) }
+                            map[type] = psis.map { psi ->
                                 FlutterPluginElementModel(
                                     name = psi.keyText,
                                     type = type,

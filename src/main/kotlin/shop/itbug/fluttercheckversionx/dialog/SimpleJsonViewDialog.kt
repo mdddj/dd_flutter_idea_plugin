@@ -22,7 +22,7 @@ class SimpleJsonViewDialog(jsonObject: Any, project: Project) : DialogWrapper(pr
         title = "JSON查看器"
     }
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         return jsonView
     }
 
