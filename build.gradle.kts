@@ -24,21 +24,19 @@ intellij {
             "org.intellij.plugins.markdown:222.4167.22"
         )
     )
-
 }
 
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
-    implementation("cn.hutool:hutool-all:5.8.6")
+    implementation("cn.hutool:hutool-all:5.8.8")
     implementation("org.smartboot.socket:aio-core:1.6.0")
-    implementation("com.alibaba:fastjson:2.0.13.graal")
+    implementation("com.alibaba:fastjson:2.0.14.graal")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
-    implementation ("com.fifesoft:rsyntaxtextarea:3.2.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
 }
 var javaVersion = "17"
 tasks {

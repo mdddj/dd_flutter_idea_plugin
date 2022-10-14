@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.model
 
-import io.ktor.util.*
 import kotlin.text.toCharArray
 
 data class PubVersionDataModel(
