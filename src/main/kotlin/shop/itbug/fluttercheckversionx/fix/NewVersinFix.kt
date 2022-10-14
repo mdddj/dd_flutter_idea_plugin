@@ -1,8 +1,6 @@
 package shop.itbug.fluttercheckversionx.fix
 
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
-import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -20,18 +18,17 @@ class NewVersinFix(
 
 
     override fun getFamilyName(): String {
-        return "Repair $newVersion"
+        return " 替换为最新版:$newVersion"
     }
 
 
     override fun getText(): String {
-        return familyName;
+        return familyName
     }
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
-
-       val pluginName = (startElement as YAMLKeyValueImpl).keyText
-       val newElement = YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginName,newVersion)
+        val pluginName = (startElement as YAMLKeyValueImpl).keyText
+        val newElement = YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginName, newVersion)
         startElement.replace(newElement)
     }
 

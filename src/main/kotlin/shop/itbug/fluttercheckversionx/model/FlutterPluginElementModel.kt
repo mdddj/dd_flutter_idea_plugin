@@ -10,7 +10,7 @@ enum class FlutterPluginType(val type: String){
     dependencies("dependencies"),devDependencies("dev_dependencies"),dependencyOverrides("dependency_overrides")
 }
 ///flutter插件节点
-data class FlutterPluginElementModel(val name: String,val element: PsiElement,val type: FlutterPluginType,var pubData: PubVersionDataModel? = null)
+data class FlutterPluginElementModel(val name: String,val element: YAMLKeyValueImpl,val type: FlutterPluginType,var pubData: PubVersionDataModel? = null)
 
 /**
  * 判断一下是否为最新版本
@@ -35,5 +35,5 @@ fun FlutterPluginElementModel.isLastVersion():Boolean {
  * 获取文件element节点上的版本
  */
 fun FlutterPluginElementModel.getElementVersion() :String{
-   return runReadAction { (element as YAMLKeyValueImpl).valueText }
+   return runReadAction { element.valueText }
 }

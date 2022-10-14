@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.fix.NewVersinFix
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.util.ApiService
@@ -34,7 +33,7 @@ class YamlElementVisitor(
         super.visitFile(file)
         for (arr in plugins.values) {
             arr.forEach { ele ->
-                    regProblem(ele)
+                regProblem(ele)
             }
         }
     }
@@ -43,21 +42,17 @@ class YamlElementVisitor(
     /**
      * 问题注册器,并新增快速修复功能更
      */
-    private  fun regProblem(ele: FlutterPluginElementModel) {
-        val pluginDetail =  ApiService.getPluginDetail(ele.name)
-        pluginDetail?.let {
-            val lastVersionString = '^'+ pluginDetail.latest.version
-            val currentVersionString = (ele.element as YAMLKeyValueImpl).valueText
-            if (lastVersionString != currentVersionString) {
-                holder.registerProblem(
-                    ele.element.lastChild,
-                    "New version:${lastVersionString}",
-                    ProblemHighlightType.WARNING,
-                    NewVersinFix(ele.element, lastVersionString),
-                )
-            }
+    private fun regProblem(ele: FlutterPluginElementModel) {
+        val pluginDetail = ApiService.getPluginDetail(ele.name)
+        val currentVersionString = ele.element.valueText
+        pluginDetail?.judge(currentVersionString) {
+            holder.registerProblem(
+                ele.element.lastChild,
+                "此插件有新版本:${it}  (更新时间:${pluginDetail.lastVersionUpdateTimeString})",
+                ProblemHighlightType.WARNING,
+                NewVersinFix(ele.element, it),
+            )
         }
-
     }
 
 }
