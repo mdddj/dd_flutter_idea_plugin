@@ -94,7 +94,7 @@ class JsonViewerPanel : AbstractPanel() {
         val fileChooser = JFileChooser(lastDirectory)
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             lastDirectory = fileChooser.currentDirectory
-            readFile(fileChooser.selectedFile)
+            readFile()
         }
     }
 
@@ -147,9 +147,9 @@ class JsonViewerPanel : AbstractPanel() {
         }
     }
 
-    private fun readFile(selectedFile: File) {
+    private fun readFile() {
         try {
-            textPane.text = GuiUtils.readFile(selectedFile)
+            textPane.text = GuiUtils.readFile()
         } catch (e: Exception) {
             popup(e)
         }

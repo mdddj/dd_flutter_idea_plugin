@@ -61,7 +61,7 @@ dependencies:
 
                 if(element.isDartPluginElement()){
                     val pluginName = element.getPluginName()
-                    val myFactory = HintsInlayPresentationFactory(factory = factory)
+                    HintsInlayPresentationFactory(factory = factory)
                     if (pluginName.isNotBlank()) {
                         val get = CacheUtil.unredCaChe().asMap()[pluginName]
                         if (get != null && get == pluginName) {

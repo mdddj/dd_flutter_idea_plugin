@@ -22,7 +22,7 @@ class SocketWindow : ToolWindowFactory {
 
         //在线聊天窗口
         val flutterChatWindow = FlutterChatMessageWindow(p0)
-        val flutterChatWindowContent = instance.createContent(flutterChatWindow,"Flutter交流",false)
+        val flutterChatWindowContent = instance.createContent(flutterChatWindow,"Flutter疑难解答",false)
         p1.contentManager.addContent(flutterChatWindowContent)
 
 

@@ -47,7 +47,7 @@ class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.
         add(JLabel(AllIcons.Javaee.WebService))
         add(createHorizontalStrut(4))
 
-        val url = UrlBuilder.ofHttp(request.url)
+        UrlBuilder.ofHttp(request.url)
 
         //path
         val pathLabel = JLabel(request.url).apply {

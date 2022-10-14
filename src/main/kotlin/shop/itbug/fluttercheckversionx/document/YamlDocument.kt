@@ -6,16 +6,14 @@ import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.elementType
-import org.jetbrains.yaml.YAMLUtil
-import org.jetbrains.yaml.psi.YAMLFile
-import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
+import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
+import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.services.ServiceCreate
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
-import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
 
@@ -33,29 +31,29 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
         element?.let {
             originalElement?.let {
-                val isDartPluginName = element.isDartPluginElement()
-                println("是否为dart插件? $isDartPluginName")
-                if(isDartPluginName){
-                    val pluginName = element.getPluginName()
-                    println("插件名字:$pluginName")
-                    if (pluginName.isNotEmpty()) {
-                        var detail: PubVersionDataModel? = null
-                        val service = ServiceCreate.create(PubService::class.java)
-                        try {
-                            detail = service.callPluginDetails(pluginName).execute().body()
-                        } catch (_: Exception) {
-                        }
-                        if (detail != null) {
-                            return renderFullDoc(
-                                pluginName = detail.name,
-                                lastVersion = detail.latest.version,
-                                githubUrl = detail.latest.pubspec.homepage,
-                                desc = detail.latest.pubspec.description,
-                                lastUpdate = detail.latest.published
-                            )
-                        }
 
-                    }
+
+                if(element is LeafPsiElement && element.parent is YAMLKeyValueImpl){
+                        val pluginName = element.text
+                        println("插件名字:$pluginName")
+                        if (pluginName.isNotEmpty()) {
+                            var detail: PubVersionDataModel? = null
+                            val service = ServiceCreate.create(PubService::class.java)
+                            try {
+                                detail = service.callPluginDetails(pluginName).execute().body()
+                            } catch (_: Exception) {
+                            }
+                            if (detail != null) {
+                                return renderFullDoc(
+                                    pluginName = detail.name,
+                                    lastVersion = detail.latest.version,
+                                    githubUrl = detail.latest.pubspec.homepage,
+                                    desc = detail.latest.pubspec.description,
+                                    lastUpdate = detail.latest.published
+                                )
+                            }
+
+                        }
                 }
             }
         }
@@ -112,6 +110,8 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         sb.append(DocumentationMarkup.SECTIONS_END)
         sb.append("<br/>")
         sb.append("<p style='color:gray;padding: 6px;font-size: 8px;'><a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues'>梁典典:插件意见&bug反馈</a></p>")
+        sb.append("<br />")
+        sb.append("<b>QQ群:706438100</b>")
         return sb.toString()
     }
 

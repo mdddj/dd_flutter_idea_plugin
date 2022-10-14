@@ -54,7 +54,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             .analysis_getHover(file.virtualFile, filterIsInstance.textOffset)
                         if (analysisGethover.isNotEmpty()) {
                             val staticType = analysisGethover[0].staticType
-                            val docText = analysisGethover[0].dartdoc
+                            analysisGethover[0].dartdoc
                             if (staticType != null) {
                                 val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType")
                                 sink.addInlineElement(

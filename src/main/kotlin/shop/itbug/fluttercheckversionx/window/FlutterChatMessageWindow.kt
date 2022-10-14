@@ -13,7 +13,7 @@ import javax.swing.JPanel
 class FlutterChatMessageWindow(val project: Project) : JPanel(BorderLayout()) {
 
 
-    private val topMessageLabel = JLabel("和中国Flutter开发者在线交流,请文明发言")
+    private val topMessageLabel = JLabel("开发中,敬请期待,意见加QQ群:706438100")
 
     init {
         compentInit()

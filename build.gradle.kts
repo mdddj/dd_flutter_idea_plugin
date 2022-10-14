@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.9.0"
 }
 group = "shop.itbug"
-version = "2.0.4"
+version = "2.1.1"
 repositories {
     mavenCentral()
     google()
@@ -40,14 +40,14 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
 }
-
+var javaVersion = "17"
 tasks {
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -58,7 +58,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212.*")
+        sinceBuild.set("222.4345.14")
         untilBuild.set("223.*")
         changeNotes.set("""
             v2.0.4: 更新pubspec.yaml的快捷图标位置

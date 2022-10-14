@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder
 import org.fife.ui.rtextarea.RTextScrollPane
 import shop.itbug.fluttercheckversionx.myjsonview.core.gui.ExtendedTextPane
 import java.awt.event.KeyEvent
-import java.io.File
 import java.io.IOException
 import javax.swing.AbstractAction
 import javax.swing.JComponent
@@ -37,7 +36,7 @@ object GuiUtils {
     }
 
     @Throws(IOException::class)
-    fun readFile(selectedFile: File?): String {
+    fun readFile(): String {
         val builder = StringBuilder()
         return builder.toString()
     }
