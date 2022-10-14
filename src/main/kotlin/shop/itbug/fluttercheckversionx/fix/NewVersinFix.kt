@@ -1,15 +1,13 @@
 package shop.itbug.fluttercheckversionx.fix
 
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
-import com.intellij.lang.Language
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
-import com.intellij.psi.tree.IElementType
-import com.jetbrains.lang.dart.psi.DartPsiCompositeElement
-import com.jetbrains.lang.dart.util.DartElementGenerator
-import com.jetbrains.lang.dart.util.DartPsiImplUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.jetbrains.yaml.YAMLElementGenerator
-import org.jetbrains.yaml.psi.YAMLPsiElement
+import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 
 
 /**
@@ -18,7 +16,6 @@ import org.jetbrains.yaml.psi.YAMLPsiElement
 class NewVersinFix(
     psiElement: PsiElement,
     private val newVersion: String,
-    val fixed: ()->Unit
 ) : LocalQuickFixOnPsiElement(psiElement) {
 
 
@@ -33,13 +30,9 @@ class NewVersinFix(
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
 
-       val newElement =  DartElementGenerator.createStatementFromText(project,"^$newVersion")
-
-        newElement?.let {
-            startElement.replace(it)
-            fixed()
-        }
-
+       val pluginName = (startElement as YAMLKeyValueImpl).keyText
+       val newElement = YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginName,newVersion)
+        startElement.replace(newElement)
     }
 
 }

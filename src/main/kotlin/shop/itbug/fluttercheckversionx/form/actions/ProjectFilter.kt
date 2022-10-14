@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
-import com.intellij.icons.AllIcons
 import com.intellij.ui.components.JBLabel
 import icons.FlutterIcons
 import java.awt.Component
