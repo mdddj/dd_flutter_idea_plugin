@@ -27,10 +27,7 @@ class ProjectFilter : JComboBox<String>() {
         model = MyJComboBoxModel(list)
         model.selectedItem = current
         if (list.isEmpty()) {
-            isEnabled = false
             model.selectedItem = "暂无"
-        } else {
-            isEnabled = true
         }
         if (list.size == 1) {
             model.selectedItem = list.first()

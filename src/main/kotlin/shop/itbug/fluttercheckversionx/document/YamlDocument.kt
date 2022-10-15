@@ -32,32 +32,34 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         element?.let {
             originalElement?.let {
 
+                var pluginName = ""
 
+                if(element is YAMLKeyValueImpl && element.isDartPluginElement()){
+                    pluginName = element.keyText
+                }
                 if(element is LeafPsiElement && element.parent is YAMLKeyValueImpl){
-                        val pluginName = element.text
-                        println("插件名字:$pluginName")
-                        if (pluginName.isNotEmpty()) {
-                            var detail: PubVersionDataModel? = null
-                            val service = ServiceCreate.create(PubService::class.java)
-                            try {
-                                detail = service.callPluginDetails(pluginName).execute().body()
-                            } catch (_: Exception) {
-                            }
-                            if (detail != null) {
-                                return renderFullDoc(
-                                    pluginName = detail.name,
-                                    lastVersion = detail.latest.version,
-                                    githubUrl = detail.latest.pubspec.homepage,
-                                    desc = detail.latest.pubspec.description,
-                                    lastUpdate = detail.latest.published
-                                )
-                            }
+                    pluginName = element.text
+                }
+                if (pluginName.isNotEmpty()) {
+                    var detail: PubVersionDataModel? = null
+                    val service = ServiceCreate.create(PubService::class.java)
+                    try {
+                        detail = service.callPluginDetails(pluginName).execute().body()
+                    } catch (_: Exception) {
+                    }
+                    if (detail != null) {
+                        return renderFullDoc(
+                            pluginName = detail.name,
+                            lastVersion = detail.latest.version,
+                            githubUrl = detail.latest.pubspec.homepage,
+                            desc = detail.latest.pubspec.description,
+                            lastUpdate = detail.latest.published
+                        )
+                    }
 
-                        }
                 }
             }
         }
-
         return  super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "无法识别插件")
     }
 

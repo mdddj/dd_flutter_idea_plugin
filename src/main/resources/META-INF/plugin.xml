@@ -60,9 +60,6 @@
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
-        <!--        <editorFloatingToolbarProvider implementation="shop.itbug.fluttercheckversionx.window.YamlEditTools"/>-->
-
-
         <!--    plugin版本自动检测,并自动修复    -->
         <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
                          groupBundle="messages.InspectionsBundle"
@@ -148,6 +145,10 @@
         </action>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
+        </action>
+        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"
+                text="合并Dart导入">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
     </actions>
 
