@@ -17,11 +17,11 @@ class SocketWindow : ToolWindowFactory {
         //dio 监听窗口
         val socketRequestForm = SocketRequestForm(p0,p1)
         val instance = ContentFactory.getInstance()
-        val createContent = instance.createContent(socketRequestForm.getContent(), "Dio Request Apis Window", false)
+        val createContent = instance.createContent(socketRequestForm.getContent(), "Dio Request Apis", false)
         p1.contentManager.addContent(createContent)
 
         //在线聊天窗口
-        val flutterChatWindow = FlutterChatMessageWindow(p0)
+        val flutterChatWindow = FlutterChatMessageWindow(p0,p1)
         val flutterChatWindowContent = instance.createContent(flutterChatWindow,"Flutter疑难解答",false)
         p1.contentManager.addContent(flutterChatWindowContent)
 

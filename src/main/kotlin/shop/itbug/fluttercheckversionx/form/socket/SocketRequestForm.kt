@@ -37,7 +37,7 @@ import javax.swing.event.ListSelectionListener
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project,val toolWindow: ToolWindow) : ListSelectionListener { /// 表格模型
+class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : ListSelectionListener { /// 表格模型
 
 
     /**
