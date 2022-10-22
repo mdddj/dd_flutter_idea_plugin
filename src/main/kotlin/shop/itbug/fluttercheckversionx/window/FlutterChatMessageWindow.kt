@@ -64,7 +64,6 @@ class FlutterChatMessageWindow(val project: Project,val toolWindow: ToolWindow) 
 
     private fun showLoginDialog() {
         JBPopupFactory.getInstance().createComponentPopupBuilder(LoginDialog(),toolWindow.component)
-            .setTitle("登录")
             .setMovable(true)
             .setRequestFocus(true)
             .setFocusable(true)

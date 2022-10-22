@@ -78,7 +78,7 @@ tasks {
     }
 
     runIde {
-//        jbrVariant.set("dcevm")
-//        autoReloadPlugins.set(true)
+        autoReloadPlugins.set(true)
+        jbrVariant.set("sdk")
     }
 }

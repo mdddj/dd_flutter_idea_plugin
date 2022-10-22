@@ -10,7 +10,8 @@ interface ItbugService {
 
     /**
      * 登录接口
+     * @return 成功返回一个接口
      */
     @POST("api/user-public/login")
-    suspend fun login(@Body param: LoginParam): JSONResult<String?>
+    fun login(@Body param: LoginParam): Call<JSONResult<String?>>
 }

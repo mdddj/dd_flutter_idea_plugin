@@ -24,6 +24,11 @@ const val PUBL_API_URL = "https://pub.dartlang.org/"
 const val MY_SERVICE_HOST = "https://itbug.shop"
 
 /**
+ * 本机测试服务接口
+ */
+const val LOCAL_HOST_IP = "http://localhost"
+
+/**
  * 访问pub开放Api接口
  * 接口url: [https://pub.dartlang.org/api/packages/插件名字]
  */
