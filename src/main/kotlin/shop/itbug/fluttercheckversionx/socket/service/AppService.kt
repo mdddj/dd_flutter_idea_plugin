@@ -15,6 +15,7 @@ import shop.itbug.fluttercheckversionx.services.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
+import shop.itbug.fluttercheckversionx.socket.chat.IdeaChatMessageWindow
 import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
 
 class AppService {
@@ -48,9 +49,12 @@ class AppService {
     var socketIsInit = false
 
 
-//    init {
-//        setTestData()
-//    }
+    private val chatSessionManager = Thread(IdeaChatMessageWindow())
+
+
+    init {
+        chatSessionManager.start()
+    }
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
      */

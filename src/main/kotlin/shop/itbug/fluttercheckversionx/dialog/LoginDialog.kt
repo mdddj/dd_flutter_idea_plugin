@@ -4,10 +4,12 @@ import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.ui.FormBuilder
+import com.intellij.util.ui.JBFont
 import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.LocalhostServiceCreate
@@ -21,7 +23,7 @@ import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 const val borderPaddings = 30
 ///登录的弹窗
-class LoginDialog: JPanel(BorderLayout()) {
+class LoginDialog: JBPanel<LoginDialog>(BorderLayout()) {
 
     private val log = LoggerFactory.getLogger(LoginDialog::class.java)
     private val usernameTextFiled = ExtendableTextField()
@@ -34,7 +36,7 @@ class LoginDialog: JPanel(BorderLayout()) {
     init {
         add(form,BorderLayout.CENTER)
         border = BorderFactory.createEmptyBorder(borderPaddings,borderPaddings,borderPaddings,borderPaddings)
-        titleLabel.font = Font("宋体",Font.PLAIN,23)
+        titleLabel.font = JBFont.h2()
         loginButton.apply {
             addActionListener { login() }
         }
@@ -81,10 +83,11 @@ class LoginDialog: JPanel(BorderLayout()) {
 
     private val form get() = FormBuilder.createFormBuilder()
         .addComponent(titleLabel)
-        .addSeparator()
+        .addSeparator(2)
         .addVerticalGap(18)
         .addLabeledComponent("账号",usernameTextFiled,false)
         .addLabeledComponent("密码",passwordTextFiled,false)
+        .setVertical(true)
         .addComponent(loginButton)
         .panel
 

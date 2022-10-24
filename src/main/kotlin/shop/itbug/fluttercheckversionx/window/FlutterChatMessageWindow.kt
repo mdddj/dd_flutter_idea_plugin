@@ -48,7 +48,7 @@ class FlutterChatMessageWindow(val project: Project,val toolWindow: ToolWindow) 
             add(sendButton)
         }
         chatTextField.apply {
-            emptyText.text = "说点什么吧"
+            emptyText.text = "说点什么吧 (按Enter键发送)"
         }
         chatList.apply {
             emptyText.appendLine("暂时没有人聊天,快去发言吧")
