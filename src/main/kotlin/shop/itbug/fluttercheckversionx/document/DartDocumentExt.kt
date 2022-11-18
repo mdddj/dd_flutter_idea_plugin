@@ -10,6 +10,7 @@ import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import shop.itbug.fluttercheckversionx.document.MarkdownRender.Companion.appendTag
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 /**
@@ -23,13 +24,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
 
         try {
-
             if (element == null) return ""
-
-
             val reference = originalElement?.parent?.parent?.reference?.resolve()
-
-
             val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
                 element.containingFile.virtualFile,
                 element.textOffset
@@ -38,11 +34,13 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             val docInfo = result.first()
             val dartFormalParameterList =
                 reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
-            return renderView(
+            var html = renderView(
                 docInfo,
                 element.project,
-                if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first()
+                if (dartFormalParameterList.isEmpty() ) null else dartFormalParameterList.first(),
+                element
             )
+            return html
 
         } catch (e: Exception) {
             return ""
@@ -138,9 +136,21 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     }
 
     ///渲染doc文档
-    private fun renderView(info: HoverInformation, project: Project, referenceElement: PsiElement?): String {
+    private fun renderView(info: HoverInformation, project: Project, referenceElement: PsiElement?,element: PsiElement): String {
         val sb = StringBuilder()
+        Helper.addKeyValueHeader(sb)
+        Helper.addKeyValueSection("类型",info.elementKind,sb)
+        if (info.dartdoc != null ) {
+            val obj = MyMarkdownDocRenderObject(
+                text = info.dartdoc,
+                project = element.project
+            )
+            sb.appendTag(obj,"文档")
+//            Helper.addKeyValueSection("文档", Helper.markdown2Html(), sb)
+        }
 
+        Helper.addKeyValueFoot(sb)
+        return sb.toString()
         sb.append(DocumentationMarkup.SECTIONS_START)
 
         ///获取类型提示文本
@@ -165,11 +175,17 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         Helper.addKeyValueSection("类型", getElementKinkText(), sb)
 
         if (referenceElement != null) {
-            Helper.addKeyValueSection("属性", Helper.markdown2Html(renderParams(referenceElement), project), sb)
+//            Helper.addKeyValueSection("属性", Helper.markdown2Html(renderParams(referenceElement), project), sb)
         }
 
-        if (info.dartdoc != null) {
-            Helper.addKeyValueSection("文档", Helper.markdown2Html(info.dartdoc, project), sb)
+
+        if (info.dartdoc != null ) {
+            val obj = MyMarkdownDocRenderObject(
+                text = info.dartdoc,
+                project = element.project
+            )
+            sb.appendTag(obj,"文档")
+//            Helper.addKeyValueSection("文档", Helper.markdown2Html(), sb)
         }
         sb.append(DocumentationMarkup.SECTIONS_END)
 

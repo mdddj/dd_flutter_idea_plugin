@@ -61,7 +61,9 @@ class RequestDetailPanel(val project: Project): JPanel(BorderLayout()) {
         val sb = StringBuilder()
         Helper.addMarkdownTableHeader("key","Value",sb=sb)
         mapParam.forEach { (t, u) -> Helper.addMarkdownTableLine(t,"$u",sb=sb) }
-        return Helper.markdown2Html(sb.toString(),project)
+//        return Helper.markdown2Html(sb.toString(),project)
+        //todo
+        return ""
     }
 
 }

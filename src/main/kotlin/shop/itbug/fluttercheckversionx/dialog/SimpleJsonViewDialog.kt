@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import com.alibaba.fastjson2.JSONObject
+import com.alibaba.fastjson2.JSONWriter
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -13,7 +14,7 @@ class SimpleJsonViewDialog(jsonObject: Any, project: Project) : DialogWrapper(pr
     private var jsonView: LanguageTextField = LanguageTextField(
         JsonLanguage.INSTANCE,
         project,
-        JSONObject.toJSONString(jsonObject),
+        JSONObject.toJSONString(jsonObject, JSONWriter.Feature.PrettyFormat),
         false
     )
 

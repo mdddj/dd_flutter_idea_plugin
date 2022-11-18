@@ -73,7 +73,7 @@ class LeftActionTools(
             }
         }
 
-    private val viewQueryParamsAction = ViewGetQueryParamsAction(request = reqList.selectedValue, project = project)
+    private val viewQueryParamsAction = ViewGetQueryParamsAction(reqList, project = project)
 
     /**
      * 更新详情面板的html数据
@@ -150,14 +150,16 @@ class SortAction(action: MySortToggleAction) : ActionButton(
 
 
 ///查看get方法下,queryparams参数的功能
-class ViewGetQueryParamsAction(private val request: Request?, private val project: Project) :
+class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
     AnAction("查看 GET Query 参数", "如果API列表选中某个接口,点击此按钮,会弹出改接口URL后面query参数的json类型", AllIcons.Ide.ConfigFile) {
     override fun actionPerformed(e: AnActionEvent) {
-        if (request != null) {
-            val url = UrlBuilder.ofHttp(request.url)
+        if (reqList.selectedValue != null) {
+            val url = UrlBuilder.ofHttp(reqList.selectedValue.url)
             val queryMap = url.query.queryMap
-            mylogger().info("参数:${JSON.toJSONString(queryMap)}")
+            println("参数:${JSON.toJSONString(queryMap)}")
             SimpleJsonViewDialog.show(queryMap, project)
+        }else{
+            MyNotifactionUtil.socketNotif("未选中请求,无法查看",project,NotificationType.WARNING)
         }
     }
 

@@ -1,31 +1,30 @@
 package shop.itbug.fluttercheckversionx.dialog.components
 
 import com.intellij.openapi.project.Project
+import com.intellij.ui.components.JBPanel
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.document.MarkdownRender
+import javax.swing.JPanel
 import javax.swing.JTextPane
 
-class MarkdownShowComponent(value: String, project: Project, igToHtml: Boolean = false) : JTextPane() {
+class MarkdownShowComponent(value: String, project: Project, igToHtml: Boolean = false) : JBPanel<MarkdownShowComponent>() {
 
     private var myProject: Project
 
+
     init {
         myProject = project
-        isEditable = false
-        contentType = "text/html"
         background = UIUtil.getPanelBackground()
-        text = if (igToHtml) value else MarkdownRender.renderText(value, project)
     }
 
     /**
      * 更新Markdown文本
      */
     fun changeMarkdown(markdownText: String) {
-        text = MarkdownRender.renderText(markdownText, project = myProject)
+        //todo
     }
 
     fun changeHtml(htmlText: String) {
-        text = htmlText
     }
 
     companion object {
@@ -36,7 +35,6 @@ class MarkdownShowComponent(value: String, project: Project, igToHtml: Boolean =
          */
         fun getDocComp(conext: String, myProject: Project, htmlText: Boolean = true): MarkdownShowComponent {
             val obj = MarkdownShowComponent(conext, myProject ,htmlText)
-            obj.text = if (htmlText) conext else MarkdownRender.renderText(conext, project = myProject)
             obj.autoscrolls=false
             return obj
         }

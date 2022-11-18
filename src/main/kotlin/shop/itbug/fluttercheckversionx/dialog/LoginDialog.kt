@@ -8,6 +8,7 @@ import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.ui.layout.ValidationInfoBuilder
+import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.JBFont
 import org.slf4j.LoggerFactory
@@ -18,6 +19,7 @@ import java.awt.BorderLayout
 import java.awt.Font
 import java.util.function.Supplier
 import javax.swing.BorderFactory
+import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
@@ -30,6 +32,7 @@ class LoginDialog: JBPanel<LoginDialog>(BorderLayout()) {
     private val passwordTextFiled = JBPasswordField()
     private val titleLabel = JBLabel("典典账号授权")
     private val loginButton = JButton("登录")
+    private val loading = AsyncProcessIcon("登录中")
     private val apiService get() = LocalhostServiceCreate.create(ItbugService::class.java)
 
 
@@ -45,7 +48,7 @@ class LoginDialog: JBPanel<LoginDialog>(BorderLayout()) {
 
 
     /**
-     * 验证字符串的输入准备性
+     * 验证字符串的输入准确性
      */
     private fun validateInit() {
         usernameTextFiled.document.addDocumentListener(object : DocumentAdapter() {
@@ -59,6 +62,7 @@ class LoginDialog: JBPanel<LoginDialog>(BorderLayout()) {
 
     /**
      * 请求服务器的登录接口
+     *
      */
     private fun login() {
        try{

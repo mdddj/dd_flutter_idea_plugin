@@ -14,9 +14,9 @@ class Helper {
 
         // key - value 格式
         fun addKeyValueSection(key: String, value: String, sb: java.lang.StringBuilder) {
-            sb.append("<tr><td valign='top' class='section'><p>")
+            sb.append("<tr><td class='section'><p>")
             sb.append(key)
-            sb.append("</td><td valign='top'>")
+            sb.append("</td><td>")
             sb.append("<p>")
             sb.append(value)
             sb.append("</td>")
@@ -24,8 +24,7 @@ class Helper {
 
         //头
         fun addKeyValueHeader(sb: java.lang.StringBuilder) {
-            val bg = ColorUtil.toHex(UIUtil.getTableBackground())
-            sb.append("<table class='sections' style=\"background-color:$bg\">")
+            sb.append("<table class='sections'>")
         }
 
         //尾
@@ -44,8 +43,8 @@ class Helper {
         }
 
         // markdown转成html
-        fun markdown2Html(markdownText: String, project: Project): String {
-            return MarkdownRender.renderText(markdownText, project)
+        fun markdown2Html(markdownText: MyMarkdownDocRenderObject): String {
+            return MarkdownRender.markdownToHtml(markdownText)
         }
 
 

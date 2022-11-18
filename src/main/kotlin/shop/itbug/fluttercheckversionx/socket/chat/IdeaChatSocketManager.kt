@@ -3,7 +3,7 @@ package shop.itbug.fluttercheckversionx.socket.chat
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 
-
+///
 object IdeaChatSocketManager {
 
     private val opts = IO.Options().apply {
@@ -18,7 +18,7 @@ object IdeaChatSocketManager {
         webSocket.connect().on(Socket.EVENT_CONNECT) {
             println("连接成功...")
         }.on(Socket.EVENT_CONNECT_ERROR) {
-            println("连接失败:${it.toString()}")
+            println("连接失败:$it")
         }
 
     }

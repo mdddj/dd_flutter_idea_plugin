@@ -30,6 +30,7 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Dimension
+import java.net.InetAddress
 import javax.swing.*
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -291,6 +292,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             ) {
                 RewardDialog(project).show()
             }
+            appendLine("")
+            appendLine("本机IP:${InetAddress.getLocalHost().hostAddress}")
             val socketIsInited = service.socketIsInit;
             if(socketIsInited.not()){
                 appendLine("")

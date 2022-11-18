@@ -81,6 +81,6 @@ tasks {
     runIde {
         autoReloadPlugins.set(true)
 //        jbrVariant.set("sdk")
-//        jbrVersion.set("17.0.4.1-b653.1")
+//        jbrVersion.set("17.0.4.1b653.1")
     }
 }
