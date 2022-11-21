@@ -31,31 +31,30 @@ class MarkdownNode(val node: ASTNode, val parent: MarkdownNode?, val comment: My
     private val endOffset: Int get() = node.endOffset
     private val startOffset: Int get() = node.startOffset
     val type: IElementType get() = node.type
-    val text: String get() = comment.getContent().substring(startOffset,endOffset)
+    val text: String get() = comment.getContent().substring(startOffset, endOffset)
     fun child(type: IElementType): MarkdownNode? = children.firstOrNull { it.type == type }
 }
 
 class MarkdownRender {
 
 
-
-
     companion object {
 
-         fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, title: String) {
+        fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, title: String) {
             if (tag != null) {
                 appendSection(title) {
                     append(markdownToHtml(tag))
                 }
             }
         }
+
         private fun StringBuilder.appendSection(title: String, content: StringBuilder.() -> Unit) {
             append(SECTION_HEADER_START, title, ":", SECTION_SEPARATOR)
             content()
             append(SECTION_END)
         }
 
-         fun markdownToHtml(comment: MyMarkdownDocRenderObject, allowSingleParagraph: Boolean = true): String {
+        fun markdownToHtml(comment: MyMarkdownDocRenderObject, allowSingleParagraph: Boolean = true): String {
             val markdownTree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(comment.getContent())
             val markdownNode = MarkdownNode(markdownTree, null, comment)
 
@@ -65,40 +64,7 @@ class MarkdownRender {
                 maybeSingleParagraph != null && !allowSingleParagraph -> {
                     maybeSingleParagraph.children.joinToString("") { if (it.text == "\n") " " else it.toHtml() }
                 }
-                else -> markdownNode.toHtml()
-            }
 
-            val topMarginOmitted = when {
-                firstParagraphOmitted.startsWith("<p>") -> firstParagraphOmitted.replaceFirst("<p>", "<p style='margin-top:0;padding-top:0;'>")
-                else -> firstParagraphOmitted
-            }
-
-            return topMarginOmitted
-        }
-
-        /**
-         * 处理dart注释
-         */
-        fun renderText(comment: MyMarkdownDocRenderObject): String {
-            val markdownTree =
-                MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(comment.text)
-            val markdownNode = MarkdownNode(markdownTree, null, comment)
-
-
-            val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
-
-
-            val firstParagraphOmitted = when {
-                maybeSingleParagraph?.type == GFMElementTypes.TABLE -> {
-                    return maybeSingleParagraph.toHtml()
-                }
-                maybeSingleParagraph != null -> {
-                    maybeSingleParagraph.children.joinToString("") {
-                        if (it.text == "\n") {
-                            ""
-                        } else it.toHtml()
-                    }
-                }
                 else -> markdownNode.toHtml()
             }
 
@@ -107,11 +73,13 @@ class MarkdownRender {
                     "<p>",
                     "<p style='margin-top:0;padding-top:0;'>"
                 )
+
                 else -> firstParagraphOmitted
             }
 
             return topMarginOmitted
         }
+
 
     }
 }
@@ -156,7 +124,14 @@ fun MarkdownNode.toHtml(): String {
         }
 
         val nodeType = node.type
-        val nodeText = node.text
+        var nodeText = node.text
+        if (nodeText.contains("{@tool snippet}")) {
+            nodeText = nodeText.replace("{@tool snippet}", "<p>")
+        }
+        if(nodeText.contains("{@end-tool}")){
+            nodeText = nodeText.replace("{@end-tool}", "</p>")
+        }
+
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
             MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
@@ -175,6 +150,7 @@ fun MarkdownNode.toHtml(): String {
                 sb.trimEnd()
                 wrapChildren("p", newline = true)
             }
+
             MarkdownElementTypes.CODE_SPAN -> {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
@@ -189,6 +165,7 @@ fun MarkdownNode.toHtml(): String {
                     sb.append("</code>")
                 }
             }
+
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
                 sb.trimEnd()
@@ -196,9 +173,11 @@ fun MarkdownNode.toHtml(): String {
                 processChildren()
                 sb.append("</code></pre>")
             }
+
             MarkdownTokenTypes.FENCE_LANG -> {
                 currentCodeFenceLang = nodeText
             }
+
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
             MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                 val linkLabelNode = node.child(MarkdownElementTypes.LINK_LABEL)
@@ -215,6 +194,7 @@ fun MarkdownNode.toHtml(): String {
                     sb.append(node.text)
                 }
             }
+
             MarkdownElementTypes.INLINE_LINK -> {
                 val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml()
                 val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
@@ -224,6 +204,7 @@ fun MarkdownNode.toHtml(): String {
                     sb.append(node.text)
                 }
             }
+
             MarkdownTokenTypes.TEXT,
             MarkdownTokenTypes.WHITE_SPACE,
             MarkdownTokenTypes.COLON,
@@ -238,6 +219,7 @@ fun MarkdownNode.toHtml(): String {
             GFMTokenTypes.GFM_AUTOLINK -> {
                 sb.append(nodeText)
             }
+
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
                 sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
@@ -247,9 +229,10 @@ fun MarkdownNode.toHtml(): String {
                     },
                     comment.project,
                     guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE,
-                    nodeText
+                    nodeText.trimEnd()
                 )
             }
+
             MarkdownTokenTypes.EOL -> {
                 val parentType = node.parent?.type
                 if (parentType == MarkdownElementTypes.CODE_BLOCK || parentType == MarkdownElementTypes.CODE_FENCE) {
@@ -258,6 +241,7 @@ fun MarkdownNode.toHtml(): String {
                     sb.append(" ")
                 }
             }
+
             MarkdownTokenTypes.GT -> sb.append("&gt;")
             MarkdownTokenTypes.LT -> sb.append("&lt;")
 
@@ -354,14 +338,20 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
     val codeSnippetBuilder = StringBuilder()
     if (highlightingMode == DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING) { // highlight code by lexer
         HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-            codeSnippetBuilder, project, language, codeSnippet, false, DocumentationSettings.getHighlightingSaturation(true)
+            codeSnippetBuilder,
+            project,
+            language,
+            codeSnippet,
+            false,
+            DocumentationSettings.getHighlightingSaturation(true)
         )
     } else {
         codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
     }
     if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
         // 将代码文本颜色设置为编辑器默认代码颜色，而不是文档组件文本颜色
-        val codeAttributes = EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
+        val codeAttributes =
+            EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
         codeAttributes.backgroundColor = null
         appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
     } else {
@@ -370,7 +360,11 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
     return this
 }
 
-private fun StringBuilder.appendStyledSpan(doHighlighting: Boolean, attributesKey: TextAttributesKey, value: String?): StringBuilder {
+private fun StringBuilder.appendStyledSpan(
+    doHighlighting: Boolean,
+    attributesKey: TextAttributesKey,
+    value: String?
+): StringBuilder {
     if (doHighlighting) {
         appendStyledSpan(this, attributesKey, value, DocumentationSettings.getHighlightingSaturation(true))
     } else {
@@ -378,7 +372,12 @@ private fun StringBuilder.appendStyledSpan(doHighlighting: Boolean, attributesKe
     }
     return this
 }
-private fun StringBuilder.appendStyledSpan(doHighlighting: Boolean, attributes: TextAttributes, value: String?): StringBuilder {
+
+private fun StringBuilder.appendStyledSpan(
+    doHighlighting: Boolean,
+    attributes: TextAttributes,
+    value: String?
+): StringBuilder {
     if (doHighlighting) {
         appendStyledSpan(this, attributes, value, DocumentationSettings.getHighlightingSaturation(true))
     } else {
