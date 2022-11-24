@@ -48,8 +48,7 @@
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
-
-
+    <resource-bundle>messages.pluginBundle</resource-bundle>
     <applicationListeners>
         <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
@@ -63,6 +62,7 @@
         <!--    plugin版本自动检测,并自动修复    -->
         <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
                          groupBundle="messages.InspectionsBundle"
+                         bundle="messages.pluginBundle"
                          groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
                          implementationClass="shop.itbug.fluttercheckversionx.tools.AutoVersionTool"/>
 

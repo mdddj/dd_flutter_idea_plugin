@@ -8,10 +8,7 @@ import com.intellij.openapi.project.Project
 class MyMarkdownDocRenderObject(val text: String,val project: Project) {
 
     fun getContent() : String {
-
         return text
     }
-
-
 
 }

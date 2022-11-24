@@ -1,33 +1,26 @@
 package shop.itbug.fluttercheckversionx.window
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionToolbar
-import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindow
-import com.intellij.ui.components.JBBox
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
-import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.fields.ExtendableTextField
-import shop.itbug.fluttercheckversionx.dialog.LoginDialog
+import shop.itbug.fluttercheckversionx.dsl.loginPanel
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import java.awt.BorderLayout
-import javax.swing.BoxLayout
 import javax.swing.JButton
-import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JToolBar
 
 /**
  * Flutter聊天窗口
  */
-class FlutterChatMessageWindow(val project: Project,val toolWindow: ToolWindow) : JPanel(BorderLayout()) {
+class FlutterChatMessageWindow(val project: Project, private val toolWindow: ToolWindow) : JPanel(BorderLayout()) {
 
     private val topToolBar = JToolBar()//顶部操作区域的工具栏
     private val chatList = JBList<Any>()//聊天显示区域
-    private val userAvatarButton = JButton("登录/注册",AllIcons.General.User)//头像
+    private val userAvatarButton = JButton(PluginBundle.get("window.chat.loginAndRegister"),AllIcons.General.User)//头像
     private val bottomToolBar = JToolBar()//底部工具栏
     private val chatTextField = ExtendableTextField()//聊天内容编辑框
     private val sendButton = JButton("发送") //发送按钮
@@ -48,10 +41,10 @@ class FlutterChatMessageWindow(val project: Project,val toolWindow: ToolWindow) 
             add(sendButton)
         }
         chatTextField.apply {
-            emptyText.text = "说点什么吧 (按Enter键发送)"
+            emptyText.text = PluginBundle.get("window.chat.sendInput.desc")
         }
         chatList.apply {
-            emptyText.appendLine("暂时没有人聊天,快去发言吧")
+            emptyText.appendLine(PluginBundle.get("window.chat.noMessage"))
         }
         userAvatarButton.addActionListener {
             showLoginDialog()
@@ -63,7 +56,7 @@ class FlutterChatMessageWindow(val project: Project,val toolWindow: ToolWindow) 
     }
 
     private fun showLoginDialog() {
-        JBPopupFactory.getInstance().createComponentPopupBuilder(LoginDialog(),toolWindow.component)
+        JBPopupFactory.getInstance().createComponentPopupBuilder(loginPanel(),toolWindow.component)
             .setMovable(true)
             .setRequestFocus(true)
             .setFocusable(true)
