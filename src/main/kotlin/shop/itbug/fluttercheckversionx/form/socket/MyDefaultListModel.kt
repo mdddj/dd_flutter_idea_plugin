@@ -11,7 +11,6 @@ class MyDefaultListModel(datas: List<Request>) :
     AbstractListModel<Request>() {
     var list = datas
 
-
     override fun getSize(): Int {
         return list.size
     }
@@ -41,8 +40,6 @@ class MyCustomItemRender : ListCellRenderer<Request> {
 ///请求列表item布局
 class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.X_AXIS) {
     init {
-
-
         //icon
         add(JLabel(AllIcons.Javaee.WebService))
         add(createHorizontalStrut(4))

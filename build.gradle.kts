@@ -13,6 +13,10 @@ repositories {
         url = uri("https://plugins.gradle.org/m2/")
     }
 }
+java{
+    sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
+}
+
 intellij {
     version.set("2022.2.3")
     type.set("IC")
@@ -20,7 +24,7 @@ intellij {
         listOf(
             "yaml",
             "Dart:222.4345.14",
-            "io.flutter:70.2.5",
+            "io.flutter:71.0.5",
             "org.intellij.plugins.markdown:222.4167.22"
         )
     )
@@ -33,7 +37,6 @@ dependencies {
     implementation("cn.hutool:hutool-all:5.8.8")
     implementation("org.smartboot.socket:aio-core:1.6.0")
     implementation("com.alibaba:fastjson:2.0.14.graal")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
@@ -80,7 +83,18 @@ tasks {
 
     runIde {
         autoReloadPlugins.set(true)
-//        jbrVariant.set("sdk")
-//        jbrVersion.set("17.0.4.1b653.1")
+    }
+
+
+    buildSearchableOptions {
+        enabled = false
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "17"
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "17"
     }
 }

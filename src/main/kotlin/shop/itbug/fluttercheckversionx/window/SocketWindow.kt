@@ -5,6 +5,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 
 /**
@@ -17,12 +18,12 @@ class SocketWindow : ToolWindowFactory {
         //dio 监听窗口
         val socketRequestForm = SocketRequestForm(p0,p1)
         val instance = ContentFactory.getInstance()
-        val createContent = instance.createContent(socketRequestForm.getContent(), "Dio Request Apis", false)
+        val createContent = instance.createContent(socketRequestForm.getContent(), PluginBundle.get("window.idea.dio.title"), false)
         p1.contentManager.addContent(createContent)
 
         //在线聊天窗口
         val flutterChatWindow = FlutterChatMessageWindow(p0,p1)
-        val flutterChatWindowContent = instance.createContent(flutterChatWindow,"Flutter疑难解答",false)
+        val flutterChatWindowContent = instance.createContent(flutterChatWindow,PluginBundle.get("window.idea.chat.title"),false)
         p1.contentManager.addContent(flutterChatWindowContent)
 
 

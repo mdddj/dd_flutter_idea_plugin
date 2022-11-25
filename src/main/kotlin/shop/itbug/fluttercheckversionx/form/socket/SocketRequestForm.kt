@@ -47,7 +47,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
      */
     private var containerJBSplitter = OnePixelSplitter()
 
-
     /**
      * idea全部监听到的请求组件
      */
