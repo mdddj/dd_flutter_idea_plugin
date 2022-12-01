@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-class LoginParam(val loginName: String, val password: String)
+data class LoginParam(val loginNumber: String, val password: String)
 
 interface ItbugService {
 

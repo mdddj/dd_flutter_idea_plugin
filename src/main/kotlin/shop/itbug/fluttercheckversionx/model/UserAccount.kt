@@ -1,3 +1,3 @@
 package shop.itbug.fluttercheckversionx.model
 
-data class UserAccount(val username: String,val password: String)
+data class UserAccount(var username: String = "",var password: String = "")

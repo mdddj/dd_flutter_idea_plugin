@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("org.jetbrains.intellij") version "1.10.0"
+    id("org.jetbrains.intellij") version "1.11.0-SNAPSHOT"
 }
 group = "shop.itbug"
 version = "2.1.1"

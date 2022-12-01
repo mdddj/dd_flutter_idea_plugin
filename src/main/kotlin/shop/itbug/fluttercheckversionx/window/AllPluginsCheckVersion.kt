@@ -4,9 +4,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTreeTable
+import com.intellij.ui.treeStructure.treetable.ListTreeTableModel
+import com.intellij.util.ui.tree.AbstractTreeModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.jdesktop.swingx.treetable.AbstractTreeTableModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.model.getElementVersion
@@ -17,6 +21,7 @@ import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
+import javax.swing.tree.DefaultTreeModel
 
 ///检测版本小窗口
 class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
@@ -31,7 +36,7 @@ class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
     //展示列表组件
     private val listView = JBList<FlutterPluginElementModel>()
 
-    //
+
 
     init {
         add(topTipLabel, BorderLayout.NORTH)
