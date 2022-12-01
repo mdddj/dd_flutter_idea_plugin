@@ -23,8 +23,8 @@ import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
-import shop.itbug.fluttercheckversionx.services.SocketConnectStatusMessageBus
-import shop.itbug.fluttercheckversionx.services.SocketMessageBus
+import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
+import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout

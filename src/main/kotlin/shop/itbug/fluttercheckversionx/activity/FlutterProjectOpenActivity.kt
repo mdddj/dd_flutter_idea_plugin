@@ -7,9 +7,6 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.common.YamlFileParser
 import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
@@ -59,7 +56,6 @@ class FlutterProjectOpenActivity : StartupActivity {
             Disposer.register(project, this)
         }
 
-        @OptIn(DelicateCoroutinesApi::class)
         override fun run(p0: ProgressIndicator) {
 
 

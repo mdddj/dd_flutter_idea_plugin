@@ -2,6 +2,18 @@ package shop.itbug.fluttercheckversionx.services
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import shop.itbug.fluttercheckversionx.services.Env.*
+
+//当前环境
+ val currentEnv = Dev
+enum class Env{
+    Dev,Pro
+}
+
+val SERVICE : ApiServiceCreate = when(currentEnv){
+    Dev -> LocalhostServiceCreate
+    Pro -> ServiceCreateWithMe
+}
 
 open class ApiServiceCreate(host: String) {
     private val retrofit =

@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
+import com.alibaba.fastjson2.JSONObject
 import com.google.gson.Gson
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
@@ -11,11 +12,17 @@ import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
-import shop.itbug.fluttercheckversionx.services.SocketConnectStatusMessageBus
-import shop.itbug.fluttercheckversionx.services.SocketMessageBus
+import shop.itbug.fluttercheckversionx.model.user.User
+import shop.itbug.fluttercheckversionx.services.ItbugService
+import shop.itbug.fluttercheckversionx.services.SERVICE
+import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
+import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
+import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
+import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.socket.chat.IdeaChatMessageWindow
+import shop.itbug.fluttercheckversionx.util.CredentialUtil
 import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
 
 class AppService {
@@ -34,6 +41,8 @@ class AppService {
      */
     var examples = emptyList<ResourceModel>()
 
+    var user: User? = null
+
     /**
      * 存储了flutter项目
      *
@@ -50,10 +59,12 @@ class AppService {
 
 
     private val chatSessionManager = Thread(IdeaChatMessageWindow())
+    private val userRunStartManager = Thread(UserRunStartService())
 
 
     init {
         chatSessionManager.start()
+        userRunStartManager.start()
     }
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
@@ -158,6 +169,25 @@ class AppService {
      */
     fun getAllProjectNames(): ArrayList<String> {
         return ArrayList(flutterProjects.keys)
+    }
+
+    /**
+     * 执行登录
+     */
+    fun login() {
+        CredentialUtil.token?.let {
+            val userToken = it
+            println("加载到用户token:$it")
+            val result =  SERVICE.create<ItbugService>().getUserInfo(userToken).execute().body()
+            if(result?.state==200){
+                println("登录成功:${JSONObject.toJSONString(result.data)}")
+                user = result.data
+                messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
+                MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}",project)
+            }else{
+                println("登录失败:${result?.message}")
+            }
+        }
     }
 
 }

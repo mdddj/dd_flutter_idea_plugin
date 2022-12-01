@@ -1,4 +1,4 @@
-package shop.itbug.fluttercheckversionx.services
+package shop.itbug.fluttercheckversionx.services.event
 
 import com.intellij.util.messages.Topic
 import org.smartboot.socket.StateMachineEnum

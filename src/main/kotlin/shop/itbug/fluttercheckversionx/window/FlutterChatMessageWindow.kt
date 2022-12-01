@@ -6,15 +6,22 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.fields.ExtendableTextField
 import shop.itbug.fluttercheckversionx.dsl.loginPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.UserAccount
+import shop.itbug.fluttercheckversionx.model.user.User
+import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
+import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.BorderLayout
+import javax.swing.ImageIcon
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JToolBar
@@ -29,17 +36,39 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
     private val chatTextField = ExtendableTextField()//聊天内容编辑框
     private val sendButton = JButton("发送") //发送按钮
 
+    var userInfo: User? = null // 用户信息
+
+    private var userAvatarWidget = object : AnAction("登录","登录典典账号使用更多功能",AllIcons.General.User){
+        override fun actionPerformed(e: AnActionEvent) {
+            showLoginDialog()
+        }
+    }
+
     private var defaultActions = DefaultActionGroup().apply {
-        add(object : AnAction("登录","登录典典账号使用更多功能",AllIcons.General.User){
-            override fun actionPerformed(e: AnActionEvent) {
-                showLoginDialog()
-            }
-        })
+        add(userAvatarWidget)
     }
     private val actionToolbar = ActionManager.getInstance().createActionToolbar("ldd-chat-toolbar", defaultActions,false)
 
     init {
         uiInit()
+        userInfo = service<AppService>().user
+        ApplicationManager.getApplication().messageBus.connect().subscribe(UserLoginStatusEvent.TOPIC,object : UserLoginStatusEvent{
+            override fun loginSuccess(user: User?) {
+                userInfo = user
+                userInfoHandle()
+            }
+        })
+        userInfoHandle()
+    }
+
+    fun userInfoHandle(){
+        if(userInfo!=null){
+            println("进来了...")
+            val  icon = ImageIcon(userInfo!!.picture)
+            val ava = JBLabel(icon)
+            actionToolbar.component.remove(0)
+            actionToolbar.component.add(ava,0)
+        }
     }
 
 

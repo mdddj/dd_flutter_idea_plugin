@@ -53,10 +53,7 @@ object CredentialUtil {
     /**
      * 读取本机token
      */
-    fun readToken(): String? {
-        val get = PasswordSafe.instance.get(tokenCa)
-        return get?.getPasswordAsString()
-    }
+    val token : String? get() =  PasswordSafe.instance.get(tokenCa)?.getPasswordAsString()
 
     /**
      * 删除本机token
