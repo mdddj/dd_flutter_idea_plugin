@@ -18,7 +18,6 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationProvider {
 
-    private val logger: Logger = LoggerFactory.getLogger(DartDocumentExt::class.java)
 
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
 
@@ -163,6 +162,5 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     }
 
     override fun promptToConfigureDocumentation(element: PsiElement?) {
-        logger.info("promptToConfigureDocumentation 执行了")
     }
 }

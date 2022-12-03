@@ -40,7 +40,8 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
-    implementation ("com.github.nkzawa:socket.io-client:0.6.0")
+    implementation("org.hildan.krossbow:krossbow-stomp-core:4.4.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.4.0")
 }
 var javaVersion = "17"
 tasks {

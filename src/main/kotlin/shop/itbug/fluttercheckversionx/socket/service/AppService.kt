@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONObject
 import com.google.gson.Gson
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
@@ -24,7 +23,6 @@ import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
 import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
-import shop.itbug.fluttercheckversionx.socket.chat.IdeaChatMessageWindow
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
 import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
 
@@ -35,46 +33,45 @@ class AppService {
 
     // 全局的socket监听服务
     private lateinit var server: AioQuickServer
+
     //组件示例
     var examples = emptyList<ResourceModel>()
+
     //用户信息
     var user: User? = null
 
-    //聊天房间
-    var chatRooms : List<ResourceCategory> = emptyList()
+    //聊天房间列表
+    var chatRooms: List<ResourceCategory> = emptyList()
+
     //当前选中的聊天房间
-    var currentChatRoom : ResourceCategory? = null
+    var currentChatRoom: ResourceCategory? = null
+
+    //socket服务是否正常启动
+    var socketIsInit = false
 
     /**
      * 存储了flutter项目
-     *
      * 键是项目名称
      * 值是请求列表
      */
     private var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
 
 
-    /**
-     * socket服务是否已经正常运行
-     */
-    var socketIsInit = false
-
-
-    private val chatSessionManager = Thread(IdeaChatMessageWindow())
     private val userRunStartManager = Thread(UserRunStartService())
     private val chatRoomLoadManager = Thread(ChatRoomsLoadThread())
 
 
     init {
-        chatSessionManager.start()
         userRunStartManager.start()
         chatRoomLoadManager.start()
+        ChatSocketService.connect()
     }
+
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
      */
     fun initSocketService(p: Project) {
-        if(socketIsInit) return
+        if (socketIsInit) return
         project = p
         server = AioQuickServer(9999, StringProtocol(), object : MessageProcessor<String?> {
             override fun process(session: AioSession?, msg: String?) {
@@ -88,15 +85,22 @@ class AppService {
             ) {
                 super.stateEvent(session, stateMachineEnum, throwable)
                 println("状态机:${stateMachineEnum}")
-                messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC).statusChange(aioSession = session,stateMachineEnum = stateMachineEnum)
+                messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC)
+                    .statusChange(aioSession = session, stateMachineEnum = stateMachineEnum)
                 when (stateMachineEnum) {
                     StateMachineEnum.NEW_SESSION -> {
                         newSessionHandle(session)
 
                     }
+
                     StateMachineEnum.SESSION_CLOSED -> {
-                        MyNotifactionUtil.socketNotif("典典:dio监听模块意外断开,请重新连接",project, NotificationType.WARNING)
+                        MyNotifactionUtil.socketNotif(
+                            "典典:dio监听模块意外断开,请重新连接",
+                            project,
+                            NotificationType.WARNING
+                        )
                     }
+
                     else -> {}
                 }
             }
@@ -178,17 +182,19 @@ class AppService {
     /**
      * 执行登录
      */
-    fun login() {
+    fun login()  {
         CredentialUtil.token?.let {
             val userToken = it
             println("加载到用户token:$it")
-            val result =  SERVICE.create<ItbugService>().getUserInfo(userToken).execute().body()
-            if(result?.state==200){
+            val result = SERVICE.create<ItbugService>().getUserInfo(userToken).execute().body()
+            if (result?.state == 200) {
                 println("登录成功:${JSONObject.toJSONString(result.data)}")
                 user = result.data
                 messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
-                MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}",project)
-            }else{
+                MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}", project)
+
+
+            } else {
                 CredentialUtil.removeToken()
             }
         }
@@ -198,9 +204,10 @@ class AppService {
      * 加载房间列表
      */
     fun loadRooms() {
-        val result = SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type).execute().body()
+        val result =
+            SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type).execute().body()
         result?.apply {
-            if(state == 200) {
+            if (state == 200) {
                 chatRooms = data
             }
         }

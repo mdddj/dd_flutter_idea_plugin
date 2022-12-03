@@ -92,7 +92,6 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
 
     fun userInfoHandle(){
         if(userInfo!=null){
-            println("进来了...")
             val  icon = ImageIcon(userInfo!!.picture)
             val ava = JBLabel(icon)
             actionToolbar.component.remove(0)
@@ -139,9 +138,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
     }
 
     private fun showLoginDialog() {
-        JBPopupFactory.getInstance().createComponentPopupBuilder(loginPanel(this) {
-            login(it)
-        }, toolWindow.component)
+        JBPopupFactory.getInstance().createComponentPopupBuilder(loginPanel(this), toolWindow.component)
             .setMovable(true)
             .setRequestFocus(true)
             .setFocusable(true)

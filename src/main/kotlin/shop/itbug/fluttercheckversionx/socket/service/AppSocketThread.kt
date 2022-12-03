@@ -12,10 +12,6 @@ class AppSocketThread(private val server: AioQuickServer,private val project: Pr
             state(true)
         } catch (e: Exception) {
             state(false)
-            MyNotifactionUtil.socketNotif(
-                message = "启动dio监听模块失败,异常:${e.localizedMessage}", project = project,
-                NotificationType.ERROR
-            )
         }
     }
 

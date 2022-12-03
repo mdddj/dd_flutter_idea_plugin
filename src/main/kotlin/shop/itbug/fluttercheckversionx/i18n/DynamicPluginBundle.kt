@@ -16,7 +16,6 @@ open class DynamicPluginBundle(pathToBundle: String): AbstractBundle(pathToBundl
     ): ResourceBundle {
         val base = super.findBundle(pathToBundle, loader, control)
         val ideLocale = LangBundle.getLocale()
-        println(ideLocale)
         if(ideLocale != Locale.CHINA){
             val localizedPath = pathToBundle + "_"+ideLocale.language
             val localBoundle = super.findBundle(localizedPath, DynamicPluginBundle::class.java.classLoader, control)

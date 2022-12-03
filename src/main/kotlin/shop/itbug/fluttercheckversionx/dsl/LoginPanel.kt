@@ -16,10 +16,9 @@ import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.LocalhostServiceCreate
 import shop.itbug.fluttercheckversionx.services.LoginParam
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
-import javax.swing.BorderFactory
 
 ///登录弹窗
-fun loginPanel(parentDisposable: Disposable, login: (UserAccount) -> Unit): DialogPanel {
+fun loginPanel(parentDisposable: Disposable): DialogPanel {
     lateinit var panel: DialogPanel
     val padding = 30
     val account = UserAccount()
@@ -31,7 +30,6 @@ fun loginPanel(parentDisposable: Disposable, login: (UserAccount) -> Unit): Dial
              r.data?.let {
                  CredentialUtil.saveToken(it)
             }
-
         }else{
             println(r?.message)
         }
