@@ -13,12 +13,14 @@ enum class Env{
     Dev,Pro
 }
 
+//获取接口服务
 val SERVICE : ApiServiceCreate = when(currentEnv){
     Dev -> LocalhostServiceCreate
     Pro -> ServiceCreateWithMe
 }
 
 open class ApiServiceCreate(host: String) {
+    ///添加请求头
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
             var request = chain.request()
@@ -41,7 +43,6 @@ open class ApiServiceCreate(host: String) {
 object ServiceCreate : ApiServiceCreate(PUBL_API_URL)
 object ServiceCreateWithMe : ApiServiceCreate(MY_SERVICE_HOST)
 object LocalhostServiceCreate : ApiServiceCreate(LOCAL_HOST_IP)
-
 
 /**
  * 统一返回结果
