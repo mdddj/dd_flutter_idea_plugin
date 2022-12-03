@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject
 import com.google.gson.Gson
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
@@ -12,6 +13,8 @@ import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
+import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
+import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.SERVICE
@@ -30,18 +33,17 @@ class AppService {
 
     lateinit var project: Project
 
-    /**
-     * 全局的socket监听服务
-     */
+    // 全局的socket监听服务
     private lateinit var server: AioQuickServer
-
-
-    /**
-     * 组件示例
-     */
+    //组件示例
     var examples = emptyList<ResourceModel>()
-
+    //用户信息
     var user: User? = null
+
+    //聊天房间
+    var chatRooms : List<ResourceCategory> = emptyList()
+    //当前选中的聊天房间
+    var currentChatRoom : ResourceCategory? = null
 
     /**
      * 存储了flutter项目
@@ -60,11 +62,13 @@ class AppService {
 
     private val chatSessionManager = Thread(IdeaChatMessageWindow())
     private val userRunStartManager = Thread(UserRunStartService())
+    private val chatRoomLoadManager = Thread(ChatRoomsLoadThread())
 
 
     init {
         chatSessionManager.start()
         userRunStartManager.start()
+        chatRoomLoadManager.start()
     }
     /**
      * 初始化socket服务,并处理flutter端传输过来的值
@@ -185,7 +189,19 @@ class AppService {
                 messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
                 MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}",project)
             }else{
-                println("登录失败:${result?.message}")
+                CredentialUtil.removeToken()
+            }
+        }
+    }
+
+    /**
+     * 加载房间列表
+     */
+    fun loadRooms() {
+        val result = SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type).execute().body()
+        result?.apply {
+            if(state == 200) {
+                chatRooms = data
             }
         }
     }

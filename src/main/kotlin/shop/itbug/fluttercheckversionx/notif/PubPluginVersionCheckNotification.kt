@@ -38,7 +38,7 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
 class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtils.getEditorNotificationBackgroundColor().defaultColor) {
 
-    var checkLabel: HyperlinkLabel
+    private var checkLabel: HyperlinkLabel
 
     init {
         icon(FlutterIcons.Flutter);
@@ -46,7 +46,6 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
         checkLabel = createActionLabel("检测新版本") {
             checkNewVersions()
         }
-
         myLinksPanel.add(checkLabel)
 
         val searchPluginLabel = createActionLabel("搜索插件") {

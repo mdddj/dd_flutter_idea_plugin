@@ -11,7 +11,7 @@ fun settingPanel () : DialogPanel {
         row("dio 监听端口") {
             textField()
         }
-        row ("Plug in Language") {
+        row ("Language") {
             segmentedButton(listOf("System","中文","English")) { it }.whenItemSelected {
                 println("change it:$it")
             }

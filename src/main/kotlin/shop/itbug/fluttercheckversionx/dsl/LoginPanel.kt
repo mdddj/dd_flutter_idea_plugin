@@ -63,7 +63,7 @@ fun loginPanel(parentDisposable: Disposable, login: (UserAccount) -> Unit): Dial
                 userLogin()
             }.gap(RightGap.SMALL).horizontalAlign(HorizontalAlign.RIGHT)
         }.topGap(TopGap.SMALL)
-    }.withBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding))
+    }.addBorder()
 
     val newDisposable = Disposer.newDisposable()
     panel.registerValidators(newDisposable)
