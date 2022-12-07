@@ -19,6 +19,11 @@ import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
+import shop.itbug.fluttercheckversionx.dialog.helpText
+import shop.itbug.fluttercheckversionx.dsl.docPanel
+import shop.itbug.fluttercheckversionx.dsl.show
+import shop.itbug.fluttercheckversionx.dsl.showCenter
+import shop.itbug.fluttercheckversionx.dsl.showWithPoint
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
@@ -270,17 +275,18 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     ///添加帮助性文档
     private fun addHelpText() {
+        val helpIcon = AllIcons.Actions.Help
         requestsJBList.setEmptyText("暂时没有监听到请求.")
         requestsJBList.emptyText.apply {
             appendLine("此功能需要搭配flutter插件使用.")
             appendLine("")
             appendLine(
-                AllIcons.Actions.Help, "使用教程?", SimpleTextAttributes(
+                helpIcon, "使用教程?", SimpleTextAttributes(
                     SimpleTextAttributes.STYLE_PLAIN,
                     JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
-                DioHelpDialog(project).show()
+                docPanel(helpText,project).showCenter(project)
             }
             appendLine("")
             appendText(

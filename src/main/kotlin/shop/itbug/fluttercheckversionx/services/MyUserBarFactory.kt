@@ -9,6 +9,7 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
+import org.jetbrains.plugins.terminal.TerminalView
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginActions.*
@@ -20,7 +21,7 @@ import javax.swing.JComponent
 
 
 enum class PluginActions(val title: String) {
-    SearchPlugin("搜索pub包"), CheckVersion("检测版本更新"), GetAllPlugins("获取全部插件")
+    SearchPlugin("搜索pub包"), CheckVersion("检测版本更新"), GetAllPlugins("获取全部插件"),RunBuilder("生成代码")
 }
 
 ///用户面板
@@ -129,6 +130,10 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
 
             GetAllPlugins -> {
                 MyPsiElementUtil.getAllFlutters(project)
+            }
+
+            RunBuilder -> {
+                TerminalView.getInstance(project).createLocalShellWidget(project.basePath,"build").executeCommand("flutter pub run build_runner build")
             }
         }
     }

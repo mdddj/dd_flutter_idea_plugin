@@ -14,7 +14,7 @@ repositories {
     }
 }
 java{
-    sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 intellij {
@@ -25,7 +25,8 @@ intellij {
             "yaml",
             "Dart:222.4345.14",
             "io.flutter:71.0.5",
-            "org.intellij.plugins.markdown:222.4167.22"
+            "org.intellij.plugins.markdown:222.4167.22",
+            "terminal"
         )
     )
 }
@@ -33,15 +34,15 @@ intellij {
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.1")
-    implementation("cn.hutool:hutool-all:5.8.8")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
+    implementation("cn.hutool:hutool-all:5.8.10")
     implementation("org.smartboot.socket:aio-core:1.6.0")
-    implementation("com.alibaba:fastjson:2.0.14.graal")
+    implementation("com.alibaba:fastjson:2.0.20.graal")
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.google.code.gson:gson:2.9.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
-    implementation("org.hildan.krossbow:krossbow-stomp-core:4.4.0")
-    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.4.0")
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
+    implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
 }
 var javaVersion = "17"
 tasks {

@@ -48,6 +48,7 @@
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
     <applicationListeners>
         <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"

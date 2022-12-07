@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.dsl
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
@@ -10,9 +11,14 @@ import javax.swing.BorderFactory
 /**
  * 弹窗
  */
-fun DialogPanel.show(point: Point) {
+fun DialogPanel.showWithPoint(point: Point) {
     JBPopupFactory.getInstance().createComponentPopupBuilder(this,null)
         .createPopup().show(RelativePoint(point))
+}
+
+fun DialogPanel.showCenter(project: Project) {
+    JBPopupFactory.getInstance().createComponentPopupBuilder(this,null)
+        .createPopup().showCenteredInCurrentWindow(project)
 }
 
 fun DialogPanel.show(anActionEvent: AnActionEvent) {
