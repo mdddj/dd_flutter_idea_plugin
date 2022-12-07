@@ -26,18 +26,16 @@ import javax.swing.Icon
 typealias InlayPresentationClickHandle = (MouseEvent, Point) -> Unit
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
-
-
     private fun InlayPresentation.clickHandle(handle:  InlayPresentationClickHandle?) : InlayPresentation {
         return  factory.mouseHandling(this, clickListener = handle,null)
     }
 
     fun simpleText(text: String, tip: String?,handle: InlayPresentationClickHandle?): InlayPresentation {
-        return text(text).con().bg().addTip(tip ?: text).clickHandle(handle)
+        return text(text).bg().addTip(tip ?: text).clickHandle(handle)
     }
 
     fun simpleTextWithClick(text: String, tip: String?): InlayPresentation {
-        return text(text).con().bg().addTip(tip ?: text)
+        return text(text).bg().addTip(tip ?: text)
     }
 
     fun menuActions(pluginName: String): InlayPresentation {
@@ -80,18 +78,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     private fun InlayPresentation.insert(newInlay: InlayPresentation): InlayPresentation =
         factory.join(listOf(this, newInlay)) { text("") }
 
-    private fun InlayPresentation.con(): InlayPresentation = factory.container(
-        this,
-        InlayPresentationFactory.Padding(
-            5, 5, 2, 2,
-        ),
-        InlayPresentationFactory.RoundedCorners(
 
-            10, 10
-        ),
-
-
-        )
 
 
     private val actionMenus = listOf(

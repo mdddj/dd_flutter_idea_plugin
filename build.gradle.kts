@@ -18,14 +18,14 @@ java{
 }
 
 intellij {
-    version.set("2022.2.3")
+    version.set("2022.3")
     type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:222.4345.14",
-            "io.flutter:71.0.5",
-            "org.intellij.plugins.markdown:222.4167.22",
+            "Dart:223.7571.203",
+            "io.flutter:71.0.6",
+            "org.intellij.plugins.markdown:223.7571.125",
             "terminal"
         )
     )
@@ -62,7 +62,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222.4345.14")
+        sinceBuild.set("223.*")
         untilBuild.set("223.*")
         changeNotes.set("""
             v2.0.4: 更新pubspec.yaml的快捷图标位置
