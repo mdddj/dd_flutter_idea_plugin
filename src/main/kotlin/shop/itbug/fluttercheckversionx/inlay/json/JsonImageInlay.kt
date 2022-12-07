@@ -44,7 +44,7 @@ class JsonImageInlay : InlayHintsProvider<JsonImageInlay.Setting> {
                         sink.addInlineElement(
                             element.endOffset,
                             false,
-                            hintsInlayPresentationFactory.simpleText("图片", "鼠标移动到链接上面即可预览"),
+                            hintsInlayPresentationFactory.simpleText("图片", "鼠标移动到链接上面即可预览",null),
                             false
                         )
                     }

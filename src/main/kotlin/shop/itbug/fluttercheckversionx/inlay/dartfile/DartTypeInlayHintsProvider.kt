@@ -3,15 +3,24 @@ package shop.itbug.fluttercheckversionx.inlay.dartfile
 import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.JBLabel
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+
+
+
 
 class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider.Setting> {
 
@@ -26,7 +35,6 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
         get() = """
             var a = 0;
             final b = false;
-            const c = "梁典典 😙 QQ群 667186542";
         """.trimIndent()
 
     override fun createSettings(): Setting {
@@ -40,7 +48,6 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
         sink: InlayHintsSink
     ): InlayHintsCollector {
         return object : FactoryInlayHintsCollector(editor) {
-
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 val hintsInlayPresentationFactory = HintsInlayPresentationFactory(factory)
                 if (element is DartVarDeclarationListImpl) {
@@ -56,25 +63,14 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             val staticType = analysisGethover[0].staticType
                             analysisGethover[0].dartdoc
                             if (staticType != null) {
-                                val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType")
+                                val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType") { mouseEvent, point ->
+                                    val ss = StringSelection(staticType)
+                                    val clipboard: Clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
+                                    clipboard.setContents(ss, null)
+                                }
                                 sink.addInlineElement(
                                     filterIsInstanceWithName.endOffset, false, ins, false
                                 )
-//                                sink.addBlockElement(
-//                                    filterIsInstanceWithName.startOffset,
-//                                    true,
-//                                    showAbove = true,
-//                                    priority = 1,
-//
-//                                )
-//                                ApplicationManager.getApplication().invokeLater{
-//                                    val item =  DocRenderItem.getItemAroundOffset(editor,filterIsInstanceWithName.textOffset)
-//                                    editor.inlayModel.addBlockElement(
-//                                        filterIsInstanceWithName.startOffset,
-//                                        true, true, 1, MyCustomDocRender(docText,editor)
-//                                    )
-//                                }
-
                             }
                         }
                     }
@@ -107,7 +103,9 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                                 sink.addInlineElement(
                                                     semicolonElement.endOffset,
                                                     false,
-                                                    hintsInlayPresentationFactory.simpleText(docMessage, ""),
+                                                    hintsInlayPresentationFactory.simpleText(docMessage, ""){mouseEvent, point ->
+                                                        println("被点击了...")
+                                                    },
                                                     false
                                                 )
 
