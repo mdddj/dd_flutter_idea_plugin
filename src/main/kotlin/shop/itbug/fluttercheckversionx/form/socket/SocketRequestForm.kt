@@ -16,14 +16,11 @@ import com.intellij.util.ui.JBUI
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.StateMachineEnum.*
 import org.smartboot.socket.transport.AioSession
-import shop.itbug.fluttercheckversionx.dialog.DioHelpDialog
+import shop.itbug.fluttercheckversionx.constance.helpText
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
-import shop.itbug.fluttercheckversionx.dialog.helpText
 import shop.itbug.fluttercheckversionx.dsl.docPanel
-import shop.itbug.fluttercheckversionx.dsl.show
 import shop.itbug.fluttercheckversionx.dsl.showCenter
-import shop.itbug.fluttercheckversionx.dsl.showWithPoint
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
@@ -124,7 +121,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             requestsJBList.model = MyDefaultListModel(datas = emptyList())
         }
 
-        ///jlist初始化
         addHelpText()
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true

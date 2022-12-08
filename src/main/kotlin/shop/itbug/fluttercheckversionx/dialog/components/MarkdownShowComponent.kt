@@ -2,41 +2,36 @@ package shop.itbug.fluttercheckversionx.dialog.components
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
-import com.intellij.util.ui.UIUtil
-import shop.itbug.fluttercheckversionx.document.MarkdownRender
-import javax.swing.JPanel
-import javax.swing.JTextPane
+import shop.itbug.fluttercheckversionx.dsl.docPanel
+import java.awt.BorderLayout
 
-class MarkdownShowComponent(value: String, project: Project, igToHtml: Boolean = false) : JBPanel<MarkdownShowComponent>() {
-
-    private var myProject: Project
+class MarkdownShowComponent(value: String, project: Project) : JBPanel<MarkdownShowComponent>(BorderLayout()) {
 
 
+    private var panel = docPanel(value,project)
+    private var project: Project
     init {
-        myProject = project
-        background = UIUtil.getPanelBackground()
+        this@MarkdownShowComponent.project = project
+        add(panel,BorderLayout.CENTER)
     }
 
     /**
      * 更新Markdown文本
      */
     fun changeMarkdown(markdownText: String) {
-        //todo
+        remove(panel)
+        panel = docPanel(markdownText,project)
+        add(panel,BorderLayout.CENTER)
     }
 
-    fun changeHtml(htmlText: String) {
-    }
 
     companion object {
 
         /**
-         * @param conext html内容
-         * @param htmlText 是否需要markdown转成html true 表示需要 false 表示不需要
+         * @param content html内容
          */
-        fun getDocComp(conext: String, myProject: Project, htmlText: Boolean = true): MarkdownShowComponent {
-            val obj = MarkdownShowComponent(conext, myProject ,htmlText)
-            obj.autoscrolls=false
-            return obj
+        fun getDocComp(content: String, myProject: Project): MarkdownShowComponent {
+            return MarkdownShowComponent(content, myProject)
         }
     }
 }

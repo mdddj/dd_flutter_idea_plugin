@@ -36,6 +36,8 @@ class LeftActionTools(
     private val deletButton = DeleButton()
     private var sortAction = MySortToggleAction(requestSort)
     private val sortOption = SortAction(action = sortAction)
+
+    //查看请求头的工具
     private var detailAction = object : ToggleAction("查看请求头", "查看详细信息", AllIcons.Ide.ConfigFile) {
         var selected = false
         override fun isSelected(e: AnActionEvent): Boolean {

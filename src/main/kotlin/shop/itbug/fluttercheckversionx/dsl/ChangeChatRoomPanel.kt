@@ -19,6 +19,7 @@ fun changeRoomPanel () : DialogPanel {
         }
         row  {
             segmentedButton(names) { it }.bind(object : ObservableMutableProperty<String> {
+
                 override fun set(value: String) {
                     service<AppService>().currentChatRoom = rooms.first { it.name == value }
                 }

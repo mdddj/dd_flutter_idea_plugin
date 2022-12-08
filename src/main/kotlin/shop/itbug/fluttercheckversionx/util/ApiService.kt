@@ -6,13 +6,9 @@ import shop.itbug.fluttercheckversionx.services.ServiceCreate
 
 object ApiService {
     fun getPluginDetail(name: String): PubVersionDataModel? {
-        val response = ServiceCreate.create<PubService>().callPluginDetails(name).execute()
-        if (response.isSuccessful) {
-            val detail = response.body()
-            detail?.let {
-                return it
-            }
-        }
+        try {
+            return ServiceCreate.create<PubService>().callPluginDetails(name).execute().body()
+        } catch (_: Exception) {}
         return null
     }
 }

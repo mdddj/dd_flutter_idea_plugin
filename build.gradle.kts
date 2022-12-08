@@ -44,6 +44,8 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
 }
+
+
 var javaVersion = "17"
 tasks {
     withType<JavaCompile> {
@@ -62,7 +64,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.*")
+        sinceBuild.set("223.7571.182")
         untilBuild.set("223.*")
         changeNotes.set("""
             v2.0.4: 更新pubspec.yaml的快捷图标位置

@@ -9,6 +9,13 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
+import io.flutter.actions.FlutterSdkAction
+import io.flutter.sdk.FlutterCommand
+import io.flutter.sdk.FlutterSdk
+import io.flutter.sdk.FlutterSdkChannel
+import io.flutter.sdk.FlutterSdkManager
+import io.flutter.sdk.FlutterSdkUtil
+import io.flutter.sdk.FlutterSdkVersion
 import org.jetbrains.plugins.terminal.TerminalView
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -17,11 +24,18 @@ import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 
 enum class PluginActions(val title: String) {
-    SearchPlugin("搜索pub包"), CheckVersion("检测版本更新"), GetAllPlugins("获取全部插件"),RunBuilder("生成代码")
+    SearchPlugin("搜索pub包"), CheckVersion("检测版本更新"), GetAllPlugins("获取全部插件"), RunBuilder("生成代码"), FlutterClan(
+        "清理"
+    ),
+    FlutterPushPlugin("发布插件"),
+    BuildApk("构建安卓包"),
+    BuildIos("构建IOS包"),
+    FlutterDoctor("颤抖医生")
 }
 
 ///用户面板
@@ -71,8 +85,6 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     }
 
     override fun getComponent(): JComponent {
-
-
         iconLabel.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent?) {
                 e?.let {
@@ -81,9 +93,16 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
                 super.mouseClicked(e)
             }
         })
+        iconLabel.text = getSdkVersion() ?: ""
         return iconLabel
     }
 
+
+    //获取当前安装的flutter版本
+    private fun getSdkVersion(): String? {
+        val flutterSdk = FlutterSdk.getFlutterSdk(project)
+        return flutterSdk?.version?.versionText
+    }
 
     fun showPop() {
         val pop = createPop()
@@ -103,9 +122,11 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
         return JBPopupFactory.getInstance().createPopupChooserBuilder(values().asList())
             .setItemChosenCallback { doActions(it) }
             .setRenderer { _, value, _, _, _ ->
-                return@setRenderer JBLabel(value.title)
+                return@setRenderer JBLabel(value.title).apply {
+                    border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
+                }
             }
-            .setTitle("Flutter工具")
+            .setTitle("典典工具包")
             .createPopup()
     }
 
@@ -121,21 +142,25 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             }
 
             CheckVersion -> {
-                val pubsecpFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-                pubsecpFile?.let {
+                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
+                pubspecFile?.let {
                     val plugins = MyPsiElementUtil.getAllPlugins(project)
                     print(plugins)
                 }
             }
 
-            GetAllPlugins -> {
-                MyPsiElementUtil.getAllFlutters(project)
-            }
-
-            RunBuilder -> {
-                TerminalView.getInstance(project).createLocalShellWidget(project.basePath,"build").executeCommand("flutter pub run build_runner build")
-            }
+            GetAllPlugins -> MyPsiElementUtil.getAllFlutters(project)
+            RunBuilder -> runCommand("flutter pub run build_runner build")
+            FlutterClan -> runCommand("flutter clean")
+            FlutterPushPlugin -> runCommand(" dart pub publish")
+            BuildApk -> runCommand("flutter build apk")
+            BuildIos -> runCommand("flutter build ios")
+            FlutterDoctor -> runCommand("flutter doctor")
         }
+    }
+
+    private fun runCommand(code: String) {
+        TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "梁典典").executeCommand(code)
     }
 
 }

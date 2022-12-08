@@ -129,8 +129,8 @@
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"/>
 
         <!--     自定义模板 riverpod   -->
-        <defaultLiveTemplates file="/temp/Flutter.xml"/>
-        <liveTemplateContext implementation="shop.itbug.fluttercheckversionx.temp.ConsumerfulTemp"/>
+<!--        <defaultLiveTemplates file="/temp/Flutter.xml"/>-->
+<!--        <liveTemplateContext implementation="shop.itbug.fluttercheckversionx.temp.ConsumerfulTemp" contextId="DART"/>-->
 
         <!--        系统设置-->
         <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"/>

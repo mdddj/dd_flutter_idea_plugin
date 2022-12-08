@@ -10,12 +10,16 @@ import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.ItbugService
+import shop.itbug.fluttercheckversionx.services.JSONResult
 import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
@@ -75,7 +79,7 @@ class AppService {
         project = p
         server = AioQuickServer(9999, StringProtocol(), object : MessageProcessor<String?> {
             override fun process(session: AioSession?, msg: String?) {
-                msg?.let { flutterClienJsonHandle(msg) }
+                msg?.let { flutterClientJsonHandle(msg) }
             }
 
             override fun stateEvent(
@@ -130,7 +134,7 @@ class AppService {
      * 对齐进一步处理
      * 通过idea的开发消息总线进行传输到UI工具窗口对用户进行展示内容
      */
-    private fun flutterClienJsonHandle(json: String) {
+    private fun flutterClientJsonHandle(json: String) {
         try {
             val responseModel = Gson().fromJson(json, ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
@@ -182,21 +186,29 @@ class AppService {
     /**
      * 执行登录
      */
-    fun login()  {
+    fun login() {
         CredentialUtil.token?.let {
             val userToken = it
-            println("加载到用户token:$it")
-            val result = SERVICE.create<ItbugService>().getUserInfo(userToken).execute().body()
-            if (result?.state == 200) {
-                println("登录成功:${JSONObject.toJSONString(result.data)}")
-                user = result.data
-                messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
-                MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}", project)
+            val r = SERVICE.create<ItbugService>().getUserInfo(userToken)
+            r.enqueue(object : Callback<JSONResult<User?>> {
+                override fun onResponse(call: Call<JSONResult<User?>>, response: Response<JSONResult<User?>>) {
+                    val body = response.body()
+                    if (body?.state == 200) {
+                        println("登录成功:${JSONObject.toJSONString(body.data)}")
+                        user = body.data
+                        messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
+                        MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}", project)
+                    } else {
+                        CredentialUtil.removeToken()
+                    }
+                }
+
+                override fun onFailure(call: Call<JSONResult<User?>>, t: Throwable) {
+                    CredentialUtil.removeToken()
+                }
+            })
 
 
-            } else {
-                CredentialUtil.removeToken()
-            }
         }
     }
 
@@ -204,13 +216,24 @@ class AppService {
      * 加载房间列表
      */
     fun loadRooms() {
-        val result =
-            SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type).execute().body()
-        result?.apply {
-            if (state == 200) {
-                chatRooms = data
+        val call = SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type)
+        call.enqueue(object : Callback<JSONResult<List<ResourceCategory>>> {
+            override fun onResponse(
+                call: Call<JSONResult<List<ResourceCategory>>>,
+                response: Response<JSONResult<List<ResourceCategory>>>
+            ) {
+                response.body()?.apply {
+                    if (state == 200) {
+                        chatRooms = data
+                    }
+                }
             }
-        }
+
+            override fun onFailure(call: Call<JSONResult<List<ResourceCategory>>>, t: Throwable) {
+            }
+
+        })
+
     }
 
 }

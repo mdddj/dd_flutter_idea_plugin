@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.project.Project
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
 import shop.itbug.fluttercheckversionx.document.Helper
+import shop.itbug.fluttercheckversionx.document.MyMarkdownDocRenderObject
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
@@ -11,7 +12,7 @@ import javax.swing.JPanel
 ///请求详情
 class RequestDetailPanel(val project: Project): JPanel(BorderLayout()) {
 
-    private val htmlView= MarkdownShowComponent.getDocComp("11",project)
+    private val htmlView= MarkdownShowComponent.getDocComp("",project)
 
     init {
         border = BorderFactory.createEmptyBorder()
@@ -54,16 +55,14 @@ class RequestDetailPanel(val project: Project): JPanel(BorderLayout()) {
     }
 
 
-    private fun getHeaderHtmlText(mapParam: Map<String,Any>): String{
-        if(mapParam.isEmpty()){
+    private fun getHeaderHtmlText(mapParam: Map<String, Any>): String {
+        if (mapParam.isEmpty()) {
             return "空"
         }
         val sb = StringBuilder()
-        Helper.addMarkdownTableHeader("key","Value",sb=sb)
-        mapParam.forEach { (t, u) -> Helper.addMarkdownTableLine(t,"$u",sb=sb) }
-//        return Helper.markdown2Html(sb.toString(),project)
-        //todo
-        return ""
+        Helper.addMarkdownTableHeader("key", "Value", sb = sb)
+        mapParam.forEach { (t, u) -> Helper.addMarkdownTableLine(t, "$u", sb = sb) }
+        return Helper.markdown2Html(MyMarkdownDocRenderObject(sb.toString(), project))
     }
 
 }
