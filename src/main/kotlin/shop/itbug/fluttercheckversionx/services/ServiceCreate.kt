@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -25,6 +27,10 @@ val SERVICE: ApiServiceCreate = when (currentEnv) {
 }
 
 open class ApiServiceCreate(var host: String) {
+    private var gson: Gson = GsonBuilder()
+        .setLenient()
+        .create()
+
     ///添加请求头
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
@@ -37,13 +43,13 @@ open class ApiServiceCreate(var host: String) {
         .build()
     private val retrofit =
         Retrofit.Builder()
-            .baseUrl(host).addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(host)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
 
     fun <T> create(serverClass: Class<T>): T = retrofit.create(serverClass)
     inline fun <reified T> create(): T = create(T::class.java)
-
 
 }
 

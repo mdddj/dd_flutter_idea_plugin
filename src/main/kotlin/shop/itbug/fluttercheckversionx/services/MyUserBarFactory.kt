@@ -84,6 +84,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     override fun install(statusBar: StatusBar) {
     }
 
+    ///
     override fun getComponent(): JComponent {
         iconLabel.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent?) {
@@ -140,7 +141,6 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             SearchPlugin -> {
                 SearchDialog(project).show()
             }
-
             CheckVersion -> {
                 val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
                 pubspecFile?.let {
@@ -148,7 +148,6 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
                     print(plugins)
                 }
             }
-
             GetAllPlugins -> MyPsiElementUtil.getAllFlutters(project)
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")

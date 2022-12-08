@@ -6,6 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import shop.itbug.fluttercheckversionx.model.Pageable
+import shop.itbug.fluttercheckversionx.model.chat.IdeaMessage
 import shop.itbug.fluttercheckversionx.model.chat.SendTextModel
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.user.User
@@ -34,6 +36,16 @@ interface ItbugService {
     @GET("api/rc/findByType")
     fun getResourceCategorys(@Query("type") type: String) : Call<JSONResult<List<ResourceCategory>>>
 
+    /**
+     * 发送一条简单的聊天信息
+     */
     @POST("ws/send/simple")
     fun sendSimpleMessage(@Body model: SendTextModel): Call<JSONResult<Any>>
+
+    /**
+     * 查询房间的聊天历史记录
+     * @param [roomId] 房间ID
+     */
+    @GET("idea-chat/history")
+    fun findRoomHistory(@Query("roomId") roomId: Int,@Query("page") page: Int,@Query("pageSize") pageSize: Int): Call<JSONResult<Pageable<IdeaMessage>>>
 }

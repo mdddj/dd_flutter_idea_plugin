@@ -2,36 +2,47 @@ package shop.itbug.fluttercheckversionx.dsl
 
 import cn.hutool.core.lang.Validator
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.UserAccount
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.LocalhostServiceCreate
 import shop.itbug.fluttercheckversionx.services.LoginParam
+import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
+import java.awt.Dimension
 
 ///登录弹窗
 fun loginPanel(parentDisposable: Disposable): DialogPanel {
     lateinit var panel: DialogPanel
-    val padding = 30
     val account = UserAccount()
     val passwordJBTextField = JBPasswordField()
-
+    val errorLabel = JBLabel("").apply {
+        foreground = UIUtil.getErrorForeground()
+    }
     fun userLogin() {
-        val r =   LocalhostServiceCreate.create(ItbugService::class.java).login(LoginParam(account.username,account.password)).execute().body()
+        if(errorLabel.text.isNotEmpty()){
+            errorLabel.text = ""
+        }
+        val r =  LocalhostServiceCreate.create(ItbugService::class.java).login(LoginParam(account.username,account.password)).execute().body()
         if(r?.state == 200) {
              r.data?.let {
                  CredentialUtil.saveToken(it)
+                 service<AppService>().login()
             }
         }else{
             println(r?.message)
+            errorLabel.text = r?.message
         }
     }
     panel = panel {
@@ -54,21 +65,19 @@ fun loginPanel(parentDisposable: Disposable): DialogPanel {
             checkBox(PluginBundle.get("window.idea.loginDialog.remember")).enabled(true).horizontalAlign(HorizontalAlign.LEFT)
         }.topGap(TopGap.SMALL)
         row {
-            comment(PluginBundle.get("window.chat.loginDialog.register.comment")).horizontalAlign(HorizontalAlign.LEFT)
+            comment(PluginBundle.get("window.chat.loginDialog.register.comment")).align(Align.CENTER)
             button(PluginBundle.get("window.chat.loginDialog.text")) {
                 account.password = String(passwordJBTextField.password)
                 panel.apply()
                 userLogin()
             }.gap(RightGap.SMALL).horizontalAlign(HorizontalAlign.RIGHT)
         }.topGap(TopGap.SMALL)
+        row {
+            cell(errorLabel)
+        }
     }.addBorder()
-
     val newDisposable = Disposer.newDisposable()
     panel.registerValidators(newDisposable)
     Disposer.register(parentDisposable, newDisposable)
-
-
-
-
     return panel
 }
