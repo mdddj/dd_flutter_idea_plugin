@@ -28,7 +28,7 @@ import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
-import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
+import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 
 class AppService {
 
@@ -98,7 +98,7 @@ class AppService {
                     }
 
                     StateMachineEnum.SESSION_CLOSED -> {
-                        MyNotifactionUtil.socketNotif(
+                        MyNotificationUtil.socketNotif(
                             "典典:dio监听模块意外断开,请重新连接",
                             project,
                             NotificationType.WARNING
@@ -120,7 +120,7 @@ class AppService {
      * 当有新连接进来的时候处理函数
      */
     private fun newSessionHandle(session: AioSession?) {
-        MyNotifactionUtil.socketNotif(
+        MyNotificationUtil.socketNotif(
             "梁典典: 检测到APP连接成功,现在可以在底部工具栏监听dio请求了,${session?.sessionID}",
             project = project
         )
@@ -197,7 +197,7 @@ class AppService {
                         println("登录成功:${JSONObject.toJSONString(body.data)}")
                         user = body.data
                         messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
-                        MyNotifactionUtil.socketNotif("欢迎回来,${user?.nickName}", project)
+                        MyNotificationUtil.socketNotif("欢迎回来,${user?.nickName}", project)
                     } else {
                         CredentialUtil.removeToken()
                     }

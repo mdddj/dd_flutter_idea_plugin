@@ -13,7 +13,9 @@ dd_check_plugin: any  #或者使用最新版
 
 在合适的地方进行初始化,Dio()换成你的自己的dio实例
 ```Dart
-await DdCheckPlugin.instance.init(Dio()); 
+void main() {
+    await DdCheckPlugin.instance.init(Dio()); 
+}
 ```
 
 接入完成.

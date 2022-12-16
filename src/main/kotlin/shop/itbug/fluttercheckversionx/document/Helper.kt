@@ -1,8 +1,5 @@
 package shop.itbug.fluttercheckversionx.document
 
-import com.intellij.openapi.project.Project
-import com.intellij.ui.ColorUtil
-import com.intellij.util.ui.UIUtil
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 

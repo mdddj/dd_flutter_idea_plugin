@@ -27,7 +27,6 @@ import shop.itbug.fluttercheckversionx.dsl.show
 import shop.itbug.fluttercheckversionx.dsl.userDetailSimplePanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.Pageable
-import shop.itbug.fluttercheckversionx.model.UserAccount
 import shop.itbug.fluttercheckversionx.model.chat.IdeaMessage
 import shop.itbug.fluttercheckversionx.model.chat.SendTextModel
 import shop.itbug.fluttercheckversionx.model.user.User
@@ -38,7 +37,7 @@ import shop.itbug.fluttercheckversionx.services.JSONResult
 import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.service.AppService
-import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
+import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.ImageIcon
@@ -133,7 +132,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
                     .body()
             result?.apply {
                 if (state != 200) {
-                    MyNotifactionUtil.socketNotif(message, project, NotificationType.ERROR)
+                    MyNotificationUtil.socketNotif(message, project, NotificationType.ERROR)
                 }
             }
         }.takeIf { userInfo != null }

@@ -15,7 +15,7 @@ import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
-import shop.itbug.fluttercheckversionx.util.MyNotifactionUtil
+import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.CardLayout
 import java.util.function.Supplier
 import javax.swing.JPanel
@@ -66,7 +66,7 @@ class LeftActionTools(
             override fun actionPerformed(e: AnActionEvent) {
                 val url = reqList.selectedValue?.url
                 url?.copyTextToClipboard()
-                MyNotifactionUtil.socketNotif(
+                MyNotificationUtil.socketNotif(
                     if (url == null) "复制失败(未选中接口)" else "复制成功:${url}",
                     project = project,
                     type = if (url == null) NotificationType.WARNING
@@ -161,7 +161,7 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
             println("参数:${JSON.toJSONString(queryMap)}")
             SimpleJsonViewDialog.show(queryMap, project)
         }else{
-            MyNotifactionUtil.socketNotif("未选中请求,无法查看",project,NotificationType.WARNING)
+            MyNotificationUtil.socketNotif("未选中请求,无法查看",project,NotificationType.WARNING)
         }
     }
 

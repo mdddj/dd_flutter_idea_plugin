@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
@@ -25,10 +26,12 @@ import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Dimension
@@ -76,7 +79,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     ///左侧竖行工具栏
     private var leftToolBarCore: LeftActionTools =
-        LeftActionTools(project,requestsJBList, rightPanel, rightNextPanel, rightFirstPanel) {
+        LeftActionTools(project, requestsJBList, rightPanel, rightNextPanel, rightFirstPanel) {
             val datas = (requestsJBList.model as MyDefaultListModel).list
             requestsJBList.model = MyDefaultListModel(datas = datas)
         }
@@ -189,7 +192,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     private val messageBus get() = ApplicationManager.getApplication().messageBus
 
 
-    private fun listenData(){
+    private fun listenData() {
         // api消息进入
         messageBus.connect().subscribe(
             SocketMessageBus.CHANGE_ACTION_TOPIC, object : SocketMessageBus {
@@ -200,12 +203,13 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         )
         // socket连接状态变更
         messageBus.connect().subscribe(
-            SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC,object : SocketConnectStatusMessageBus {
+            SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC, object : SocketConnectStatusMessageBus {
                 override fun statusChange(aioSession: AioSession?, stateMachineEnum: StateMachineEnum?) {
-                    when(stateMachineEnum){
+                    when (stateMachineEnum) {
                         NEW_SESSION -> {
                             print("新连接")
                         }
+
                         else -> {
 
                         }
@@ -282,7 +286,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                     JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
-                docPanel(helpText,project).showCenter(project)
+                docPanel(helpText, project).showCenter(project)
             }
             appendLine("")
             appendText(
@@ -291,14 +295,28 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                     JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
-                RewardDialog(project).show()
+//                MyNotificationUtil.toolWindowShowMessage(project,"插件群: 706438100")
+//                RewardDialog(project).show()
+
+
+                val resource = Thread.currentThread().contextClassLoader.getResource("images/dashang.jpeg")
+                val jbLabel = JBLabel(ImageIcon(resource))
+                MyNotificationUtil.tooWindowShowMessage(project, jbLabel)
+
+
             }
             appendLine("")
             appendLine("本机IP:${InetAddress.getLocalHost().hostAddress}")
             val socketIsInited = service.socketIsInit;
-            if(socketIsInited.not()){
+            if (socketIsInited.not()) {
                 appendLine("")
-                appendText("Socket(端口9999)没有正常启动,请检查网络连接或者本地代理,点我重连",SimpleTextAttributes(SimpleTextAttributes.STYLE_CLICKABLE,JBUI.CurrentTheme.Link.Foreground.ENABLED)){
+                appendText(
+                    "Socket(端口9999)没有正常启动,请检查网络连接或者本地代理,点我重连",
+                    SimpleTextAttributes(
+                        SimpleTextAttributes.STYLE_CLICKABLE,
+                        JBUI.CurrentTheme.Link.Foreground.ENABLED
+                    )
+                ) {
                     service.initSocketService(project)
                 }
             }
