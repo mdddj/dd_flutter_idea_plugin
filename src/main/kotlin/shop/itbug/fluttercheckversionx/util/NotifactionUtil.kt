@@ -14,7 +14,7 @@ import javax.swing.JComponent
 class MyNotificationUtil {
 
     companion object {
-        const val toolWindowId = "Dio Request"
+        private const val toolWindowId = "Dio Request"
 
         //        socket 相关通知
         fun socketNotif(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
