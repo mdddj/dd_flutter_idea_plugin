@@ -4,6 +4,8 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.PsiBuilderFactory
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -11,7 +13,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiElementFilter
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartTokenTypes
+import com.jetbrains.lang.dart.psi.DartElement
+import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.*
+import com.jetbrains.lang.dart.util.DartElementGenerator
+import com.jetbrains.lang.dart.util.DartPsiImplUtil
+import io.flutter.dart.DartPsiUtil
 
 
 val checkSuperClassNames = listOf<String>("StatefulWidget")
@@ -108,9 +115,11 @@ class PublicApiRenameFix(val element: PsiElement, var className: String, var fun
     }
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+        val createExpressionFromText = DartElementGenerator.createExpressionFromText(project, renameText)
+        createExpressionFromText?.let {
+            startElement.replace(createExpressionFromText)
+        }
 
-
-        // todo 替换类
 //        val newNamePsi = factory.createDummyHolder(renameText, DartTokenTypes.RETURN_TYPE, null)
 //        startElement.replace(newNamePsi)
 //

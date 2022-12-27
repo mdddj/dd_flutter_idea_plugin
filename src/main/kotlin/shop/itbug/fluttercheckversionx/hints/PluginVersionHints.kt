@@ -25,7 +25,7 @@ class PluginVersionHints : CompletionContributor() {
                        data.versions.forEach {
                            result.addElement(LookupElementBuilder.create(it))
                        }
-                   }catch (e: Exception){
+                   }catch (_: Exception){
                    }
 
                 }
