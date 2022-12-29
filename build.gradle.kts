@@ -37,7 +37,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
     implementation("cn.hutool:hutool-all:5.8.10")
     implementation("org.smartboot.socket:aio-core:1.6.0")
-    implementation("com.alibaba:fastjson:2.0.20.graal")
+    implementation("com.alibaba:fastjson:2.0.21.graal")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")

@@ -152,6 +152,11 @@
                 text="合并Dart导入">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
+        <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
+                text="生成注释" description="自动生成dart方法的注释">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
+        </action>
     </actions>
 
 

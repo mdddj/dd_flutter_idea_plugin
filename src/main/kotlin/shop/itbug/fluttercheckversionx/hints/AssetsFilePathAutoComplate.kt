@@ -29,7 +29,7 @@ class AssetsFilePathAutoComplete : CompletionContributor(){
                 elementHandle(f,result)
             }else{
                 val indexOf = f.path.indexOf("assets")
-                val withIcon = LookupElementBuilder.create(f.path.substring(indexOf)).withIcon(MyIcons.imageIcon)
+                val withIcon = LookupElementBuilder.create(f.path.substring(indexOf)).withIcon(MyIcons.diandianLogoIcon)
                 result.addElement(withIcon)
             }
         }

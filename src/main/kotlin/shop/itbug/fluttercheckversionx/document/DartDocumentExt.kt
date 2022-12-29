@@ -28,7 +28,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
                 element.containingFile.virtualFile,
                 element.textOffset
             )
-            if (result.isEmpty()) return "dart分析服务器没有返回数据,请重试."
+            if (result.isEmpty()) return ""
             val docInfo = result.first()
             val dartFormalParameterList =
                 reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
@@ -36,7 +36,8 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
                 docInfo,
                 element.project,
                 if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first(),
-                element
+                element,
+                originalElement
             )
 
         } catch (e: Exception) {
@@ -116,13 +117,10 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
                 val param = getOptElement(it)
                 paramsArr.add(param)
             }
-
         }
-
         if (paramsArr.isEmpty()) {
             return ""
         }
-
         val sb = StringBuilder()
         Helper.addMarkdownTableHeader("类型", "名称", "必填", "位置", sb = sb)
         paramsArr.forEachIndexed { index, it ->
@@ -133,19 +131,35 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     }
 
     ///渲染doc文档
-    private fun renderView(info: HoverInformation, project: Project, referenceElement: PsiElement?,element: PsiElement): String {
+    private fun renderView(
+        info: HoverInformation,
+        project: Project,
+        referenceElement: PsiElement?,
+        element: PsiElement,
+        originalElement: PsiElement?
+    ): String {
         val sb = StringBuilder()
-        Helper.addKeyValueHeader(sb)
-        Helper.addKeyValueSection("类型",info.elementKind,sb)
-        if (referenceElement != null) {
-            Helper.addKeyValueSection("属性", Helper.markdown2Html(MyMarkdownDocRenderObject(renderParams(referenceElement),project)), sb)
+        originalElement?.let {
+            sb.append(originalElement.text)
         }
-        if (info.dartdoc != null ) {
+        Helper.addKeyValueHeader(sb)
+//        Helper.addKeyValueSection("类型", info.elementKind, sb)
+        if (info.staticType != null) {
+            Helper.addKeyValueSection("类型", info.staticType, sb)
+        }
+        if (referenceElement != null) {
+            Helper.addKeyValueSection(
+                "属性",
+                Helper.markdown2Html(MyMarkdownDocRenderObject(renderParams(referenceElement), project)),
+                sb
+            )
+        }
+        if (info.dartdoc != null) {
             val obj = MyMarkdownDocRenderObject(
                 text = info.dartdoc,
                 project = element.project
             )
-            sb.appendTag(obj,"文档")
+            sb.appendTag(obj, "文档")
         }
 
         Helper.addKeyValueFoot(sb)
