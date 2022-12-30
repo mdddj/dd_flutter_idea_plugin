@@ -3,7 +3,12 @@ package shop.itbug.fluttercheckversionx.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import com.jetbrains.lang.dart.psi.impl.DartFormalParameterListImpl
 import com.jetbrains.lang.dart.psi.impl.DartNormalFormalParameterImpl
@@ -25,8 +30,14 @@ class GenerateFunctionDocument : AnAction() {
                     sb.append("/// [$name] - \n")
                 }.takeIf { psis.isNotEmpty() }
                 e.project?.let {
+                    createDartDocPsiElement(it, data.parent, sb.toString())
                 }
             }
         }
+    }
+
+    /// TODO Automatically generate document comments
+    private fun createDartDocPsiElement(project: Project, element: PsiElement, text: String) {
+        println("进来了.")
     }
 }

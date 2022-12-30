@@ -26,7 +26,7 @@ intellij {
             "Dart:223.7571.203",
             "io.flutter:71.2.6",
             "org.intellij.plugins.markdown:223.7571.125",
-            "terminal"
+            "terminal","java"
         )
     )
 }

@@ -45,6 +45,7 @@
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
+    <depends>com.intellij.java</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
