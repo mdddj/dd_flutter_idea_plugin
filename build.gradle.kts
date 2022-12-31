@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.11.0-SNAPSHOT"
 }
 group = "shop.itbug"
-version = "2.1.1"
+version = "2.1.2"
 repositories {
     mavenCentral()
     google()
@@ -35,7 +35,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
-    implementation("cn.hutool:hutool-all:5.8.10")
+    implementation("cn.hutool:hutool-all:5.8.11")
     implementation("org.smartboot.socket:aio-core:1.6.0")
     implementation("com.alibaba:fastjson:2.0.21.graal")
     implementation("org.apache.commons:commons-lang3:3.12.0")

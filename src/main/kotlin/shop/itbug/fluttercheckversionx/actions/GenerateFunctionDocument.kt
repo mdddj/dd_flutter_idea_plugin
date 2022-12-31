@@ -3,11 +3,14 @@ package shop.itbug.fluttercheckversionx.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
@@ -31,17 +34,25 @@ class GenerateFunctionDocument : AnAction() {
                     sb.append("/// [$name] - \n")
                 }.takeIf { psis.isNotEmpty() }
                 e.project?.let {
-                    createDartDocPsiElement(it, data.parent, sb.toString())
+                   val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+                   val document = e.getData(CommonDataKeys.EDITOR)?.document
+                    createDartDocPsiElement(it, data.parent, sb.toString(),psiFile,document)
                 }
             }
         }
     }
 
-    private fun createDartDocPsiElement(project: Project, element: PsiElement, text: String) {
-        println("进来了.")
-        val psifile = PsiFileFactory.getInstance(project).createFileFromText(DartLanguage.INSTANCE, text)
+    private fun createDartDocPsiElement(project: Project, element: PsiElement, text: String,file: PsiFile?,doc : Document?) {
+        println(text)
+        val psiFile = PsiFileFactory.getInstance(project).createFileFromText(DartLanguage.INSTANCE, text)
         WriteCommandAction.runWriteCommandAction(project) {
-            element.addBefore(psifile.navigationElement,element)
+            element.addBefore(psiFile.navigationElement,element.originalElement)
+            doc?.let {
+                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(doc)
+                file?.let {
+                    CodeStyleManager.getInstance(project).reformat(file)
+                }
+            }
         }
 
     }
