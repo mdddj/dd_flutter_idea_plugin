@@ -1,10 +1,11 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
 import cn.hutool.core.net.url.UrlBuilder
-import com.intellij.icons.AllIcons
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
-import java.awt.*
+import shop.itbug.fluttercheckversionx.icons.MyIcons
+import java.awt.Component
 import javax.swing.*
 
 class MyDefaultListModel(datas: List<Request>) :
@@ -41,7 +42,7 @@ class MyCustomItemRender : ListCellRenderer<Request> {
 class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.X_AXIS) {
     init {
         //icon
-        add(JLabel(AllIcons.Javaee.WebService))
+        add(JLabel(MyIcons.apiIcon))
         add(createHorizontalStrut(4))
 
         UrlBuilder.ofHttp(request.url)
@@ -56,7 +57,7 @@ class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.
 
         //method
         val methodLabel = JLabel(request.method).apply {
-            foreground = Color.GRAY
+            foreground = JBColor.GRAY
         }
         add(methodLabel)
         add(createHorizontalStrut(4))
@@ -64,7 +65,7 @@ class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.
         //状态码
         val codeLabel = JLabel("${request.statusCode}").apply {
             foreground = if (request.statusCode != 200) {
-                Color.RED
+                JBColor.RED
             } else {
                 ColorUtil.fromHex("#79bf2d")
             }
@@ -81,7 +82,7 @@ class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.
 
         ///请求耗时label
         val timerLabel = JLabel((request.timestamp).toString() + "毫秒")
-        timerLabel.foreground = Color.GRAY
+        timerLabel.foreground = JBColor.GRAY
         if (isSelected) {
             timerLabel.background = UIUtil.getListSelectionBackground(false)
         } else {

@@ -3,28 +3,37 @@ package shop.itbug.fluttercheckversionx.dsl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.util.Disposer
+import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.Alarm
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
+import javax.swing.SwingUtilities
 
 /**
  * 设置面板
  */
-fun settingPanel (model : AppStateModel) : DialogPanel {
+fun settingPanel(
+    model: AppStateModel,
+    parentDisposable: Disposable,
+    onChange: (state: AppStateModel) -> Unit
+): DialogPanel {
 
-    return panel {
-        row("dio 监听端口") {
+    val alarm = Alarm(parentDisposable)
+
+    val p: DialogPanel = panel {
+        row("Diox ${PluginBundle.get("setting.listening.port")}") {
             textField().bindText(model::serverPort)
-            button("保存") {
-
-            }
         }
-        row ("Language") {
-            segmentedButton(listOf("System","中文","English")) { it }.bind(object : ObservableMutableProperty<String> {
+        row(PluginBundle.get("setting.language")) {
+            segmentedButton(listOf("System", "中文", "English")) { it }.bind(object :
+                ObservableMutableProperty<String> {
                 override fun set(value: String) {
-                    println("设置语言:$value")
                     model.lang = value
                 }
+
                 override fun afterChange(listener: (String) -> Unit) {
                 }
 
@@ -32,12 +41,34 @@ fun settingPanel (model : AppStateModel) : DialogPanel {
                 }
 
                 override fun get(): String {
-                    println("初始化语言:${model.lang}")
-                   return model.lang
+                    return model.lang
                 }
 
             })
-            label("更改后需要重启生效")
-        }
+        }.comment(PluginBundle.get("setting.reset.tip"))
+
+        row(PluginBundle.get("setting.new.tips")) {
+            checkBox( PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
+        }.comment(PluginBundle.get("comment.api.new.tips"))
     }
+
+    fun initValidation() {
+        alarm.addRequest({
+            val isModified = p.isModified()
+            if (isModified) {
+                onChange.invoke(model)
+            }
+            initValidation()
+        }, 1000)
+    }
+
+    val disposable = Disposer.newDisposable()
+    p.registerValidators(disposable)
+    Disposer.register(parentDisposable, disposable)
+
+    SwingUtilities.invokeLater {
+        initValidation()
+    }
+
+    return p
 }

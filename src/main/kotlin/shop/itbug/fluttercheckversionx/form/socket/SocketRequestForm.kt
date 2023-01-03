@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -11,6 +12,7 @@ import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.JBUI
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.StateMachineEnum.NEW_SESSION
@@ -18,16 +20,19 @@ import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.constance.helpText
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dsl.docPanel
+import shop.itbug.fluttercheckversionx.dsl.requestDetailPanel
 import shop.itbug.fluttercheckversionx.dsl.showCenter
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Dimension
@@ -192,6 +197,12 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         messageBus.connect().subscribe(
             SocketMessageBus.CHANGE_ACTION_TOPIC, object : SocketMessageBus {
                 override fun handleData(data: SocketResponseModel?) {
+                    val setting = PluginStateService.getInstance().state
+                    setting?.apply {
+                        data?.let {
+                            MyNotificationUtil.toolWindowShowMessage(project,data.url)
+                        }.takeIf { this.apiInToolwindowTop }
+                    }
                     refreshData(null)
                 }
             }
@@ -262,6 +273,14 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             val element = requestsJBList.model.getElementAt(firstIndex)
             if (leftToolBarCore.isInDetailView) {
                 leftToolBarCore.changeRequestInDetail(element)
+
+                val content = ContentFactory.getInstance().createContent(JBScrollPane(requestDetailPanel(element,project)),"接口详情",false).apply {
+                    isCloseable = true
+                    icon = AllIcons.Actions.Close
+                }
+
+                toolWindow.contentManager.addContent(content)
+                toolWindow.contentManager.setSelectedContent(content)
             } else {
                 rightFirstPanel.changeShowValue(element)
             }

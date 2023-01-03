@@ -85,13 +85,13 @@ class AppService {
                 throwable: Throwable?
             ) {
                 super.stateEvent(session, stateMachineEnum, throwable)
-                println("状态机:${stateMachineEnum}")
                 messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC)
                     .statusChange(aioSession = session, stateMachineEnum = stateMachineEnum)
                 when (stateMachineEnum) {
                     StateMachineEnum.NEW_SESSION -> {
                         newSessionHandle(session)
                     }
+
                     StateMachineEnum.SESSION_CLOSED -> {
                         MyNotificationUtil.toolWindowShowMessage(
                             project,
@@ -114,7 +114,7 @@ class AppService {
      * 当有新连接进来的时候处理函数
      */
     private fun newSessionHandle(session: AioSession?) {
-        MyNotificationUtil.toolWindowShowMessage(project,"FlutterCheckX Connection succeeded")
+        MyNotificationUtil.toolWindowShowMessage(project, "FlutterCheckX Connection succeeded")
     }
 
 
@@ -127,7 +127,7 @@ class AppService {
      */
     private fun flutterClientJsonHandle(json: String) {
         try {
-            val responseModel = JSONObject.parseObject(json,ProjectSocketService.SocketResponseModel::class.java)
+            val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             flutterProjects[responseModel.projectName] = reqsAdded
@@ -135,6 +135,7 @@ class AppService {
                 .handleData(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e")
+
         }
     }
 

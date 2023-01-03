@@ -27,8 +27,6 @@ class SocketWindow : ToolWindowFactory {
         p1.contentManager.addContent(flutterChatWindowContent)
 
 
-
-
     }
 
 }

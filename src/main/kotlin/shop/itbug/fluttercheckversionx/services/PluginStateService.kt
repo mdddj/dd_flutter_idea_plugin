@@ -21,6 +21,10 @@ class PluginStateService private constructor(): PersistentStateComponent<AppStat
         model = state
     }
 
+    fun getSetting() : AppStateModel {
+        return model
+    }
+
     companion object {
         fun getInstance(): PersistentStateComponent<AppStateModel> {
             return service<PluginStateService>()
@@ -33,5 +37,8 @@ data class AppStateModel(
     //dio监听端口
     var serverPort: String = "9999",
     //语言设置
-    var lang: String = "System"
+    var lang: String = "System",
+
+    //监听到新接口,显示一个提醒
+    var apiInToolwindowTop: Boolean = true
 )
