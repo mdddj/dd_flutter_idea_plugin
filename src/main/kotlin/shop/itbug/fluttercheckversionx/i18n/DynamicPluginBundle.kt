@@ -10,7 +10,6 @@ import java.util.*
 
 ///抽象类，支持加载与安装的语言包匹配的本地化消息。
 open class DynamicPluginBundle(pathToBundle: String): AbstractBundle(pathToBundle) {
-
     override fun findBundle(
         pathToBundle: String,
         loader: ClassLoader,
@@ -21,16 +20,14 @@ open class DynamicPluginBundle(pathToBundle: String): AbstractBundle(pathToBundl
         val setting =  PluginStateService.getInstance().state ?: AppStateModel()
         if(setting.lang != "中文"){
             val localizedPath = pathToBundle + "_"+ideLocale.language
-            val localBoundle = super.findBundle(localizedPath, DynamicPluginBundle::class.java.classLoader, control)
-            if(base != localBoundle){
-                setParent(localBoundle,base)
-                return localBoundle
+            val localBundle = super.findBundle(localizedPath, DynamicPluginBundle::class.java.classLoader, control)
+            if(base != localBundle){
+                setParent(localBundle,base)
+                return localBundle
             }
         }
-
         return base
     }
-
     /**
      * 从com.intellij中借用代码。DynamicBundle使用反射设置父捆绑包。
      */

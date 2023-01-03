@@ -9,7 +9,7 @@ import com.intellij.openapi.components.service
     name = "flutter-check-x",
     storages = [Storage("flutter-check-x.xml")]
 )
-class PluginStateService : PersistentStateComponent<AppStateModel> {
+class PluginStateService private constructor(): PersistentStateComponent<AppStateModel> {
 
     private var model = AppStateModel()
 
@@ -21,8 +21,6 @@ class PluginStateService : PersistentStateComponent<AppStateModel> {
         model = state
     }
 
-    val setting get() = state
-
     companion object {
         fun getInstance(): PersistentStateComponent<AppStateModel> {
             return service<PluginStateService>()
@@ -31,4 +29,9 @@ class PluginStateService : PersistentStateComponent<AppStateModel> {
 }
 
 ///插件全局设置
-data class AppStateModel(var serverPort: String = "9999", var lang: String = "System")
+data class AppStateModel(
+    //dio监听端口
+    var serverPort: String = "9999",
+    //语言设置
+    var lang: String = "System"
+)
