@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.11.0-SNAPSHOT"
 }
 group = "shop.itbug"
-version = "2.1.2"
+version = "2.1.3"
 repositories {
     mavenCentral()
     google()
@@ -67,11 +67,11 @@ tasks {
         sinceBuild.set("223.7571.182")
         untilBuild.set("223.*")
         changeNotes.set("""
-            v2.0.4: 更新pubspec.yaml的快捷图标位置
-            
-            v2.0.2: 新增riverpod代码模板 `conf`和`conl`
-             
-            v2.0.3: 修复了一些小错误
+            <ul>
+            <li>New System Settings</li>
+            <li>Diox monitoring optimization</li>
+            <li>Suitable for English, Chinese and other languages</li>
+            <ul>
         """.trimIndent())
     }
 

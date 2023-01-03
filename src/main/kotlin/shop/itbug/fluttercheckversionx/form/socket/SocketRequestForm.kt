@@ -200,7 +200,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                     val setting = PluginStateService.getInstance().state
                     setting?.apply {
                         data?.let {
-                            MyNotificationUtil.toolWindowShowMessage(project,data.url)
+                            MyNotificationUtil.toolWindowShowMessage(project, data.url)
                         }.takeIf { this.apiInToolwindowTop }
                     }
                     refreshData(null)
@@ -274,7 +274,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             if (leftToolBarCore.isInDetailView) {
                 leftToolBarCore.changeRequestInDetail(element)
 
-                val content = ContentFactory.getInstance().createContent(JBScrollPane(requestDetailPanel(element,project)),"接口详情",false).apply {
+                val content = ContentFactory.getInstance()
+                    .createContent(JBScrollPane(requestDetailPanel(element, project)), "API", false).apply {
                     isCloseable = true
                     icon = AllIcons.Actions.Close
                 }
@@ -293,7 +294,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         requestsJBList.setEmptyText(PluginBundle.get("empty"))
         requestsJBList.emptyText.apply {
             appendLine(
-                 PluginBundle.get("help"), SimpleTextAttributes(
+                PluginBundle.get("help"), SimpleTextAttributes(
                     SimpleTextAttributes.STYLE_PLAIN,
                     JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
