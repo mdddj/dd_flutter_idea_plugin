@@ -25,18 +25,10 @@ class ProjectFilter : JComboBox<String>() {
      */
     fun change(list: List<String>) {
         model = MyJComboBoxModel(list)
-        model.selectedItem = current
-        if (list.isEmpty()) {
-            model.selectedItem = "暂无"
-        }
         if (list.size == 1) {
             model.selectedItem = list.first()
         }
     }
-
-    private val current: String? = model
-        .selectedItem as String?
-
 }
 
 class MyJComboBoxModel(allProjects: List<String>) : DefaultComboBoxModel<String>() {

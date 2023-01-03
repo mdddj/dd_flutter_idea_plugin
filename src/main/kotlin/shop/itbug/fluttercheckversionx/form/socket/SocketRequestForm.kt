@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -10,32 +9,28 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import org.smartboot.socket.StateMachineEnum
-import org.smartboot.socket.StateMachineEnum.*
+import org.smartboot.socket.StateMachineEnum.NEW_SESSION
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.constance.helpText
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
-import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.dsl.docPanel
 import shop.itbug.fluttercheckversionx.dsl.showCenter
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
-import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
-import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Dimension
-import java.net.InetAddress
 import javax.swing.*
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -275,51 +270,24 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     ///添加帮助性文档
     private fun addHelpText() {
-        val helpIcon = AllIcons.Actions.Help
-        requestsJBList.setEmptyText("暂时没有监听到请求.")
+        requestsJBList.setEmptyText(PluginBundle.get("empty"))
         requestsJBList.emptyText.apply {
-            appendLine("此功能需要搭配flutter插件使用.")
-            appendLine("")
             appendLine(
-                helpIcon, "使用教程?", SimpleTextAttributes(
+                 PluginBundle.get("help"), SimpleTextAttributes(
                     SimpleTextAttributes.STYLE_PLAIN,
                     JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
                 docPanel(helpText, project).showCenter(project)
             }
-            appendLine("")
-            appendText(
-                "请梁典典喝咖啡(打赏)", SimpleTextAttributes(
-                    SimpleTextAttributes.STYLE_PLAIN,
-                    JBUI.CurrentTheme.Link.Foreground.ENABLED
-                )
-            ) {
-//                MyNotificationUtil.toolWindowShowMessage(project,"插件群: 706438100")
-//                RewardDialog(project).show()
-
-
-                val resource = Thread.currentThread().contextClassLoader.getResource("images/dashang.jpeg")
-                val jbLabel = JBLabel(ImageIcon(resource))
-                MyNotificationUtil.tooWindowShowMessage(project, jbLabel)
-
-
-            }
-            appendLine("")
-            appendLine("本机IP:${InetAddress.getLocalHost().hostAddress}")
-            val socketIsInited = service.socketIsInit;
-            if (socketIsInited.not()) {
-                appendLine("")
-                appendText(
-                    "Socket(端口9999)没有正常启动,请检查网络连接或者本地代理,点我重连",
-                    SimpleTextAttributes(
-                        SimpleTextAttributes.STYLE_CLICKABLE,
-                        JBUI.CurrentTheme.Link.Foreground.ENABLED
-                    )
-                ) {
-                    service.initSocketService(project)
-                }
-            }
+//            appendLine(
+//                PluginBundle.get("reward") , SimpleTextAttributes(
+//                    SimpleTextAttributes.STYLE_PLAIN,
+//                    JBUI.CurrentTheme.Link.Foreground.ENABLED
+//                )
+//            ) {
+//                MyNotificationUtil.tooWindowShowMessage(project, JBLabel(MyIcons.reward))
+//            }
         }
     }
 

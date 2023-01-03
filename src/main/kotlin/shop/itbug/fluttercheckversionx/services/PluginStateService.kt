@@ -1,36 +1,34 @@
 package shop.itbug.fluttercheckversionx.services
 
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 
 @State(
-    name = "user",
-    storages = [Storage("my-user.xml")]
+    name = "flutter-check-x",
+    storages = [Storage("flutter-check-x.xml")]
 )
-class PluginStateService: PersistentStateComponent<MyUserState> {
+class PluginStateService : PersistentStateComponent<AppStateModel> {
 
-    private var token = MyUserState()
+    private var model = AppStateModel()
 
-    override fun getState(): MyUserState {
-        return token
+    override fun getState(): AppStateModel {
+        return model
     }
 
-    override fun loadState(state: MyUserState) {
-        token = state
+    override fun loadState(state: AppStateModel) {
+        model = state
     }
+
+    val setting get() = state
 
     companion object {
-        fun getInstance(): PersistentStateComponent<MyUserState> {
+        fun getInstance(): PersistentStateComponent<AppStateModel> {
             return service<PluginStateService>()
         }
     }
 }
 
-class MyUserState {
-    var token  = ""
-
-    var username = ""
-
-    override fun toString(): String {
-        return "token===$token \n用户名:$username\n"
-    }
-}
+///插件全局设置
+data class AppStateModel(var serverPort: String = "9999", var lang: String = "System")

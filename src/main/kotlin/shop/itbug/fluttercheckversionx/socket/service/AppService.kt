@@ -18,12 +18,10 @@ import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
-import shop.itbug.fluttercheckversionx.services.ItbugService
-import shop.itbug.fluttercheckversionx.services.JSONResult
-import shop.itbug.fluttercheckversionx.services.SERVICE
+import shop.itbug.fluttercheckversionx.services.*
+import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
-import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
 import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
@@ -77,7 +75,8 @@ class AppService {
     fun initSocketService(p: Project) {
         if (socketIsInit) return
         project = p
-        server = AioQuickServer(9999, StringProtocol(), object : MessageProcessor<String?> {
+        val port = PluginStateService.getInstance().state?.serverPort ?: AppStateModel().serverPort
+        server = AioQuickServer(port.toInt(), StringProtocol(), object : MessageProcessor<String?> {
             override fun process(session: AioSession?, msg: String?) {
                 msg?.let { flutterClientJsonHandle(msg) }
             }

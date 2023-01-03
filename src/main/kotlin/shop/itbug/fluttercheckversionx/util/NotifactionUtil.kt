@@ -35,9 +35,8 @@ class MyNotificationUtil {
             val createBalloon = JBPopupFactory.getInstance().createBalloonBuilder(com).createBalloon()
             val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(toolWindowId)
             toolWindow?.apply {
-                // todo
-//                HintManager.getInstance().showHint(com, RelativePoint(component.locationOnScreen),1,1000)
-//                createBalloon.show(component.rootPane.layeredPane)
+                println("弹窗")
+                createBalloon.showInCenterOf(toolWindow.component)
             }
         }
     }
