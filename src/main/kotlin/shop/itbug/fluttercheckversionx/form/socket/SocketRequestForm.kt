@@ -93,7 +93,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                 requestsJBList.model = MyDefaultListModel(datas = reqs)
             } else {
                 //执行过滤
-                val filters = reqs.filter { it.methed.uppercase() == type.uppercase() }
+                val filters = reqs.filter { it.method.uppercase() == type.uppercase() }
                 requestsJBList.model = MyDefaultListModel(datas = filters)
             }
 
@@ -254,6 +254,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         }
     }
 
+    //切换接口详情显示
     override fun valueChanged(e: ListSelectionEvent?) {
         if (e?.valueIsAdjusting == false) {
             val firstIndex = requestsJBList.selectedIndex
@@ -280,14 +281,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             ) {
                 docPanel(helpText, project).showCenter(project)
             }
-//            appendLine(
-//                PluginBundle.get("reward") , SimpleTextAttributes(
-//                    SimpleTextAttributes.STYLE_PLAIN,
-//                    JBUI.CurrentTheme.Link.Foreground.ENABLED
-//                )
-//            ) {
-//                MyNotificationUtil.tooWindowShowMessage(project, JBLabel(MyIcons.reward))
-//            }
         }
     }
 

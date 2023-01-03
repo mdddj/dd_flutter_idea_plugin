@@ -7,10 +7,11 @@ import shop.itbug.fluttercheckversionx.document.Helper
 import shop.itbug.fluttercheckversionx.document.MyMarkdownDocRenderObject
 
 ///markdown渲染弹窗
-fun docPanel(markdownText:String,project: Project) : DialogPanel {
+fun docPanel(markdownText:String,project: Project,covert: Boolean = true) : DialogPanel {
+    val mk = if(covert) Helper.markdown2Html(MyMarkdownDocRenderObject(markdownText,project)) else markdownText
     val p = panel {
         row {
-            label("<html>${Helper.markdown2Html(MyMarkdownDocRenderObject(markdownText,project))}</html>")
+            label("<html>${mk}</html>")
         }
     }
     return  p.addBorder()

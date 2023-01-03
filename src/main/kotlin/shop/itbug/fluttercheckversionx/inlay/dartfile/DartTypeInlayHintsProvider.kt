@@ -3,13 +3,10 @@ package shop.itbug.fluttercheckversionx.inlay.dartfile
 import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.refactoring.suggested.endOffset
-import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.components.JBLabel
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
@@ -63,7 +60,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             val staticType = analysisGethover[0].staticType
                             analysisGethover[0].dartdoc
                             if (staticType != null) {
-                                val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType") { mouseEvent, point ->
+                                val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType") { _, _ ->
                                     val ss = StringSelection(staticType)
                                     val clipboard: Clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
                                     clipboard.setContents(ss, null)

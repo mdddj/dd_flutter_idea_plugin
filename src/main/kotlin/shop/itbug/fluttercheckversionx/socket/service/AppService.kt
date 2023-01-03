@@ -2,8 +2,6 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONObject
-import com.google.gson.Gson
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.smartboot.socket.MessageProcessor
@@ -49,7 +47,7 @@ class AppService {
     var currentChatRoom: ResourceCategory? = null
 
     //socket服务是否正常启动
-    var socketIsInit = false
+    private var socketIsInit = false
 
     /**
      * 存储了flutter项目
@@ -93,14 +91,11 @@ class AppService {
                 when (stateMachineEnum) {
                     StateMachineEnum.NEW_SESSION -> {
                         newSessionHandle(session)
-
                     }
-
                     StateMachineEnum.SESSION_CLOSED -> {
-                        MyNotificationUtil.socketNotif(
-                            "典典:dio监听模块意外断开,请重新连接",
+                        MyNotificationUtil.toolWindowShowMessage(
                             project,
-                            NotificationType.WARNING
+                            "典典:dio监听模块意外断开,请重新连接",
                         )
                     }
 
@@ -119,10 +114,7 @@ class AppService {
      * 当有新连接进来的时候处理函数
      */
     private fun newSessionHandle(session: AioSession?) {
-        MyNotificationUtil.socketNotif(
-            "梁典典: 检测到APP连接成功,现在可以在底部工具栏监听dio请求了,${session?.sessionID}",
-            project = project
-        )
+        MyNotificationUtil.toolWindowShowMessage(project,"FlutterCheckX Connection succeeded")
     }
 
 
@@ -135,7 +127,7 @@ class AppService {
      */
     private fun flutterClientJsonHandle(json: String) {
         try {
-            val responseModel = Gson().fromJson(json, ProjectSocketService.SocketResponseModel::class.java)
+            val responseModel = JSONObject.parseObject(json,ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             flutterProjects[responseModel.projectName] = reqsAdded

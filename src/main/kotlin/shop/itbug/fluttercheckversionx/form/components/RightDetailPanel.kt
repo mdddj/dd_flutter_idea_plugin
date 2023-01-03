@@ -38,7 +38,7 @@ class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
      */
     fun changeShowValue(detail: Request) {
         this.detail = detail
-        jsonView.changeValue(detail.body)
+        jsonView.changeValue(detail.data)
     }
 
     private fun jsonViewInit() {

@@ -55,7 +55,7 @@ class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.
 
 
         //method
-        val methodLabel = JLabel(request.methed).apply {
+        val methodLabel = JLabel(request.method).apply {
             foreground = Color.GRAY
         }
         add(methodLabel)
@@ -80,7 +80,7 @@ class MyRequestItemPanel(request: Request, isSelected: Boolean) : Box(BoxLayout.
 
 
         ///请求耗时label
-        val timerLabel = JLabel((request.timesatamp).toString() + "毫秒")
+        val timerLabel = JLabel((request.timestamp).toString() + "毫秒")
         timerLabel.foreground = Color.GRAY
         if (isSelected) {
             timerLabel.background = UIUtil.getListSelectionBackground(false)

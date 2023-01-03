@@ -1,7 +1,7 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.serializer.SerializerFeature
+import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONWriter
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
@@ -56,10 +56,10 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
 
         val isJson = if (json is String) JSON.isValid(json) else false
         return if (isJson) {
-            return JSON.toJSONString(JSON.parseObject(json.toString(), Map::class.java),SerializerFeature.PrettyFormat)
+            return JSON.toJSONString(JSON.parseObject(json.toString(), Map::class.java),JSONWriter.Feature.PrettyFormat)
         } else {
             try {
-                JSON.toJSONString(json,SerializerFeature.PrettyFormat)
+                JSON.toJSONString(json,JSONWriter.Feature.PrettyFormat)
             } catch (_: Exception) {
                 json.toString()
             }

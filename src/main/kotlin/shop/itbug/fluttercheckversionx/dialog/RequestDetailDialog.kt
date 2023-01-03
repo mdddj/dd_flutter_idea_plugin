@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
+import com.intellij.ui.components.JBScrollPane
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
 import shop.itbug.fluttercheckversionx.document.Helper
 import shop.itbug.fluttercheckversionx.document.MyMarkdownDocRenderObject
@@ -10,13 +11,13 @@ import javax.swing.BorderFactory
 import javax.swing.JPanel
 
 ///请求详情
-class RequestDetailPanel(val project: Project): JPanel(BorderLayout()) {
+class RequestDetailPanel(val project: Project) : JPanel(BorderLayout()) {
 
-    private val htmlView= MarkdownShowComponent.getDocComp("",project)
+    private val htmlView = MarkdownShowComponent.getDocComp("", project)
 
     init {
         border = BorderFactory.createEmptyBorder()
-        add(htmlView,BorderLayout.CENTER)
+        add(JBScrollPane(htmlView), BorderLayout.CENTER)
     }
 
 
@@ -33,23 +34,22 @@ class RequestDetailPanel(val project: Project): JPanel(BorderLayout()) {
         val sb = StringBuilder()
         Helper.addKeyValueHeader(sb)
         //请求链接
-        Helper.addKeyValueSection("Url", request.url,sb)
+        Helper.addKeyValueSection("Url", request.url, sb)
 
         //请求方法
-        Helper.addKeyValueSection("Method",request.methed,sb)
+        Helper.addKeyValueSection("Method", request.method, sb)
 
         //请求耗时
-        Helper.addKeyValueSection("Time","${request.timesatamp}ms",sb)
+        Helper.addKeyValueSection("Time", "${request.timestamp}ms", sb)
 
         //请求头
-        Helper.addKeyValueSection("Header", getHeaderHtmlText(request.headers),sb)
+        Helper.addKeyValueSection("Header", getHeaderHtmlText(request.headers), sb)
 
         //参数
-        Helper.addKeyValueSection("Param", getHeaderHtmlText(request.queryParams),sb)
+        Helper.addKeyValueSection("Param", getHeaderHtmlText(request.queryParams), sb)
 
         //返回的请求头
-        Helper.addKeyValueSection("Response Header", getHeaderHtmlText(request.responseHeaders),sb)
-
+        Helper.addKeyValueSection("Response Header", getHeaderHtmlText(request.responseHeaders), sb)
         Helper.addKeyValueFoot(sb)
         return sb.toString()
     }

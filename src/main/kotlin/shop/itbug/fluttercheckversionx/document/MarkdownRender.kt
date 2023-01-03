@@ -128,7 +128,7 @@ fun MarkdownNode.toHtml(): String {
         if (nodeText.contains("{@tool snippet}")) {
             nodeText = nodeText.replace("{@tool snippet}", "<p>")
         }
-        if(nodeText.contains("{@end-tool}")){
+        if (nodeText.contains("{@end-tool}")) {
             nodeText = nodeText.replace("{@end-tool}", "</p>")
         }
 

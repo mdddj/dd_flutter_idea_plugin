@@ -28,7 +28,7 @@ class CustomListRender(private val model: ProjectSocketService.SocketResponseMod
 
         add(StringValueRender("Url",model.url))
         add(Box.createVerticalStrut(6))
-        add(StringValueRender("Methed",model.methed))
+        add(StringValueRender("Methed",model.method))
         add(Box.createVerticalStrut(6))
         add(StringValueRender("Status Code",model.statusCode.toString()))
         if(model.data!=null){
