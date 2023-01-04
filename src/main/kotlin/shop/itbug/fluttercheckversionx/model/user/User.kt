@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.model.user
 
+import java.io.Serializable
+
 data class User(
     val accountNonExpired: Boolean,
     val accountNonLocked: Boolean,
@@ -15,4 +17,4 @@ data class User(
     val status: Int,
     val type: Int,
     val username: String
-)
+): Serializable

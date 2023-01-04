@@ -4,7 +4,6 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 
 @State(
     name = "flutter-check-x",
@@ -18,7 +17,6 @@ class PluginStateService private constructor(): PersistentStateComponent<AppStat
         return model
     }
 
-    val settings: AppStateModel get() = state
 
     override fun loadState(state: AppStateModel) {
         model = state
@@ -26,11 +24,12 @@ class PluginStateService private constructor(): PersistentStateComponent<AppStat
 
 
     companion object {
-        fun getInstance(): PluginStateService {
-            return service()
+        fun getInstance(): PersistentStateComponent<AppStateModel> {
+            return service<PluginStateService>()
         }
     }
 }
+
 
 ///插件全局设置
 data class AppStateModel(
@@ -43,5 +42,6 @@ data class AppStateModel(
     var apiInToolwindowTop: Boolean = true,
 
     //选择的房间
-    var selectRoom: ResourceCategory? = null
+//    @OptionTag(converter = ResourceCategoryCovert::class)
+//    var selectRoom: ResourceCategory? = null
 )

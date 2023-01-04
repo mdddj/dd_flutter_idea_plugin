@@ -16,7 +16,10 @@ import shop.itbug.fluttercheckversionx.model.example.ResourceModel
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
-import shop.itbug.fluttercheckversionx.services.*
+import shop.itbug.fluttercheckversionx.services.ItbugService
+import shop.itbug.fluttercheckversionx.services.JSONResult
+import shop.itbug.fluttercheckversionx.services.PluginStateService
+import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
@@ -73,7 +76,7 @@ class AppService {
     fun initSocketService(p: Project) {
         if (socketIsInit) return
         project = p
-        val port = PluginStateService.getInstance().state?.serverPort ?: AppStateModel().serverPort
+        val port = PluginStateService.getInstance().state?.serverPort ?: "9999"
         server = AioQuickServer(port.toInt(), StringProtocol(), object : MessageProcessor<String?> {
             override fun process(session: AioSession?, msg: String?) {
                 msg?.let { flutterClientJsonHandle(msg) }
@@ -89,7 +92,7 @@ class AppService {
                     .statusChange(aioSession = session, stateMachineEnum = stateMachineEnum)
                 when (stateMachineEnum) {
                     StateMachineEnum.NEW_SESSION -> {
-                        newSessionHandle(session)
+                        newSessionHandle()
                     }
 
                     StateMachineEnum.SESSION_CLOSED -> {
@@ -113,7 +116,7 @@ class AppService {
     /**
      * 当有新连接进来的时候处理函数
      */
-    private fun newSessionHandle(session: AioSession?) {
+    private fun newSessionHandle() {
         MyNotificationUtil.toolWindowShowMessage(project, "FlutterCheckX Connection succeeded")
     }
 
@@ -189,7 +192,6 @@ class AppService {
                         println("登录成功:${JSONObject.toJSONString(body.data)}")
                         user = body.data
                         messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
-                        MyNotificationUtil.socketNotif("欢迎回来,${user?.nickName}", project)
                     } else {
                         CredentialUtil.removeToken()
                     }
@@ -199,8 +201,6 @@ class AppService {
                     CredentialUtil.removeToken()
                 }
             })
-
-
         }
     }
 

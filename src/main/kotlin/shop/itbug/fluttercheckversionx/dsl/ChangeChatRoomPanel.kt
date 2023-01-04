@@ -8,7 +8,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 ///切换房间的面板
@@ -25,7 +24,7 @@ fun changeRoomPanel (setCall: ()-> Unit) : DialogPanel {
 
                 override fun set(value: String) {
                     service<AppService>().currentChatRoom = rooms.first { it.name == value }
-                    PluginStateService.getInstance().settings.selectRoom = rooms.first()
+//                    PluginStateService.getInstance().state?.selectRoom = rooms.first()
                     setCall.invoke()
                 }
 

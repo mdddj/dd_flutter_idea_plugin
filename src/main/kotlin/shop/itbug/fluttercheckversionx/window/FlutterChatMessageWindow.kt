@@ -78,7 +78,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
         object : AnAction("切换房间", "切换聊天房间", AllIcons.Toolwindows.ToolWindowMessages) {
             override fun actionPerformed(e: AnActionEvent) {
                 changeRoomPanel {
-                    loadRoomsHistory(true)
+                    loadRoomsHistory()
                 }.show(e)
             }
 
@@ -175,7 +175,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
 
 
     //加载历史的聊天列表
-    private fun loadRoomsHistory(clean: Boolean = false) {
+    private fun loadRoomsHistory() {
         appService.currentChatRoom?.let {
             val findRoomHistory = SERVICE.create<ItbugService>().findRoomHistory(it.id, 0, 10)
             findRoomHistory.enqueue(object : Callback<JSONResult<Pageable<IdeaMessage>>> {
@@ -190,7 +190,6 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
                 }
 
                 override fun onFailure(call: Call<JSONResult<Pageable<IdeaMessage>>>, t: Throwable) {
-                    println("加载消息失败:$")
                     t.printStackTrace()
                 }
 

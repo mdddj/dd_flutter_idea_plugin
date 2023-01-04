@@ -34,6 +34,7 @@ intellij {
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
     implementation("cn.hutool:hutool-all:5.8.11")
     implementation("org.smartboot.socket:aio-core:1.6.0")
