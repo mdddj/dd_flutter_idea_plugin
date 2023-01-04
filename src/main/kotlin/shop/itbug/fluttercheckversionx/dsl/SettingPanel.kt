@@ -24,6 +24,14 @@ fun settingPanel(
     val alarm = Alarm(parentDisposable)
 
     val p: DialogPanel = panel {
+
+
+        group("典典账号登录") {
+            row {
+                button("登录"){}
+            }
+        }
+
         row("Diox ${PluginBundle.get("setting.listening.port")}") {
             textField().bindText(model::serverPort)
         }
@@ -50,6 +58,10 @@ fun settingPanel(
         row(PluginBundle.get("setting.new.tips")) {
             checkBox( PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
         }.comment(PluginBundle.get("comment.api.new.tips"))
+
+        indent {
+
+        }
     }
 
     fun initValidation() {

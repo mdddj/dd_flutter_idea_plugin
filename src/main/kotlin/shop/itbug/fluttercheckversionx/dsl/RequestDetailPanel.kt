@@ -44,7 +44,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
             }
         }
         row("Headers") {
-            cell(
+            scrollCell(
                 LanguageTextField(
                     JsonLanguage.INSTANCE,
                     project,
@@ -60,7 +60,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
             box = checkBox("Show Response Header")
         }
         row {
-            cell(
+            scrollCell(
                 LanguageTextField(
                     JsonLanguage.INSTANCE,
                     project,

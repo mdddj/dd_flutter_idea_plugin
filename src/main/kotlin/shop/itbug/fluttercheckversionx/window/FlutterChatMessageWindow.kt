@@ -39,11 +39,8 @@ import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.BorderLayout
-import javax.swing.BorderFactory
-import javax.swing.ImageIcon
-import javax.swing.JButton
-import javax.swing.JPanel
-import javax.swing.JToolBar
+import java.net.URL
+import javax.swing.*
 
 /**
  * Flutter聊天窗口
@@ -112,8 +109,8 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
 
 
     fun userInfoHandle() {
-        if (userInfo != null) {
-            val icon = ImageIcon(userInfo!!.picture)
+        userInfo?.apply {
+            val icon = ImageIcon(URL(picture),nickName)
             val ava = JBLabel(icon)
             actionToolbar.component.remove(0)
             actionToolbar.component.add(ava, 0)
@@ -138,6 +135,10 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
         }.takeIf { userInfo != null }
     }
 
+
+    /**
+     * ui组件初始化
+     */
     private fun uiInit() {
 
         bottomToolBar.apply {

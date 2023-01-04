@@ -100,7 +100,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                                 sink.addInlineElement(
                                                     semicolonElement.endOffset,
                                                     false,
-                                                    hintsInlayPresentationFactory.simpleText(docMessage, ""){mouseEvent, point ->
+                                                    hintsInlayPresentationFactory.simpleText(docMessage, ""){ _, _ ->
                                                         println("被点击了...")
                                                     },
                                                     false

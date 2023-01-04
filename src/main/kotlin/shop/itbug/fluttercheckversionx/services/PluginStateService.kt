@@ -4,6 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 
 @State(
     name = "flutter-check-x",
@@ -17,17 +18,16 @@ class PluginStateService private constructor(): PersistentStateComponent<AppStat
         return model
     }
 
+    val settings: AppStateModel get() = state
+
     override fun loadState(state: AppStateModel) {
         model = state
     }
 
-    fun getSetting() : AppStateModel {
-        return model
-    }
 
     companion object {
-        fun getInstance(): PersistentStateComponent<AppStateModel> {
-            return service<PluginStateService>()
+        fun getInstance(): PluginStateService {
+            return service()
         }
     }
 }
@@ -40,5 +40,8 @@ data class AppStateModel(
     var lang: String = "System",
 
     //监听到新接口,显示一个提醒
-    var apiInToolwindowTop: Boolean = true
+    var apiInToolwindowTop: Boolean = true,
+
+    //选择的房间
+    var selectRoom: ResourceCategory? = null
 )

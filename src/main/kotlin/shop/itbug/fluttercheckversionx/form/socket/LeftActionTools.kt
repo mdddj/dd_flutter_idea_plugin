@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
 import cn.hutool.core.net.url.UrlBuilder
-import com.alibaba.fastjson2.JSON
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.*
@@ -9,7 +8,6 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
-import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
@@ -38,11 +36,19 @@ class LeftActionTools(
     private var sortAction = MySortToggleAction(requestSort)
     private val sortOption = SortAction(action = sortAction)
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
     //查看请求头的工具
-    private var detailAction = object : ToggleAction("查看请求头", "查看详细信息", AllIcons.Ide.ConfigFile) {
+    private var detailAction = object : ToggleAction(PluginBundle.get("window.idea.dio.view.detail"), PluginBundle.get("window.idea.dio.view.detail.desc"), AllIcons.Ide.ConfigFile) {
         var selected = false
         override fun isSelected(e: AnActionEvent): Boolean {
             return selected
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread {
+            return ActionUpdateThread.EDT
         }
 
         override fun setSelected(e: AnActionEvent, state: Boolean) {
@@ -63,7 +69,7 @@ class LeftActionTools(
 
     //复制api url 到剪贴板
     private val copyAction =
-        object : AnAction("复制接口", "将选中的请求的接口链接复制到系统的剪贴板", AllIcons.Actions.Copy) {
+        object : AnAction(PluginBundle.get("window.idea.dio.view.copy"), PluginBundle.get("window.idea.dio.view.copy.desc"), AllIcons.Actions.Copy) {
             override fun actionPerformed(e: AnActionEvent) {
                 val url = reqList.selectedValue?.url
                 url?.copyTextToClipboard()
@@ -73,6 +79,10 @@ class LeftActionTools(
                     type = if (url == null) NotificationType.WARNING
                     else NotificationType.INFORMATION
                 )
+            }
+
+            override fun getActionUpdateThread(): ActionUpdateThread {
+                return ActionUpdateThread.EDT
             }
         }
 
@@ -116,9 +126,13 @@ class LeftActionTools(
 
 
 class DelButton : ActionButton(
-    object : AnAction(PluginBundle.get("clean"), "清除列表中的全部历史记录", AllIcons.Actions.GC) {
+    object : AnAction(PluginBundle.get("clean"), PluginBundle.get("window.idea.dio.view.clean.desc"), AllIcons.Actions.GC) {
         override fun actionPerformed(e: AnActionEvent) {
             service<AppService>().cleanAllRequest()
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread {
+            return ActionUpdateThread.EDT
         }
     },
     Presentation("清除全部记录"),
@@ -142,6 +156,10 @@ class MySortToggleAction(private val handle: RequestSort) :
         s = state
     }
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
 }
 
 class SortAction(action: MySortToggleAction) : ActionButton(
@@ -154,21 +172,21 @@ class SortAction(action: MySortToggleAction) : ActionButton(
 
 ///查看get方法下,queryparams参数的功能
 class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
-    AnAction("查看 GET Query 参数", "如果API列表选中某个接口,点击此按钮,会弹出改接口URL后面query参数的json类型", AllIcons.Ide.ConfigFile) {
+    AnAction(PluginBundle.get("window.idea.dio.view.query.params"), PluginBundle.get("window.idea.dio.view.query.params.desc"), AllIcons.Ide.ConfigFile) {
     override fun actionPerformed(e: AnActionEvent) {
         if (reqList.selectedValue != null) {
             val url = UrlBuilder.ofHttp(reqList.selectedValue.url)
             val queryMap = url.query.queryMap
-            println("参数:${JSON.toJSONString(queryMap)}")
             SimpleJsonViewDialog.show(queryMap, project)
         }else{
-            MyNotificationUtil.socketNotif("未选中请求,无法查看",project,NotificationType.WARNING)
+            MyNotificationUtil.socketNotif(PluginBundle.get("window.idea.dio.view.query.params.tip"),project,NotificationType.WARNING)
         }
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
     }
 
 }
 
-fun Any.mylogger() : org.slf4j.Logger {
-   return LoggerFactory.getLogger(this::class.java)
-}
 

@@ -51,10 +51,6 @@
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
-    <applicationListeners>
-        <listener class="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
 
@@ -139,6 +135,7 @@
 
         <editorNotificationProvider implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification" />
 
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners" />
     </extensions>
 
 
