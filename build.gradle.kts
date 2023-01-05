@@ -37,13 +37,15 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
     implementation("cn.hutool:hutool-all:5.8.11")
-    implementation("org.smartboot.socket:aio-core:1.6.0")
+    implementation("org.smartboot.socket:aio-core:1.6.1")
     implementation("com.alibaba.fastjson2:fastjson2:2.0.22")
+    implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.22")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
     implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
+
 }
 
 

@@ -16,11 +16,10 @@ import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.UserAccount
 import shop.itbug.fluttercheckversionx.services.ItbugService
-import shop.itbug.fluttercheckversionx.services.LocalhostServiceCreate
 import shop.itbug.fluttercheckversionx.services.LoginParam
+import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
-import java.awt.Dimension
 
 ///登录弹窗
 fun loginPanel(parentDisposable: Disposable): DialogPanel {
@@ -34,7 +33,8 @@ fun loginPanel(parentDisposable: Disposable): DialogPanel {
         if(errorLabel.text.isNotEmpty()){
             errorLabel.text = ""
         }
-        val r =  LocalhostServiceCreate.create(ItbugService::class.java).login(LoginParam(account.username,account.password)).execute().body()
+        val r =  SERVICE.create(ItbugService::class.java).login(LoginParam(account.username,account.password)).execute().body()
+        println(r)
         if(r?.state == 200) {
              r.data?.let {
                  CredentialUtil.saveToken(it)

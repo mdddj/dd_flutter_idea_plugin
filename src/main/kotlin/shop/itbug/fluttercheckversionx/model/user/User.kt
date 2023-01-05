@@ -10,7 +10,7 @@ data class User(
     val enabled: Boolean,
     val id: Int,
     val loginNumber: String,
-    val loginTime: Long,
+    val loginTime: String,
     val nickName: String,
     val phone: String,
     val picture: String,

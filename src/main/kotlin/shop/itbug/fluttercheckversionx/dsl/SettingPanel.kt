@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.dsl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.bindSelected
@@ -10,6 +11,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
+import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import javax.swing.SwingUtilities
 
 /**
@@ -22,13 +24,17 @@ fun settingPanel(
 ): DialogPanel {
 
     val alarm = Alarm(parentDisposable)
+    lateinit var myPanel: DialogPanel
 
-    val p: DialogPanel = panel {
+   myPanel = panel {
 
 
         group("典典账号登录") {
             row {
-                button("登录"){}
+                button("登录"){
+                    val project = ProjectManager.getInstance().defaultProject
+                    MyNotificationUtil.showLoginDialog(project,myPanel,parentDisposable)
+                }
             }
         }
 
@@ -66,7 +72,7 @@ fun settingPanel(
 
     fun initValidation() {
         alarm.addRequest({
-            val isModified = p.isModified()
+            val isModified = myPanel.isModified()
             if (isModified) {
                 onChange.invoke(model)
             }
@@ -75,12 +81,12 @@ fun settingPanel(
     }
 
     val disposable = Disposer.newDisposable()
-    p.registerValidators(disposable)
+    myPanel.registerValidators(disposable)
     Disposer.register(parentDisposable, disposable)
 
     SwingUtilities.invokeLater {
         initValidation()
     }
 
-    return p
+    return myPanel
 }

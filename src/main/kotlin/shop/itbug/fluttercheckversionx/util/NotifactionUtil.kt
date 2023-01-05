@@ -1,13 +1,13 @@
 package shop.itbug.fluttercheckversionx.util
 
-import com.intellij.codeInsight.hint.HintManager
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.ui.awt.RelativePoint
+import shop.itbug.fluttercheckversionx.dsl.loginPanel
 import javax.swing.JComponent
 
 //通知相关工具类
@@ -38,6 +38,14 @@ class MyNotificationUtil {
                 println("弹窗")
                 createBalloon.showInCenterOf(toolWindow.component)
             }
+        }
+
+        fun showLoginDialog(project: Project,preferableFocusComponent: JComponent,parentDisposable: Disposable) {
+                JBPopupFactory.getInstance().createComponentPopupBuilder(loginPanel(parentDisposable), preferableFocusComponent)
+                    .setMovable(true)
+                    .setRequestFocus(true)
+                    .setFocusable(true)
+                    .createPopup().showCenteredInCurrentWindow(project)
         }
     }
 }

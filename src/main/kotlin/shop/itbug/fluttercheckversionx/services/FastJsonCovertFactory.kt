@@ -37,7 +37,7 @@ class Retrofit2ConverterFactory : Converter.Factory() {
         override fun convert(value: ResponseBody): T {
             return try {
                 JSON.parseObject(
-                    value.source().readByteArray(),
+                    value.bytes(),
                     type,
                 )
             } catch (e: Exception) {

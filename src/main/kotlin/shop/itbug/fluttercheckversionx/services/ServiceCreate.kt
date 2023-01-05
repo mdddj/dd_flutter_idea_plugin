@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import shop.itbug.fluttercheckversionx.services.Env.Dev
 import shop.itbug.fluttercheckversionx.services.Env.Pro
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
@@ -44,9 +46,9 @@ open class ApiServiceCreate(var host: String) {
         Retrofit.Builder()
             .baseUrl(host)
             .client(client)
-//            .addConverterFactory(ScalarsConverterFactory.create())
-//            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addConverterFactory(Retrofit2ConverterFactory.create())
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .addConverterFactory(Retrofit2ConverterFactory.create())
             .build()
 
     fun <T> create(serverClass: Class<T>): T = retrofit.create(serverClass)

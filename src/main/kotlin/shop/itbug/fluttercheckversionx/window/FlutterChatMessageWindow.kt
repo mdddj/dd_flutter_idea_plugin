@@ -16,13 +16,13 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.fields.ExtendableTextField
 import org.slf4j.LoggerFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import shop.itbug.fluttercheckversionx.dsl.changeRoomPanel
-import shop.itbug.fluttercheckversionx.dsl.loginPanel
 import shop.itbug.fluttercheckversionx.dsl.show
 import shop.itbug.fluttercheckversionx.dsl.userDetailSimplePanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -57,7 +57,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
     private val chatListModel = ChatHistoryListModel(emptyList())
     private val appService get() = service<AppService>()
 
-    var userInfo: User? = null // 用户信息
+    var userInfo: User? = appService.user // 用户信息
 
     //用户信息&用户登录
     private var userAvatarWidget = object : AnAction("登录", "登录典典账号使用更多功能", AllIcons.General.User) {
@@ -160,17 +160,13 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
         }
         actionToolbar.targetComponent = toolWindow.component
         add(actionToolbar.component, BorderLayout.LINE_START)
-        add(chatList, BorderLayout.CENTER)
+        add(JBScrollPane(chatList), BorderLayout.CENTER)
         add(bottomToolBar, BorderLayout.SOUTH)
     }
 
     //登录弹窗
     private fun showLoginDialog() {
-        JBPopupFactory.getInstance().createComponentPopupBuilder(loginPanel(this), toolWindow.component)
-            .setMovable(true)
-            .setRequestFocus(true)
-            .setFocusable(true)
-            .createPopup().showCenteredInCurrentWindow(project)
+        MyNotificationUtil.showLoginDialog(project,toolWindow.component,this)
     }
 
 

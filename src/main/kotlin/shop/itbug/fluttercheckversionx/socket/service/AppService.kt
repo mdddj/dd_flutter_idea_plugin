@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
@@ -189,7 +190,6 @@ class AppService {
                 override fun onResponse(call: Call<JSONResult<User?>>, response: Response<JSONResult<User?>>) {
                     val body = response.body()
                     if (body?.state == 200) {
-                        println("登录成功:${JSONObject.toJSONString(body.data)}")
                         user = body.data
                         messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
                     } else {
@@ -198,6 +198,8 @@ class AppService {
                 }
 
                 override fun onFailure(call: Call<JSONResult<User?>>, t: Throwable) {
+                    MyNotificationUtil.toolWindowShowMessage(project,"登录失败,${t}", MessageType.ERROR)
+                    t.printStackTrace()
                     CredentialUtil.removeToken()
                 }
             })
