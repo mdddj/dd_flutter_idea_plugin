@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.11.0"
 }
 group = "shop.itbug"
-version = "2.1.3"
+version = "2.1.4"
 repositories {
     mavenCentral()
     google()
@@ -70,10 +70,12 @@ tasks {
         sinceBuild.set("223.7571.182")
         untilBuild.set("223.*")
         changeNotes.set("""
+            <div>
+            <h1>2023-01-06</h1>
+            </div>
             <ul>
-            <li>New System Settings</li>
-            <li>Diox monitoring optimization</li>
-            <li>Suitable for English, Chinese and other languages</li>
+            <li>Fix the problem that some dio interfaces cannot listen</li>
+            <li>Optimize the asset file pop-up mechanism</li>
             <ul>
         """.trimIndent())
     }

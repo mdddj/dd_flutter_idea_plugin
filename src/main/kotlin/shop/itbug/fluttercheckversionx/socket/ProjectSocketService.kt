@@ -22,7 +22,7 @@ class ProjectSocketService {
         val statusCode: Int?,
 
         ///post参数
-        val body: Any,
+        val body: Any?,
 
         ///请求头
         val headers: Map<String, Any>?,
