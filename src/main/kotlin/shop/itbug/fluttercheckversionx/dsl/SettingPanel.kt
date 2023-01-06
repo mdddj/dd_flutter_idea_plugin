@@ -5,6 +5,7 @@ import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.dsl.builder.bindIntText
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
@@ -26,14 +27,14 @@ fun settingPanel(
     val alarm = Alarm(parentDisposable)
     lateinit var myPanel: DialogPanel
 
-   myPanel = panel {
+    myPanel = panel {
 
 
         group("典典账号登录") {
             row {
-                button("登录"){
+                button("登录") {
                     val project = ProjectManager.getInstance().defaultProject
-                    MyNotificationUtil.showLoginDialog(project,myPanel,parentDisposable)
+                    MyNotificationUtil.showLoginDialog(project, myPanel, parentDisposable)
                 }
             }
         }
@@ -62,11 +63,19 @@ fun settingPanel(
         }.comment(PluginBundle.get("setting.reset.tip"))
 
         row(PluginBundle.get("setting.new.tips")) {
-            checkBox( PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
+            checkBox(PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
         }.comment(PluginBundle.get("comment.api.new.tips"))
 
-        indent {
-
+        group("Assets 资产文件智能提醒设置") {
+            row("触发文本") {
+                textField().bindText(model::assetCompilationTriggerString)
+            }.comment("字符串类型的输入类型中,监测到该关键字会触发智能提醒实现资产文件自动补全")
+            row("触发长度") {
+                intTextField().bindIntText(model::assetCompilationTriggerLen)
+            }.comment("默认3,一般使用默认值就可以")
+            row("扫描文件夹") {
+                textField().bindText(model::assetScanFolderName)
+            }.comment("默认assets文件夹")
         }
     }
 

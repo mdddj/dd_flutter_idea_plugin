@@ -5,10 +5,13 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.PlatformPatterns
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import com.jetbrains.lang.dart.DartLanguage
-import com.jetbrains.lang.dart.psi.DartStringLiteralExpression
+import com.jetbrains.lang.dart.DartTokenTypes
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.AppStateModel
+import shop.itbug.fluttercheckversionx.services.PluginStateService
 
 /**
  * 资源文件路径自动补全
@@ -34,28 +37,30 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
  */
 class AssetsFilePathAutoCompleteProvider : CompletionProvider<CompletionParameters>() {
 
-    val defaultTag = "ass" //触发关键字
 
+    var setting = PluginStateService.getInstance().state ?: AppStateModel()
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
+
         val file = parameters.originalFile
         file.findElementAt(parameters.offset)?.apply {
-            if (parent is DartStringLiteralExpression) {
-                val strEle = parent as DartStringLiteralExpression
-                if(strEle.textLength>=3 || strEle.text.contains(defaultTag)) {
-                    doHandle(parameters,result)
+            if (prevSibling.elementType == DartTokenTypes.REGULAR_STRING_PART) {
+                val strEle = prevSibling.text
+                println(strEle)
+                if (strEle.length >= setting.assetCompilationTriggerLen && (strEle.startsWith(setting.assetCompilationTriggerString))) {
+                    doHandle(parameters, result)
                 }
             }
         }
     }
 
 
-    fun doHandle(parameters: CompletionParameters, result: CompletionResultSet) {
+    private fun doHandle(parameters: CompletionParameters, result: CompletionResultSet) {
         val path = parameters.editor.project?.basePath
-        val assetsPath = "$path/assets"
+        val assetsPath = "$path/${setting.assetScanFolderName}"
         val findFileByUrl = LocalFileSystem.getInstance().findFileByPath(assetsPath)
         findFileByUrl?.apply {
             elementHandle(this, result)

@@ -44,4 +44,12 @@ data class AppStateModel(
     //选择的房间
 //    @OptionTag(converter = ResourceCategoryCovert::class)
 //    var selectRoom: ResourceCategory? = null
+    ///路径自动补全的触发关键字
+    var assetCompilationTriggerString: String = "ass",
+
+    ///路径自动补全的触发文本长度
+    var assetCompilationTriggerLen: Int = 3,
+
+    ///路径自动补全扫描目录
+    var assetScanFolderName: String = "assets"
 )
