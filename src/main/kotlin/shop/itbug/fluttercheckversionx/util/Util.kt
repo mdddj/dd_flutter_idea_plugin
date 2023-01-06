@@ -1,5 +1,8 @@
 package shop.itbug.fluttercheckversionx.util
 
+import java.net.InetAddress
+import java.net.NetworkInterface
+import java.net.SocketException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -7,6 +10,34 @@ import java.util.*
 
 class Util {
     companion object {
+
+
+        fun resolveLocalAddresses(): Set<InetAddress> {
+            val addrs: MutableSet<InetAddress> = HashSet<InetAddress>()
+            var ns: Enumeration<NetworkInterface>? = null
+            try {
+                ns = NetworkInterface.getNetworkInterfaces()
+            } catch (_: SocketException) {
+            }
+            while (ns != null && ns.hasMoreElements()) {
+                val n: NetworkInterface = ns.nextElement()
+                val `is`: Enumeration<InetAddress> = n.getInetAddresses()
+                while (`is`.hasMoreElements()) {
+                    val i: InetAddress = `is`.nextElement()
+                    if (!i.isLoopbackAddress && !i.isLinkLocalAddress && !i.isMulticastAddress
+                        && !isSpecialIp(i.hostAddress)
+                    ) addrs.add(i)
+                }
+            }
+            return addrs
+        }
+        private fun isSpecialIp(ip: String): Boolean {
+            if (ip.contains(":")) return true
+            if (ip.startsWith("127.")) return true
+            if (ip.startsWith("169.254.")) return true
+            return ip == "255.255.255.255"
+        }
+
         object RelativeDateFormat {
             private const val ONE_MINUTE = 60000L
             private const val ONE_HOUR = 3600000L
@@ -79,5 +110,7 @@ class Util {
                 return toMonths(date) / 365L
             }
         }
+
+
     }
 }

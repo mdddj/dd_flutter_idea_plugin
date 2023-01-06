@@ -19,14 +19,14 @@ class PluginVersionHints : CompletionContributor() {
         if (currLinePluginName != null) {
             runBlocking {
                 launch {
-                   try {
-                       val data =
-                           ServiceCreate.create(PubService::class.java).getPackageVersions(currLinePluginName).await()
-                       data.versions.forEach {
-                           result.addElement(LookupElementBuilder.create(it))
-                       }
-                   }catch (_: Exception){
-                   }
+                    try {
+                        val data =
+                            ServiceCreate.create(PubService::class.java).getPackageVersions(currLinePluginName).await()
+                        data.versions.forEach {
+                            result.addElement(LookupElementBuilder.create(it))
+                        }
+                    } catch (_: Exception) {
+                    }
 
                 }
             }

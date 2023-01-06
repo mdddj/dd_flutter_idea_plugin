@@ -4,21 +4,12 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.lang.PsiBuilderFactory
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiElementFilter
-import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.lang.dart.DartTokenTypes
-import com.jetbrains.lang.dart.psi.DartElement
-import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.*
 import com.jetbrains.lang.dart.util.DartElementGenerator
-import com.jetbrains.lang.dart.util.DartPsiImplUtil
-import io.flutter.dart.DartPsiUtil
 
 
 val checkSuperClassNames = listOf<String>("StatefulWidget")
@@ -81,7 +72,7 @@ class DartPublicFunctionApiFixVisitor(val holder: ProblemsHolder) : PsiElementVi
                                     if (returnTypeEle.text.indexOf("_") == 0) {
                                         holder.registerProblem(
                                             returnTypes.first(),
-                                            "dart建议将返回类型修改为公有变量. Flutter自学群:667186542",
+                                            "dart建议将返回类型修改为公有变量",
                                             ProblemHighlightType.WARNING,
                                             PublicApiRenameFix(returnTypeEle, returnTypeEle.text, dmdElement)
                                         )
