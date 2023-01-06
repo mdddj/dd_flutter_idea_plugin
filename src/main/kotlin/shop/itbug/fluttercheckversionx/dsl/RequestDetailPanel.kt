@@ -11,6 +11,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.selected
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import javax.swing.BorderFactory
 
@@ -20,24 +21,24 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
 
     val p = panel {
         row("Url") {
-            label(request.url)
+            label(request.url?: "")
         }
         row("Method") {
-            label(request.method)
+            label(request.method ?:"")
         }
         row("Time") {
             label("${request.timestamp}ms").apply {
-                if (request.timestamp > 2000) {
+                if (request.timestamp!=null && request.timestamp!! > 2000) {
                     component.foreground = JBColor.ORANGE
                 } else {
-                    component.foreground = JBColor.GREEN
+                    component.foreground = UIUtil.getLabelSuccessForeground()
                 }
             }
         }
         row("Status Code") {
             label("${request.statusCode}").apply {
                 if (request.statusCode == 200) {
-                    component.foreground = JBColor.GREEN
+                    component.foreground = UIUtil.getLabelSuccessForeground()
                 } else {
                     component.foreground = JBColor.RED
                 }
@@ -53,7 +54,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
                 ).apply {
                     border = BorderFactory.createEmptyBorder()
                 }
-            ).visible(request.headers.isNotEmpty())
+            ).visible(request.headers?.isNotEmpty() == true)
         }
         lateinit var box: Cell<JBCheckBox>
         row("Response Headers") {
@@ -69,7 +70,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
                 ).apply {
                     border = BorderFactory.createEmptyBorder()
                 }
-            ).visible(request.responseHeaders.isNotEmpty())
+            ).visible(request.responseHeaders?.isNotEmpty() == true)
         }.visibleIf(box.selected)
     }
     return p

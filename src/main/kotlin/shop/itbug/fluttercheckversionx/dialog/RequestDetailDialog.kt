@@ -34,22 +34,22 @@ class RequestDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         val sb = StringBuilder()
         Helper.addKeyValueHeader(sb)
         //请求链接
-        Helper.addKeyValueSection("Url", request.url, sb)
+        Helper.addKeyValueSection("Url", request.url ?: "", sb)
 
         //请求方法
-        Helper.addKeyValueSection("Method", request.method, sb)
+        Helper.addKeyValueSection("Method", request.method ?:"", sb)
 
         //请求耗时
         Helper.addKeyValueSection("Time", "${request.timestamp}ms", sb)
 
         //请求头
-        Helper.addKeyValueSection("Header", getHeaderHtmlText(request.headers), sb)
+        Helper.addKeyValueSection("Header", getHeaderHtmlText(request.headers ?: emptyMap()), sb)
 
         //参数
-        Helper.addKeyValueSection("Param", getHeaderHtmlText(request.queryParams), sb)
+        Helper.addKeyValueSection("Param", getHeaderHtmlText(request.queryParams ?: emptyMap()), sb)
 
         //返回的请求头
-        Helper.addKeyValueSection("Response Header", getHeaderHtmlText(request.responseHeaders), sb)
+        Helper.addKeyValueSection("Response Header", getHeaderHtmlText(request.responseHeaders ?: emptyMap()), sb)
         Helper.addKeyValueFoot(sb)
         return sb.toString()
     }

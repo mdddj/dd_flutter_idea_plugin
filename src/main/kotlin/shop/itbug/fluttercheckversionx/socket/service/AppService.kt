@@ -134,7 +134,9 @@ class AppService {
             val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
-            flutterProjects[responseModel.projectName] = reqsAdded
+            responseModel.projectName?.apply {
+                flutterProjects[this] = reqsAdded
+            }
             messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
                 .handleData(responseModel)
         } catch (e: Exception) {

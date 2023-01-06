@@ -18,7 +18,6 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.fields.ExtendableTextField
-import org.slf4j.LoggerFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,8 +46,6 @@ import javax.swing.*
  */
 class FlutterChatMessageWindow(val project: Project, private val toolWindow: ToolWindow) : JPanel(BorderLayout()),
     Disposable {
-
-    val log = LoggerFactory.getLogger(FlutterChatMessageWindow::class.java)
 
     private val chatList = JBList<IdeaMessage>()//聊天显示区域
     private val bottomToolBar = JToolBar()//底部工具栏

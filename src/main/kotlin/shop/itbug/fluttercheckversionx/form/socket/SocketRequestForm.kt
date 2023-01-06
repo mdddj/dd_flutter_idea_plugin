@@ -98,7 +98,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                 requestsJBList.model = MyDefaultListModel(datas = reqs)
             } else {
                 //执行过滤
-                val filters = reqs.filter { it.method.uppercase() == type.uppercase() }
+                val filters = reqs.filter { it.method?.uppercase() == type.uppercase() }
                 requestsJBList.model = MyDefaultListModel(datas = filters)
             }
 
@@ -200,8 +200,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                     val setting = PluginStateService.getInstance().state
                     setting?.apply {
                         data?.let {
-                            MyNotificationUtil.toolWindowShowMessage(project, data.url)
-                        }.takeIf { this.apiInToolwindowTop }
+                            MyNotificationUtil.toolWindowShowMessage(project, data.url ?: "")
+                        }.takeIf { this.apiInToolwindowTop && data?.url != null }
                     }
                     refreshData(null)
                 }
@@ -276,9 +276,9 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
                 val content = ContentFactory.getInstance()
                     .createContent(JBScrollPane(requestDetailPanel(element, project)), "API", false).apply {
-                    isCloseable = true
-                    icon = AllIcons.Actions.Close
-                }
+                        isCloseable = true
+                        icon = AllIcons.Actions.Close
+                    }
 
                 toolWindow.contentManager.addContent(content)
                 toolWindow.contentManager.setSelectedContent(content)

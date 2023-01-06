@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
 import com.intellij.openapi.project.Project
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
-import java.awt.Color
 import java.awt.Dimension
 import javax.swing.Box
 import javax.swing.BoxLayout
@@ -26,9 +26,9 @@ class CustomListRender(private val model: ProjectSocketService.SocketResponseMod
         layout = BoxLayout(this,BoxLayout.PAGE_AXIS)
 
 
-        add(StringValueRender("Url",model.url))
+        add(StringValueRender("Url",model.url?:""))
         add(Box.createVerticalStrut(6))
-        add(StringValueRender("Methed",model.method))
+        add(StringValueRender("Methed",model.method?:""))
         add(Box.createVerticalStrut(6))
         add(StringValueRender("Status Code",model.statusCode.toString()))
         if(model.data!=null){
@@ -58,9 +58,9 @@ class CustomListRender(private val model: ProjectSocketService.SocketResponseMod
 
              val valueLabel = JLabel(value)
              if(value == "200"){
-                 valueLabel.foreground = Color.GREEN
+                 valueLabel.foreground = UIUtil.getLabelSuccessForeground()
              }else if(value == "500"){
-                 valueLabel.foreground = Color.RED
+                 valueLabel.foreground = UIUtil.getErrorForeground()
                  valueLabel.text = "500  (服务器错误)"
              }
              add(valueLabel)

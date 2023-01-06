@@ -5,7 +5,6 @@ import com.intellij.ui.SearchTextField
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import javax.swing.BorderFactory
-import javax.swing.JLabel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -38,7 +37,7 @@ class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextFi
             val document = e.document
             val text = document.getText(0, document.length)
             val allRequest = appService.getAllRequest()
-            val results = allRequest.filter { it.url.uppercase().contains(text.uppercase()) }
+            val results = allRequest.filter { it.url?.uppercase()?.contains(text.uppercase()) ?: false }
             if(results.isNotEmpty()){
                 filterUrlHandler.invoke(results)
                 history = results.map { it.url }

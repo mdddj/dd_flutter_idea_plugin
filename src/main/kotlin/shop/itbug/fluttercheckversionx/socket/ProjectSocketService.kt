@@ -10,31 +10,31 @@ class ProjectSocketService {
         val data: Any?,
 
         ///请求类型
-        val method: String,
+        val method: String?,
 
         /// get 查询参数
-        val queryParams: Map<String, Any>,
+        val queryParams: Map<String, Any>?,
 
         ///请求URL
-        val url: String,
+        val url: String?,
 
         ///状态码
-        val statusCode: Int,
+        val statusCode: Int?,
 
         ///post参数
         val body: Any,
 
         ///请求头
-        val headers: Map<String, Any>,
+        val headers: Map<String, Any>?,
 
         ///response 请求头
-        val responseHeaders: Map<String, Any>,
+        val responseHeaders: Map<String, Any>?,
 
         ///请求耗时
-        var timestamp: Int,
+        var timestamp: Int?,
 
         ///项目名称
-        var projectName: String
+        var projectName: String?
     )
 
 }
