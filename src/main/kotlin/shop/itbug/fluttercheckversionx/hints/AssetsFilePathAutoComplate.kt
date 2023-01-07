@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.hints
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.vfs.InvalidVirtualFileAccessException
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.PlatformPatterns
@@ -17,8 +18,6 @@ import shop.itbug.fluttercheckversionx.services.PluginStateService
  * 资源文件路径自动补全
  */
 class AssetsFilePathAutoComplete : CompletionContributor() {
-
-
 
     init {
         extend(
@@ -38,7 +37,7 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
 class AssetsFilePathAutoCompleteProvider : CompletionProvider<CompletionParameters>() {
 
 
-    var setting = PluginStateService.getInstance().state ?: AppStateModel()
+    private var setting = PluginStateService.getInstance().state ?: AppStateModel()
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
@@ -68,15 +67,20 @@ class AssetsFilePathAutoCompleteProvider : CompletionProvider<CompletionParamete
     }
 
     private fun elementHandle(file: VirtualFile, result: CompletionResultSet) {
-        val cs = file.children.toList()
-        cs.forEach { f ->
-            if (f.isDirectory) {
-                elementHandle(f, result)
-            } else {
-                val indexOf = f.path.indexOf("assets")
-                val withIcon = LookupElementBuilder.create(f.path.substring(indexOf)).withIcon(MyIcons.diandianLogoIcon)
-                result.addElement(withIcon)
+        try {
+            val cs = file.children.toList()
+            cs.forEach { f ->
+                if (f.isDirectory) {
+                    elementHandle(f, result)
+                } else {
+                    val indexOf = f.path.indexOf("assets")
+                    val withIcon =
+                        LookupElementBuilder.create(f.path.substring(indexOf)).withIcon(MyIcons.diandianLogoIcon)
+                    result.addElement(withIcon)
+                }
             }
+        } catch (_: InvalidVirtualFileAccessException) {
+
         }
     }
 
