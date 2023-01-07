@@ -77,7 +77,8 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
 
-        <completion.contributor language="Dart" implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor" />
+        <completion.contributor language="Dart"
+                                implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
         <!--   项目被打开回调事件     -->
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
@@ -156,6 +157,11 @@
                 text="生成注释" description="自动生成dart方法的注释">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
+        </action>
+        <action id="AssetsAutoGenerateClassAction"
+                class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction" text="生成r.dart"
+                description="flutter项目自动生成Assets资产Class类">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="DartFileGroupAction"/>
         </action>
     </actions>
 

@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.google.common.base.CaseFormat
+import shop.itbug.fluttercheckversionx.constance.dartKeys
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -12,6 +14,18 @@ class Util {
     companion object {
 
 
+        fun removeSpecialCharacters(string: String): String {
+            var str1: String = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, string)
+            str1 = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, str1)
+            if (dartKeys.contains(str1)) {
+                str1 += "_"
+            }
+            return str1
+        }
+
+        /**
+         * 获取本机IP列表
+         */
         fun resolveLocalAddresses(): Set<InetAddress> {
             val addrs: MutableSet<InetAddress> = HashSet<InetAddress>()
             var ns: Enumeration<NetworkInterface>? = null
@@ -31,6 +45,7 @@ class Util {
             }
             return addrs
         }
+
         private fun isSpecialIp(ip: String): Boolean {
             if (ip.contains(":")) return true
             if (ip.startsWith("127.")) return true
@@ -57,7 +72,7 @@ class Util {
                 } catch (e: ParseException) {
                     e.printStackTrace()
                 }
-                val delta: Long = Date().time - (date!!.time  )
+                val delta: Long = Date().time - (date!!.time)
                 if (delta < 1L * ONE_MINUTE) {
                     val seconds = toSeconds(delta)
                     return (if (seconds <= 0) 1 else seconds).toString() + ONE_SECOND_AGO

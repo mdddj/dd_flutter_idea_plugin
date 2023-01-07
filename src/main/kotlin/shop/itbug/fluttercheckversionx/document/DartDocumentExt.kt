@@ -7,8 +7,6 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.document.MarkdownRender.Companion.appendTag
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
@@ -74,7 +72,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             val keyText: String
             val childrens = or.children.filterIsInstance<DartReferenceExpressionImpl>()
             keyText = if (childrens.isNotEmpty()) {
-                MyDartPsiElementUtil.getRefreshMethedName(childrens.first())
+                MyDartPsiElementUtil.getRefreshMethodName(childrens.first())
             } else {
                 or.firstChild.text
             }

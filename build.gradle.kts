@@ -45,6 +45,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
     implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
+    implementation("com.google.guava:guava:31.1-jre")
+
 
 }
 
