@@ -25,7 +25,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
                 MyFileUtil.onFolderEachWithProject(project, "assets") { virtualFile ->
                     val eleValue = virtualFile.fileNameWith("assets")
                     var filename = Util.removeSpecialCharacters(virtualFile.presentableName.split(".").first())
-                    if (names.contains(filename)) filename += "${names.filter { it.equals(filename) }.size}"
+                    if (names.contains(filename)) filename += "${names.filter { it.contains(filename) }.size}"
                     if (filename.isNotEmpty() && eleValue.isNotEmpty()) {
                         val expression = "static const $filename = '$eleValue'"
                         names.add(filename)
