@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.Util
@@ -17,6 +16,7 @@ import shop.itbug.fluttercheckversionx.util.fileNameWith
 class AssetsAutoGenerateClassAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)
+        val names = mutableSetOf<String>()
         project?.apply {
             val classElement =
                 MyDartPsiElementUtil.createDartClassBodyFromClassName(project, "AppAssets")
@@ -25,17 +25,10 @@ class AssetsAutoGenerateClassAction : AnAction() {
                 MyFileUtil.onFolderEachWithProject(project, "assets") { virtualFile ->
                     val eleValue = virtualFile.fileNameWith("assets")
                     var filename = Util.removeSpecialCharacters(virtualFile.presentableName.split(".").first())
-
-
-                    //检测是否有相同的命名
-                    val ch = MyDartPsiElementUtil.checkElementEqName(
-                        classMembers,
-                        filename,
-                        DartComponentNameImpl::class.java
-                    )
-                    if (ch) filename += "_"
+                    if (names.contains(filename)) filename += "${names.filter { it.equals(filename) }.size}"
                     if (filename.isNotEmpty() && eleValue.isNotEmpty()) {
                         val expression = "static const $filename = '$eleValue'"
+                        names.add(filename)
                         MyDartPsiElementUtil.createVarExpressionFromText(
                             project,
                             expression
@@ -44,7 +37,6 @@ class AssetsAutoGenerateClassAction : AnAction() {
                             runWriteAction {
                                 it.addAfter(d, it.nextSibling)
                                 classMembers.addAfter(it, classMembers.nextSibling)
-
                             }
                         }
 

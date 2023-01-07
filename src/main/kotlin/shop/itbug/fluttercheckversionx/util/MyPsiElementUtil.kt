@@ -67,13 +67,14 @@ class MyDartPsiElementUtil {
             if (findFileByPath != null) {
                 val findDirectory = PsiManager.getInstance(project).findDirectory(findFileByPath)
                 if (findDirectory != null) {
+                    checkFileIsExits(project, "$path/$filename") {
+                        it.delete()
+                    }
                     val e = PsiFileFactory.getInstance(project)
                         .createFileFromText(filename, DartLanguage.INSTANCE, element.text)
                     runWriteAction {
                         findDirectory.add(e)
-                        println("保存文件成功")
-                        MyNotificationUtil.socketNotif("生成文件成功", project)
-
+                        project.toast("生成成功")
                     }
                     return e
                 } else {
@@ -85,21 +86,41 @@ class MyDartPsiElementUtil {
             return null
         }
 
+        ///检测文件是否存在
+        fun checkFileIsExits(project: Project, path: String, existenceHandle: (psiFile: PsiFile) -> Unit): Boolean {
+            val file = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
+            if (file != null) {
+                val findFile = PsiManager.getInstance(project).findFile(file)
+                if (findFile != null) {
+                    runWriteAction {
+                        existenceHandle.invoke(findFile)
+                    }
+                    return true
+                }
+            }
+            return false
+
+        }
+
 
         /**
          * 检测是否有相同的PsiElement
          * 返回true 表示有相同的
          * false 则没有
          */
-        fun <T : PsiElement> checkElementEqName(element: PsiElement, text: String,  type: Class<T>): Boolean {
-            val childrenOfAnyType = PsiTreeUtil.getChildrenOfType(element, type)
-            if (childrenOfAnyType != null) {
-                return childrenOfAnyType.any {
-                    println(">>>${it.text}    $text")
-                    it.text.equals(text)
-                }
+        fun <T : PsiElement> checkElementEqName(
+            project: Project,
+            element: PsiElement,
+            text: String,
+            type: Class<T>
+        ): Boolean {
+            println(element.children.size)
+            val file = DartElementGenerator.createDummyFile(project, element.text)
+            val childrenOfAnyType = PsiTreeUtil.getChildrenOfAnyType(file.originalElement, type)
+            println(">>${childrenOfAnyType.size}")
+            return childrenOfAnyType.any {
+                it.text.equals(text)
             }
-            return false
         }
 
     }
