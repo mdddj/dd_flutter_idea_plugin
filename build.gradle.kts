@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.11.0"
 }
 group = "shop.itbug"
-version = "2.1.4"
+version = "2.1.5"
 repositories {
     mavenCentral()
     google()
@@ -46,8 +46,6 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
     implementation("com.google.guava:guava:31.1-jre")
-
-
 }
 
 
@@ -73,11 +71,18 @@ tasks {
         untilBuild.set("223.*")
         changeNotes.set("""
             <div>
-            <h1>2023-01-06</h1>
+                <h1>2023-01-07</h1>
             </div>
             <ul>
-            <li>Fix the problem that some dio interfaces cannot listen</li>
-            <li>Optimize the asset file pop-up mechanism</li>
+                <li>Add the function of automatically generating asset file objects</li>
+            </ul>
+            <hr>
+            <div>
+                <h1>2023-01-06</h1>
+            </div>
+            <ul>
+                <li>Fix the problem that some dio interfaces cannot listen</li>
+                <li>Optimize the asset file pop-up mechanism</li>
             <ul>
         """.trimIndent())
     }
