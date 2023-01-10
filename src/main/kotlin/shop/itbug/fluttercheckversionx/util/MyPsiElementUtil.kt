@@ -78,10 +78,10 @@ class MyDartPsiElementUtil {
                     }
                     return e
                 } else {
-                    println("查找文件目录失败")
+                    project.toastWithError("查找目录失败")
                 }
             } else {
-                println("查找目录失败")
+                project.toastWithError("查找目录失败")
             }
             return null
         }
