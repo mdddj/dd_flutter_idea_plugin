@@ -32,7 +32,7 @@ class LeftActionTools(
     requestSort: RequestSort,
 ) : DefaultActionGroup() {
 
-    private val deletButton = DelButton()
+    private val deleteButton = DelButton()
     private var sortAction = MySortToggleAction(requestSort)
     private val sortOption = SortAction(action = sortAction)
 
@@ -41,7 +41,11 @@ class LeftActionTools(
     }
 
     //查看请求头的工具
-    private var detailAction = object : ToggleAction(PluginBundle.get("window.idea.dio.view.detail"), PluginBundle.get("window.idea.dio.view.detail.desc"), AllIcons.Ide.ConfigFile) {
+    private var detailAction = object : ToggleAction(
+        PluginBundle.get("window.idea.dio.view.detail"),
+        PluginBundle.get("window.idea.dio.view.detail.desc"),
+        AllIcons.General.ShowInfos
+    ) {
         var selected = false
         override fun isSelected(e: AnActionEvent): Boolean {
             return selected
@@ -69,7 +73,11 @@ class LeftActionTools(
 
     //复制api url 到剪贴板
     private val copyAction =
-        object : AnAction(PluginBundle.get("window.idea.dio.view.copy"), PluginBundle.get("window.idea.dio.view.copy.desc"), AllIcons.Actions.Copy) {
+        object : AnAction(
+            PluginBundle.get("window.idea.dio.view.copy"),
+            PluginBundle.get("window.idea.dio.view.copy.desc"),
+            AllIcons.Actions.Copy
+        ) {
             override fun actionPerformed(e: AnActionEvent) {
                 val url = reqList.selectedValue?.url
                 url?.copyTextToClipboard()
@@ -96,7 +104,7 @@ class LeftActionTools(
     }
 
     init {
-        add(deletButton.action)
+        add(deleteButton.action)
         add(sortOption.action)
         addSeparator()
         add(detailAction)
@@ -126,7 +134,8 @@ class LeftActionTools(
 
 
 class DelButton : ActionButton(
-    object : AnAction(PluginBundle.get("clean"), PluginBundle.get("window.idea.dio.view.clean.desc"), AllIcons.Actions.GC) {
+    object :
+        AnAction(PluginBundle.get("clean"), PluginBundle.get("window.idea.dio.view.clean.desc"), AllIcons.Actions.GC) {
         override fun actionPerformed(e: AnActionEvent) {
             service<AppService>().cleanAllRequest()
         }
@@ -144,7 +153,7 @@ class MySortToggleAction(private val handle: RequestSort) :
     ToggleAction(
         Supplier { "滚动条自动滚动到最底部" },
         Supplier { "当接口监听到数据后,滚动条会一直保持在最底部,关闭后保持不变" },
-        AllIcons.ObjectBrowser.SortByType
+        AllIcons.RunConfigurations.Scroll_down
     ) {
     var s = true
     override fun isSelected(e: AnActionEvent): Boolean {
@@ -172,14 +181,22 @@ class SortAction(action: MySortToggleAction) : ActionButton(
 
 ///查看get方法下,queryparams参数的功能
 class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
-    AnAction(PluginBundle.get("window.idea.dio.view.query.params"), PluginBundle.get("window.idea.dio.view.query.params.desc"), AllIcons.Ide.ConfigFile) {
+    AnAction(
+        PluginBundle.get("window.idea.dio.view.query.params"),
+        PluginBundle.get("window.idea.dio.view.query.params.desc"),
+        AllIcons.Ide.ConfigFile
+    ) {
     override fun actionPerformed(e: AnActionEvent) {
         if (reqList.selectedValue != null) {
             val url = UrlBuilder.ofHttp(reqList.selectedValue.url)
             val queryMap = url.query.queryMap
             SimpleJsonViewDialog.show(queryMap, project)
-        }else{
-            MyNotificationUtil.socketNotif(PluginBundle.get("window.idea.dio.view.query.params.tip"),project,NotificationType.WARNING)
+        } else {
+            MyNotificationUtil.socketNotif(
+                PluginBundle.get("window.idea.dio.view.query.params.tip"),
+                project,
+                NotificationType.WARNING
+            )
         }
     }
 
