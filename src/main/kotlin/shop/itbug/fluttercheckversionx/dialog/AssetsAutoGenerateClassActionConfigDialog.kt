@@ -13,26 +13,35 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
 
     init {
         super.init()
-        title = "生成资产文件配置"
+        title = "生成资产文件类"
         isResizable = false
 
     }
 
     override fun createCenterPanel(): JComponent {
         return panel {
-            row("类名") {
+            row("类    名") {
                 textField()
             }
             row ("文件名") {
                 textField()
             }
+            row("目    录") {
+                textField()
+            }
             row {
-                checkBox("设置为默认且不再弹窗提醒")
+                checkBox("保存且不再提醒")
+            }.contextHelp("可在设置中再次配置")
+            row {
+                checkBox("监听文件变化自动更新")
             }.bottomGap(BottomGap.SMALL)
             row {
                 button("生成"){
 
                 }.align(Align.FILL)
+            }
+            row {
+                comment("有任何问题请<a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues'>提交bug</a>")
             }
         }
     }
