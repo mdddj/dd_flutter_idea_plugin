@@ -96,6 +96,9 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
                                    language="JSON"/>
 
+
+        <vfs.asyncListener implementation="shop.itbug.fluttercheckversionx.monitor.FileChangeListening"/>
+
         <!--    插件更新更新时间内联提示     -->
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.DartPluginTimeDateHintsProvider"
