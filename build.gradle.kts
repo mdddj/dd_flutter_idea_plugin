@@ -14,7 +14,7 @@ repositories {
     }
 }
 java{
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 intellij {
@@ -49,7 +49,7 @@ dependencies {
 }
 
 
-var javaVersion = "17"
+var javaVersion = "11"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
