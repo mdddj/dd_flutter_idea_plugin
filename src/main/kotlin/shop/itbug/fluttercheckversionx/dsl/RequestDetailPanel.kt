@@ -31,14 +31,14 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
                 if (request.timestamp!=null && request.timestamp!! > 2000) {
                     component.foreground = JBColor.ORANGE
                 } else {
-                    component.foreground = UIUtil.getLabelSuccessForeground()
+                    component.foreground = UIUtil.getLabelInfoForeground()
                 }
             }
         }
         row("Status Code") {
             label("${request.statusCode}").apply {
                 if (request.statusCode == 200) {
-                    component.foreground = UIUtil.getLabelSuccessForeground()
+                    component.foreground = UIUtil.getLabelInfoForeground()
                 } else {
                     component.foreground = JBColor.RED
                 }

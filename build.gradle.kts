@@ -1,10 +1,10 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("org.jetbrains.intellij") version "1.11.0"
+    id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.1.5"
+version = "2.1.5-as"
 repositories {
     mavenCentral()
     google()
@@ -18,14 +18,14 @@ java{
 }
 
 intellij {
-    version.set("2022.1.1")
+    version.set("2022.1.1.19")
     type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.7571.203",
-            "io.flutter:71.3.6",
-            "org.intellij.plugins.markdown:223.7571.125",
+            "Dart:221.6091",
+            "io.flutter:71.2.4",
+            "org.intellij.plugins.markdown:221.5787.39",
             "terminal","java"
         )
     )

@@ -17,7 +17,7 @@ class SocketWindow : ToolWindowFactory {
     override fun createToolWindowContent(p0: Project, p1: ToolWindow) {
         //dio 监听窗口
         val socketRequestForm = SocketRequestForm(p0,p1)
-        val instance = ContentFactory.getInstance()
+        val instance = ContentFactory.SERVICE.getInstance()
         val createContent = instance.createContent(socketRequestForm.getContent(), PluginBundle.get("window.idea.dio.title"), false)
         p1.contentManager.addContent(createContent)
 

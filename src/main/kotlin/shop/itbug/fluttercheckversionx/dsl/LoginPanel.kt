@@ -65,7 +65,7 @@ fun loginPanel(parentDisposable: Disposable): DialogPanel {
             checkBox(PluginBundle.get("window.idea.loginDialog.remember")).enabled(true).horizontalAlign(HorizontalAlign.LEFT)
         }.topGap(TopGap.SMALL)
         row {
-            comment(PluginBundle.get("window.chat.loginDialog.register.comment")).align(Align.CENTER)
+            comment(PluginBundle.get("window.chat.loginDialog.register.comment"))
             button(PluginBundle.get("window.chat.loginDialog.text")) {
                 account.password = String(passwordJBTextField.password)
                 panel.apply()

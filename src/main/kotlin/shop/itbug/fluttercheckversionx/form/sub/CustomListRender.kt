@@ -58,7 +58,7 @@ class CustomListRender(private val model: ProjectSocketService.SocketResponseMod
 
              val valueLabel = JLabel(value)
              if(value == "200"){
-                 valueLabel.foreground = UIUtil.getLabelSuccessForeground()
+                 valueLabel.foreground = UIUtil.getLabelInfoForeground()
              }else if(value == "500"){
                  valueLabel.foreground = UIUtil.getErrorForeground()
                  valueLabel.text = "500  (服务器错误)"

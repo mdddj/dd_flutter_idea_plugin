@@ -274,7 +274,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             if (leftToolBarCore.isInDetailView) {
                 leftToolBarCore.changeRequestInDetail(element)
 
-                val content = ContentFactory.getInstance()
+                val content = ContentFactory.SERVICE.getInstance()
                     .createContent(JBScrollPane(requestDetailPanel(element, project)), "API", false).apply {
                         isCloseable = true
                         icon = AllIcons.Actions.Close

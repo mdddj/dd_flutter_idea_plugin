@@ -3,7 +3,10 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.BottomGap
+import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import javax.swing.Action
@@ -47,7 +50,7 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
                         ui.apply()
                         println(configModel)
                         GenerateAssetsClassConfig.getInstance().loadState(configModel)
-                    }.align(Align.FILL)
+                    }
                 }
                 row {
                     comment("有任何问题请<a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues'>提交bug</a>")

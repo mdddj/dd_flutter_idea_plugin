@@ -36,9 +36,6 @@ class LeftActionTools(
     private var sortAction = MySortToggleAction(requestSort)
     private val sortOption = SortAction(action = sortAction)
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 
     //查看请求头的工具
     private var detailAction = object : ToggleAction(
@@ -51,9 +48,6 @@ class LeftActionTools(
             return selected
         }
 
-        override fun getActionUpdateThread(): ActionUpdateThread {
-            return ActionUpdateThread.EDT
-        }
 
         override fun setSelected(e: AnActionEvent, state: Boolean) {
             val selectItem = reqList.selectedValue
@@ -89,9 +83,6 @@ class LeftActionTools(
                 )
             }
 
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.EDT
-            }
         }
 
     private val viewQueryParamsAction = ViewGetQueryParamsAction(reqList, project = project)
@@ -140,9 +131,6 @@ class DelButton : ActionButton(
             service<AppService>().cleanAllRequest()
         }
 
-        override fun getActionUpdateThread(): ActionUpdateThread {
-            return ActionUpdateThread.EDT
-        }
     },
     Presentation("清除全部记录"),
     "Dio Tool Left Action Sort",
@@ -165,9 +153,6 @@ class MySortToggleAction(private val handle: RequestSort) :
         s = state
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.EDT
-    }
 
 }
 
@@ -198,10 +183,6 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
                 NotificationType.WARNING
             )
         }
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.EDT
     }
 
 }
