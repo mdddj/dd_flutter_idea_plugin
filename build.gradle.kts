@@ -41,10 +41,10 @@ dependencies {
     implementation("com.alibaba.fastjson2:fastjson2:2.0.22")
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.22")
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
     implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
-    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
+//    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
     implementation("com.google.guava:guava:31.1-jre")
 }
 
@@ -107,10 +107,10 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = javaVersion
     }
 }

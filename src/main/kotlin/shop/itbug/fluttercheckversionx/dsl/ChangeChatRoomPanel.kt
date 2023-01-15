@@ -9,6 +9,7 @@ import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import kotlin.streams.toList
 
 ///切换房间的面板
 fun changeRoomPanel (setCall: ()-> Unit) : DialogPanel {
