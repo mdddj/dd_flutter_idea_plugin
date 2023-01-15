@@ -126,7 +126,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
                     .body()
             result?.apply {
                 if (state != 200) {
-                    MyNotificationUtil.socketNotif(message, project, NotificationType.ERROR)
+                    MyNotificationUtil.socketNotify(message, project, NotificationType.ERROR)
                 }
             }
         }.takeIf { userInfo != null }

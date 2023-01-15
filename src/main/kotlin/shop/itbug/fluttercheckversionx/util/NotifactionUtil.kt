@@ -17,7 +17,7 @@ class MyNotificationUtil {
         private const val toolWindowId = "Dio Request"
 
         //        socket 相关通知
-        fun socketNotif(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
+        fun socketNotify(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
             NotificationGroupManager.getInstance().getNotificationGroup("dio_socket_notif")
                 .createNotification(message, type)
                 .notify(project)
@@ -26,12 +26,12 @@ class MyNotificationUtil {
         /**
          * 显示tool window 弹窗
          */
-        fun toolWindowShowMessage(project: Project, message: String,type: MessageType = MessageType.INFO) {
+        fun toolWindowShowMessage(project: Project, message: String, type: MessageType = MessageType.INFO) {
             ToolWindowManager.getInstance(project)
                 .notifyByBalloon(toolWindowId, type, "<html><p>$message</p></html>")
         }
 
-        fun tooWindowShowMessage(project: Project,com: JComponent) {
+        fun tooWindowShowMessage(project: Project, com: JComponent) {
             val createBalloon = JBPopupFactory.getInstance().createBalloonBuilder(com).createBalloon()
             val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(toolWindowId)
             toolWindow?.apply {
@@ -40,12 +40,13 @@ class MyNotificationUtil {
             }
         }
 
-        fun showLoginDialog(project: Project,preferableFocusComponent: JComponent,parentDisposable: Disposable) {
-                JBPopupFactory.getInstance().createComponentPopupBuilder(loginPanel(parentDisposable), preferableFocusComponent)
-                    .setMovable(true)
-                    .setRequestFocus(true)
-                    .setFocusable(true)
-                    .createPopup().showCenteredInCurrentWindow(project)
+        fun showLoginDialog(project: Project, preferableFocusComponent: JComponent, parentDisposable: Disposable) {
+            JBPopupFactory.getInstance()
+                .createComponentPopupBuilder(loginPanel(parentDisposable), preferableFocusComponent)
+                .setMovable(true)
+                .setRequestFocus(true)
+                .setFocusable(true)
+                .createPopup().showCenteredInCurrentWindow(project)
         }
     }
 }

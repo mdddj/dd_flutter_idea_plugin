@@ -4,8 +4,8 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 
 fun Project.toast(message: String) {
-    MyNotificationUtil.socketNotif(message,this)
+    MyNotificationUtil.socketNotify(message,this)
 }
 fun Project.toastWithError(message: String) {
-    MyNotificationUtil.socketNotif(message,this,NotificationType.ERROR)
+    MyNotificationUtil.socketNotify(message,this,NotificationType.ERROR)
 }

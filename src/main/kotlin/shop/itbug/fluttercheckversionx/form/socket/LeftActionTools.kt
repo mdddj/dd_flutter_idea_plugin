@@ -81,7 +81,7 @@ class LeftActionTools(
             override fun actionPerformed(e: AnActionEvent) {
                 val url = reqList.selectedValue?.url
                 url?.copyTextToClipboard()
-                MyNotificationUtil.socketNotif(
+                MyNotificationUtil.socketNotify(
                     if (url == null) "复制失败(未选中接口)" else "复制成功:${url}",
                     project = project,
                     type = if (url == null) NotificationType.WARNING
@@ -192,7 +192,7 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
             val queryMap = url.query.queryMap
             SimpleJsonViewDialog.show(queryMap, project)
         } else {
-            MyNotificationUtil.socketNotif(
+            MyNotificationUtil.socketNotify(
                 PluginBundle.get("window.idea.dio.view.query.params.tip"),
                 project,
                 NotificationType.WARNING
