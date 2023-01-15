@@ -70,13 +70,21 @@ tasks {
         sinceBuild.set("221.6008.13")
         untilBuild.set("221.6008.13")
         changeNotes.set("""
+            
             <div>
-                <h1>2023-01-07</h1>
+                <h1>2023-01-15 (2.1.5-as)</h1>
+            </div>
+            <ul>
+                <li>Adapt to Android studio</li>
+                <li>Some details are optimized</>
+            </ul>
+            <div>
+                <h1>2023-01-07 (2.1.5)</h1>
             </div>
             <ul>
                 <li>Add the function of automatically generating asset file objects</li>
             </ul>
-            <hr>
+            
             <div>
                 <h1>2023-01-06</h1>
             </div>
