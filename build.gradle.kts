@@ -18,8 +18,8 @@ java{
 }
 
 intellij {
-    version.set("2022.3")
-    type.set("IC")
+    version.set("2022.1.1")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
@@ -67,8 +67,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.7571.182")
-        untilBuild.set("223.*")
+        sinceBuild.set("221.6008.13")
+        untilBuild.set("221.6008.13")
         changeNotes.set("""
             <div>
                 <h1>2023-01-07</h1>
