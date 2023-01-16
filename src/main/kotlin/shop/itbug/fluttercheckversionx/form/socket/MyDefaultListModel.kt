@@ -4,6 +4,7 @@ import cn.hutool.core.net.url.UrlBuilder
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
+import shop.itbug.fluttercheckversionx.dsl.requestDetailLayout
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.Component
 import javax.swing.*
@@ -33,9 +34,12 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         cellHasFocus: Boolean
     ): Component {
         if (value == null) return JLabel("未知请求")
-        return MyRequestItemPanel(value, isSelected)
+        return  requestDetailLayout(value,isSelected);
+//        return MyRequestItemPanel(value, isSelected)
     }
 }
+
+
 
 
 ///请求列表item布局

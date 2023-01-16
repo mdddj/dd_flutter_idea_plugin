@@ -179,7 +179,6 @@ class SortAction(action: MySortToggleAction) : ActionButton(
     ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
 )
 
-
 ///查看get方法下,queryparams参数的功能
 class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
     AnAction(
@@ -189,9 +188,9 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
     ) {
     override fun actionPerformed(e: AnActionEvent) {
         reqList.selectedValue?.apply {
-            this.queryParams?.let { SimpleJsonViewDialog.show(it, project) }
-            if (this.data is Map<*, *>) {
-                SimpleJsonViewDialog.show(this.data, project)
+            this.queryParams?.let { SimpleJsonViewDialog.show(it, project) }.takeIf { this.queryParams?.isEmpty() != true }
+            if (this.body is Map<*, *> && this.queryParams?.isEmpty() == true) {
+                SimpleJsonViewDialog.show(this.body, project)
             }
         }
     }
