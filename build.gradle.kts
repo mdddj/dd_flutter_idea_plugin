@@ -1,7 +1,7 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("org.jetbrains.intellij") version "1.11.0"
+    id("org.jetbrains.kotlin.jvm") version "1.8.0"
+    id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
 version = "2.1.5"
@@ -41,7 +41,7 @@ dependencies {
     implementation("com.alibaba.fastjson2:fastjson2:2.0.22")
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.22")
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
     implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
