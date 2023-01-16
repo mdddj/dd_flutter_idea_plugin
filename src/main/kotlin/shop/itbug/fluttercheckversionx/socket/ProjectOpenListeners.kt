@@ -6,8 +6,6 @@ import com.intellij.openapi.startup.StartupActivity
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 class ProjectOpenListeners: StartupActivity {
-
-
     override fun runActivity(project: Project) {
         service<AppService>().initSocketService(project)
     }

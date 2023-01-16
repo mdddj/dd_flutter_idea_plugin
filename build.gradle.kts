@@ -99,6 +99,7 @@ tasks {
 
     runIde {
         autoReloadPlugins.set(true)
+        ideDir.set(File("/Users/ldd/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/223.8617.9/IntelliJ IDEA.app/Contents"))
     }
 
 

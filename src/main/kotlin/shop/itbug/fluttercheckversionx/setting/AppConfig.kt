@@ -30,7 +30,6 @@ class AppConfig : Configurable, Disposable {
 
     override fun apply() {
         dialog.apply()
-        println("appled: $model")
         PluginStateService.getInstance().loadState(model)
        val project =  ProjectManager.getInstance().defaultProject
         MyToolWindowTools.getMyToolWindow(project)?.apply {
