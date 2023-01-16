@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.1.5"
+version = "2.1.6"
 repositories {
     mavenCentral()
     google()
