@@ -43,8 +43,8 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
-    implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
-//    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
+    implementation("org.hildan.krossbow:krossbow-stomp-core:5.0.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
     implementation("com.google.guava:guava:31.1-jre")
 }
 
