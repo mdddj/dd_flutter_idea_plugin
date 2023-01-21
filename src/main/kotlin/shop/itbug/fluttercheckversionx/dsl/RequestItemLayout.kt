@@ -25,7 +25,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
         row {
             label(request.statusCode!!.toString()).component.apply {
                 font = JBFont.small()
-                foreground = if(request.statusCode == 200) UIUtil.getLabelSuccessForeground() else color
+                foreground = if(request.statusCode == 200) UIUtil.getLabelInfoForeground() else color
             }
             label(request.method!!).component.apply {
                 font = JBFont.small()
