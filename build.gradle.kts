@@ -68,7 +68,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("223.7571.182")
-        untilBuild.set("223.*")
+        untilBuild.set("231.*")
         changeNotes.set("""
             <div>
                 <h1>2023-01-07</h1>
@@ -99,7 +99,6 @@ tasks {
 
     runIde {
         autoReloadPlugins.set(true)
-        ideDir.set(File("/Users/ldd/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/223.8617.9/IntelliJ IDEA.app/Contents"))
     }
 
 

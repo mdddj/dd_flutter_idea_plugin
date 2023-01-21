@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.setting
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.DialogPanel
 import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
 import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
@@ -35,7 +34,6 @@ class AppConfig : Configurable, Disposable {
         dialog.apply()
         PluginStateService.getInstance().loadState(model)
         DioxListingUiConfig.getInstance().loadState(dioSetting)
-       val project =  ProjectManager.getInstance().defaultProject
     }
 
     override fun getDisplayName(): String {

@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil.appendStyledSpan
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -21,6 +22,7 @@ import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.intellij.markdown.parser.MarkdownParser
+import shop.itbug.fluttercheckversionx.util.toHexString
 
 /**
  * markdown节点
@@ -57,9 +59,7 @@ class MarkdownRender {
         fun markdownToHtml(comment: MyMarkdownDocRenderObject, allowSingleParagraph: Boolean = true): String {
             val markdownTree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(comment.getContent())
             val markdownNode = MarkdownNode(markdownTree, null, comment)
-
             val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
-
             val firstParagraphOmitted = when {
                 maybeSingleParagraph != null && !allowSingleParagraph -> {
                     maybeSingleParagraph.children.joinToString("") { if (it.text == "\n") " " else it.toHtml() }
@@ -112,10 +112,11 @@ fun MarkdownNode.toHtml(): String {
         return text   // do not trim trailing whitespace
     }
 
-    var currentCodeFenceLang = "kotlin"
+    var currentCodeFenceLang = "dart"
 
     val sb = StringBuilder()
     visit { node, processChildren ->
+
         fun wrapChildren(tag: String, newline: Boolean = false) {
             sb.append("<$tag>")
             processChildren()
@@ -125,6 +126,8 @@ fun MarkdownNode.toHtml(): String {
 
         val nodeType = node.type
         var nodeText = node.text
+
+
         if (nodeText.contains("{@tool snippet}")) {
             nodeText = nodeText.replace("{@tool snippet}", "<p>")
         }
@@ -163,19 +166,25 @@ fun MarkdownNode.toHtml(): String {
                         text
                     )
                     sb.append("</code>")
+                } else {
+                    sb.append("<code>$nodeText</code>")
                 }
             }
 
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
-                sb.trimEnd()
-                sb.append("<pre><code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                sb.append(
+                    "<div style='background-color:#${
+                        UIUtil.getEditorPaneBackground().toHexString()
+                    };padding: 12px;border-radius: 25px;margin: 12px 0px;'><pre><code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>"
+                )
                 processChildren()
-                sb.append("</code></pre>")
+                sb.append("</code></pre></div>")
             }
 
             MarkdownTokenTypes.FENCE_LANG -> {
                 currentCodeFenceLang = nodeText
+//                sb.append("<div style='position:relative;right:12;top:12;' >$nodeText</div>")
             }
 
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
@@ -189,6 +198,8 @@ fun MarkdownNode.toHtml(): String {
                     val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml() ?: label
                     if (DumbService.isDumb(comment.project)) {
                         sb.append(linkText)
+                    } else {
+                        wrapChildren("strong")
                     }
                 } else {
                     sb.append(node.text)
@@ -229,7 +240,7 @@ fun MarkdownNode.toHtml(): String {
                     },
                     comment.project,
                     guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE,
-                    nodeText.trimEnd()
+                    nodeText
                 )
             }
 
@@ -296,6 +307,7 @@ fun MarkdownNode.toHtml(): String {
             }
         }
     }
+    println(sb)
     return sb.toString().trimEnd()
 }
 

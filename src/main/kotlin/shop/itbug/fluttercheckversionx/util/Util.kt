@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
 import shop.itbug.fluttercheckversionx.constance.dartKeys
+import java.awt.Color
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -10,8 +11,47 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+fun Color.toHexString(): String {
+    return Util.toHexFromColor(this)
+}
+
 class Util {
     companion object {
+
+
+        /**
+         * Color对象转换成字符串
+         * @param color Color对象
+         * @return 16进制颜色字符串
+         */
+         fun toHexFromColor(color: Color): String {
+            val su = StringBuilder()
+            var r: String = Integer.toHexString(color.red)
+            var g: String = Integer.toHexString(color.green)
+            var b: String = Integer.toHexString(color.blue)
+            r = if (r.length == 1) "0$r" else r
+            g = if (g.length == 1) "0$g" else g
+            b = if (b.length == 1) "0$b" else b
+            r = r.uppercase(Locale.getDefault())
+            g = g.uppercase(Locale.getDefault())
+            b = b.uppercase(Locale.getDefault())
+            su.append(r)
+            su.append(g)
+            su.append(b)
+            return su.toString()
+        }
+
+        /**
+         * 字符串转换成Color对象
+         * @param colorStr 16进制颜色字符串
+         * @return Color对象
+         */
+        fun toColorFromString(colorStr: String): Color {
+            var colorStr = colorStr
+            colorStr = colorStr.substring(4)
+            //java.awt.Color[r=0,g=0,b=255]
+            return Color(colorStr.toInt(16))
+        }
 
 
         fun removeSpecialCharacters(string: String): String {

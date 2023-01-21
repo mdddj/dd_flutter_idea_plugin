@@ -36,11 +36,11 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
         ApplicationManager.getApplication().messageBus.connect(this).subscribe(VirtualFileManager.VFS_CHANGES, object :
             BulkFileListener {
             override fun after(events: MutableList<out VFileEvent>) {
-                val path = project.basePath
+                project.basePath
                 events.forEach {
                     it.file?.apply {
                         println("path: "+this.path)
-                        println("canonicalpath: "+this.canonicalPath)
+                        println("canonical path: "+this.canonicalPath)
                         println("to string: ${this.parent.path}")
                     }
                 }
