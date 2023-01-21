@@ -13,6 +13,7 @@ import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.CardLayout
@@ -24,8 +25,8 @@ typealias RequestSort = (state: Boolean) -> Unit
 
 //左侧工具栏操作区域
 class LeftActionTools(
-    project: Project,
-    reqList: JBList<Request>,
+    val project: Project,
+    val reqList: JBList<Request>,
     rightCardPanel: JPanel,
     private val requestDetailPanel: RequestDetailPanel,
     responseBodyPanel: RightDetailPanel,
@@ -41,7 +42,7 @@ class LeftActionTools(
     private var detailAction = object : ToggleAction(
         PluginBundle.get("window.idea.dio.view.detail"),
         PluginBundle.get("window.idea.dio.view.detail.desc"),
-        AllIcons.General.ShowInfos
+        MyIcons.infos
     ) {
         var selected = false
         override fun isSelected(e: AnActionEvent): Boolean {
@@ -85,7 +86,7 @@ class LeftActionTools(
 
         }
 
-    private val viewQueryParamsAction = ViewGetQueryParamsAction(reqList, project = project)
+
 
     /**
      * 更新详情面板的html数据
@@ -100,7 +101,7 @@ class LeftActionTools(
         addSeparator()
         add(detailAction)
         add(copyAction)
-        add(viewQueryParamsAction)
+        add(showParamsActionGroup.actionGroup)
         add(OpenSettingAnAction())
     }
 
@@ -114,17 +115,19 @@ class LeftActionTools(
     }
 
     companion object {
-        fun create(modl: LeftActionTools): ActionToolbar {
+        fun create(model: LeftActionTools): ActionToolbar {
             return ActionManager.getInstance().createActionToolbar(
                 "Dio Tool Left Action",
-                modl,
+                model,
                 false
             )
         }
     }
+
+    private val showParamsActionGroup: ActionPopupMenu get() = ActionManager.getInstance().createActionPopupMenu("show-params",ShowParamsActionGroup(reqList = reqList, project = project))
 }
 
-
+//清理
 class DelButton : ActionButton(
     object :
         AnAction(PluginBundle.get("clean"), PluginBundle.get("window.idea.dio.view.clean.desc"), AllIcons.Actions.GC) {
@@ -138,6 +141,7 @@ class DelButton : ActionButton(
     ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
 )
 
+//自动滚动到底部
 class MySortToggleAction(private val handle: RequestSort) :
     ToggleAction(
         Supplier { "滚动条自动滚动到最底部" },
@@ -157,6 +161,7 @@ class MySortToggleAction(private val handle: RequestSort) :
 
 }
 
+//
 class SortAction(action: MySortToggleAction) : ActionButton(
     action,
     Presentation("使用倒序的方式渲染列表"),
@@ -164,22 +169,77 @@ class SortAction(action: MySortToggleAction) : ActionButton(
     ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
 )
 
-///查看get方法下,queryparams参数的功能
+///查看get方法下,query params参数的功能
 class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
     AnAction(
-        PluginBundle.get("window.idea.dio.view.query.params"),
+        "查看Get查询参数",
         PluginBundle.get("window.idea.dio.view.query.params.desc"),
         AllIcons.Ide.ConfigFile
     ) {
     override fun actionPerformed(e: AnActionEvent) {
         reqList.selectedValue?.apply {
             this.queryParams?.let { SimpleJsonViewDialog.show(it, project) }.takeIf { this.queryParams?.isEmpty() != true }
-            if (this.body is Map<*, *> && this.queryParams?.isEmpty() == true) {
-                SimpleJsonViewDialog.show(this.body, project)
-            }
         }
     }
 
+    override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = reqList.selectedValue!=null && reqList.selectedValue?.queryParams?.isNotEmpty() == true
+        super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
+}
+
+///查看post方法下,query params参数的功能
+class ViewPostQueryParamsAction(reqList: JBList<Request>, private val project: Project) :
+    AnAction(
+        "查看Post请求体",
+        PluginBundle.get("window.idea.dio.view.query.params.desc"),
+        AllIcons.Ide.ConfigFile
+    ) {
+
+      private  val selectValue = reqList.selectedValue
+    override fun actionPerformed(e: AnActionEvent) {
+        selectValue?.apply {
+            this.body?.let { SimpleJsonViewDialog.show(it, project) }.takeIf { this.body is Map<*,*> && this.body.isNotEmpty() }
+        }
+    }
+
+    override fun update(e: AnActionEvent) {
+        val body = selectValue?.body
+        e.presentation.isEnabled = selectValue !=null && body!=null && body is Map<*,*> && body.isNotEmpty()
+        super.update(e)
+    }
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+}
+
+///查看参数的选项
+class ShowParamsActionGroup( val reqList: JBList<Request>,val project: Project) : DefaultActionGroup("请求参数查询",true) {
+
+    private val viewQueryParamsAction = ViewGetQueryParamsAction(reqList, project = project)
+    private val viewPostParamsAction = ViewPostQueryParamsAction(reqList, project = project)
+    init {
+
+        add(viewQueryParamsAction)
+        add(viewPostParamsAction)
+        super.getTemplatePresentation().icon = MyIcons.params
+
+        reqList.addListSelectionListener {
+            if(reqList.selectedValue!=null){
+                viewPostParamsAction.templatePresentation.isEnabled = true
+                viewQueryParamsAction.templatePresentation.isEnabled = true
+            }else{
+                viewPostParamsAction.templatePresentation.isEnabled = false
+                viewQueryParamsAction.templatePresentation.isEnabled = false
+            }
+        }
+
+    }
 }
 
 

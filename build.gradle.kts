@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    id("org.jetbrains.kotlin.jvm") version "1.8.0"
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.1.5-as"
+version = "2.1.6"
 repositories {
     mavenCentral()
     google()
@@ -14,18 +14,18 @@ repositories {
     }
 }
 java{
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 intellij {
-    version.set("2022.1.1.19")
-    type.set("AI")
+    version.set("2022.3")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:221.6096",
-            "io.flutter:71.2.4",
-            "org.intellij.plugins.markdown:221.5787.39",
+            "Dart:223.7571.203",
+            "io.flutter:71.3.6",
+            "org.intellij.plugins.markdown:223.7571.125",
             "terminal","java"
         )
     )
@@ -43,13 +43,13 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
-    implementation("org.hildan.krossbow:krossbow-stomp-core:5.0.0")
-    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
+    implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
     implementation("com.google.guava:guava:31.1-jre")
 }
 
 
-var javaVersion = "11"
+var javaVersion = "17"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
@@ -67,24 +67,16 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("221.6008.13")
-        untilBuild.set("221.6008.13")
+        sinceBuild.set("223.7571.182")
+        untilBuild.set("231.*")
         changeNotes.set("""
-            
             <div>
-                <h1>2023-01-15 (2.1.5-as)</h1>
-            </div>
-            <ul>
-                <li>Adapt to Android studio</li>
-                <li>Some details are optimized</>
-            </ul>
-            <div>
-                <h1>2023-01-07 (2.1.5)</h1>
+                <h1>2023-01-07</h1>
             </div>
             <ul>
                 <li>Add the function of automatically generating asset file objects</li>
             </ul>
-            
+            <hr>
             <div>
                 <h1>2023-01-06</h1>
             </div>
@@ -115,10 +107,10 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = "17"
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = "17"
     }
 }

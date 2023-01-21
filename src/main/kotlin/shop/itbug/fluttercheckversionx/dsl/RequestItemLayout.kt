@@ -17,7 +17,9 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
     val color = UIUtil.getLabelDisabledForeground()
     val p = panel {
         row {
-            cell(JBLabel(MyIcons.apiIcon))
+            cell(JBLabel(MyIcons.apiIcon).apply {
+                foreground = UIUtil.getListForeground()
+            })
             label(request.url!!).bold().component.apply {
                 foreground = if(isSelected) UIUtil.getListSelectionForeground(false) else UIUtil.getLabelForeground()
             }
