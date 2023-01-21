@@ -9,10 +9,10 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartFileType
-import icons.FlutterIcons
-import io.flutter.utils.UIUtils
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
 import java.util.function.Function
@@ -36,12 +36,12 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
 }
 
 class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project: Project) :
-    EditorNotificationPanel(fileEditor, UIUtils.getEditorNotificationBackgroundColor().defaultColor) {
+    EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
     private var checkLabel: HyperlinkLabel
 
     init {
-        icon(FlutterIcons.Flutter);
+        icon(MyIcons.dartPluginIcon)
         text("梁典典的扩展工具")
         checkLabel = createActionLabel("检测新版本") {
             checkNewVersions()

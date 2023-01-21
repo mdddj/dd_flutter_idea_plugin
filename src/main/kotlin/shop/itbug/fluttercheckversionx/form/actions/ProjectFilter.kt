@@ -1,7 +1,7 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
 import com.intellij.ui.components.JBLabel
-import icons.FlutterIcons
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.Component
 import javax.swing.*
 
@@ -53,7 +53,7 @@ class MyCustomListRender : ListCellRenderer<String> {
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
-        return JBLabel(value?: "未知项目", FlutterIcons.Flutter, SwingConstants.LEFT)
+        return JBLabel(value?: "未知项目", MyIcons.flutter, SwingConstants.LEFT)
     }
 
 }
