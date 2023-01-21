@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.1.6"
+version = "2.2.0"
 repositories {
     mavenCentral()
     google()
@@ -71,12 +71,20 @@ tasks {
         untilBuild.set("231.*")
         changeNotes.set("""
             <div>
+                <h1>2023-01-21 (2.2.0 - 2023.1 EAP)</h1>
+            </div>
+            <ul>
+                <li>Adapt to IDEA 2023.1 EAP</li>
+                <li>New UI layout added to the Dio interface list</li>
+            </ul>
+          
+            <div>
                 <h1>2023-01-07</h1>
             </div>
             <ul>
                 <li>Add the function of automatically generating asset file objects</li>
             </ul>
-            <hr>
+           
             <div>
                 <h1>2023-01-06</h1>
             </div>
