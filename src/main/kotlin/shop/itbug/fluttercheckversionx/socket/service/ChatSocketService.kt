@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -28,7 +28,7 @@ object ChatSocketService {
     /**
      * 连接socket
      */
-    @OptIn(InternalCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class)
     fun connect() {
         CredentialUtil.token?.let { token ->
             GlobalScope.launch(Dispatchers.IO) {
