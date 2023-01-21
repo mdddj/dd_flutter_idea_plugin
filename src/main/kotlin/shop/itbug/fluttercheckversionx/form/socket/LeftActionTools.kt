@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
-import cn.hutool.core.net.url.UrlBuilder
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.*
@@ -8,6 +7,7 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
+import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
@@ -101,6 +101,7 @@ class LeftActionTools(
         add(detailAction)
         add(copyAction)
         add(viewQueryParamsAction)
+        add(OpenSettingAnAction())
     }
 
 
@@ -163,7 +164,6 @@ class SortAction(action: MySortToggleAction) : ActionButton(
     ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
 )
 
-
 ///查看get方法下,queryparams参数的功能
 class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
     AnAction(
@@ -172,16 +172,11 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
         AllIcons.Ide.ConfigFile
     ) {
     override fun actionPerformed(e: AnActionEvent) {
-        if (reqList.selectedValue != null) {
-            val url = UrlBuilder.ofHttp(reqList.selectedValue.url)
-            val queryMap = url.query.queryMap
-            SimpleJsonViewDialog.show(queryMap, project)
-        } else {
-            MyNotificationUtil.socketNotify(
-                PluginBundle.get("window.idea.dio.view.query.params.tip"),
-                project,
-                NotificationType.WARNING
-            )
+        reqList.selectedValue?.apply {
+            this.queryParams?.let { SimpleJsonViewDialog.show(it, project) }.takeIf { this.queryParams?.isEmpty() != true }
+            if (this.body is Map<*, *> && this.queryParams?.isEmpty() == true) {
+                SimpleJsonViewDialog.show(this.body, project)
+            }
         }
     }
 

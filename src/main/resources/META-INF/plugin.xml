@@ -110,7 +110,7 @@
 
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
-
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -166,6 +166,9 @@
                 description="flutter项目自动生成Assets资产Class类">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="DartFileGroupAction"/>
         </action>
+        <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
+                class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
+                text="OpenFlutterCheckVersionXSetting" description="打开设置"/>
     </actions>
 
 

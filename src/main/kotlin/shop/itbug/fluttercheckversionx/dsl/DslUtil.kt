@@ -32,3 +32,7 @@ fun DialogPanel.show(anActionEvent: AnActionEvent) {
 fun DialogPanel.addBorder() : DialogPanel {
     return this.withBorder(BorderFactory.createEmptyBorder(DslConfig.padding, DslConfig.padding, DslConfig.padding, DslConfig.padding))
 }
+
+fun DialogPanel.addMargin() : DialogPanel {
+    return this.withBorder(BorderFactory.createEmptyBorder())
+}
