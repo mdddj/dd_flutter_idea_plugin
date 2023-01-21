@@ -25,7 +25,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
 
         project?.apply {
 
-            val isOk = AssetsAutoGenerateClassActionConfigDialog(project).showAndGet()
+            AssetsAutoGenerateClassActionConfigDialog(project).showAndGet()
 
             val classElement =
                 MyDartPsiElementUtil.createDartClassBodyFromClassName(project, "AppAssets")
