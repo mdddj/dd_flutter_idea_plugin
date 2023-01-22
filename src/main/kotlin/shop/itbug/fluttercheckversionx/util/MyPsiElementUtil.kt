@@ -17,7 +17,7 @@ import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import com.jetbrains.lang.dart.util.DartElementGenerator
-
+typealias CreatePsiFileSuccess = (psiFile: PsiFile)->Unit
 /**
  * psi 工具类类
  */
@@ -40,7 +40,7 @@ class MyDartPsiElementUtil {
         /**
          * 创建var表达式
          */
-        fun createVarExpressionFromText(project: Project, text: String): DartVarDeclarationListImpl? {
+        private fun createVarExpressionFromText(project: Project, text: String): DartVarDeclarationListImpl? {
             val psiFile = DartElementGenerator.createDummyFile(project, text)
             return PsiTreeUtil.getChildOfType(psiFile, DartVarDeclarationListImpl::class.java)
         }
@@ -48,7 +48,7 @@ class MyDartPsiElementUtil {
         /**
          * 创建逗号
          */
-        fun createLeafPsiElement(project: Project): LeafPsiElement {
+        private fun createLeafPsiElement(project: Project): LeafPsiElement {
             val file = DartElementGenerator.createDummyFile(project, "var d = 'hello';")
             return PsiTreeUtil.getChildOfType(file, LeafPsiElement::class.java)!!
         }
@@ -56,7 +56,7 @@ class MyDartPsiElementUtil {
         /**
          * 根据类名创建PsiElement
          */
-        fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
+        private fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
             val file = DartElementGenerator.createDummyFile(project, "class $className{}")
             return PsiTreeUtil.getChildOfType(file, DartClassDefinitionImpl::class.java)!!
         }
@@ -64,7 +64,7 @@ class MyDartPsiElementUtil {
         /**
          * 创建一个dart file
          */
-        fun createDartFileWithElement(project: Project, element: PsiElement, path: String, filename: String): PsiFile? {
+        private fun createDartFileWithElement(project: Project, element: PsiElement, path: String, filename: String, onSuccess: CreatePsiFileSuccess?): PsiFile? {
             val findFileByPath = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
             if (findFileByPath != null) {
                 val findDirectory = PsiManager.getInstance(project).findDirectory(findFileByPath)
@@ -131,7 +131,7 @@ class MyDartPsiElementUtil {
          * @param project 项目
          * @param name 扫描目录名字,比如 "assets"
          */
-        fun autoGenerateAssetsDartClassFile(project: Project,name: String) {
+        fun autoGenerateAssetsDartClassFile(project: Project,name: String,auto: Boolean = false) {
             val names = mutableSetOf<String>()
             val classElement =
                 createDartClassBodyFromClassName(project, "AppAssets")
@@ -158,7 +158,9 @@ class MyDartPsiElementUtil {
                 }
             }
 
-            val file = createDartFileWithElement(project, classElement, "lib", "R.dart")
+            val file = createDartFileWithElement(project, classElement, "lib", "R.dart",onSuccess = {
+                project.toast(if (auto) "监听到资产文件夹变化,自动生成成功." else "生成成功:${it.name}")
+            })
 
             file?.let {
                 WriteCommandAction.runWriteCommandAction(project) {
