@@ -12,7 +12,6 @@ import shop.itbug.fluttercheckversionx.common.YamlFileParser
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
-import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 /**
@@ -68,8 +67,7 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
             println(filePath)
             if(filePath.indexOf("assets") == 0) {
                 println("满足自动生成文件条件,即将执行:${filePath}")
-                MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project,"assets")
-                MyNotificationUtil.toolWindowShowMessage(project,"自动生成资产文件成功")
+                MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project,"assets",true)
             }
         }
     }
