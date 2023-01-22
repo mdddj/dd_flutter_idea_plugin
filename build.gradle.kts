@@ -50,6 +50,7 @@ dependencies {
 
 
 var javaVersion = "17"
+
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
