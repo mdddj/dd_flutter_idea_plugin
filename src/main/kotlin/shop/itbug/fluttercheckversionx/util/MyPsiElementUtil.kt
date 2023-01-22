@@ -17,6 +17,9 @@ import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import com.jetbrains.lang.dart.util.DartElementGenerator
+import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
+import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
+
 typealias CreatePsiFileSuccess = (psiFile: PsiFile)->Unit
 /**
  * psi 工具类类
@@ -77,6 +80,7 @@ class MyDartPsiElementUtil {
                     runWriteAction {
                         findDirectory.add(e)
                         project.toast("生成成功")
+                        onSuccess?.invoke(e)
                     }
                     return e
                 } else {
@@ -131,10 +135,10 @@ class MyDartPsiElementUtil {
          * @param project 项目
          * @param name 扫描目录名字,比如 "assets"
          */
-        fun autoGenerateAssetsDartClassFile(project: Project,name: String,auto: Boolean = false) {
+        fun autoGenerateAssetsDartClassFile(project: Project,name: String,auto: Boolean = false,config: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()) {
             val names = mutableSetOf<String>()
             val classElement =
-                createDartClassBodyFromClassName(project, "AppAssets")
+                createDartClassBodyFromClassName(project, config.className)
             classElement.classBody?.classMembers?.let { classMembers ->
                 MyFileUtil.onFolderEachWithProject(project, name) { virtualFile ->
                     val eleValue = virtualFile.fileNameWith(name)
@@ -158,7 +162,7 @@ class MyDartPsiElementUtil {
                 }
             }
 
-            val file = createDartFileWithElement(project, classElement, "lib", "R.dart",onSuccess = {
+            val file = createDartFileWithElement(project, classElement, config.path , "${config.fileName}.dart",onSuccess = {
                 project.toast(if (auto) "监听到资产文件夹变化,自动生成成功." else "生成成功:${it.name}")
             })
 
