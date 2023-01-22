@@ -13,7 +13,7 @@ class NotifUtils {
         // 显示有新版本升级提示的通知
         fun showNewPluginTips(@NotNull project: Project, msg: String){
             NotificationGroupManager.getInstance()
-                .getNotificationGroup("plugin_new_version_notif")
+                .getNotificationGroup("plugin_new_version_notify")
                 .createNotification(msg,NotificationType.INFORMATION)
                 .notify(project)
         }

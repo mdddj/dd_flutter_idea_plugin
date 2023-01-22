@@ -15,7 +15,7 @@ class AppConfig : Configurable, Disposable {
 
     var model = PluginStateService.getInstance().state ?: AppStateModel()
 
-    var dioSetting = DioxListingUiConfig.getInstance().state ?: DioxListeningSetting()
+    private var dioSetting = DioxListingUiConfig.getInstance().state ?: DioxListeningSetting()
 
     override fun createComponent(): JComponent {
         return panel

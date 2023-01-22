@@ -67,7 +67,4 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
         SearchDialog(project).show()
     }
 
-    private fun openSetting() {
-
-    }
 }
