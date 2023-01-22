@@ -18,13 +18,15 @@ class AssetsAutoGenerateClassAction : AnAction() {
         val name = vf.name
 
         project?.apply {
-            val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+            var setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
             var isOk = setting.dontTip
             if (isOk.not()) {
-                isOk = AssetsAutoGenerateClassActionConfigDialog(project).showAndGet()
+                isOk = AssetsAutoGenerateClassActionConfigDialog(project,callback = {
+                    setting = it
+                }).showAndGet()
             }
             if (isOk) {
-               MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project, name)
+               MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project,name,false,setting)
             }
         }
     }

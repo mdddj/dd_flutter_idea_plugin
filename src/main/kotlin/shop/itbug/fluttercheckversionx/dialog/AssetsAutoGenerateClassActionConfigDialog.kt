@@ -10,8 +10,10 @@ import shop.itbug.fluttercheckversionx.dsl.addBorder
 import javax.swing.Action
 import javax.swing.JComponent
 
+
+typealias GenerateAssetsConfigCallback = (config: GenerateAssetsClassConfigModel) -> Unit
 //生成资产文件的配置弹窗
-class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrapper(project) {
+class AssetsAutoGenerateClassActionConfigDialog(project: Project, private val  callback: GenerateAssetsConfigCallback?) : DialogWrapper(project) {
 
 
 
@@ -23,7 +25,7 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
 
     override fun createCenterPanel(): JComponent {
         return generateAssetsFileSettingDialog {
-            println(it)
+            callback?.invoke(it)
             doOKAction()
         }
     }
@@ -34,7 +36,7 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
     }
 }
 
-fun generateAssetsFileSettingDialog(onApply: (model: GenerateAssetsClassConfigModel) -> Unit): DialogPanel {
+fun generateAssetsFileSettingDialog(onApply: GenerateAssetsConfigCallback): DialogPanel {
      val configModel: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
         lateinit var p : DialogPanel
      p =   panel {

@@ -66,7 +66,6 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
         if(filePath!=null){
             println(filePath)
             if(filePath.indexOf("assets") == 0) {
-                println("满足自动生成文件条件,即将执行:${filePath}")
                 MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project,"assets",true)
             }
         }
