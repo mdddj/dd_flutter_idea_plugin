@@ -76,6 +76,7 @@
         <completion.contributor language="yaml"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
                                 order="first"/>
+
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
 
@@ -144,7 +145,16 @@
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
 
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"/>
+
+
+
     </extensions>
+
+
+    <projectListeners>
+        <listener class="shop.itbug.fluttercheckversionx.listeners.PubspecYamlVersionFixedListener" topic="com.intellij.analysis.problemsView.ProblemsListener" />
+    </projectListeners>
+
 
 
     <actions>

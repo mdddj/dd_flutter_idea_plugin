@@ -1,12 +1,14 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartLanguage
@@ -87,7 +89,7 @@ class MyDartPsiElementUtil {
         }
 
         ///检测文件是否存在
-        fun checkFileIsExits(project: Project, path: String, existenceHandle: (psiFile: PsiFile) -> Unit): Boolean {
+        private fun checkFileIsExits(project: Project, path: String, existenceHandle: (psiFile: PsiFile) -> Unit): Boolean {
             val file = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
             if (file != null) {
                 val findFile = PsiManager.getInstance(project).findFile(file)
@@ -120,6 +122,48 @@ class MyDartPsiElementUtil {
             println(">>${childrenOfAnyType.size}")
             return childrenOfAnyType.any {
                 it.text.equals(text)
+            }
+        }
+
+
+        /**
+         * 自动生成资产文件
+         * @param project 项目
+         * @param name 扫描目录名字,比如 "assets"
+         */
+        fun autoGenerateAssetsDartClassFile(project: Project,name: String) {
+            val names = mutableSetOf<String>()
+            val classElement =
+                createDartClassBodyFromClassName(project, "AppAssets")
+            classElement.classBody?.classMembers?.let { classMembers ->
+                MyFileUtil.onFolderEachWithProject(project, name) { virtualFile ->
+                    val eleValue = virtualFile.fileNameWith(name)
+                    var filename = Util.removeSpecialCharacters(virtualFile.presentableName.split(".").first())
+                    if (names.contains(filename)) filename += "${names.filter { it.contains(filename) }.size}"
+                    if (filename.isNotEmpty() && eleValue.isNotEmpty()) {
+                        val expression = "static const $filename = '$eleValue'"
+                        names.add(filename)
+                        createVarExpressionFromText(
+                            project,
+                            expression
+                        )?.let {
+                            val d = createLeafPsiElement(project)
+                            runWriteAction {
+                                it.addAfter(d, it.nextSibling)
+                                classMembers.addAfter(it, classMembers.nextSibling)
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            val file = createDartFileWithElement(project, classElement, "lib", "R.dart")
+
+            file?.let {
+                WriteCommandAction.runWriteCommandAction(project) {
+                    CodeStyleManager.getInstance(project).reformat(file)
+                }
             }
         }
 
