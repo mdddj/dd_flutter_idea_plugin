@@ -14,3 +14,7 @@ object MyIcons {
     val params = IconLoader.getIcon("icons/params.svg",MyIcons::class.java)
     var flutter = IconLoader.getIcon("/icons/flutter.svg",MyIcons::class.java)
 }
+
+object MyImages {
+    val wx = IconLoader.getIcon("/images/wx.JPG",MyImages::class.java)
+}
