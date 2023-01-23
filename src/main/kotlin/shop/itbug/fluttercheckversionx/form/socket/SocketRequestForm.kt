@@ -109,12 +109,10 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     private var searchTextField: DioRequestSearch
 
     init {
-
         val initProjects = service.getAllProjectNames()
         if (initProjects.isNotEmpty()) {
             projectFilterBox.change(initProjects)
         }
-
         if (projectFilterBox.selectedItem != null) {
             requestsJBList.model =
                 projectFilterBox.selectedItem?.let { service.getRequestsWithProjectName(it.toString()) }?.let {
@@ -123,7 +121,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         } else {
             requestsJBList.model = MyDefaultListModel(datas = emptyList())
         }
-
         addHelpText()
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true

@@ -79,7 +79,6 @@ class MyDartPsiElementUtil {
                         .createFileFromText(filename, DartLanguage.INSTANCE, element.text)
                     runWriteAction {
                         findDirectory.add(e)
-                        project.toast("生成成功")
                         onSuccess?.invoke(e)
                     }
                     return e

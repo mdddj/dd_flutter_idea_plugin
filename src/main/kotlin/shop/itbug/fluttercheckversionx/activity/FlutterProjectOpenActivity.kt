@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import shop.itbug.fluttercheckversionx.common.YamlFileParser
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
-import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
@@ -48,7 +47,7 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
                 if(projectPath!=null){
                     events.forEach {
                         it.file?.apply {
-                            checkAndAutoGenFile(projectPath,this,project,setting)
+                            checkAndAutoGenFile(projectPath,this,project)
                         }
                     }
                 }
@@ -60,7 +59,7 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
     }
 
 
-    private fun checkAndAutoGenFile(projectPath: String,file: VirtualFile,project: Project,setting: GenerateAssetsClassConfigModel) {
+    private fun checkAndAutoGenFile(projectPath: String,file: VirtualFile,project: Project) {
        var filePath = file.canonicalPath
        filePath = filePath?.replace("$projectPath/","")
         if(filePath!=null){

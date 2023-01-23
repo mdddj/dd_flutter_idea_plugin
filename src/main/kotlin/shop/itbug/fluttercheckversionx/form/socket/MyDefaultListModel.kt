@@ -34,8 +34,7 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         cellHasFocus: Boolean
     ): Component {
         if (value == null) return JLabel("未知请求")
-        return  requestDetailLayout(value,isSelected);
-//        return MyRequestItemPanel(value, isSelected)
+        return  requestDetailLayout(value,isSelected)
     }
 }
 
