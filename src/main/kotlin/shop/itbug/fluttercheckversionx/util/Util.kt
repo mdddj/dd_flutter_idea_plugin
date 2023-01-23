@@ -47,10 +47,9 @@ class Util {
          * @return Color对象
          */
         fun toColorFromString(colorStr: String): Color {
-            var colorStr = colorStr
-            colorStr = colorStr.substring(4)
-            //java.awt.Color[r=0,g=0,b=255]
-            return Color(colorStr.toInt(16))
+            var c = colorStr
+            c = c.substring(4)
+            return Color(c.toInt(16))
         }
 
 

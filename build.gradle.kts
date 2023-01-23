@@ -18,7 +18,8 @@ java{
 }
 
 intellij {
-    version.set("2022.3")
+//    version.set("2022.3")
+    localPath.set("/Applications/IntelliJ IDEA.app/Contents")
     type.set("IC")
     plugins.set(
         listOf(
