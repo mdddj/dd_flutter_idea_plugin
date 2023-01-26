@@ -32,6 +32,7 @@ fun changeRoomPanel (setCall: ()-> Unit) : DialogPanel {
                 }
 
                 override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
+
                 }
 
                 override fun get(): String {
