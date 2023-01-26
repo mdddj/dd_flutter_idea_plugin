@@ -1,5 +1,7 @@
 # Fluttercheckversionx
 
+**点了没反应就是还在开发,部分功能都还在努力更新!**
+
 Flutter开发插件扩展
 
 下载地址: [Fluttercheckversionx](https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx)
