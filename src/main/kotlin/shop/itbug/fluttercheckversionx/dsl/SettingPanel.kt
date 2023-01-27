@@ -31,19 +31,16 @@ fun settingPanel(
 
     myPanel = panel {
 
-        group("典典账号登录") {
-            row {
-                button("登录") {
-                    val project = ProjectManager.getInstance().defaultProject
-                    MyNotificationUtil.showLoginDialog(project, myPanel, parentDisposable)
-                }
+        row {
+            button(PluginBundle.get("window.chat.loginDialog.text")) {
+                val project = ProjectManager.getInstance().defaultProject
+                MyNotificationUtil.showLoginDialog(project, myPanel, parentDisposable)
             }
         }
 
-        group("Diox接口监听") {
-            row("Diox ${PluginBundle.get("setting.listening.port")}") {
-                textField().bindText(model::serverPort)
-            }
+        group(PluginBundle.get("basic")) {
+
+
             row(PluginBundle.get("setting.language")) {
                 segmentedButton(listOf("System", "中文", "English")) { it }.bind(object :
                     ObservableMutableProperty<String> {
@@ -64,6 +61,13 @@ fun settingPanel(
                 })
             }.comment(PluginBundle.get("setting.reset.tip"))
 
+        }
+
+        group("Diox") {
+            row("Diox ${PluginBundle.get("setting.listening.port")}") {
+                textField().bindText(model::serverPort)
+            }
+
 
 //            新接口弹出提醒
             row(PluginBundle.get("setting.new.tips")) {
@@ -83,9 +87,9 @@ fun settingPanel(
                     checkBox("显示状态码").bindSelected(dioxSetting::showStatusCode)
                 })
                 twoColumnsRow({
-                    checkBox("显示").bindSelected(dioxSetting::showTimestamp)
+                    checkBox("显示接口耗时").bindSelected(dioxSetting::showTimestamp)
                 }, {
-
+                    checkBox("显示创建时间").bindSelected(dioxSetting::showDate)
                 })
             }
 

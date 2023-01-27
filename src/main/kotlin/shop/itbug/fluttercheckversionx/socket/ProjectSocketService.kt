@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.socket
 
+import cn.hutool.core.date.DateUtil
+
 class ProjectSocketService {
 
     /**
@@ -34,7 +36,10 @@ class ProjectSocketService {
         var timestamp: Int?,
 
         ///项目名称
-        var projectName: String?
+        var projectName: String?,
+
+        ///生成成功
+        var createDate: String = DateUtil.now()
     )
 
 }

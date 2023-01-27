@@ -13,7 +13,6 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
-import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.StateMachineEnum.NEW_SESSION
@@ -28,7 +27,6 @@ import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.icons.MyImages
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.services.event.SocketMessageBus
@@ -300,16 +298,11 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             ) {
                 docPanel(helpText, project).showCenter(project)
             }
-
-            appendLine("打赏",
+            appendText(" ")
+            appendText("打赏",
                 SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED,JBUI.CurrentTheme.Link.Foreground.ENABLED)
             ){
-                MyNotificationUtil.tooWindowShowMessage(project, panel {
-                    row {
-                        label("打赏")
-                        MyImages.wx
-                    }
-                })
+
             }
         }
     }

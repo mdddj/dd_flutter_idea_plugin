@@ -75,6 +75,11 @@ fun loginPanel(parentDisposable: Disposable): DialogPanel {
         row {
             cell(errorLabel)
         }
+        row {
+            label("登录服务出现错误,正在抢修中").component.apply {
+                foreground = UIUtil.getErrorForeground()
+            }
+        }
     }.addBorder()
     val newDisposable = Disposer.newDisposable()
     panel.registerValidators(newDisposable)

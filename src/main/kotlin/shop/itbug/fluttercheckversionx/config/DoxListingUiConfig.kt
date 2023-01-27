@@ -17,6 +17,8 @@ data class DioxListeningSetting(
     var showStatusCode: Boolean = true,
     //显示接口耗时
     var showTimestamp: Boolean = true,
+    //显示时间
+    var showDate: Boolean = true,
 
     //是否使用旧版本的UI
     var uiRenderVersionCode: String = "2",
@@ -41,6 +43,8 @@ class DioxListingUiConfig private constructor(): PersistentStateComponent<DioxLi
         fun getInstance(): PersistentStateComponent<DioxListeningSetting> {
             return service<DioxListingUiConfig>()
         }
+
+        val  setting :  DioxListeningSetting get() = getInstance().state ?: DioxListeningSetting()
     }
 
 }

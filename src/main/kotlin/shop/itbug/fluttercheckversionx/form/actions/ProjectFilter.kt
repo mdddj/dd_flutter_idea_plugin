@@ -20,7 +20,7 @@ class ProjectFilter : JComboBox<String>() {
     }
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(100,-1)
+        return Dimension(150,-1)
     }
 
     override fun getMinimumSize(): Dimension {
