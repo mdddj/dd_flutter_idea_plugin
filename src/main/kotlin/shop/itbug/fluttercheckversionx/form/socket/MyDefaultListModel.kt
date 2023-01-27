@@ -4,6 +4,7 @@ import cn.hutool.core.net.url.UrlBuilder
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
+import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.dsl.requestDetailLayout
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.Component
@@ -26,6 +27,7 @@ class MyDefaultListModel(datas: List<Request>) :
 ///渲染请求列表
 class MyCustomItemRender : ListCellRenderer<Request> {
 
+    private val setting = DioxListingUiConfig.setting
     override fun getListCellRendererComponent(
         list: JList<out Request>?,
         value: Request?,
@@ -34,7 +36,7 @@ class MyCustomItemRender : ListCellRenderer<Request> {
         cellHasFocus: Boolean
     ): Component {
         if (value == null) return JLabel("未知请求")
-        return  requestDetailLayout(value,isSelected)
+        return  requestDetailLayout(value,isSelected,setting)
     }
 }
 
