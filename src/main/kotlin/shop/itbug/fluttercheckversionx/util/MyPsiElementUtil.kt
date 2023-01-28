@@ -19,7 +19,8 @@ import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 
-typealias CreatePsiFileSuccess = (psiFile: PsiFile)->Unit
+typealias CreatePsiFileSuccess = (psiFile: PsiFile) -> Unit
+
 /**
  * psi 工具类类
  */
@@ -58,7 +59,7 @@ class MyDartPsiElementUtil {
         /**
          * 根据类名创建PsiElement
          */
-         fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
+        fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
             val file = DartElementGenerator.createDummyFile(project, "class $className{\n\n}")
             return PsiTreeUtil.getChildOfType(file, DartClassDefinitionImpl::class.java)!!
         }
@@ -66,7 +67,13 @@ class MyDartPsiElementUtil {
         /**
          * 创建一个dart file
          */
-        private fun createDartFileWithElement(project: Project, element: PsiElement, path: String, filename: String, onSuccess: CreatePsiFileSuccess?): PsiFile? {
+        private fun createDartFileWithElement(
+            project: Project,
+            element: PsiElement,
+            path: String,
+            filename: String,
+            onSuccess: CreatePsiFileSuccess?
+        ): PsiFile? {
             val findFileByPath = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
             if (findFileByPath != null) {
                 val findDirectory = PsiManager.getInstance(project).findDirectory(findFileByPath)
@@ -91,7 +98,11 @@ class MyDartPsiElementUtil {
         }
 
         ///检测文件是否存在
-        private fun checkFileIsExits(project: Project, path: String, existenceHandle: (psiFile: PsiFile) -> Unit): Boolean {
+        private fun checkFileIsExits(
+            project: Project,
+            path: String,
+            existenceHandle: (psiFile: PsiFile) -> Unit
+        ): Boolean {
             val file = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
             if (file != null) {
                 val findFile = PsiManager.getInstance(project).findFile(file)
@@ -133,7 +144,12 @@ class MyDartPsiElementUtil {
          * @param project 项目
          * @param name 扫描目录名字,比如 "assets"
          */
-        fun autoGenerateAssetsDartClassFile(project: Project,name: String,auto: Boolean = false,config: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()) {
+        fun autoGenerateAssetsDartClassFile(
+            project: Project,
+            name: String,
+            auto: Boolean = false,
+            config: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+        ) {
             val names = mutableSetOf<String>()
             val classElement =
                 createDartClassBodyFromClassName(project, config.className)
@@ -160,9 +176,10 @@ class MyDartPsiElementUtil {
                 }
             }
 
-            val file = createDartFileWithElement(project, classElement, config.path , "${config.fileName}.dart",onSuccess = {
-                project.toast(if (auto) "监听到资产文件夹变化,自动生成成功." else "生成成功:${it.name}")
-            })
+            val file =
+                createDartFileWithElement(project, classElement, config.path, "${config.fileName}.dart", onSuccess = {
+                    project.toast(if (auto) "监听到资产文件夹变化,自动生成成功." else "生成成功:${it.name}")
+                })
 
             file?.let {
                 WriteCommandAction.runWriteCommandAction(project) {
@@ -179,29 +196,40 @@ class MyDartPsiElementUtil {
             return PsiTreeUtil.findChildOfType(createDummyFile, DartMetadataImpl::class.java)!!
         }
 
-        fun generateSpace(project: Project,text: String = "\n"): PsiWhiteSpaceImpl {
+        fun generateSpace(project: Project, text: String = "\n"): PsiWhiteSpaceImpl {
             val createDummyFile = DartElementGenerator.createDummyFile(project, text)
-            return PsiTreeUtil.findChildOfType(createDummyFile,PsiWhiteSpaceImpl::class.java)!!
+            return PsiTreeUtil.findChildOfType(createDummyFile, PsiWhiteSpaceImpl::class.java)!!
         }
 
-        fun generateMixins(project: Project,name: String) : DartMixinsImpl {
+        fun generateMixins(project: Project, name: String): DartMixinsImpl {
             val createDummyFile = DartElementGenerator.createDummyFile(project, "class A with $name")
-            return PsiTreeUtil.findChildOfType(createDummyFile,DartMixinsImpl::class.java)!!
+            return PsiTreeUtil.findChildOfType(createDummyFile, DartMixinsImpl::class.java)!!
         }
 
 
-
-
-        fun genFreezedClass(project: Project,className: String) : PsiFile {
+        fun genFreezedClass(project: Project, className: String, properties: String = ""): PsiFile {
             return DartElementGenerator.createDummyFile(
                 project, "@freezed\n" +
                         "class $className with _\$$className {\n" +
-                        "  const factory $className({}) = _$className;\n" +
+                        "  const factory $className({\n$properties    }) = _$className;\n" +
                         "}"
             )
         }
-        fun freezedGetDartFactoryConstructorDeclarationImpl(file: PsiFile) : DartFactoryConstructorDeclarationImpl {
-            return PsiTreeUtil.findChildOfType(file,DartFactoryConstructorDeclarationImpl::class.java)!!
+
+        fun freezedGetDartFactoryConstructorDeclarationImpl(file: PsiFile): DartFactoryConstructorDeclarationImpl {
+            return PsiTreeUtil.findChildOfType(file, DartFactoryConstructorDeclarationImpl::class.java)!!
+        }
+
+        /**
+         * 生成可空的属性
+         */
+        fun getNullProperties(type: String, name: String, project: Project): DartDefaultFormalNamedParameterImpl {
+            val createDummyFile = DartElementGenerator.createDummyFile(
+                project, "class B {\n" +
+                        "  B({$type $name});\n" +
+                        "}"
+            )
+            return PsiTreeUtil.getChildOfType(createDummyFile, DartDefaultFormalNamedParameterImpl::class.java)!!
         }
     }
 
