@@ -77,7 +77,7 @@ class AppService {
     fun initSocketService(p: Project) {
         if (socketIsInit) return
         project = p
-        val port = PluginStateService.getInstance().state?.serverPort ?: "9999"
+        val port = PluginStateService.appSetting.serverPort
         server = AioQuickServer(port.toInt(), StringProtocol(), object : MessageProcessor<String?> {
             override fun process(session: AioSession?, msg: String?) {
                 msg?.let { flutterClientJsonHandle(msg) }

@@ -182,6 +182,10 @@
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="OpenFlutterCheckVersionXSetting" description="打开设置"/>
+        <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
+                text="模型转Freezed对象">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
     </actions>
 
 
