@@ -19,6 +19,8 @@ data class DioxListeningSetting(
     var showTimestamp: Boolean = true,
     //显示时间
     var showDate: Boolean = true,
+    //粗体链接
+    var urlBold : Boolean = true,
 
     //是否使用旧版本的UI
     var uiRenderVersionCode: String = "2",

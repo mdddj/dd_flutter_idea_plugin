@@ -91,6 +91,9 @@ fun settingPanel(
                 }, {
                     checkBox("显示创建时间").bindSelected(dioxSetting::showDate)
                 })
+                twoColumnsRow({
+                    checkBox("粗体链接").bindSelected(dioxSetting::urlBold)
+                }, {})
             }
 
         }

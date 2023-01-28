@@ -19,12 +19,14 @@ class SocketWindow : ToolWindowFactory {
         val socketRequestForm = SocketRequestForm(p0,p1)
         val instance = ContentFactory.SERVICE.getInstance()
         val createContent = instance.createContent(socketRequestForm.getContent(), PluginBundle.get("window.idea.dio.title"), false)
+
         p1.contentManager.addContent(createContent)
 
         //在线聊天窗口
         val flutterChatWindow = FlutterChatMessageWindow(p0,p1)
         val flutterChatWindowContent = instance.createContent(flutterChatWindow,PluginBundle.get("window.idea.chat.title"),false)
         p1.contentManager.addContent(flutterChatWindowContent)
+
 
 
     }
