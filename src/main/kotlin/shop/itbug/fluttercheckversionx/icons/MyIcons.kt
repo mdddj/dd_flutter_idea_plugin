@@ -15,6 +15,3 @@ object MyIcons {
     var flutter = IconLoader.getIcon("/icons/flutter.svg",MyIcons::class.java)
 }
 
-object MyImages {
-    val wx = IconLoader.getIcon("/images/wx.png",MyImages::class.java)
-}

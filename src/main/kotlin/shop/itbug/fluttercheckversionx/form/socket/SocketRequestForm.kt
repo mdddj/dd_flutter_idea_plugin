@@ -213,9 +213,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                         NEW_SESSION -> {
                             print("新连接")
                         }
-
                         else -> {
-
+                            println("socket状态变更:$stateMachineEnum")
                         }
                     }
                 }

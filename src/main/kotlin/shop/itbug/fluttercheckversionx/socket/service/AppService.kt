@@ -2,9 +2,11 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONObject
+import com.alibaba.fastjson2.JSONWriter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
+import org.apache.commons.logging.LogFactory
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
@@ -95,7 +97,6 @@ class AppService {
                     StateMachineEnum.NEW_SESSION -> {
                         newSessionHandle()
                     }
-
                     StateMachineEnum.SESSION_CLOSED -> {
                         MyNotificationUtil.toolWindowShowMessage(
                             project,
@@ -107,7 +108,7 @@ class AppService {
                 }
             }
         })
-        server.setReadBufferSize(10485760) // 10m
+        server.setReadBufferSize(10485760*2) // 10m
         val thread = AppSocketThread(server, project) {
             socketIsInit = it
         }
@@ -137,6 +138,7 @@ class AppService {
             responseModel.projectName?.apply {
                 flutterProjects[this] = reqsAdded
             }
+            LogFactory.getLog(AppService::class.java).info(JSONObject.toJSONString(responseModel,JSONWriter.Feature.PrettyFormat))
             messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
                 .handleData(responseModel)
         } catch (e: Exception) {

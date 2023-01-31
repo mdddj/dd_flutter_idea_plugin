@@ -2,12 +2,12 @@ package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.panel
+import icons.MyImages
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
-import shop.itbug.fluttercheckversionx.icons.MyImages
 import javax.swing.JButton
 import javax.swing.JComponent
-import javax.swing.JLabel
 import javax.swing.JPanel
 
 /**
@@ -27,10 +27,7 @@ class RewardDialog(var project: Project) : DialogWrapper(project) {
     override fun createCenterPanel(): JComponent {
         return panel {
             row {
-                JLabel(MyImages.wx)
-            }
-            row {
-                MyImages.wx
+                JBLabel(MyImages.wx)
             }
         }
 
