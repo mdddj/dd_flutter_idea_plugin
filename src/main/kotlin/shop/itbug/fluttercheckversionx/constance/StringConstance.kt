@@ -19,6 +19,11 @@ Future<void> main() async  {
 }
 ```
 
+# 注意
+```dart
+interceptors.removeWhere((element) => element is! DioHttpRequestInterceptor);//单例模式下,请不要clean或者remove DioHttpRequestInterceptor
+```
+
 接入完成.
 注意:第一次安装插件需要重启Idea
 有问题请加Flutter自学QQ群:__${qqGroup.qqGroupNumber}__
