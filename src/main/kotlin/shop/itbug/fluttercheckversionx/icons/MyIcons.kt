@@ -16,5 +16,5 @@ object MyIcons {
 }
 
 object MyImages {
-    val wx = IconLoader.getIcon("/images/wx.JPG",MyImages::class.java)
+    val wx = IconLoader.getIcon("/images/wx.png",MyImages::class.java)
 }

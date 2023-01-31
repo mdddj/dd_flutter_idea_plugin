@@ -19,6 +19,7 @@ import org.smartboot.socket.StateMachineEnum.NEW_SESSION
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.constance.helpText
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
+import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.dsl.docPanel
 import shop.itbug.fluttercheckversionx.dsl.requestDetailPanel
 import shop.itbug.fluttercheckversionx.dsl.showCenter
@@ -299,10 +300,10 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                 docPanel(helpText, project).showCenter(project)
             }
             appendText(" ")
-            appendText("打赏",
+            appendText(PluginBundle.get("reward"),
                 SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED,JBUI.CurrentTheme.Link.Foreground.ENABLED)
             ){
-
+                RewardDialog(project).show()
             }
         }
     }
