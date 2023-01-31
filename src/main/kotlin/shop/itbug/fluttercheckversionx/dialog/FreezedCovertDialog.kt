@@ -56,7 +56,11 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
                     .align(Align.FILL)
             }
             row {
-                checkBox("生成fromJson方法").bindSelected(setting::genFromJson)
+                checkBox("生成fromJson方法").bindSelected({setting.genFromJson}){
+                    if(it){
+
+                    }
+                }
             }
             row {
                 checkBox("生成part引用").bindSelected(setting::genPartOf)
@@ -79,9 +83,11 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
     private fun generateFreezedModel() {
         val genFreezedClass =
             MyDartPsiElementUtil.genFreezedClass(project, model.className, model.getPropertiesString())
-        println(genFreezedClass.text)
+
         editView.text = genFreezedClass.text
     }
+
+
 
 
 }

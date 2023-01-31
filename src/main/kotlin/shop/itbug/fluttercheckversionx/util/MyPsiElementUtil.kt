@@ -43,9 +43,9 @@ class MyDartPsiElementUtil {
         /**
          * 创建var表达式
          */
-        private fun createVarExpressionFromText(project: Project, text: String): DartVarDeclarationListImpl? {
+        private fun createVarExpressionFromText(project: Project, text: String): DartVarDeclarationListImpl {
             val psiFile = DartElementGenerator.createDummyFile(project, text)
-            return PsiTreeUtil.getChildOfType(psiFile, DartVarDeclarationListImpl::class.java)
+            return PsiTreeUtil.getChildOfType(psiFile, DartVarDeclarationListImpl::class.java)!!
         }
 
         /**
@@ -161,15 +161,14 @@ class MyDartPsiElementUtil {
                     if (filename.isNotEmpty() && eleValue.isNotEmpty()) {
                         val expression = "static const $filename = '$eleValue'"
                         names.add(filename)
-                        createVarExpressionFromText(
+                        val ex = createVarExpressionFromText(
                             project,
                             expression
-                        )?.let {
-                            val d = createLeafPsiElement(project)
-                            runWriteAction {
-                                it.addAfter(d, it.nextSibling)
-                                classMembers.addAfter(it, classMembers.nextSibling)
-                            }
+                        )
+                        val d = createLeafPsiElement(project)
+                        runWriteAction {
+                            ex.addAfter(d, ex.nextSibling)
+                            classMembers.addAfter(ex, classMembers.nextSibling)
                         }
 
                     }
