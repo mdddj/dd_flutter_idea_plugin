@@ -54,7 +54,7 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
     }
 
 
-
+    val code: String get() = editView.text
 
 }
 
