@@ -1,14 +1,14 @@
 package shop.itbug.fluttercheckversionx.form.components
 
-import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
-import shop.itbug.fluttercheckversionx.common.toJsonFormart
+import shop.itbug.fluttercheckversionx.dialog.FreezedClassesGenerateDialog
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.services.impl.ModelToFreezedModelServiceImpl
+import shop.itbug.fluttercheckversionx.util.toastWithError
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -19,7 +19,7 @@ import javax.swing.JPanel
  * print("hello world");
  * ```
  */
-class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
+class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
 
 
     private val freezedService = ModelToFreezedModelServiceImpl()
@@ -75,10 +75,17 @@ class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
      * 将json转成freezed模型对象
      */
     private fun jsonToFreezedModel() {
-        val jsonObject = JSONObject.parseObject(jsonView.text)
-        val jsonObjectToFreezedCovertModelList = freezedService.jsonObjectToFreezedCovertModelList(jsonObject)
-        Console.log("转模型:${jsonObjectToFreezedCovertModelList.toJsonFormart()}")
-
+        val text = jsonView.text.trim()
+        if(text.isEmpty()){
+            return
+        }
+        try {
+            val jsonObject = JSONObject.parseObject(text)
+            val jsonObjectToFreezedCovertModelList = freezedService.jsonObjectToFreezedCovertModelList(jsonObject)
+            FreezedClassesGenerateDialog(project,jsonObjectToFreezedCovertModelList).show()
+        }catch (e: Exception) {
+            project.toastWithError("转模型失败:$e")
+        }
     }
 
 
