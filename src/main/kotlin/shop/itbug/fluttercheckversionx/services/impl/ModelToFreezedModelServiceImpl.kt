@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.services.impl
 
+import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONArray
 import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -9,6 +10,7 @@ import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.services.ModelToFreezedModelService
 import shop.itbug.fluttercheckversionx.util.DartJavaCovertUtil
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.formatDartName
 import shop.itbug.fluttercheckversionx.util.getDartClassDefinition
 
 class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
@@ -23,32 +25,45 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
         return psiElementToFreezedCovertModel(dartClassDefinition)
     }
 
-    override fun jsonObjectToFreezedCovertModelList(jsonObject: JSONObject,oldList: MutableList<FreezedCovertModel>): List<FreezedCovertModel> {
-        val rootModel = jsonObjectToFreezedCovertModel(jsonObject)
+    override fun jsonObjectToFreezedCovertModelList(
+        jsonObject: JSONObject,
+        oldList: MutableList<FreezedCovertModel>,
+        className: String
+    ): List<FreezedCovertModel> {
+        val rootModel = jsonObjectToFreezedCovertModel(jsonObject,className)
         oldList.add(rootModel)
-        jsonObject.values.forEach {
-            if(it is JSONObject) {
-                val jsonObjectToFreezedCovertModelList = jsonObjectToFreezedCovertModelList(it, oldList)
+        jsonObject.forEach { key,value ->
+            if(value is JSONObject) {
+                val jsonObjectToFreezedCovertModelList = jsonObjectToFreezedCovertModelList(value, oldList,key.toString().formatDartName())
                 oldList.addAll(jsonObjectToFreezedCovertModelList)
-            }else if(it is JSONArray) {
-                if(it.isNotEmpty()) {
-                    val parse = JSONObject.parse(JSONObject.toJSONString(it.first()))
-                    val jsonObjectToFreezedCovertModelList = jsonObjectToFreezedCovertModelList(parse, oldList)
-                    oldList.addAll(jsonObjectToFreezedCovertModelList)
+            }else if(value is JSONArray) {
+                if(value.isNotEmpty()) {
+                    val firstObject = value.first()
+                    println(firstObject::class.java)
+                    if(firstObject is JSONObject) {
+                        try{
+                            val parse = JSONObject.parse(JSONObject.toJSONString(value.first()))
+                            val jsonObjectToFreezedCovertModelList = jsonObjectToFreezedCovertModelList(parse, oldList,key.toString().formatDartName())
+                            oldList.addAll(jsonObjectToFreezedCovertModelList)
+                        }catch (e: Exception){
+                            Console.log("数组转失败:${e}")
+                        }
+                    }
+
                 }
             }
         }
         return oldList
     }
 
-    override fun jsonObjectToFreezedCovertModel(jsonObject: JSONObject): FreezedCovertModel {
+    override fun jsonObjectToFreezedCovertModel(jsonObject: JSONObject, className: String): FreezedCovertModel {
         val properties = mutableListOf<DartClassProperty>()
         jsonObject.forEach { key, value ->
-            val dartType = DartJavaCovertUtil.getDartType(value::class.java, key)
+            val dartType = DartJavaCovertUtil.getDartType(value, key)
             val dartClassProperty = DartClassProperty(type = dartType, name = key, isNonNull = false)
             properties.add(dartClassProperty)
         }
-        return FreezedCovertModel(properties = properties, className = "FreezedModel")
+        return FreezedCovertModel(properties = properties, className = className)
     }
 
 
