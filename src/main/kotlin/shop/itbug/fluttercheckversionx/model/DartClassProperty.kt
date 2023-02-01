@@ -15,7 +15,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
                 defaultValue = "@Default(${it.getDartDefaultValue()}) "
             }
 
-            val jsonKeyString = if (upperCamelStyle) "@JsonKey(name='${it.finalPropertyName}') " else ""
+            val jsonKeyString = if (upperCamelStyle) "@JsonKey(name: '${it.finalPropertyName}') " else ""
 
 
             if (it.isNonNull) {
