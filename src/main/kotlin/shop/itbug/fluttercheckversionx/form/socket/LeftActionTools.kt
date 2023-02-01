@@ -230,13 +230,7 @@ class ShowParamsActionGroup( val reqList: JBList<Request>,val project: Project) 
         super.getTemplatePresentation().icon = MyIcons.params
 
         reqList.addListSelectionListener {
-            if(reqList.selectedValue!=null){
-                viewPostParamsAction.templatePresentation.isEnabled = true
-                viewQueryParamsAction.templatePresentation.isEnabled = true
-            }else{
-                viewPostParamsAction.templatePresentation.isEnabled = false
-                viewQueryParamsAction.templatePresentation.isEnabled = false
-            }
+
         }
 
     }
