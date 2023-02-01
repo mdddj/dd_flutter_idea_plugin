@@ -27,19 +27,16 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
         oldList: MutableList<FreezedCovertModel>,
         className: String
     ): MutableList<FreezedCovertModel> {
-        if(!oldList.any { it.className == className }){
+        val filter = oldList.none { it.className == className }
+        if (filter) {
             val rootModel = jsonObjectToFreezedCovertModel(jsonObject, className)
             oldList.add(rootModel)
             jsonObject.forEach { key, value ->
                 if (value is JSONObject) {
-                    val jsonObjectToFreezedCovertModelList =
-                        jsonObjectToFreezedCovertModelList(value, oldList, key.toString().formatDartName())
-                    oldList.addAll(jsonObjectToFreezedCovertModelList)
+                    jsonObjectToFreezedCovertModelList(value, oldList, key.toString().formatDartName())
                 } else if (value is JSONArray && value.isNotEmpty() && value.first() is JSONObject) {
                     val parse = JSONObject.parse(JSONObject.toJSONString(value.findPropertiesMaxLenObject()))
-                    val jsonObjectToFreezedCovertModelList =
-                        jsonObjectToFreezedCovertModelList(parse, oldList, key.toString().formatDartName())
-                    oldList.addAll(jsonObjectToFreezedCovertModelList)
+                    jsonObjectToFreezedCovertModelList(parse, oldList, key.toString().formatDartName())
                 }
             }
         }
@@ -51,7 +48,13 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
         val properties = mutableListOf<DartClassProperty>()
         jsonObject.forEach { key, value ->
             val dartType = DartJavaCovertUtil.getDartType(value, key)
-            val dartClassProperty = DartClassProperty(type = dartType, name = key, isNonNull = false)
+            val dartClassProperty = DartClassProperty(
+                type = dartType,
+                name = key,
+                isNonNull = false,
+                finalPropertyValue = value,
+                finalPropertyName = key
+            )
             properties.add(dartClassProperty)
         }
         return FreezedCovertModel(properties = properties, className = className)

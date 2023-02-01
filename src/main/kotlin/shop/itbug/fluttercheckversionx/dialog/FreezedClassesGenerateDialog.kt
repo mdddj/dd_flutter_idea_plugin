@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
 import javax.swing.JComponent
@@ -17,6 +16,8 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
         super.init()
         title = "freezed类生成"
         initTabView()
+        setOKButtonText("一键生成")
+        setCancelButtonText("取消")
     }
 
 
@@ -28,11 +29,6 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
     }
 
     override fun createCenterPanel(): JComponent {
-
-        return panel {
-            row {
-                scrollCell(tabView)
-            }
-        }
+        return tabView
     }
 }
