@@ -28,6 +28,9 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
         false
     )
 
+
+    val text: String get() = jsonView.text
+
     init {
         border = BorderFactory.createEmptyBorder()
         jsonView.border = BorderFactory.createEmptyBorder()

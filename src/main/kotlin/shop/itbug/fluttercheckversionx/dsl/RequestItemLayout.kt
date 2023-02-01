@@ -32,7 +32,6 @@ fun requestDetailLayout(request: Request, isSelected: Boolean,setting: DioxListe
             })
             label(request.url!!.formatUrl(setting)).component.apply {
                 foreground = if(isSelected) UIUtil.getListSelectionForeground(false) else UIUtil.getLabelForeground()
-                font = JBFont.h4()
             }
         }
         row {

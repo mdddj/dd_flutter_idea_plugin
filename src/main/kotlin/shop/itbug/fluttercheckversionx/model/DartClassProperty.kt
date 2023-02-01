@@ -22,5 +22,11 @@ fun DartVarDeclarationListImpl.covertDartClassPropertyModel(): DartClassProperty
     )
 }
 
-data class DartClassProperty(val type: String, val name: String, val isNonNull: Boolean)
+data class DartClassProperty(
+    val type: String, val name: String,
+    //true - 可空
+    //false - 不可为空
+    val isNonNull: Boolean
+)
+
 data class FreezedCovertModel(val properties: List<DartClassProperty>, val className: String)
