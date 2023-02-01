@@ -16,6 +16,7 @@ import com.jetbrains.lang.dart.DartLanguage
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.services.DEFAULT_CLASS_NAME
+import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
 import java.awt.BorderLayout
@@ -30,6 +31,7 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
     private var fileName: String = DEFAULT_CLASS_NAME
     private var filePath: String =  project.basePath + "/lib/freezed"
     private val widgets : MutableList<FreezedCovertModelWidget> = mutableListOf()
+    lateinit var settingPanel: DialogPanel
     init {
         super.init()
         title = "freezed类生成"
@@ -62,7 +64,7 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
      * 存储设置
      */
     fun getGlobalSettingPanel(): DialogPanel {
-        return panel {
+        settingPanel = panel {
             row("保存到目录") {
                 textFieldWithBrowseButton(
                     fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor(),
@@ -85,10 +87,12 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
                 })
             }
         }
+        return settingPanel
     }
 
 
     override fun doOKAction() {
+        settingPanel.apply()
         val psiFile =
             PsiFileFactory.getInstance(project).createFileFromText("$fileName.dart",DartLanguage.INSTANCE, generateFileText())
         val virtualFile = filePath.getVirtualFile()
@@ -104,6 +108,8 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
                 runWriteAction {
                     findDirectory.add(psiFile)
                 }
+                project.toast("创建成功")
+                super.doOKAction()
             }
 
         }
