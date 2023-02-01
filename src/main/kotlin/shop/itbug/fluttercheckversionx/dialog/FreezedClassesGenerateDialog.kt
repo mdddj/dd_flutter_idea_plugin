@@ -1,18 +1,22 @@
 package shop.itbug.fluttercheckversionx.dialog
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.DartLanguage
+import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.services.DEFAULT_CLASS_NAME
+import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -23,8 +27,9 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
     DialogWrapper(project) {
 
     private val tabView = JBTabbedPane()
-    var fileName: String = DEFAULT_CLASS_NAME
-
+    private var fileName: String = DEFAULT_CLASS_NAME
+    private var filePath: String =  project.basePath + "/lib/freezed"
+    private val widgets : MutableList<FreezedCovertModelWidget> = mutableListOf()
     init {
         super.init()
         title = "freezed类生成"
@@ -37,6 +42,7 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
     private fun initTabView() {
         freezedClasses.forEach {
             val widget = FreezedCovertModelWidget(it, project)
+            widgets.add(widget)
             tabView.add(it.className, widget)
         }
     }
@@ -62,9 +68,9 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
                     fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                     project = project
                 ).align(Align.FILL).bindText({
-                    project.basePath + "/lib/freezed"
+                   filePath
                 }, {
-                    println("设置目录:${it}")
+                   filePath = it
                 })
 
             }.contextHelp("如果目录不存在,将会自动穿件该文件夹", "提示")
@@ -83,6 +89,40 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
 
 
     override fun doOKAction() {
-        PsiFileFactory.getInstance(project).createFileFromText(DartLanguage.INSTANCE,"")
+        val psiFile =
+            PsiFileFactory.getInstance(project).createFileFromText("$fileName.dart",DartLanguage.INSTANCE, generateFileText())
+        val virtualFile = filePath.getVirtualFile()
+        if(virtualFile==null){
+            project.toastWithError("无法找到目录")
+        }
+        virtualFile?.let {
+            val  findDirectory = PsiManager.getInstance(project).findDirectory(it)
+            if(findDirectory==null){
+                project.toastWithError("查找目录失败")
+            }
+            findDirectory?.let {
+                runWriteAction {
+                    findDirectory.add(psiFile)
+                }
+            }
+
+        }
+
+
+    }
+
+    private fun generateFileText() : String {
+        val sb = StringBuilder()
+        sb.appendLine("import 'package:freezed_annotation/freezed_annotation.dart';")
+        sb.appendLine()
+        sb.appendLine("part '$fileName.freezed.dart';")
+        sb.appendLine("part '$fileName.g.dart';")
+        sb.appendLine()
+        widgets.forEach {
+            sb.appendLine()
+            sb.appendLine(it.code)
+            sb.appendLine()
+        }
+        return sb.toString()
     }
 }
