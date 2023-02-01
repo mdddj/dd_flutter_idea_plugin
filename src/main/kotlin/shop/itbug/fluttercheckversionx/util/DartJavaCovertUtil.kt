@@ -5,9 +5,11 @@ import com.alibaba.fastjson2.JSONObject
 import java.math.BigDecimal
 
 object DartJavaCovertUtil {
-    fun getDartType(clazz: Class<*>,key: String) : String {
-        println(clazz)
-        return when(clazz){
+    fun getDartType(obj: Any,key: String) : String {
+        if(obj is Boolean) {
+            return "bool"
+        }
+        return when(obj::class.java){
             Integer::class.java -> {
                 "int"
             }
@@ -21,10 +23,15 @@ object DartJavaCovertUtil {
                 "bool"
             }
             JSONObject::class.java -> {
-                key
+                key.formatDartName()
             }
             JSONArray::class.java -> {
-                "List<$key>"
+                val arr = obj as JSONArray
+                if(arr.isNotEmpty() && arr.first() is JSONObject) {
+                    "List<${key.formatDartName()}>"
+                }
+                "List<${getDartType(arr.first(),key)}>"
+
             }
             else -> {
                 "dynamic"

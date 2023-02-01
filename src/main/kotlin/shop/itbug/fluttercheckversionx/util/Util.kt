@@ -15,6 +15,10 @@ fun Color.toHexString(): String {
     return Util.toHexFromColor(this)
 }
 
+fun String.formatDartName() : String {
+    return Util.removeSpecialCharacters(this)
+}
+
 class Util {
     companion object {
 
@@ -54,8 +58,9 @@ class Util {
 
 
         fun removeSpecialCharacters(string: String): String {
-            var str1: String = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, string)
-            str1 = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, str1)
+
+            var str1: String = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, string)
+            str1 = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, str1)
             if (dartKeys.contains(str1)) {
                 str1 += "_"
             }
@@ -74,7 +79,7 @@ class Util {
             }
             while (ns != null && ns.hasMoreElements()) {
                 val n: NetworkInterface = ns.nextElement()
-                val `is`: Enumeration<InetAddress> = n.getInetAddresses()
+                val `is`: Enumeration<InetAddress> = n.inetAddresses
                 while (`is`.hasMoreElements()) {
                     val i: InetAddress = `is`.nextElement()
                     if (!i.isLoopbackAddress && !i.isLinkLocalAddress && !i.isMulticastAddress
