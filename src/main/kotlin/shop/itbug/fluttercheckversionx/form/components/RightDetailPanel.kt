@@ -38,6 +38,7 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         border = BorderFactory.createEmptyBorder()
         jsonViewInit()
         add(actionsToolBar,BorderLayout.NORTH)
+
     }
 
 
