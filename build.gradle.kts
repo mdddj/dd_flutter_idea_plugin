@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.2.1"
+version = "2.2.2"
 repositories {
     mavenCentral()
     google()
@@ -72,6 +72,15 @@ tasks {
         sinceBuild.set("223.7571.182")
         untilBuild.set("231.*")
         changeNotes.set("""
+            
+             <div>
+                <h1>2023-02-02 (2.2.2)</h1>
+            </div>
+            <ul>
+                <li>Add the function of converting json to freezed model</li>
+                <li>Optimize the details</li>            
+            </ul>
+            
             <div>
                 <h1>2023-01-21 (2.2.0 - 2023.1 EAP)</h1>
             </div>
