@@ -76,7 +76,7 @@ fun freezedCovertModelSetting(model: FreezedCovertModel,submit: () -> Unit): Dia
         }
 
         row {
-            button("保存") {
+            button(PluginBundle.get("save.and.refresh")) {
                 p.apply()
                 submit.invoke()
             }
