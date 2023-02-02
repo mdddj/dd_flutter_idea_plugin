@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog
 
+import com.alibaba.fastjson2.JSONObject
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -38,6 +39,11 @@ class JsonToFreezedInputDialog(val project: Project) : DialogWrapper(project) {
     override fun doValidate(): ValidationInfo? {
         if(jsonEditView.text.trim().isEmpty()){
             return ValidationInfo(PluginBundle.get("input.your.json"),jsonEditView)
+        }
+        try {
+            JSONObject.parseObject(jsonEditView.text)
+        }catch (e: Exception){
+            return ValidationInfo(PluginBundle.get("json.format.verification.failed"),jsonEditView)
         }
         return super.doValidate()
     }
