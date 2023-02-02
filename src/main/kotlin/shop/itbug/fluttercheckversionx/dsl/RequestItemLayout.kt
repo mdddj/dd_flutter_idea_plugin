@@ -38,7 +38,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean,setting: DioxListe
             label(request.statusCode!!.toString())
                 .visible(setting.showStatusCode).component.apply {
                 font = JBFont.small()
-                foreground = if(request.statusCode == 200) UIUtil.getLabelSuccessForeground() else UIUtil.getErrorForeground()
+                foreground = if(request.statusCode == 200) UIUtil.getLabelTextForeground() else UIUtil.getErrorForeground()
             }
             label(request.method!!).visible(setting.showMethod).component.apply {
                 font = JBFont.small()

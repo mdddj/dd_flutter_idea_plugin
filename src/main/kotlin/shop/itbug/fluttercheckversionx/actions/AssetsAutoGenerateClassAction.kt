@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -38,7 +37,4 @@ class AssetsAutoGenerateClassAction : AnAction() {
         super.update(e)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }
