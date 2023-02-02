@@ -35,5 +35,9 @@ class GenerateAssetsClassConfig private constructor() : PersistentStateComponent
         fun getInstance(): GenerateAssetsClassConfig {
             return service()
         }
+
+        fun getGenerateAssetsSetting() : GenerateAssetsClassConfigModel {
+            return getInstance().state
+        }
     }
 }

@@ -1,8 +1,12 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.dsl.builder.panel
+import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -13,7 +17,7 @@ import javax.swing.JPanel
  * print("hello world");
  * ```
  */
-class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
+class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
 
 
     /**
@@ -30,6 +34,8 @@ class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
     init {
         border = BorderFactory.createEmptyBorder()
         jsonViewInit()
+        add(actionsToolBar,BorderLayout.NORTH)
+
     }
 
 
@@ -52,5 +58,31 @@ class RightDetailPanel(project: Project) : JPanel(BorderLayout()) {
         jsonView.changeValue("")
     }
 
+    private val actionsToolBar : DialogPanel get() {
+         return panel {
+            row {
+                button(PluginBundle.get("freezed.btn.text")) {
+                    jsonToFreezedModel()
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 将json转成freezed模型对象
+     */
+    private fun jsonToFreezedModel() {
+        val text = jsonView.text.trim()
+        if(text.isEmpty()){
+            return
+        }
+        project.jsonToFreezedRun(text)
+    }
+
+
+
 
 }
+
+

@@ -18,7 +18,7 @@ class MyNotificationUtil {
 
         //        socket 相关通知
         fun socketNotify(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
-            NotificationGroupManager.getInstance().getNotificationGroup("dio_socket_notif")
+            NotificationGroupManager.getInstance().getNotificationGroup("dio_socket_notify")
                 .createNotification(message, type)
                 .notify(project)
         }
@@ -35,7 +35,6 @@ class MyNotificationUtil {
             val createBalloon = JBPopupFactory.getInstance().createBalloonBuilder(com).createBalloon()
             val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(toolWindowId)
             toolWindow?.apply {
-                println("弹窗")
                 createBalloon.showInCenterOf(toolWindow.component)
             }
         }

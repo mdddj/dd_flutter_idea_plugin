@@ -30,6 +30,7 @@ class NewVersinFix(
         val pluginName = (startElement as YAMLKeyValueImpl).keyText
         val newElement = YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginName, newVersion)
         startElement.replace(newElement)
+
     }
 
 }

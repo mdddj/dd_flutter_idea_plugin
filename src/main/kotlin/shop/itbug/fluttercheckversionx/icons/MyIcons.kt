@@ -10,4 +10,8 @@ object MyIcons {
     var diandianLogoIcon = IconLoader.getIcon("/icons/diandian.svg", MyIcons::class.java)
     //打赏
     var reward = IconLoader.getIcon("/icons/reward.svg",MyIcons::class.java)
+    val infos = IconLoader.getIcon("/icons/info.svg",MyIcons::class.java)
+    val params = IconLoader.getIcon("icons/params.svg",MyIcons::class.java)
+    var flutter = IconLoader.getIcon("/icons/flutter.svg",MyIcons::class.java)
 }
+

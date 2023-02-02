@@ -1,8 +1,9 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
 import com.intellij.ui.components.JBLabel
-import icons.FlutterIcons
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.Component
+import java.awt.Dimension
 import javax.swing.*
 
 
@@ -15,10 +16,16 @@ class ProjectFilter : JComboBox<String>() {
 
 
     init {
-        change(emptyList())
         setRenderer(MyCustomListRender())
     }
 
+    override fun getPreferredSize(): Dimension {
+        return Dimension(150,-1)
+    }
+
+    override fun getMinimumSize(): Dimension {
+        return preferredSize
+    }
 
     /**
      * 改变数据
@@ -53,7 +60,8 @@ class MyCustomListRender : ListCellRenderer<String> {
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
-        return JBLabel(value?: "未知项目", FlutterIcons.Flutter, SwingConstants.LEFT)
+        if(value == null) return JBLabel()
+        return JBLabel(value, MyIcons.flutter, SwingConstants.LEFT)
     }
 
 }

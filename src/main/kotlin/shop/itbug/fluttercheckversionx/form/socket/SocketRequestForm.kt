@@ -19,6 +19,7 @@ import org.smartboot.socket.StateMachineEnum.NEW_SESSION
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.constance.helpText
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
+import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.dsl.docPanel
 import shop.itbug.fluttercheckversionx.dsl.requestDetailPanel
 import shop.itbug.fluttercheckversionx.dsl.showCenter
@@ -109,12 +110,10 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     private var searchTextField: DioRequestSearch
 
     init {
-
         val initProjects = service.getAllProjectNames()
         if (initProjects.isNotEmpty()) {
             projectFilterBox.change(initProjects)
         }
-
         if (projectFilterBox.selectedItem != null) {
             requestsJBList.model =
                 projectFilterBox.selectedItem?.let { service.getRequestsWithProjectName(it.toString()) }?.let {
@@ -123,7 +122,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         } else {
             requestsJBList.model = MyDefaultListModel(datas = emptyList())
         }
-
         addHelpText()
         requestsJBList.cellRenderer = MyCustomItemRender()
         requestsJBList.isFocusable = true
@@ -215,9 +213,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                         NEW_SESSION -> {
                             print("新连接")
                         }
-
                         else -> {
-
+                            println("socket状态变更:$stateMachineEnum")
                         }
                     }
                 }
@@ -300,6 +297,12 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                 )
             ) {
                 docPanel(helpText, project).showCenter(project)
+            }
+            appendText(" ")
+            appendText(PluginBundle.get("reward"),
+                SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED,JBUI.CurrentTheme.Link.Foreground.ENABLED)
+            ){
+                RewardDialog(project).show()
             }
         }
     }
