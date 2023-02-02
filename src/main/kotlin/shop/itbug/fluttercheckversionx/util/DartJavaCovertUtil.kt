@@ -9,7 +9,7 @@ fun JSONArray.findPropertiesMaxLenObject() : JSONObject {
     var obj = first() as JSONObject
     forEach {
         if(it is JSONObject) {
-            if(it.keys.size > (obj as JSONObject).keys.size) {
+            if(it.keys.size > obj.keys.size) {
                 obj = it
             }
         }
