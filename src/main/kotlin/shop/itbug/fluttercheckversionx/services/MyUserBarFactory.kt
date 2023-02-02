@@ -10,6 +10,7 @@ import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import org.jetbrains.plugins.terminal.TerminalView
+import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginActions.*
@@ -28,7 +29,8 @@ enum class PluginActions(val title: String) {
     FlutterPushPlugin("发布插件"),
     BuildApk("构建安卓包"),
     BuildIos("构建IOS包"),
-    FlutterDoctor("颤抖医生")
+    FlutterDoctor("颤抖医生"),
+    JsonToFreezed("Json to Freezed")
 }
 
 ///用户面板
@@ -133,6 +135,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             SearchPlugin -> {
                 SearchDialog(project).show()
             }
+
             CheckVersion -> {
                 val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
                 pubspecFile?.let {
@@ -140,6 +143,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
                     print(plugins)
                 }
             }
+
             GetAllPlugins -> MyPsiElementUtil.getAllFlutters(project)
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")
@@ -147,7 +151,13 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             BuildApk -> runCommand("flutter build apk")
             BuildIos -> runCommand("flutter build ios")
             FlutterDoctor -> runCommand("flutter doctor")
+            JsonToFreezed -> jsonToFreezedRun()
         }
+    }
+
+
+    private fun jsonToFreezedRun() {
+        JsonToFreezedInputDialog(project).show()
     }
 
     private fun runCommand(code: String) {
