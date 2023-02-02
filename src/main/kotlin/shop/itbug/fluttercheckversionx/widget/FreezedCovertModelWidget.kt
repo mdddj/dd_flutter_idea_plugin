@@ -9,6 +9,7 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.DartLanguage
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.model.getPropertiesString
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
@@ -62,16 +63,16 @@ fun freezedCovertModelSetting(model: FreezedCovertModel,submit: () -> Unit): Dia
     lateinit var p: DialogPanel
     p = panel {
 
-        row("重命名") {
+        row(PluginBundle.get("rename")) {
             textField().bindText(model::className)
         }
 
-        row("驼峰变量") {
-            checkBox("变量使用驼峰命名").bindSelected(model::upperCamelStyle)
+        row(PluginBundle.get("hump.variable")) {
+            checkBox(PluginBundle.get("variable.is.named.with.hump")).bindSelected(model::upperCamelStyle)
         }
 
-        row("默认值") {
-            checkBox("如果变量为空设置一个默认值").bindSelected(model::useDefaultValueIfNull)
+        row(PluginBundle.get("default.value")) {
+            checkBox(PluginBundle.get("default.value.tip")).bindSelected(model::useDefaultValueIfNull)
         }
 
         row {
