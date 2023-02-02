@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiFileFactory
@@ -29,9 +30,10 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
 
     private val tabView = JBTabbedPane()
     private var fileName: String = DEFAULT_CLASS_NAME
-    private var filePath: String =  project.basePath + "/lib/freezed"
+//    project.basePath + "/lib/freezed"
+    private var filePath: String =  ""
     private val widgets : MutableList<FreezedCovertModelWidget> = mutableListOf()
-    lateinit var settingPanel: DialogPanel
+    private lateinit var settingPanel: DialogPanel
     init {
         super.init()
         title = "freezed类生成"
@@ -67,7 +69,9 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
         settingPanel = panel {
             row("保存到目录") {
                 textFieldWithBrowseButton(
-                    fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                    fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().apply {
+                        roots = ProjectRootManager.getInstance(project).contentRoots.toMutableList()
+                    },
                     project = project
                 ).align(Align.FILL).bindText({
                    filePath

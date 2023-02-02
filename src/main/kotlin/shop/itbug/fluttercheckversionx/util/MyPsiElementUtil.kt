@@ -211,6 +211,7 @@ class MyDartPsiElementUtil {
                 project, "@freezed\n" +
                         "class $className with _\$$className {\n" +
                         "  const factory $className({\n$properties    }) = _$className;\n" +
+                        "  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);" +
                         "}"
             )
         }
