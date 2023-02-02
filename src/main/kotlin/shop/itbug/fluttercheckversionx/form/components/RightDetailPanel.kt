@@ -7,6 +7,7 @@ import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.dialog.FreezedClassesGenerateDialog
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.impl.ModelToFreezedModelServiceImpl
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import java.awt.BorderLayout
@@ -64,7 +65,7 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     private val actionsToolBar : DialogPanel get() {
          return panel {
             row {
-                button("json转freezed模型") {
+                button(PluginBundle.get("freezed.btn.text")) {
                     jsonToFreezedModel()
                 }
             }
