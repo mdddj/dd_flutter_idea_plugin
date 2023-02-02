@@ -2,9 +2,10 @@ package shop.itbug.fluttercheckversionx.model
 
 import com.alibaba.fastjson2.JSONArray
 import com.google.common.base.CaseFormat
-import com.ibm.icu.math.BigDecimal
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.formatDartName
+import java.math.BigDecimal
 
 fun FreezedCovertModel.getPropertiesString(): String {
     val sb = StringBuilder()
@@ -72,6 +73,7 @@ fun DartClassProperty.formatType(useDefaultValue: Boolean): String {
  * 如果为空设置为默认值
  */
 fun DartClassProperty.getDartDefaultValue(): Any {
+//    println(">>>$finalPropertyName  >>  $finalPropertyValue   >>   ${finalPropertyValue?.javaClass}"  )
     when (finalPropertyValue) {
         is String -> {
             return "\'\'"
@@ -89,11 +91,15 @@ fun DartClassProperty.getDartDefaultValue(): Any {
             return "0.0"
         }
 
+        is Double -> {
+            return  "0.0"
+        }
+
         is JSONArray -> {
             return "[]"
         }
 
-        else -> return "$name()"
+        else -> return "${name.formatDartName()}()"
     }
 }
 
