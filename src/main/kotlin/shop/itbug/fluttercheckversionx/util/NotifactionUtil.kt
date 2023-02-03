@@ -47,5 +47,8 @@ class MyNotificationUtil {
                 .setFocusable(true)
                 .createPopup().showCenteredInCurrentWindow(project)
         }
+
+        fun hintText(comp: JComponent) {
+        }
     }
 }

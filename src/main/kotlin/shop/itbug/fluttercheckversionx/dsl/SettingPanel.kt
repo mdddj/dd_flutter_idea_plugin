@@ -77,37 +77,37 @@ fun settingPanel(
 
             indent {
                 twoColumnsRow({
-                    checkBox("显示域名").bindSelected(dioxSetting::showHost)
+                    checkBox(PluginBundle.get("display_domain_name")).bindSelected(dioxSetting::showHost)
                 }, {
-                    checkBox("显示查询参数").bindSelected(dioxSetting::showQueryParams)
+                    checkBox(PluginBundle.get("display.query.parameters")).bindSelected(dioxSetting::showQueryParams)
                 })
                 twoColumnsRow({
-                    checkBox("显示请求方法").bindSelected(dioxSetting::showMethod)
+                    checkBox(PluginBundle.get("show.request.method")).bindSelected(dioxSetting::showMethod)
                 }, {
-                    checkBox("显示状态码").bindSelected(dioxSetting::showStatusCode)
+                    checkBox(PluginBundle.get("display.status.code")).bindSelected(dioxSetting::showStatusCode)
                 })
                 twoColumnsRow({
-                    checkBox("显示接口耗时").bindSelected(dioxSetting::showTimestamp)
+                    checkBox(PluginBundle.get("display.time")).bindSelected(dioxSetting::showTimestamp)
                 }, {
-                    checkBox("显示创建时间").bindSelected(dioxSetting::showDate)
+                    checkBox(PluginBundle.get("time")).bindSelected(dioxSetting::showDate)
                 })
                 twoColumnsRow({
-                    checkBox("粗体链接").bindSelected(dioxSetting::urlBold)
+                    checkBox(PluginBundle.get("bold.link")).bindSelected(dioxSetting::urlBold)
                 }, {})
             }
 
         }
 
-        group("Assets 资产文件智能提醒设置") {
-            row("触发文本") {
+        group(PluginBundle.get("ass.setting.title")) {
+            row(PluginBundle.get("ass.1")) {
                 textField().bindText(model::assetCompilationTriggerString)
-            }.comment("字符串类型的输入类型中,监测到该关键字会触发智能提醒实现资产文件自动补全")
-            row("触发长度") {
+            }.comment(PluginBundle.get("ass.2"))
+            row(PluginBundle.get("ass.3")) {
                 intTextField().bindIntText(model::assetCompilationTriggerLen)
-            }.comment("默认3,一般使用默认值就可以")
-            row("扫描文件夹") {
+            }.comment(PluginBundle.get("ass.4"))
+            row(PluginBundle.get("ass.5")) {
                 textField().bindText(model::assetScanFolderName)
-            }.comment("默认assets文件夹")
+            }.comment(PluginBundle.get("ass.6"))
         }
 
 
