@@ -127,6 +127,6 @@ data class FreezedCovertModel(
     //变量使用驼峰命名法
     var upperCamelStyle: Boolean = true,
     //如果变量为空,则设置一个默认值
-    var useDefaultValueIfNull: Boolean = false,
+    var useDefaultValueIfNull: Boolean = true,
 
     )
