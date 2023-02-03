@@ -3,13 +3,12 @@ package shop.itbug.fluttercheckversionx.form.components
 import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.util.toastWithError
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -38,7 +37,6 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         border = BorderFactory.createEmptyBorder()
         jsonViewInit()
         add(actionsToolBar,BorderLayout.NORTH)
-
     }
 
 
@@ -62,28 +60,10 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     }
 
     private val actionsToolBar : DialogPanel get() {
-        lateinit var p : DialogPanel
-         p = panel {
+        val p : DialogPanel = panel {
             row {
                 button(PluginBundle.get("freezed.btn.text")) {
-                    println("转换...")
-                    p.apply()
-                    p.validate()
-                    if(p.isValid){
-                        jsonToFreezedModel()
-                    }else{
-                        println("验证不通过")
-                    }
-                }.validation{
-                    if(jsonView.text.trim().isEmpty()){
-                        ValidationInfoBuilder(JBLabel()).error(PluginBundle.get("input.your.json"))
-                    }
-                    try {
-                        JSONObject.parseObject(jsonView.text)
-                    }catch (e:Exception){
-                        ValidationInfoBuilder(JBLabel()).error(PluginBundle.get("json.format.verification.failed"))
-                    }
-                    null
+                    jsonToFreezedModel()
                 }
             }
         }
@@ -99,6 +79,13 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     private fun jsonToFreezedModel() {
         val text = jsonView.text.trim()
         if(text.isEmpty()){
+            project.toastWithError(PluginBundle.get("input.your.json"))
+            return
+        }
+        try {
+            JSONObject.parseObject(jsonView.text)
+        }catch (e:Exception){
+            project.toastWithError(PluginBundle.get("json.format.verification.failed"))
             return
         }
         project.jsonToFreezedRun(text)
