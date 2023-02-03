@@ -1,8 +1,10 @@
 package shop.itbug.fluttercheckversionx.form.components
 
+import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
@@ -63,6 +65,16 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
             row {
                 button(PluginBundle.get("freezed.btn.text")) {
                     jsonToFreezedModel()
+                }.validation {
+                    if(jsonView.text.trim().isEmpty()){
+                        ValidationInfoBuilder(it).error(PluginBundle.get("input.your.json"))
+                    }
+                    try {
+                        JSONObject.parseObject(jsonView.text)
+                    }catch (e:Exception){
+                        ValidationInfoBuilder(it).error(PluginBundle.get("json.format.verification.failed"))
+                    }
+                    null
                 }
             }
         }
