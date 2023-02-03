@@ -118,7 +118,6 @@ tasks {
 
     runIde {
         autoReloadPlugins.set(true)
-        jbrVersion.set("17.0.6-b785.1")
     }
 
 

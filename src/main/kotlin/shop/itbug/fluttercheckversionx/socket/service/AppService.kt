@@ -102,13 +102,16 @@ class AppService {
                             project,
                             "典典:dio监听模块意外断开,请重新连接",
                         )
+                        println("aio已断开: $throwable")
                     }
 
-                    else -> {}
+                    else -> {
+                        println("aio意外断开: $throwable")
+                    }
                 }
             }
         })
-        server.setReadBufferSize(10485760*2) // 10m
+        server.setReadBufferSize(10485760*2) // 20m
         val thread = AppSocketThread(server, project) {
             socketIsInit = it
         }
@@ -132,6 +135,7 @@ class AppService {
      */
     private fun flutterClientJsonHandle(json: String) {
         try {
+            println(">>>>进来了.")
             val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
