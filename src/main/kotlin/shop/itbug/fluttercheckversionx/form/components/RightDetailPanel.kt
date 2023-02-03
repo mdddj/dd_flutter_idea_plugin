@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.form.components
 import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
@@ -61,24 +62,35 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     }
 
     private val actionsToolBar : DialogPanel get() {
-         return panel {
+        lateinit var p : DialogPanel
+         p = panel {
             row {
                 button(PluginBundle.get("freezed.btn.text")) {
-                    jsonToFreezedModel()
-                }.validation {
+                    println("转换...")
+                    p.apply()
+                    p.validate()
+                    if(p.isValid){
+                        jsonToFreezedModel()
+                    }else{
+                        println("验证不通过")
+                    }
+                }.validation{
                     if(jsonView.text.trim().isEmpty()){
-                        ValidationInfoBuilder(it).error(PluginBundle.get("input.your.json"))
+                        ValidationInfoBuilder(JBLabel()).error(PluginBundle.get("input.your.json"))
                     }
                     try {
                         JSONObject.parseObject(jsonView.text)
                     }catch (e:Exception){
-                        ValidationInfoBuilder(it).error(PluginBundle.get("json.format.verification.failed"))
+                        ValidationInfoBuilder(JBLabel()).error(PluginBundle.get("json.format.verification.failed"))
                     }
                     null
                 }
             }
         }
+        return p
     }
+
+
 
 
     /**
@@ -91,8 +103,6 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         }
         project.jsonToFreezedRun(text)
     }
-
-
 
 
 }
