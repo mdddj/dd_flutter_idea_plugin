@@ -86,21 +86,23 @@ class MyPsiElementUtil {
             yamlFile?.let { yaml ->
                 val coreElement = yaml.firstChild.firstChild
                 val coreElementChildrens = coreElement.childrenOfType<YAMLKeyValueImpl>()
-                if(coreElementChildrens.isNotEmpty()){
+                if (coreElementChildrens.isNotEmpty()) {
                     FlutterPluginType.values().forEach { type ->
                         val l = coreElementChildrens.filter { it.keyText == type.type }.toList()
-                        if(l.isNotEmpty()){
+                        if (l.isNotEmpty()) {
                             val pluginDevs = l.first()
-                            val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
-                            var psis = mapping.childrenOfType<YAMLKeyValueImpl>()
-                            val igs = igFlutterPlugin.igPlugins
-                            psis = psis.filter { p -> !igs.contains(p.keyText) }
-                            map[type] = psis.map { psi ->
-                                FlutterPluginElementModel(
-                                    name = psi.keyText,
-                                    type = type,
-                                    element = psi
-                                )
+                            if (pluginDevs.childrenOfType<YAMLBlockMappingImpl>().isNotEmpty()) {
+                                val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
+                                var psis = mapping.childrenOfType<YAMLKeyValueImpl>()
+                                val igs = igFlutterPlugin.igPlugins
+                                psis = psis.filter { p -> !igs.contains(p.keyText) }
+                                map[type] = psis.map { psi ->
+                                    FlutterPluginElementModel(
+                                        name = psi.keyText,
+                                        type = type,
+                                        element = psi
+                                    )
+                                }
                             }
                         }
                     }

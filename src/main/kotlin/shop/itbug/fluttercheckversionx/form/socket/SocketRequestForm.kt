@@ -92,18 +92,21 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
      * 状态码级别的筛选 get,post,等等
      */
     private val stateCodeFilterBox = StateCodeFilterBox { type ->
-        run {
-            val currentProject = projectFilterBox.model.selectedItem.toString()
-            val reqs = service.getRequestsWithProjectName(currentProject)
-            if (type == "All") {
-                requestsJBList.model = MyDefaultListModel(datas = reqs)
-            } else {
-                //执行过滤
-                val filters = reqs.filter { it.method?.uppercase() == type.uppercase() }
-                requestsJBList.model = MyDefaultListModel(datas = filters)
-            }
+        if(projectFilterBox.model.selectedItem!=null){
+            run {
+                val currentProject = projectFilterBox.model.selectedItem.toString()
+                val reqs = service.getRequestsWithProjectName(currentProject)
+                if (type == "All") {
+                    requestsJBList.model = MyDefaultListModel(datas = reqs)
+                } else {
+                    //执行过滤
+                    val filters = reqs.filter { it.method?.uppercase() == type.uppercase() }
+                    requestsJBList.model = MyDefaultListModel(datas = filters)
+                }
 
+            }
         }
+
     }
 
 
