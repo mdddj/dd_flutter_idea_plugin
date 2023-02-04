@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.LanguageTextField
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
@@ -53,7 +52,7 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
             }
             row {
                 scrollCell(editView)
-                    .align(Align.FILL)
+
             }
             row {
                 checkBox("生成fromJson方法").bindSelected({setting.genFromJson}){

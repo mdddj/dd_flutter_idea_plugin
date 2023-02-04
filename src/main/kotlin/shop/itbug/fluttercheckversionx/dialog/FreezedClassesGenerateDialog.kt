@@ -9,7 +9,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
@@ -78,7 +77,7 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
                             roots = ProjectRootManager.getInstance(project).contentRoots.toMutableList()
                         },
                         project = project
-                    ).align(Align.FILL).bindText({
+                    ).bindText({
                         filePath
                     }, {
                         filePath = it
