@@ -24,8 +24,8 @@ intellij {
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.7571.203",
-            "io.flutter:71.3.6",
+            "Dart:223.8214.16",
+            "io.flutter:72.0.4",
             "org.intellij.plugins.markdown:223.7571.125",
             "terminal","java"
         )

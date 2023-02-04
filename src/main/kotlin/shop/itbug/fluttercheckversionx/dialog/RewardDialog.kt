@@ -3,9 +3,10 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.dsl.builder.panel
 import icons.MyImages
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
+import java.awt.BorderLayout
+import javax.swing.ImageIcon
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -25,9 +26,13 @@ class RewardDialog(var project: Project) : DialogWrapper(project) {
 
 
     override fun createCenterPanel(): JComponent {
-        return panel {
-            row {
-                JBLabel(MyImages.wx)
+        println(MyImages.wx2)
+        return object : JPanel(BorderLayout()){
+            init {
+                add(JBLabel().apply {
+                    icon = ImageIcon(MyImages.wx2)
+                    setSize(400,400)
+                },BorderLayout.CENTER)
             }
         }
 
