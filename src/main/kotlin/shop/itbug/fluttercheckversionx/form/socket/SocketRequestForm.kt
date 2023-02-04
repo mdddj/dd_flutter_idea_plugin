@@ -37,6 +37,7 @@ import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Dimension
+import java.net.URI
 import javax.swing.*
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -193,15 +194,19 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     private val messageBus get() = ApplicationManager.getApplication().messageBus
 
 
+    /**
+     * 监听请求进入window
+     */
     private fun listenData() {
-        // api消息进入
         messageBus.connect().subscribe(
             SocketMessageBus.CHANGE_ACTION_TOPIC, object : SocketMessageBus {
                 override fun handleData(data: SocketResponseModel?) {
                     val setting = PluginStateService.getInstance().state
                     setting?.apply {
                         data?.let {
-                            MyNotificationUtil.toolWindowShowMessage(project, data.url ?: "")
+                            it.url?.let { it1 -> URI(it1) }?.let { url  ->
+                                MyNotificationUtil.toolWindowShowMessage(project, url.path)
+                            }
                         }.takeIf { this.apiInToolwindowTop && data?.url != null }
                     }
                     refreshData(null)
