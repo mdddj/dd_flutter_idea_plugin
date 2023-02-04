@@ -315,7 +315,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
             appendText(PluginBundle.get("bugs"),
                 SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED,JBUI.CurrentTheme.Link.Foreground.ENABLED)
             ){
-
+                BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
         }
     }
