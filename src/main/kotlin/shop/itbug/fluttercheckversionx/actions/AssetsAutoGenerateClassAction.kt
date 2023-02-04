@@ -53,7 +53,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
                 }
             }
 
-            val file = MyDartPsiElementUtil.createDartFileWithElement(project, classElement, "lib", "R.dart")
+            val file = MyDartPsiElementUtil.createDartFileWithElement(project, classElement, "lib", "R.dart",null)
 
             file?.let {
                 WriteCommandAction.runWriteCommandAction(project) {
