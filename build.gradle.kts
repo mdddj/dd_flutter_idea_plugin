@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.2.2"
+version = "2.2.3"
 repositories {
     mavenCentral()
     google()
@@ -13,7 +13,7 @@ repositories {
         url = uri("https://plugins.gradle.org/m2/")
     }
 }
-java{
+java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
@@ -27,7 +27,7 @@ intellij {
             "Dart:223.8214.16",
             "io.flutter:72.0.4",
             "org.intellij.plugins.markdown:223.7571.125",
-            "terminal","java"
+            "terminal", "java"
         )
     )
 }
@@ -35,7 +35,7 @@ intellij {
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.2")
     implementation("cn.hutool:hutool-all:5.8.11")
     implementation("org.smartboot.socket:aio-core:1.6.1")
@@ -71,10 +71,24 @@ tasks {
     patchPluginXml {
         sinceBuild.set("222.7571.182")
         untilBuild.set("231.*")
-        changeNotes.set("""
+        changeNotes.set(
+            """
+                
+                
+                <div>
+                    <h1>2.2.3</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>Add international language</li>
+                        <li>Optimize the relevant functions of the diox listening window</li>
+                        <li>Remove the 2023.1 version adaptation and update it on the new branch</li>
+                        <li>Update the json to freezed model tool, and set the default value to true</li>
+                    </ul>
+                </div>
             
-             <div>
-                <h1>2023-02-02 (2.2.2)</h1>
+            <div>
+                <h1>2.2.2</h1>
             </div>
             <ul>
                 <li>Add the function of converting json to freezed model</li>
@@ -82,7 +96,7 @@ tasks {
             </ul>
             
             <div>
-                <h1>2023-01-21 (2.2.0 - 2023.1 EAP)</h1>
+                <h1>2.2.0</h1>
             </div>
             <ul>
                 <li>Adapt to IDEA 2023.1 EAP</li>
@@ -90,20 +104,21 @@ tasks {
             </ul>
           
             <div>
-                <h1>2023-01-07</h1>
+                <h1>1.1.1</h1>
             </div>
             <ul>
                 <li>Add the function of automatically generating asset file objects</li>
             </ul>
            
             <div>
-                <h1>2023-01-06</h1>
+                <h1>0.1.1</h1>
             </div>
             <ul>
                 <li>Fix the problem that some dio interfaces cannot listen</li>
                 <li>Optimize the asset file pop-up mechanism</li>
             <ul>
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     signPlugin {
