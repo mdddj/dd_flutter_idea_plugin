@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -17,12 +18,9 @@ import com.intellij.util.ui.JBUI
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.StateMachineEnum.NEW_SESSION
 import org.smartboot.socket.transport.AioSession
-import shop.itbug.fluttercheckversionx.constance.helpText
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
-import shop.itbug.fluttercheckversionx.dsl.docPanel
 import shop.itbug.fluttercheckversionx.dsl.requestDetailPanel
-import shop.itbug.fluttercheckversionx.dsl.showCenter
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.actions.StateCodeFilterBox
@@ -304,7 +302,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
                     JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
-                docPanel(helpText, project).showCenter(project)
+//                docPanel(helpText, project).showCenter(project)
+                BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md")
             }
             appendText(" ")
             appendText(PluginBundle.get("reward"),
