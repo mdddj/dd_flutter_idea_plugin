@@ -305,11 +305,17 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 //                docPanel(helpText, project).showCenter(project)
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md")
             }
-            appendText(" ")
+            appendText(" 丨 ")
             appendText(PluginBundle.get("reward"),
                 SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED,JBUI.CurrentTheme.Link.Foreground.ENABLED)
             ){
                 RewardDialog(project).show()
+            }
+            appendText(" 丨 ")
+            appendText(PluginBundle.get("bugs"),
+                SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED,JBUI.CurrentTheme.Link.Foreground.ENABLED)
+            ){
+
             }
         }
     }
