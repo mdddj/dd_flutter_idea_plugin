@@ -25,12 +25,17 @@ Like this
 
 ```dart
 void main() {
-  await DdCheckPlugin.instance
-      .init(Dio(), initHost: '192.168.199.75', port: 9999, conectSuccess: (Socket s) {
+  await DdCheckPlugin().init(Dio(), initHost: '192.168.199.75', port: 9999, conectSuccess: (Socket s) {
     print('Connection succeeded:${s.address}');
   });
 }
 ```
+
+> 
+> InitHost can automatically recognize your local IP address
+> 
+> ![image](https://user-images.githubusercontent.com/29020213/216746356-58ca9a3b-0df0-41c3-b319-d38945694727.png)
+
 
 | Attribute                  | Introduce                                          |
 |----------------------------|----------------------------------------------------|
