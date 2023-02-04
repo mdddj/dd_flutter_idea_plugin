@@ -187,9 +187,7 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
         super.update(e)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.EDT
-    }
+
 
 }
 
@@ -213,9 +211,7 @@ class ViewPostQueryParamsAction(reqList: JBList<Request>, private val project: P
         e.presentation.isEnabled = selectValue !=null && body!=null && body is Map<*,*> && body.isNotEmpty()
         super.update(e)
     }
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.EDT
-    }
+
 }
 
 ///查看参数的选项
