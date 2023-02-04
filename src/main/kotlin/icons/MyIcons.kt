@@ -1,8 +1,7 @@
 package icons
 
-import com.intellij.openapi.util.IconLoader
+import com.intellij.util.ImageLoader
 
 object MyImages {
-    @JvmField
-    val wx = IconLoader.getIcon("/icons/wx.png",MyImages::class.java)
+    val wx2 = ImageLoader.loadFromResource("/icons/wx.jpg",MyImages::class.java)!!
 }
