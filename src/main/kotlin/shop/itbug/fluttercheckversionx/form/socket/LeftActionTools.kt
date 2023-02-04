@@ -144,8 +144,8 @@ class DelButton : ActionButton(
 //自动滚动到底部
 class MySortToggleAction(private val handle: RequestSort) :
     ToggleAction(
-        Supplier { "滚动条自动滚动到最底部" },
-        Supplier { "当接口监听到数据后,滚动条会一直保持在最底部,关闭后保持不变" },
+        Supplier { PluginBundle.get("dio.toolbar.2.1") },
+        Supplier { PluginBundle.get("dio.toolbar.2.2") },
         AllIcons.RunConfigurations.Scroll_down
     ) {
     var s = true
@@ -164,7 +164,7 @@ class MySortToggleAction(private val handle: RequestSort) :
 //
 class SortAction(action: MySortToggleAction) : ActionButton(
     action,
-    Presentation("使用倒序的方式渲染列表"),
+    Presentation(PluginBundle.get("dio.toolbar.3.1")),
     "Dio Tool Left Action Sort",
     ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
 )
@@ -172,7 +172,7 @@ class SortAction(action: MySortToggleAction) : ActionButton(
 ///查看get方法下,query params参数的功能
 class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val project: Project) :
     AnAction(
-        "查看Get查询参数",
+        PluginBundle.get("dio.toolbar.get.params"),
         PluginBundle.get("window.idea.dio.view.query.params.desc"),
         AllIcons.Ide.ConfigFile
     ) {
@@ -196,7 +196,7 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
 ///查看post方法下,query params参数的功能
 class ViewPostQueryParamsAction(reqList: JBList<Request>, private val project: Project) :
     AnAction(
-        "查看Post请求体",
+        PluginBundle.get("dio.toolbar.post.params"),
         PluginBundle.get("window.idea.dio.view.query.params.desc"),
         AllIcons.Ide.ConfigFile
     ) {
