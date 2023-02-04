@@ -3,6 +3,9 @@
 You can listen to the API requests of the Flutter plug-in dio in this window. There is no need to use the print function
 to print the logs related to dio
 
+![image](https://user-images.githubusercontent.com/29020213/216746543-fb9ea063-3250-4d53-b3ef-0aeba89fc871.png)
+
+
 ## 1.Installation dependency
 
 Add a dependency in the `pubspec. yaml` under the root directory of your Flutter Project
@@ -43,5 +46,12 @@ void main() {
 | port                       | The listening port is generally 9999 by default    |
 | conectSuccess              | Connection success callback                        |
 | customCoverterResponseData | User-defined parsing of data sent to the idea side |
+
+## Custom listening port
+
+After saving, you need to restart the idea to take effect
+
+![image](https://user-images.githubusercontent.com/29020213/216746563-f8c6522b-7828-488c-953d-8fdbe3f6717d.png)
+
 
 
