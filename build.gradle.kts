@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.20"
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.2.3"
+version = "2.2.3-as"
 repositories {
     mavenCentral()
     google()
@@ -14,19 +14,18 @@ repositories {
     }
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 intellij {
-//    version.set("2022.3")
-    localPath.set("/Applications/IntelliJ IDEA.app/Contents")
-    type.set("IC")
+    version.set("2022.1.1.19")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8214.16",
-            "io.flutter:72.0.4",
-            "org.intellij.plugins.markdown:223.7571.125",
+            "Dart:221.6096",
+            "io.flutter:71.2.4",
+            "org.intellij.plugins.markdown:221.5787.39",
             "terminal", "java"
         )
     )
@@ -44,14 +43,13 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
-    implementation("org.hildan.krossbow:krossbow-stomp-core:4.5.0")
-    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:4.5.0")
+    implementation("org.hildan.krossbow:krossbow-stomp-core:5.0.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
     implementation("com.google.guava:guava:31.1-jre")
 }
 
 
-var javaVersion = "17"
-
+var javaVersion = "11"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
@@ -69,13 +67,12 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222.7571.182")
-        untilBuild.set("231.*")
+        sinceBuild.set("221.6008.13")
+        untilBuild.set("221.6008.13")
         changeNotes.set(
             """
-                
-                
-                <div>
+            
+            <div>
                     <h1>2.2.3</h1>
                 </div>
                 <div>
@@ -91,27 +88,18 @@ tasks {
                 <h1>2.2.2</h1>
             </div>
             <ul>
-                <li>Add the function of converting json to freezed model</li>
-                <li>Optimize the details</li>            
+                <li>Adapt to Android studio</li>
+                <li>Some details are optimized</>
             </ul>
-            
             <div>
-                <h1>2.2.0</h1>
-            </div>
-            <ul>
-                <li>Adapt to IDEA 2023.1 EAP</li>
-                <li>New UI layout added to the Dio interface list</li>
-            </ul>
-          
-            <div>
-                <h1>1.1.1</h1>
+                <h1>2.1.5</h1>
             </div>
             <ul>
                 <li>Add the function of automatically generating asset file objects</li>
             </ul>
-           
+            
             <div>
-                <h1>0.1.1</h1>
+                <h1>2.x</h1>
             </div>
             <ul>
                 <li>Fix the problem that some dio interfaces cannot listen</li>
@@ -141,10 +129,10 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = javaVersion
     }
 }
