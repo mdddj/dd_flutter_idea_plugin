@@ -1,10 +1,13 @@
+
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.2.3"
+version = "2.2.3.231"
+
 repositories {
     mavenCentral()
     google()
@@ -14,19 +17,19 @@ repositories {
     }
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 intellij {
-    version.set("2022.1.1.19")
-    type.set("AI")
+    version.set("231-EAP-SNAPSHOT")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:221.6096",
-            "io.flutter:71.2.4",
-            "org.intellij.plugins.markdown:221.5787.39",
-            "terminal", "java"
+            "Dart:231.6471.1",
+            "io.flutter:72.0.5",
+//            "org.intellij.plugins.markdown:223.8617.3",
+            "terminal", "java","markdown"
         )
     )
 }
@@ -49,7 +52,7 @@ dependencies {
 }
 
 
-var javaVersion = "11"
+var javaVersion = "17"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
@@ -67,8 +70,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("221.6008.13")
-        untilBuild.set("221.6008.13")
+        sinceBuild.set("231.6471.13")
+        untilBuild.set("231.6471.13")
         changeNotes.set(
             """
             
@@ -117,6 +120,11 @@ tasks {
 
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
+    }
+
+    runPluginVerifier {
+        ideVersions.set(listOf("2023.1"))
+        localPaths.set(listOf(File("/Users/ldd/ide/run/plugin/verifier")))
     }
 
     runIde {

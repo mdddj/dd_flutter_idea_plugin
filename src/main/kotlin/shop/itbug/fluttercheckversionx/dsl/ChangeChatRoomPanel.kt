@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.dsl
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.ui.DialogPanel
@@ -27,14 +26,6 @@ fun changeRoomPanel (setCall: ()-> Unit) : DialogPanel {
                     service<AppService>().currentChatRoom = rooms.first { it.name == value }
                     setCall.invoke()
                 }
-
-                override fun afterChange(listener: (String) -> Unit) {
-                }
-
-                override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
-
-                }
-
                 override fun get(): String {
                     return curr?.name ?: ""
                 }

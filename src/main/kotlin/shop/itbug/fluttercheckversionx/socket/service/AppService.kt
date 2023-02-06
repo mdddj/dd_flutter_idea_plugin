@@ -135,7 +135,6 @@ class AppService {
      */
     private fun flutterClientJsonHandle(json: String) {
         try {
-            println(">>>>进来了.")
             val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
