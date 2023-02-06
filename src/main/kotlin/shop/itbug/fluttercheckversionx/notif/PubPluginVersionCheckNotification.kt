@@ -12,7 +12,9 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartFileType
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
 import java.util.function.Function
@@ -38,20 +40,27 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
 class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
-    private var checkLabel: HyperlinkLabel
+    private var checkLabel: HyperlinkLabel = createActionLabel(PluginBundle.get("check.flutter.plugin")) {
+        checkNewVersions()
+    }
 
     init {
         icon(MyIcons.dartPluginIcon)
-        text("梁典典的扩展工具")
-        checkLabel = createActionLabel("检测新版本") {
-            checkNewVersions()
-        }
+        text(PluginBundle.get("w.t"))
+
         myLinksPanel.add(checkLabel)
 
-        val searchPluginLabel = createActionLabel("搜索插件") {
+        val searchPluginLabel = createActionLabel(PluginBundle.get("search.pub.plugin")) {
             search()
         }
         myLinksPanel.add(searchPluginLabel)
+
+
+        //清理缓存
+        val cleanCacheBtn = createActionLabel(PluginBundle.get("clean.cache")){
+            CacheUtil.clean()
+        }
+        myLinksPanel.add(cleanCacheBtn)
     }
 
     private fun checkNewVersions() {

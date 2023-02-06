@@ -28,4 +28,7 @@ object CacheUtil {
         cache.invalidate(name)
     }
 
+    fun clean() {
+        cache.invalidateAll()
+    }
 }

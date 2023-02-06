@@ -91,9 +91,9 @@
         <!--   dio socket 相关通知    -->
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
 
-        <!--    检查插件是否在项目中已经使用过     -->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
-                                   language="yaml"/>
+<!--        &lt;!&ndash;    检查插件是否在项目中已经使用过     &ndash;&gt;-->
+<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"-->
+<!--        />-->
 
         <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"

@@ -15,11 +15,14 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.BorderLayout
 import java.awt.Button
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import javax.swing.*
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -51,18 +54,18 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
         selectLabel.text = it.`package` + ":"
         versionSelect.doRequest(it.`package`)
         myOKAction.isEnabled = true
+
     }
 
     //项目所有插件
     private var allPlugins = emptyList<String>()
 
     init {
-        title = "搜索包"
+        title = PluginBundle.get("search.pub.plugin")
         init()
         getAllPlugins()
-        setOKButtonText("添加包")
-        setCancelButtonText("取消")
-        setOKButtonTooltip("点击确定后会在pubspec.yaml文件后添加选中对应的包")
+        setOKButtonText(PluginBundle.get("add"))
+        setCancelButtonText(PluginBundle.get("cancel"))
         myOKAction.isEnabled = false
     }
 
@@ -119,9 +122,6 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
             resultList.model = ResultModel(it.packages)
         }, BorderLayout.NORTH)
         corePanel.add(JBScrollPane(resultList), BorderLayout.CENTER)
-
-
-
         bottomPanel.add(selectLabel)
         corePanel.add(bottomPanel, BorderLayout.PAGE_END)
         return corePanel
@@ -139,32 +139,38 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
 
     private val searchTextField = JBTextField()
 
-    private val searchButton = Button("搜索")
+    private val searchButton = Button(PluginBundle.get("search"))
 
     init {
         layout = BoxLayout(this, BoxLayout.X_AXIS)
-        add(JBLabel("插件名:"))
+        add(JBLabel("${PluginBundle.get("name.plugin")}:"))
         add(searchTextField)
         add(searchButton)
-
         searchButton.addActionListener {
             doSearch()
         }
+        searchTextField.addKeyListener(object : KeyAdapter(){
+            override fun keyTyped(e: KeyEvent?) {
+                if(e?.keyChar == KeyEvent.VK_ENTER.toChar()){
+                    doSearch()
+                }
+                super.keyTyped(e)
+            }
+        })
     }
 
     //执行搜索
     private fun doSearch() {
-        searchButton.label = "搜索中..."
+        searchButton.label = "${PluginBundle.get("search")}..."
         val keyWorlds = searchTextField.text
         try {
             val response = HttpRequest.get("https://pub.dartlang.org/api/search?q=${keyWorlds}").execute()
             val result = Gson().fromJson(response.body(), PubSearchResult::class.java)
 
             handle(result)
-        } catch (e: Exception) {
-            println("搜索失败")
+        } catch (_: Exception) {
         }
-        searchButton.label = "搜索"
+        searchButton.label = PluginBundle.get("search")
     }
 
 }
@@ -176,7 +182,7 @@ class SearchListResultShow(val doSelect: DoSelectChange) : JBList<Package>(), Li
 
     init {
         cellRenderer = ReultItemRender()
-        setEmptyText("空空如也")
+        setEmptyText(PluginBundle.get("empty"))
         addListSelectionListener(this)
     }
 
