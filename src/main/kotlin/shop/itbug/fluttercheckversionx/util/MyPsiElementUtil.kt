@@ -231,6 +231,23 @@ class MyDartPsiElementUtil {
             )
             return PsiTreeUtil.getChildOfType(createDummyFile, DartDefaultFormalNamedParameterImpl::class.java)!!
         }
+
+
+        /**
+         * 创建dart类节点
+         */
+        fun createDartNamePsiElement(name: String,project: Project) : DartComponentNameImpl {
+            val createDummyFile = DartElementGenerator.createDummyFile(project, "class $name {}")!!
+            return PsiTreeUtil.getChildOfType(createDummyFile,DartComponentNameImpl::class.java)!!
+        }
+
+        fun createDartDartReferenceExpressionImplPsiElement(name: String, project: Project) : DartReferenceExpressionImpl{
+            val file = DartElementGenerator.createDummyFile(project,"class $name{" +
+                    "}" +
+                    "var b = $name();")!!
+           return PsiTreeUtil.getChildOfType(file,DartReferenceExpressionImpl::class.java)!!
+
+        }
     }
 
 
