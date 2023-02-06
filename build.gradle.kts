@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.2.3"
+version = "2.3.0"
 repositories {
     mavenCentral()
     google()
@@ -71,6 +71,19 @@ tasks {
         untilBuild.set("221.6008.13")
         changeNotes.set(
             """
+            
+             <div>
+                    <h1>2.3.0</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>Optimize the jam problem of ymal file</li>
+                        <li>Translate Chinese to English</li>
+                         <li>Optimize multiple functional details</li>
+                    </ul>
+                </div>
+            
+            <div>
             
             <div>
                     <h1>2.2.3</h1>
