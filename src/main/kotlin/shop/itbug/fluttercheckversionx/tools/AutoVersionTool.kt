@@ -1,13 +1,13 @@
 package shop.itbug.fluttercheckversionx.tools
 
-import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import shop.itbug.fluttercheckversionx.fix.NewVersinFix
+import shop.itbug.fluttercheckversionx.fix.NewVersionFix
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.util.ApiService
+import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 
@@ -18,7 +18,17 @@ class AutoVersionTool : LocalInspectionTool() {
 
     /// 访问了文件
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        println("id on the fly  $isOnTheFly")
         return YamlElementVisitor(holder)
+    }
+
+    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+        println("check file : ...")
+        return super.checkFile(file, manager, isOnTheFly)
+    }
+
+    override fun runForWholeFile(): Boolean {
+        return false
     }
 }
 
@@ -43,15 +53,24 @@ class YamlElementVisitor(
      * 问题注册器,并新增快速修复功能更
      */
     private fun regProblem(ele: FlutterPluginElementModel) {
-        val pluginDetail = ApiService.getPluginDetail(ele.name)
-        val currentVersionString = ele.element.valueText
-        pluginDetail?.judge(currentVersionString) {
-            holder.registerProblem(
-                ele.element.lastChild,
-                "此插件有新版本:${it}  (更新时间:${pluginDetail.lastVersionUpdateTimeString})",
-                ProblemHighlightType.WARNING,
-                NewVersinFix(ele.element, it),
-            )
+
+        var cacheModel = CacheUtil.getCatch().getIfPresent(ele.name)
+        if(cacheModel == null){
+           cacheModel = ApiService.getPluginDetail(ele.name)
+        }else{
+            println("使用了缓存的数据")
+        }
+        cacheModel?.let { model ->
+            CacheUtil.set(ele.name,cacheModel)
+            val currentVersionString = ele.element.valueText
+            cacheModel.judge(currentVersionString) {
+                holder.registerProblem(
+                    ele.element.lastChild,
+                    "${PluginBundle.get("version.tip.1")}:${it}  (${PluginBundle.get("version.tip.2")}:${cacheModel.lastVersionUpdateTimeString})",
+                    ProblemHighlightType.WARNING,
+                    NewVersionFix(ele.element, it,model),
+                )
+            }
         }
     }
 

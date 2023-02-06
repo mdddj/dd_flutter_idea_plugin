@@ -8,10 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import shop.itbug.fluttercheckversionx.common.YamlFileParser
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 /**
  * 梁典典
@@ -27,13 +25,6 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
      */
     override fun runActivity(project: Project) {
 
-
-        val psiFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-
-        // 判断是否有插件文件
-        if (psiFile != null) {
-          YamlFileParser(psiFile)
-        }
 
         ///监听assets资源目录更改事件
         ApplicationManager.getApplication().messageBus.connect(this).subscribe(VirtualFileManager.VFS_CHANGES, object :

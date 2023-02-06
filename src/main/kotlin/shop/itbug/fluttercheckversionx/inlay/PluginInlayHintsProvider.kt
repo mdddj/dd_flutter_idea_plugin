@@ -2,17 +2,9 @@ package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.elementType
-import com.intellij.psi.util.parents
-import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
-import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
-import shop.itbug.fluttercheckversionx.util.CacheUtil
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
@@ -63,8 +55,8 @@ dependencies:
                     val pluginName = element.getPluginName()
                     HintsInlayPresentationFactory(factory = factory)
                     if (pluginName.isNotBlank()) {
-                        val get = CacheUtil.unredCaChe().asMap()[pluginName]
-                        if (get != null && get == pluginName) {
+//                        val get = CacheUtil.unredCaChe().asMap()[pluginName]
+//                        if (get != null && get == pluginName) {
 
                             ///TODO 检测插件是否在项目中使用过
 //                            sink.addInlineElement(
@@ -76,7 +68,7 @@ dependencies:
 //                                ),
 //                                true
 //                            )
-                        }
+//                        }
                     }
                 }
 

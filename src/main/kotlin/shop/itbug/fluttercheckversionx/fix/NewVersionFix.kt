@@ -6,21 +6,23 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
+import shop.itbug.fluttercheckversionx.util.CacheUtil
 
 
 /**
  * 存在新版本的快速修复
  */
-class NewVersinFix(
+class NewVersionFix(
     psiElement: PsiElement,
     private val newVersion: String,
+    private val model: PubVersionDataModel
 ) : LocalQuickFixOnPsiElement(psiElement) {
 
-
     override fun getFamilyName(): String {
-        return " 替换为最新版:$newVersion"
+        return " ${PluginBundle.get("replace.with")}:$newVersion"
     }
-
 
     override fun getText(): String {
         return familyName
@@ -30,7 +32,7 @@ class NewVersinFix(
         val pluginName = (startElement as YAMLKeyValueImpl).keyText
         val newElement = YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginName, newVersion)
         startElement.replace(newElement)
-
+        CacheUtil.remove(model.name)
     }
 
 }

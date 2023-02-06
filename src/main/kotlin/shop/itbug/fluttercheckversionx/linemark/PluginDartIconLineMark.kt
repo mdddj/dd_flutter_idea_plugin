@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
@@ -48,7 +49,7 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
     private val menus
         get() = listOf(
             PluginDartIconActionMenuItem(
-                title = "跳转到pub.dev", type = "navToPub", icon = AllIcons.Toolwindows.WebToolWindow
+                title = "${PluginBundle.get("nav.to")} pub.dev", type = "navToPub", icon = AllIcons.Toolwindows.WebToolWindow
             )
         )
 
