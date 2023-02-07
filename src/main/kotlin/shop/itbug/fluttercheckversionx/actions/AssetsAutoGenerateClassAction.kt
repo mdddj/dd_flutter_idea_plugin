@@ -41,7 +41,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
                         MyDartPsiElementUtil.createVarExpressionFromText(
                             project,
                             expression
-                        )?.let {
+                        ).let {
                             val d = MyDartPsiElementUtil.createLeafPsiElement(project)
                             runWriteAction {
                                 it.addAfter(d, it.nextSibling)

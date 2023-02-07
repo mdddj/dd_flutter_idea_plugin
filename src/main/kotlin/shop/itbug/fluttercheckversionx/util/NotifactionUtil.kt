@@ -16,7 +16,7 @@ class MyNotificationUtil {
     companion object {
         private const val toolWindowId = "Dio Request"
 
-        //        socket 相关通知
+        //socket 相关通知
         fun socketNotify(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
             NotificationGroupManager.getInstance().getNotificationGroup("dio_socket_notify")
                 .createNotification(message, type)
@@ -48,7 +48,5 @@ class MyNotificationUtil {
                 .createPopup().showCenteredInCurrentWindow(project)
         }
 
-        fun hintText(comp: JComponent) {
-        }
     }
 }

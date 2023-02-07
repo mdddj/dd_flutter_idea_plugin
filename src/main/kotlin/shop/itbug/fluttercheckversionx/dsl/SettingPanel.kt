@@ -11,6 +11,7 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
 import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
+import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
@@ -108,6 +109,15 @@ fun settingPanel(
             row(PluginBundle.get("ass.5")) {
                 textField().bindText(model::assetScanFolderName)
             }.comment(PluginBundle.get("ass.6"))
+        }
+
+
+        group("r.dart") {
+          row {
+              checkBox("生成r.dart不再提醒").bindSelected({ GenerateAssetsClassConfig.getGenerateAssetsSetting().dontTip},{
+                  GenerateAssetsClassConfig.getGenerateAssetsSetting().dontTip = it
+              })
+          }
         }
 
 
