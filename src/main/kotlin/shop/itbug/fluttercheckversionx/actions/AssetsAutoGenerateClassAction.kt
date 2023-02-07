@@ -25,7 +25,11 @@ class AssetsAutoGenerateClassAction : AnAction() {
 
         project?.apply {
 
-            AssetsAutoGenerateClassActionConfigDialog(project).showAndGet()
+            val isOk = AssetsAutoGenerateClassActionConfigDialog(project).showAndGet()
+            if (!isOk) {
+                println("取消生成")
+                return
+            }
 
             val classElement =
                 MyDartPsiElementUtil.createDartClassBodyFromClassName(project, "AppAssets")
@@ -53,7 +57,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
                 }
             }
 
-            val file = MyDartPsiElementUtil.createDartFileWithElement(project, classElement, "lib", "R.dart",null)
+            val file = MyDartPsiElementUtil.createDartFileWithElement(project, classElement, "lib", "R.dart", null)
 
             file?.let {
                 WriteCommandAction.runWriteCommandAction(project) {
@@ -66,7 +70,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         val vf = e.getData(CommonDataKeys.VIRTUAL_FILE)
-        e.presentation.isEnabledAndVisible = vf !=null && vf.isDirectory
+        e.presentation.isEnabledAndVisible = vf != null && vf.isDirectory
         super.update(e)
     }
 }

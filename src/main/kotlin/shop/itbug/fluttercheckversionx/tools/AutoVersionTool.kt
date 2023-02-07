@@ -57,8 +57,6 @@ class YamlElementVisitor(
         var cacheModel = CacheUtil.getCatch().getIfPresent(ele.name)
         if(cacheModel == null){
            cacheModel = ApiService.getPluginDetail(ele.name)
-        }else{
-            println("使用了缓存的数据")
         }
         cacheModel?.let { model ->
             CacheUtil.set(ele.name,cacheModel)

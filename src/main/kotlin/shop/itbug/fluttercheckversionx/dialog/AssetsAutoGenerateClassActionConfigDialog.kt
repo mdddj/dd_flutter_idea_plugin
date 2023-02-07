@@ -51,6 +51,7 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
                         ui.apply()
                         println(configModel)
                         GenerateAssetsClassConfig.getInstance().loadState(configModel)
+                        super.doOKAction()
                     }.horizontalAlign(HorizontalAlign.FILL)
                 }
                 row {
