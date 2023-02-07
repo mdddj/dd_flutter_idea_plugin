@@ -48,8 +48,8 @@ class AssetsAutoGenerateClassAction : AnAction() {
                         ).let {
                             val d = MyDartPsiElementUtil.createLeafPsiElement(project)
                             runWriteAction {
-                                it.addAfter(d, it.nextSibling)
-                                classMembers.addAfter(it, classMembers.nextSibling)
+                                it?.addAfter(d, it.nextSibling)
+                                it?.let { it1 -> classMembers.addAfter(it1, classMembers.nextSibling) }
                             }
                         }
 
