@@ -18,7 +18,6 @@ class AutoVersionTool : LocalInspectionTool() {
 
     /// 访问了文件
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        println("id on the fly  $isOnTheFly")
         return YamlElementVisitor(holder)
     }
 
@@ -37,6 +36,7 @@ class YamlElementVisitor(
 ) : PsiElementVisitor() {
 
 
+
     private val plugins = MyPsiElementUtil.getAllFlutters(holder.project)
 
     override fun visitFile(file: PsiFile) {
@@ -47,6 +47,8 @@ class YamlElementVisitor(
             }
         }
     }
+
+
 
 
     /**

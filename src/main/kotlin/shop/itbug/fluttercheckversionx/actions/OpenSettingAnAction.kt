@@ -13,6 +13,4 @@ class OpenSettingAnAction : AnAction(AllIcons.General.Settings) {
     override fun actionPerformed(e: AnActionEvent) {
         ShowSettingsUtil.getInstance().showSettingsDialog(e.project, PluginBundle.get("setting"))
     }
-
-
 }

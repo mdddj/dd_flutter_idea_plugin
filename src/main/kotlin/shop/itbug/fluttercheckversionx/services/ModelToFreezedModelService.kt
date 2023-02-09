@@ -10,4 +10,5 @@ interface ModelToFreezedModelService {
     fun anActionEventToFreezedCovertModel(event: AnActionEvent) : FreezedCovertModel
     fun jsonObjectToFreezedCovertModelList(jsonObject: JSONObject,oldList: MutableList<FreezedCovertModel> = mutableListOf(),className: String=DEFAULT_CLASS_NAME) : MutableList<FreezedCovertModel>
     fun jsonObjectToFreezedCovertModel(jsonObject: JSONObject,className: String = DEFAULT_CLASS_NAME) : FreezedCovertModel
+
 }

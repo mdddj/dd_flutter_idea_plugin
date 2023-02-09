@@ -7,9 +7,9 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
-import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
+import shop.itbug.fluttercheckversionx.dialog.openSocketStatusDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -87,7 +87,6 @@ class LeftActionTools(
         }
 
 
-
     /**
      * 更新详情面板的html数据
      */
@@ -102,7 +101,7 @@ class LeftActionTools(
         add(detailAction)
         add(copyAction)
         add(showParamsActionGroup.actionGroup)
-        add(OpenSettingAnAction())
+        add(DioWindowSettingGroup().create("设置").actionGroup)
     }
 
 
@@ -124,7 +123,9 @@ class LeftActionTools(
         }
     }
 
-    private val showParamsActionGroup: ActionPopupMenu get() = ActionManager.getInstance().createActionPopupMenu("show-params",ShowParamsActionGroup(reqList = reqList, project = project))
+    private val showParamsActionGroup: ActionPopupMenu
+        get() = ActionManager.getInstance()
+            .createActionPopupMenu("show-params", ShowParamsActionGroup(reqList = reqList, project = project))
 }
 
 //清理
@@ -178,15 +179,16 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
     ) {
     override fun actionPerformed(e: AnActionEvent) {
         reqList.selectedValue?.apply {
-            this.queryParams?.let { SimpleJsonViewDialog.show(it, project) }.takeIf { this.queryParams?.isEmpty() != true }
+            this.queryParams?.let { SimpleJsonViewDialog.show(it, project) }
+                .takeIf { this.queryParams?.isEmpty() != true }
         }
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = reqList.selectedValue!=null && reqList.selectedValue?.queryParams?.isNotEmpty() == true
+        e.presentation.isEnabled =
+            reqList.selectedValue != null && reqList.selectedValue?.queryParams?.isNotEmpty() == true
         super.update(e)
     }
-
 
 
 }
@@ -199,26 +201,29 @@ class ViewPostQueryParamsAction(reqList: JBList<Request>, private val project: P
         AllIcons.Ide.ConfigFile
     ) {
 
-      private  val selectValue = reqList.selectedValue
+    private val selectValue = reqList.selectedValue
     override fun actionPerformed(e: AnActionEvent) {
         selectValue?.apply {
-            this.body?.let { SimpleJsonViewDialog.show(it, project) }.takeIf { this.body is Map<*,*> && this.body.isNotEmpty() }
+            this.body?.let { SimpleJsonViewDialog.show(it, project) }
+                .takeIf { this.body is Map<*, *> && this.body.isNotEmpty() }
         }
     }
 
     override fun update(e: AnActionEvent) {
         val body = selectValue?.body
-        e.presentation.isEnabled = selectValue !=null && body!=null && body is Map<*,*> && body.isNotEmpty()
+        e.presentation.isEnabled = selectValue != null && body != null && body is Map<*, *> && body.isNotEmpty()
         super.update(e)
     }
 
 }
 
 ///查看参数的选项
-class ShowParamsActionGroup( val reqList: JBList<Request>,val project: Project) : DefaultActionGroup("请求参数查询",true) {
+class ShowParamsActionGroup(val reqList: JBList<Request>, val project: Project) :
+    DefaultActionGroup("请求参数查询", true) {
 
     private val viewQueryParamsAction = ViewGetQueryParamsAction(reqList, project = project)
     private val viewPostParamsAction = ViewPostQueryParamsAction(reqList, project = project)
+
     init {
 
         add(viewQueryParamsAction)
@@ -226,10 +231,29 @@ class ShowParamsActionGroup( val reqList: JBList<Request>,val project: Project) 
         super.getTemplatePresentation().icon = MyIcons.params
 
         reqList.addListSelectionListener {
-
         }
 
     }
 }
 
+
+class DioWindowSettingGroup() : DefaultActionGroup("设置", true) {
+    init {
+        add(object : AnAction("服务状态", "查看dio服务状态", AllIcons.Ide.Link) {
+            override fun actionPerformed(e: AnActionEvent) {
+                e.project?.openSocketStatusDialog()
+            }
+        })
+        val settingAction =
+            ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction")
+
+        add(settingAction)
+
+    }
+}
+
+
+fun DefaultActionGroup.create(place: String): ActionPopupMenu {
+    return ActionManager.getInstance().createActionPopupMenu(place, this)
+}
 

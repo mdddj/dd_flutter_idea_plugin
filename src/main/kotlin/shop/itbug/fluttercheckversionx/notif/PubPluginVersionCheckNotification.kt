@@ -5,10 +5,12 @@ import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartFileType
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
@@ -61,6 +63,15 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
             CacheUtil.clean()
         }
         myLinksPanel.add(cleanCacheBtn)
+
+
+        //重新索引
+        val reIndex = createActionLabel("重新索引") {
+            FileBasedIndex.getInstance().requestReindex(
+                VirtualFileManager.getInstance().findFileByUrl(project.basePath!!)!!
+            )
+        }
+        myLinksPanel.add(reIndex)
     }
 
     private fun checkNewVersions() {

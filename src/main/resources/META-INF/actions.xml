@@ -1,7 +1,6 @@
 <idea-plugin>
 
     <actions>
-
         <!--    dio 请求里面的清空按钮    -->
         <group id="DioTool.CleanService">
             <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService"
@@ -10,14 +9,26 @@
                     text="清空全部"/>
             <separator/>
         </group>
-
         <group id="Yaml.Search">
             <action class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                     icon="AllIcons.Actions.Search"
                     id="Yaml.Search.Icon" text="搜索Pub Dart 包"
             />
         </group>
-
     </actions>
 
+    <actions>
+        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/diandian.svg" >
+            <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
+                    text="生成注释">
+                <add-to-group group-id="dart-file-actions" anchor="first"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
+            </action>
+            <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
+                    text="模型转Freezed对象">
+                <add-to-group group-id="dart-file-actions" anchor="last"/>
+            </action>
+            <add-to-group group-id="EditorPopupMenu" anchor="first" />
+        </group>
+    </actions>
 </idea-plugin>

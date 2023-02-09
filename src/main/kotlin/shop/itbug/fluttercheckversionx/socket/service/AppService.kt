@@ -55,6 +55,10 @@ class AppService {
     //socket服务是否正常启动
     private var socketIsInit = false
 
+    //socket服务状态
+    private var socketServerState : StateMachineEnum? = null
+    val dioServerStatus: StateMachineEnum? get() = socketServerState
+
     /**
      * 存储了flutter项目
      * 键是项目名称
@@ -65,7 +69,7 @@ class AppService {
 
     private val userRunStartManager = Thread(UserRunStartService())
     private val chatRoomLoadManager = Thread(ChatRoomsLoadThread())
-
+    lateinit var dioThread: Thread
 
     init {
         userRunStartManager.start()
@@ -84,13 +88,13 @@ class AppService {
             override fun process(session: AioSession?, msg: String?) {
                 msg?.let { flutterClientJsonHandle(msg) }
             }
-
             override fun stateEvent(
                 session: AioSession?,
                 stateMachineEnum: StateMachineEnum?,
                 throwable: Throwable?
             ) {
                 super.stateEvent(session, stateMachineEnum, throwable)
+                socketServerState = stateMachineEnum
                 messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC)
                     .statusChange(aioSession = session, stateMachineEnum = stateMachineEnum)
                 when (stateMachineEnum) {
@@ -104,18 +108,19 @@ class AppService {
                         )
                         println("aio已断开: $throwable")
                     }
-
                     else -> {
                         println("aio意外断开: $throwable")
                     }
                 }
             }
         })
+        server.setBannerEnabled(false)
         server.setReadBufferSize(10485760*2) // 20m
-        val thread = AppSocketThread(server, project) {
+        val appSocketThread = AppSocketThread(server, project) {
             socketIsInit = it
         }
-        Thread(thread).start()
+        dioThread = Thread(appSocketThread)
+        dioThread.start()
     }
 
     /**
@@ -135,7 +140,6 @@ class AppService {
      */
     private fun flutterClientJsonHandle(json: String) {
         try {
-            println(">>>>进来了.")
             val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)

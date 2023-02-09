@@ -54,7 +54,6 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
        var filePath = file.canonicalPath
        filePath = filePath?.replace("$projectPath/","")
         if(filePath!=null){
-            println(filePath)
             if(filePath.indexOf("assets") == 0) {
                 MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project,"assets",true)
             }
