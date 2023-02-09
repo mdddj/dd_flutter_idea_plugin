@@ -7,6 +7,10 @@ import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.formatDartName
 import java.math.BigDecimal
 
+
+/**
+ * @param isClassElement 是否为dart class 对象
+ */
 fun FreezedCovertModel.getPropertiesString(): String {
     val sb = StringBuilder()
     if (properties.isNotEmpty()) {
@@ -14,9 +18,13 @@ fun FreezedCovertModel.getPropertiesString(): String {
             var defaultValue = ""
             if (this.useDefaultValueIfNull) {
                 defaultValue = "@Default(${it.getDartDefaultValue()}) "
+                if (this.isDartClassElementType) {
+                    defaultValue = if(it.isNonNull.not()) "required" else ""
+                }
             }
 
-            val jsonKeyString = if (upperCamelStyle) "@JsonKey(name: '${it.finalPropertyName}') " else ""
+            val jsonKeyString =
+                if (upperCamelStyle && !this.isDartClassElementType) "@JsonKey(name: '${it.finalPropertyName}') " else ""
 
 
             if (it.isNonNull) {
@@ -92,7 +100,7 @@ fun DartClassProperty.getDartDefaultValue(): Any {
         }
 
         is Double -> {
-            return  "0.0"
+            return "0.0"
         }
 
         is JSONArray -> {
@@ -113,8 +121,10 @@ fun DartVarDeclarationListImpl.covertDartClassPropertyModel(): DartClassProperty
 
 data class DartClassProperty(
     val type: String, val name: String,
-    //true - 可空
-    //false - 不可为空
+    /**
+     *  //true - 可空
+     *     //false - 不可为空
+     */
     val isNonNull: Boolean,
     //原始变量的值
     var finalPropertyValue: Any? = null,
@@ -129,4 +139,6 @@ data class FreezedCovertModel(
     //如果变量为空,则设置一个默认值
     var useDefaultValueIfNull: Boolean = true,
 
-    )
+    var isDartClassElementType: Boolean = false
+
+)

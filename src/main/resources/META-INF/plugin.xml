@@ -82,6 +82,7 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
 
+        <completion.contributor language="Dart" implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate" />
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
         <!--   项目被打开回调事件     -->

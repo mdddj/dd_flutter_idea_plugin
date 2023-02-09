@@ -16,7 +16,6 @@ class FxModelToFreezedModel : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val model = toFreezedService.anActionEventToFreezedCovertModel(e)
         FreezedCovertDialog(e.project!!, model).show()
-//        FreezedClassesGenerateDialog(e.project!!, mutableListOf(model)).show()
     }
 
     override fun update(e: AnActionEvent) {

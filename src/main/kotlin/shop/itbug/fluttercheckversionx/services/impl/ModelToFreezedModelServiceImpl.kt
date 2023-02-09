@@ -13,7 +13,7 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
     override fun psiElementToFreezedCovertModel(classPsiElement: DartClassDefinitionImpl): FreezedCovertModel {
         val classProperties = DartPsiElementUtil.getClassProperties(classPsiElement)
         val models = DartPsiElementUtil.getModels(classProperties)
-        return FreezedCovertModel(properties = models, className = classPsiElement.componentName.text)
+        return FreezedCovertModel(properties = models, className = classPsiElement.componentName.text, isDartClassElementType = true)
     }
 
     override fun anActionEventToFreezedCovertModel(event: AnActionEvent): FreezedCovertModel {

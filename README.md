@@ -7,11 +7,13 @@ Flutter开发插件扩展
 下载地址: [Fluttercheckversionx](https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx)
 
 
+ dio tool window tutorial https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md
+
 - [x] dart文档美化
 - [x] flutter插件版本检测更新
 - [x] flutter插件跳转到pub.dev快捷方式
 - [x] pubspec.yaml搜索包并支持一键导入
-- [x] dio请求监听窗口,快捷查看http请求
+- [x] dio请求监听窗口,快捷查看http请求 
 - [x] json编辑器图片链接快捷预览
 - [x] flutter插件历史版本提示
 - [x] dart属性内联提示,final,val,const

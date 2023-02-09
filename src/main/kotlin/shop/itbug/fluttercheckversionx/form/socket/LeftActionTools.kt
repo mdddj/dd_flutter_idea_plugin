@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
+import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.dialog.openSocketStatusDialog
@@ -244,10 +245,8 @@ class DioWindowSettingGroup() : DefaultActionGroup("设置", true) {
                 e.project?.openSocketStatusDialog()
             }
         })
-        val settingAction =
-            ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction")
 
-        add(settingAction)
+        add(OpenSettingAnAction.getInstance())
 
     }
 }
