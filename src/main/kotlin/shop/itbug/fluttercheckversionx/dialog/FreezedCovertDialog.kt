@@ -47,6 +47,7 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
             }
         }
     }
+
     private fun generateFreezedModel() {
         val genFreezedClass =
             MyDartPsiElementUtil.genFreezedClass(project, model.className, model.getPropertiesString())

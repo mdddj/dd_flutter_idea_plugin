@@ -8,9 +8,6 @@ import shop.itbug.fluttercheckversionx.util.formatDartName
 import java.math.BigDecimal
 
 
-/**
- * @param isClassElement 是否为dart class 对象
- */
 fun FreezedCovertModel.getPropertiesString(): String {
     val sb = StringBuilder()
     if (properties.isNotEmpty()) {
@@ -19,7 +16,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
             if (this.useDefaultValueIfNull) {
                 defaultValue = "@Default(${it.getDartDefaultValue()}) "
                 if (this.isDartClassElementType) {
-                    defaultValue = if(it.isNonNull.not()) "required" else ""
+                    defaultValue = if (it.isNonNull.not()) "required" else ""
                 }
             }
 
@@ -29,9 +26,15 @@ fun FreezedCovertModel.getPropertiesString(): String {
 
             if (it.isNonNull) {
                 sb.append(
-                    "       $jsonKeyString$defaultValue${it.formatType(useDefaultValueIfNull)} ${
+                    "       $jsonKeyString$defaultValue${
+                        it.formatType(
+                            useDefaultValueIfNull,
+                            !this.isDartClassElementType
+                        )
+                    } ${
                         it.formatName(
-                            upperCamelStyle
+                            upperCamelStyle,
+                            !this.isDartClassElementType
                         )
                     },"
                 )
@@ -42,7 +45,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
                             useDefaultValueIfNull,
                             defaultValue
                         )
-                    } ${it.type} ${it.formatName(upperCamelStyle)},"
+                    } ${it.type} ${it.formatName(upperCamelStyle, !this.isDartClassElementType)},"
                 )
             }
             sb.append("\n")
@@ -60,7 +63,10 @@ fun showRequiredString(useDefaultValue: Boolean, defaultValue: String): String {
     }
 }
 
-fun DartClassProperty.formatName(upperCamelStyle: Boolean): String {
+fun DartClassProperty.formatName(upperCamelStyle: Boolean, isJson: Boolean = true): String {
+    if (!isJson) {
+        return name
+    }
     if (upperCamelStyle) {
         var s = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, name)
         s = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_CAMEL, s)
@@ -70,8 +76,8 @@ fun DartClassProperty.formatName(upperCamelStyle: Boolean): String {
     return name
 }
 
-fun DartClassProperty.formatType(useDefaultValue: Boolean): String {
-    if (useDefaultValue) {
+fun DartClassProperty.formatType(useDefaultValue: Boolean, isJson: Boolean = true): String {
+    if (useDefaultValue && isJson) {
         return type.removeSuffix("?")
     }
     return type
