@@ -71,7 +71,8 @@
                          implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
                          groupName="Dart public api fix"/>
 
-        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold" language="yaml" />
+        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold"
+                             language="yaml"/>
 
 
         <!--    plugin版本自动联想功能    -->
@@ -82,7 +83,8 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
 
-        <completion.contributor language="Dart" implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate" />
+        <completion.contributor language="Dart"
+                                implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
         <!--   项目被打开回调事件     -->
@@ -94,11 +96,11 @@
         <!--   dio socket 相关通知    -->
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
 
-                <!--    检查插件是否在项目中已经使用过     -->
-                <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
-                                           language="yaml"
+        <!--    检查插件是否在项目中已经使用过     -->
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
+                                   language="yaml"
 
-                />
+        />
 
         <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
