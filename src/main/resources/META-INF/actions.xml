@@ -26,6 +26,7 @@
             <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
                     text="Model to Freezed">
             </action>
+            <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed" text="Function Params To Freezed" />
             <add-to-group group-id="EditorPopupMenu" />
         </group>
     </actions>
