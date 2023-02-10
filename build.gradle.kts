@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.3.1"
+version = "2.3.2"
 repositories {
     mavenCentral()
     google()
@@ -73,6 +73,16 @@ tasks {
         untilBuild.set("223.8617.56")
         changeNotes.set(
             """
+                
+                 <div>
+                    <h1>2.3.2</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>bug fixed</li>
+                    </ul>
+                </div>
+                
                  <div>
                     <h1>2.3.1</h1>
                 </div>
