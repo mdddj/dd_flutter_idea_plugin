@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.dialog.FreezedCovertDialog
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
-import shop.itbug.fluttercheckversionx.util.formatDartName
+import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 
 /**
  * 判断用户选中的是否为 class method 名字节点
@@ -17,7 +17,7 @@ import shop.itbug.fluttercheckversionx.util.formatDartName
 fun AnActionEvent.selectTextIsDartMethodElement(): Boolean {
     val element = getData(CommonDataKeys.PSI_ELEMENT)
     element?.let {
-        return it is DartComponentNameImpl && it.parent is DartMethodDeclarationImpl
+        return it is DartComponentNameImpl
     }
     return false
 }
@@ -62,7 +62,7 @@ class FunctionParamsToFreezed : AnAction() {
         }
         val freezedCovertModel = FreezedCovertModel(
             properties = properties,
-            className = element.text + "Params".formatDartName(),
+            className = (element.text).firstChatToUpper() + "Params",
             isDartClassElementType = true
         )
         FreezedCovertDialog(e.project!!, freezedCovertModel).show()
