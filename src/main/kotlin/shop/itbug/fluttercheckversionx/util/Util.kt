@@ -22,6 +22,7 @@ fun String.formatDartName() : String {
 class Util {
     companion object {
 
+        val userHomePath: String get() = System.getProperty("user.home")
 
         /**
          * Color对象转换成字符串

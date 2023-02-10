@@ -75,6 +75,7 @@ class AppService {
         userRunStartManager.start()
         chatRoomLoadManager.start()
         ChatSocketService.connect()
+        note.jdbc.SqliteConnectManager
     }
 
     /**

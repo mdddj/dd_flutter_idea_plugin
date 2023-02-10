@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.12.0"
 }
 group = "shop.itbug"
-version = "2.3.0"
+version = "2.3.1"
 repositories {
     mavenCentral()
     google()
@@ -14,18 +14,18 @@ repositories {
     }
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 intellij {
-    version.set("2022.1.1.19")
-    type.set("AI")
+    version.set("2022.3.2")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:221.6096",
-            "io.flutter:71.2.4",
-            "org.intellij.plugins.markdown:221.5787.39",
+            "Dart:223.8214.16",
+            "io.flutter:71.2.6",
+            "org.intellij.plugins.markdown:223.8617.3",
             "terminal", "java"
         )
     )
@@ -46,10 +46,12 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-stomp-core:5.0.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
     implementation("com.google.guava:guava:31.1-jre")
+    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
+
 }
 
 
-var javaVersion = "11"
+var javaVersion = "17"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
@@ -67,10 +69,22 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("221.6008.13")
-        untilBuild.set("221.6008.13")
+        sinceBuild.set("223.8617.56")
+        untilBuild.set("223.8617.56")
         changeNotes.set(
             """
+                 <div>
+                    <h1>2.3.1</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>Editor add tool menu</li>
+                        <li>Add a new model object to freezed</li>
+                        <li>Detail optimization</li>
+                    </ul>
+                </div>
+            
+            <div>
             
              <div>
                     <h1>2.3.0</h1>

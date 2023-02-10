@@ -4,13 +4,13 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 import shop.itbug.fluttercheckversionx.model.Pageable
 import shop.itbug.fluttercheckversionx.model.chat.IdeaMessage
 import shop.itbug.fluttercheckversionx.model.chat.SendTextModel
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.user.User
+import shop.itbug.fluttercheckversionx.services.params.AddCityApiModel
 
 data class LoginParam(val loginNumber: String, val password: String)
 
@@ -48,4 +48,11 @@ interface ItbugService {
      */
     @GET("idea-chat/history")
     fun findRoomHistory(@Query("roomId") roomId: Int,@Query("page") page: Int,@Query("pageSize") pageSize: Int): Call<JSONResult<Pageable<IdeaMessage>>>
+
+
+    /**
+     * 添加城市
+     */
+    @POST("api/admin/jobs/add-city")
+    fun addNewJobsCity(@Body params: AddCityApiModel): Call<JSONResult<Any>>
 }
