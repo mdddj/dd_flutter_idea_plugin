@@ -9,6 +9,7 @@ import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.model.getPropertiesString
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -30,7 +31,9 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
         project,
         "",
         false
-    )
+    ).apply {
+        minimumSize = Dimension(400,400)
+    }
 
     init {
         super.init()

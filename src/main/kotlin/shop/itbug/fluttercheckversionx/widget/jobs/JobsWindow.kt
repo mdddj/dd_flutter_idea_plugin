@@ -6,17 +6,30 @@ import com.intellij.ui.components.JBPanel
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 
-class JobsWindow (val project: Project, private val toolWindow: ToolWindow) : JBPanel<JobsWindow>(GridBagLayout()) {
+class JobsWindow(val project: Project, private val toolWindow: ToolWindow) : JBPanel<JobsWindow>(GridBagLayout()) {
 
     private val cityList = CityListView(project)
+    private val postListWidget = PostListWidget()
+    private val commentListWidget = CommentListWidget()
+
 
     init {
-        val listConstraints = GridBagConstraints().apply {
-            fill = GridBagConstraints.VERTICAL
-            gridwidth = 200
-            weightx = 1.0
+        GridBagConstraints().apply {
+            fill = GridBagConstraints.BOTH
+            gridx = 0
+            weighty = 1.0
+            weightx = 0.1
+            gridwidth = 1
+            add(cityList, this)
+            gridx = 1
+            weightx = 0.7
+            add(postListWidget, this)
+            gridx = 2
+            weightx = 0.2
+            add(commentListWidget, this)
+
         }
-        add(cityList,listConstraints)
+
     }
 
 

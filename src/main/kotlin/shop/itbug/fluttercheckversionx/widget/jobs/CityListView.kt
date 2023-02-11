@@ -9,23 +9,26 @@ import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.JSONResult
 import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.params.AddCityApiModel
+import shop.itbug.fluttercheckversionx.util.MyActionUtil
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
+import shop.itbug.fluttercheckversionx.util.toolbar
 import java.awt.BorderLayout
-import java.awt.Dimension
-import javax.swing.JButton
 
 
-class CityListView(project: Project): JBPanel<CityListView>(BorderLayout()) {
+class CityListView(val project: Project) : JBPanel<CityListView>(BorderLayout()) {
 
-    private val addButton: JButton = JButton("添加城市")
+
+    private val toolbar = MyActionUtil.jobCityToolbarActionGroup.toolbar("城市列表")
 
     init {
-        maximumSize = Dimension(200,-1)
-        preferredSize = Dimension(200,-1)
-        add(addButton,BorderLayout.NORTH)
-        addButton.addActionListener {
-            SERVICE.create<ItbugService>().addNewJobsCity(AddCityApiModel(name = "广州")).enqueue(object : Callback<JSONResult<Any>>{
+        add(toolbar.component, BorderLayout.NORTH)
+        add(JobsCitySelectWidget(project), BorderLayout.CENTER)
+    }
+
+    private fun addNewCity(name: String) {
+        SERVICE.create<ItbugService>().addNewJobsCity(AddCityApiModel(name = name))
+            .enqueue(object : Callback<JSONResult<Any>> {
                 override fun onResponse(call: Call<JSONResult<Any>>, response: Response<JSONResult<Any>>) {
                     project.toast(response.body()?.message ?: response.message())
                 }
@@ -33,9 +36,7 @@ class CityListView(project: Project): JBPanel<CityListView>(BorderLayout()) {
                 override fun onFailure(call: Call<JSONResult<Any>>, t: Throwable) {
                     project.toastWithError("添加失败")
                 }
-
             })
-        }
     }
 
 

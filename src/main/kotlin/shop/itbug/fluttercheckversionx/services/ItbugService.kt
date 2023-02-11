@@ -55,4 +55,10 @@ interface ItbugService {
      */
     @POST("api/admin/jobs/add-city")
     fun addNewJobsCity(@Body params: AddCityApiModel): Call<JSONResult<Any>>
+
+    /**
+     * 查询所有城市
+     */
+    @GET("api/public/jobs/city")
+    fun findAllJobCity() : Call<JSONResult<List<ResourceCategory>>>
 }
