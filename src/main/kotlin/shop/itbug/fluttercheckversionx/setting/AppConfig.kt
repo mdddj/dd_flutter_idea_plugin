@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.setting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.components.JBTabbedPane
 import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
 import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
@@ -19,10 +20,13 @@ class AppConfig : Configurable, Disposable {
 
 
     override fun createComponent(): JComponent {
-        return panel
+        return JBTabbedPane().apply {
+            add("基本", panel)
+            add("资产生成", GeneraAssetsSettingPanel())
+        }
     }
 
-    val dialog: DialogPanel = settingPanel(model, dioSetting,this) {
+    val dialog: DialogPanel = settingPanel(model, dioSetting, this) {
         model = it
     }
     private val panel: JComponent get() = dialog
