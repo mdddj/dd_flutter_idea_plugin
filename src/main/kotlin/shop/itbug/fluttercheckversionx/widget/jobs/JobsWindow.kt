@@ -8,8 +8,10 @@ import java.awt.GridBagLayout
 
 class JobsWindow(val project: Project, private val toolWindow: ToolWindow) : JBPanel<JobsWindow>(GridBagLayout()) {
 
-    private val cityList = CityListView(project)
-    private val postListWidget = PostListWidget()
+    private val cityList = CityListView(project) {
+        postListWidget.changeListWithCategoryId(it.id.toLong())
+    }
+    private val postListWidget = PostListWidget(project)
     private val commentListWidget = CommentListWidget()
 
 
@@ -27,9 +29,7 @@ class JobsWindow(val project: Project, private val toolWindow: ToolWindow) : JBP
             gridx = 2
             weightx = 0.2
             add(commentListWidget, this)
-
         }
-
     }
 
 

@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("org.jetbrains.intellij") version "1.12.0"
+    id("org.jetbrains.intellij") version "1.13.0"
 }
 group = "shop.itbug"
 version = "2.3.2"
@@ -23,8 +23,8 @@ intellij {
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8214.16",
-            "io.flutter:71.2.6",
+            "Dart:223.8617.8",
+            "io.flutter:72.0.4",
             "org.intellij.plugins.markdown:223.8617.3",
             "terminal", "java"
         )

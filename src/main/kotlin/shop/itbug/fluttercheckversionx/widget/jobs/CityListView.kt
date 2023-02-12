@@ -1,43 +1,50 @@
 package shop.itbug.fluttercheckversionx.widget.jobs
 
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import shop.itbug.fluttercheckversionx.services.ItbugService
-import shop.itbug.fluttercheckversionx.services.JSONResult
-import shop.itbug.fluttercheckversionx.services.SERVICE
-import shop.itbug.fluttercheckversionx.services.params.AddCityApiModel
+import com.intellij.ui.components.JBScrollPane
+import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.util.MyActionUtil
-import shop.itbug.fluttercheckversionx.util.toast
-import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.util.toolbar
 import java.awt.BorderLayout
 
 
-class CityListView(val project: Project) : JBPanel<CityListView>(BorderLayout()) {
+class CityListView(val project: Project,onListSelect: (category: ResourceCategory)->Unit) : JBPanel<CityListView>(BorderLayout()) {
 
 
-    private val toolbar = MyActionUtil.jobCityToolbarActionGroup.toolbar("城市列表")
+    private val group = MyActionUtil.jobCityToolbarActionGroup
+
+    private val toolbar = group.toolbar("城市列表")
+
+    private val cityWidget = JobsCitySelectWidget(project)
+
+    private val refresh = DumbAwareAction.create(AllIcons.Actions.Refresh){
+        refreshList()
+    }
 
     init {
+        uiInit()
+        toolbar.targetComponent = this
         add(toolbar.component, BorderLayout.NORTH)
-        add(JobsCitySelectWidget(project), BorderLayout.CENTER)
+        add(JBScrollPane(cityWidget), BorderLayout.CENTER)
+        cityWidget.addListSelectionListener { e ->
+            onListSelect.invoke(cityWidget.selectedValue).takeIf { !e.valueIsAdjusting }
+        }
     }
 
-    private fun addNewCity(name: String) {
-        SERVICE.create<ItbugService>().addNewJobsCity(AddCityApiModel(name = name))
-            .enqueue(object : Callback<JSONResult<Any>> {
-                override fun onResponse(call: Call<JSONResult<Any>>, response: Response<JSONResult<Any>>) {
-                    project.toast(response.body()?.message ?: response.message())
-                }
 
-                override fun onFailure(call: Call<JSONResult<Any>>, t: Throwable) {
-                    project.toastWithError("添加失败")
-                }
-            })
+
+
+    private fun uiInit() {
+        group.add(refresh)
     }
+
+    private fun refreshList(){
+        cityWidget.refresh()
+    }
+
 
 
 }

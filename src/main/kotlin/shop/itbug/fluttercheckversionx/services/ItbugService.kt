@@ -1,16 +1,15 @@
 package shop.itbug.fluttercheckversionx.services
 
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 import shop.itbug.fluttercheckversionx.model.Pageable
 import shop.itbug.fluttercheckversionx.model.chat.IdeaMessage
 import shop.itbug.fluttercheckversionx.model.chat.SendTextModel
+import shop.itbug.fluttercheckversionx.model.resource.MyResource
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.params.AddCityApiModel
+import shop.itbug.fluttercheckversionx.services.params.AddJobParams
 
 data class LoginParam(val loginNumber: String, val password: String)
 
@@ -61,4 +60,17 @@ interface ItbugService {
      */
     @GET("api/public/jobs/city")
     fun findAllJobCity() : Call<JSONResult<List<ResourceCategory>>>
+
+    /**
+     * 发布职位
+     */
+    @POST("api/public/jobs/add-job")
+    fun addJob(@Body params: AddJobParams): Call<JSONResult<Any>>
+
+
+    /**
+     * 查询职位
+     */
+    @GET("api/public/jobs/find-job")
+    fun findAllJob(@QueryMap params: MutableMap<String,Any>): Call<JSONResult<Pageable<MyResource>>>
 }

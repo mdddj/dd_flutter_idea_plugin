@@ -11,6 +11,7 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartFileType
+import io.flutter.sdk.FlutterSdkUtil
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -29,7 +30,14 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
     ): Function<in FileEditor, out JComponent?> {
         return Function<FileEditor, JComponent?> {
             project.getPubspecYAMLFile() ?: return@Function null
-            if(file.fileType is DartFileType){
+            if (file.fileType is DartFileType) {
+                return@Function null
+            }
+            val filename: String = file.name
+            if (filename != "pubspec.yaml") {
+                return@Function null
+            }
+            if(!FlutterSdkUtil.hasFlutterModules(project)){
                 return@Function null
             }
             YamlFileNotificationPanel(it, project)
@@ -57,7 +65,7 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
 
 
         //清理缓存
-        val cleanCacheBtn = createActionLabel(PluginBundle.get("clean.cache")){
+        val cleanCacheBtn = createActionLabel(PluginBundle.get("clean.cache")) {
             CacheUtil.clean()
         }
         myLinksPanel.add(cleanCacheBtn)
