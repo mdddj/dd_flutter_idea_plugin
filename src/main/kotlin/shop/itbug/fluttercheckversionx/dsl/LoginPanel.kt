@@ -34,14 +34,13 @@ fun loginPanel(parentDisposable: Disposable): DialogPanel {
             errorLabel.text = ""
         }
         val r =  SERVICE.create(ItbugService::class.java).login(LoginParam(account.username,account.password)).execute().body()
-        println(r)
         if(r?.state == 200) {
              r.data?.let {
                  CredentialUtil.saveToken(it)
                  service<AppService>().login()
+
             }
         }else{
-            println(r?.message)
             errorLabel.text = r?.message
         }
     }

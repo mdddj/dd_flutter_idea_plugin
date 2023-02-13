@@ -1,0 +1,17 @@
+<idea-plugin>
+
+
+    <actions>
+        <group id="jobs-city-action">
+            <action class="shop.itbug.fluttercheckversionx.actions.jobs.JobsCityAddAction" icon="/icons/add.svg"
+                    text="添加城市"/>
+        </group>
+    </actions>
+
+    <actions>
+        <group id="jobs-post-action">
+            <action class="shop.itbug.fluttercheckversionx.actions.jobs.WriteJobPostAction" icon="/icons/write.svg"
+                    text="发布职位"/>
+        </group>
+    </actions>
+</idea-plugin>

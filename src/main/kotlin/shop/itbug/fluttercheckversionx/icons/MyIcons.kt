@@ -13,5 +13,7 @@ object MyIcons {
     val infos = IconLoader.getIcon("/icons/info.svg",MyIcons::class.java)
     val params = IconLoader.getIcon("icons/params.svg",MyIcons::class.java)
     var flutter = IconLoader.getIcon("/icons/flutter.svg",MyIcons::class.java)
+    var write = IconLoader.getIcon("/icons/write.svg",MyIcons::class.java)
+    var add = IconLoader.getIcon("/icons/add.svg",MyIcons::class.java)
 }
 

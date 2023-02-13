@@ -21,14 +21,13 @@
         <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/diandian.svg" >
             <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
                     text="Add Comments to Functions">
-                <add-to-group group-id="dart-file-actions" anchor="first"/>
                 <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
             </action>
             <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
                     text="Model to Freezed">
-                <add-to-group group-id="dart-file-actions" anchor="last"/>
             </action>
-            <add-to-group group-id="EditorPopupMenu" anchor="first" />
+            <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed" text="Function Params To Freezed" />
+            <add-to-group group-id="EditorPopupMenu" />
         </group>
     </actions>
 </idea-plugin>

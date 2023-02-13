@@ -51,7 +51,7 @@ dependencies:
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 if (element.isDartPluginElement()) {
-                    val pathElement = PsiTreeUtil.findChildOfAnyType(element, YAMLKeyValueImpl::class.java)
+                    PsiTreeUtil.findChildOfAnyType(element, YAMLKeyValueImpl::class.java)
 //                    pathElement?.let {
 //                        if (pathElement.keyText == "path" || pathElement.keyText == "github") {
 //                            editor.foldingModel.runBatchFoldingOperation {

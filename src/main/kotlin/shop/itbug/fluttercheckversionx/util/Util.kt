@@ -19,9 +19,15 @@ fun String.formatDartName() : String {
     return Util.removeSpecialCharacters(this)
 }
 
+
+fun String.firstChatToUpper() : String {
+    return  CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, this)
+}
+
 class Util {
     companion object {
 
+        val userHomePath: String get() = System.getProperty("user.home")
 
         /**
          * Color对象转换成字符串

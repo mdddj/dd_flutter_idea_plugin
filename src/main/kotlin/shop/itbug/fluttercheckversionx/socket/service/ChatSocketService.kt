@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.socket.service
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import org.hildan.krossbow.stomp.StompClient

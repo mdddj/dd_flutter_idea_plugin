@@ -34,7 +34,6 @@ class AssetsAutoGenerateClassAction : AnAction() {
             val classElement =
                 MyDartPsiElementUtil.createDartClassBodyFromClassName(project, "AppAssets")
             classElement.classBody?.classMembers?.let { classMembers ->
-
                 MyFileUtil.onFolderEachWithProject(project, name) { virtualFile ->
                     val eleValue = virtualFile.fileNameWith(name)
                     var filename = Util.removeSpecialCharacters(virtualFile.presentableName.split(".").first())
