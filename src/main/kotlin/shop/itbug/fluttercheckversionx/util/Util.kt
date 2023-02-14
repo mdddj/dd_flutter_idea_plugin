@@ -9,6 +9,8 @@ import java.net.SocketException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 fun Color.toHexString(): String {
@@ -176,6 +178,17 @@ class Util {
             }
         }
 
+        /**
+         * 字符串是否包含中文
+         *
+         * @param str 待校验字符串
+         * @return true 包含中文字符 false 不包含中文字符
+         */
+        fun isContainChinese(str: String): Boolean {
+            val p: Pattern = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]")
+            val m: Matcher = p.matcher(str)
+            return m.find()
+        }
 
     }
 }

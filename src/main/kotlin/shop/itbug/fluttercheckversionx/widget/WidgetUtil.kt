@@ -5,16 +5,10 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 
 
-fun Project.askString(onString: MySimpleTextFieldSubmit) {
-    WidgetUtil.getStringWithTextFieldPopup(this, onString)
-}
 
 object WidgetUtil {
 
 
-    fun getStringWithTextFieldPopup(project: Project, onSubmit: MySimpleTextFieldSubmit) {
-        getTextEditorPopup("请输入内容", "", { it.showCenteredInCurrentWindow(project) }, onSubmit)
-    }
 
     /**
      * 弹出一个输入框,并获取内容
@@ -34,7 +28,7 @@ object WidgetUtil {
                 .setRequestFocus(true)
                 .setTitle(title)
                 .setCancelKeyEnabled(true)
-                .setResizable(true)
+                .setResizable(false)
                 .setMovable(true)
                 .createPopup()
         show.invoke(popup)

@@ -11,7 +11,6 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
 import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
-import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
@@ -60,7 +59,8 @@ fun settingPanel(
                     }
 
                 })
-            }.comment(PluginBundle.get("setting.reset.tip"))
+            }
+            //.comment(PluginBundle.get("setting.reset.tip"))
 
         }
 
@@ -73,7 +73,8 @@ fun settingPanel(
 //            新接口弹出提醒
             row(PluginBundle.get("setting.new.tips")) {
                 checkBox(PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
-            }.comment(PluginBundle.get("comment.api.new.tips"))
+            }
+            //.comment(PluginBundle.get("comment.api.new.tips"))
 
 
             indent {
@@ -102,25 +103,17 @@ fun settingPanel(
         group(PluginBundle.get("ass.setting.title")) {
             row(PluginBundle.get("ass.1")) {
                 textField().bindText(model::assetCompilationTriggerString)
-            }.comment(PluginBundle.get("ass.2"))
+            }
+            //.comment(PluginBundle.get("ass.2"))
             row(PluginBundle.get("ass.3")) {
                 intTextField().bindIntText(model::assetCompilationTriggerLen)
-            }.comment(PluginBundle.get("ass.4"))
+            }
+            //.comment(PluginBundle.get("ass.4"))
             row(PluginBundle.get("ass.5")) {
                 textField().bindText(model::assetScanFolderName)
-            }.comment(PluginBundle.get("ass.6"))
+            }
+            //.comment(PluginBundle.get("ass.6"))
         }
-
-
-        group("r.dart") {
-          row {
-              checkBox("生成r.dart不再提醒").bindSelected({ GenerateAssetsClassConfig.getGenerateAssetsSetting().dontTip},{
-                  GenerateAssetsClassConfig.getGenerateAssetsSetting().dontTip = it
-              })
-          }
-        }
-
-
     }
 
     fun initValidation() {

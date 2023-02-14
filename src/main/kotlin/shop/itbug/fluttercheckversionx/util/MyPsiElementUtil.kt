@@ -60,7 +60,8 @@ class MyDartPsiElementUtil {
          * 根据类名创建PsiElement
          */
         fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
-            val file = DartElementGenerator.createDummyFile(project, "class $className{\n\n}")
+            val file = DartElementGenerator.createDummyFile(project, "class $className{\n" +
+                    "\n}")
             return PsiTreeUtil.getChildOfType(file, DartClassDefinitionImpl::class.java)!!
         }
 
