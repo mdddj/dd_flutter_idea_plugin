@@ -12,6 +12,8 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
+import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.intellij.vcs.commit.NonModalCommitPanel.Companion.showAbove
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
@@ -31,12 +33,16 @@ typealias GeneraAssetsSettingPanelIsModified = (value: Boolean) -> Unit
 class GeneraAssetsSettingPanel(
     var settingModel: GenerateAssetsClassConfigModel,
     val parentDisposable: Disposable,
-    val modified: GeneraAssetsSettingPanelIsModified
+    private val modified: GeneraAssetsSettingPanelIsModified
 ) :
     BorderLayoutPanel() {
 
     //忽略的文件
     private val igFilesWidget = IgFileList()
+
+
+    private val dialogPanel = getGeneraAssetsPanel(settingModel, parentDisposable, modified)
+
 
 
     init {
@@ -46,7 +52,7 @@ class GeneraAssetsSettingPanel(
     }
 
     private fun createRightSettingPanel() = BorderLayoutPanel().apply {
-        addToCenter(getGeneraAssetsPanel(settingModel, parentDisposable, modified))
+        addToCenter(dialogPanel)
         border = BorderFactory.createEmptyBorder(12, 12, 12, 12)
     }
 
@@ -90,13 +96,20 @@ class GeneraAssetsSettingPanel(
                 return ActionUpdateThread.BGT
             }
         })
+
+    fun doApply(){
+        dialogPanel.apply()
+    }
 }
 
 
+/**
+ * 设置面板
+ */
 fun getGeneraAssetsPanel(
     settingModel: GenerateAssetsClassConfigModel,
     parentDisposable: Disposable,
-    modified: GeneraAssetsSettingPanelIsModified
+    isModified: GeneraAssetsSettingPanelIsModified
 ): DialogPanel {
 
 
@@ -127,13 +140,18 @@ fun getGeneraAssetsPanel(
         }
         row("命名后缀") {
             checkBox("命名添加文件类型后缀").bindSelected(settingModel::addFileTypeSuffix)
-                .comment("感谢尘定同学提出的建议", 11)
         }
         row("弹窗提醒") {
             checkBox("每次生成不需要弹窗").bindSelected(settingModel::dontTip)
         }
         row("监听变化") {
             checkBox("文件更改后自动生成").bindSelected(settingModel::autoListenFileChange)
+        }
+        row {
+            label("感谢尘定同学提出的建议").component.apply {
+                font = JBFont.small()
+                foreground = JBUI.CurrentTheme.Link.Foreground.DISABLED
+            }
         }
     }
 
@@ -143,11 +161,10 @@ fun getGeneraAssetsPanel(
 
     fun initValidation() {
         alarm.addRequest({
-            if (p.isModified()) {
-                p.apply()
-
-            }
-            modified.invoke(p.isModified())
+//            if (p.isModified()) {
+//                p.apply()
+//            }
+            isModified.invoke(p.isModified())
             initValidation()
         }, 1000)
     }

@@ -23,16 +23,16 @@ class AppConfig : Configurable, Disposable {
 
     private var generaAssetsSettingPanelModelIs = false
 
+    private var generateSettingPanel =
+        GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
+            println("设置发生变更::::$it")
+            generaAssetsSettingPanelModelIs = it
+        }
+
     override fun createComponent(): JComponent {
         return JBTabbedPane().apply {
             add("基本", panel)
-            add(
-                "资产生成",
-                GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
-                    println("设置发生变更::::$it")
-                    generaAssetsSettingPanelModelIs = it
-                }
-            )
+            add("资产生成", generateSettingPanel)
         }
     }
 
@@ -48,6 +48,7 @@ class AppConfig : Configurable, Disposable {
 
     override fun apply() {
         dialog.apply()
+        generateSettingPanel.doApply()
         PluginStateService.getInstance().loadState(model)
         DioxListingUiConfig.getInstance().loadState(dioSetting)
         GenerateAssetsClassConfig.getInstance().loadState(generaAssetsSettingPanel)
