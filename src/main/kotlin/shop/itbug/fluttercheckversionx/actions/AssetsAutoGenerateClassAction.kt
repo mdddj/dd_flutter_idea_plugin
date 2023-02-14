@@ -47,7 +47,7 @@ class AssetsAutoGenerateClassAction : AnAction() {
                     val attrName = formatName(virtualFile, userSetting, project, names)//属性名
                     if (attrName.isNotEmpty()) {
                         val eleValue = virtualFile.fileNameWith(name)//属性值
-                        val expression = "static const $attrName = '$eleValue'\n"
+                        val expression = "static const $attrName = '$eleValue'"
                         names.add(attrName)
                         MyDartPsiElementUtil.createVarExpressionFromText(
                             project,

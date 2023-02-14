@@ -123,7 +123,7 @@ fun getGeneraAssetsPanel(settingModel: GenerateAssetsClassConfigModel, parentDis
         }
         row("替换字符") {
             textField().bindText(settingModel::replaceTags)
-        }.contextHelp("如果文件名中包含这些特殊字符,将会自动替换成下换线_", "替换字符")
+        }.contextHelp("如果文件名中包含这些特殊字符,将会自动替换成下换线_,多个请用英文逗号进行分割", "替换字符")
         row("命名规范") {
             checkBox("属性值首字母大写").bindSelected(settingModel::firstChatUpper)
         }

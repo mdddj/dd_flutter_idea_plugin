@@ -24,7 +24,7 @@ data class GenerateAssetsClassConfigModel(
     //命名添加文件类型后缀: test.jpg => testJpg
     var addFileTypeSuffix: Boolean = false,
     //如果文件名里面有特殊字符,需要将其忽略
-    var replaceTags: String = ".,-",
+    var replaceTags: String = ".,-,!,@,#,$,%,^,&,*,(,),+,=,?,/,<,>,~",
     //文件名首字符大写
     var firstChatUpper: Boolean = true
 
