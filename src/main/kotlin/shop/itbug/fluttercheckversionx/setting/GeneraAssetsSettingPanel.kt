@@ -28,7 +28,11 @@ typealias GeneraAssetsSettingPanelIsModified = (value: Boolean) -> Unit
 /**
  * 生成资产文件的设置面板
  */
-class GeneraAssetsSettingPanel(var settingModel: GenerateAssetsClassConfigModel, val parentDisposable: Disposable,val modified: GeneraAssetsSettingPanelIsModified) :
+class GeneraAssetsSettingPanel(
+    var settingModel: GenerateAssetsClassConfigModel,
+    val parentDisposable: Disposable,
+    val modified: GeneraAssetsSettingPanelIsModified
+) :
     BorderLayoutPanel() {
 
     //忽略的文件
@@ -42,7 +46,7 @@ class GeneraAssetsSettingPanel(var settingModel: GenerateAssetsClassConfigModel,
     }
 
     private fun createRightSettingPanel() = BorderLayoutPanel().apply {
-        addToCenter(getGeneraAssetsPanel(settingModel, parentDisposable,modified))
+        addToCenter(getGeneraAssetsPanel(settingModel, parentDisposable, modified))
         border = BorderFactory.createEmptyBorder(12, 12, 12, 12)
     }
 
@@ -55,20 +59,7 @@ class GeneraAssetsSettingPanel(var settingModel: GenerateAssetsClassConfigModel,
                 targetComponent = igFilesWidget
             }
         addToLeft(toolbar.component)
-
-        val rightToolbar = ActionManager.getInstance()
-            .createActionToolbar("GenerateAssetsIgFileRightToolbar", DefaultActionGroup(*createRightActions()), true)
-        addToRight(rightToolbar.component)
     }
-
-    private fun createRightActions(): Array<AnAction> = arrayOf(
-        //帮助图标
-        object : DumbAwareAction(AllIcons.Actions.Help) {
-            override fun actionPerformed(e: AnActionEvent) {
-
-            }
-        }
-    )
 
     private fun createActions(): Array<AnAction> = arrayOf(
         //添加
@@ -102,7 +93,11 @@ class GeneraAssetsSettingPanel(var settingModel: GenerateAssetsClassConfigModel,
 }
 
 
-fun getGeneraAssetsPanel(settingModel: GenerateAssetsClassConfigModel, parentDisposable: Disposable, modified: GeneraAssetsSettingPanelIsModified): DialogPanel {
+fun getGeneraAssetsPanel(
+    settingModel: GenerateAssetsClassConfigModel,
+    parentDisposable: Disposable,
+    modified: GeneraAssetsSettingPanelIsModified
+): DialogPanel {
 
 
     val p: DialogPanel = panel {
@@ -120,7 +115,7 @@ fun getGeneraAssetsPanel(settingModel: GenerateAssetsClassConfigModel, parentDis
             textField().bindText({ settingModel.path }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().path = it
             })
-        }
+        }.contextHelp("如果要生成在lib下的某个文件,请设置成lib/generate (generate是文件夹名字,支持多个层级)", "提示")
         row("替换字符") {
             textField().bindText(settingModel::replaceTags)
         }.contextHelp("如果文件名中包含这些特殊字符,将会自动替换成下换线_,多个请用英文逗号进行分割", "替换字符")

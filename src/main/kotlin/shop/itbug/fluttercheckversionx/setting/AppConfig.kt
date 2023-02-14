@@ -29,6 +29,7 @@ class AppConfig : Configurable, Disposable {
             add(
                 "资产生成",
                 GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
+                    println("设置发生变更::::$it")
                     generaAssetsSettingPanelModelIs = it
                 }
             )
