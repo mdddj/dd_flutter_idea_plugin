@@ -47,6 +47,8 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
+    implementation("com.kitfox.svg:svg-salamander:1.0")
+
 
 }
 
