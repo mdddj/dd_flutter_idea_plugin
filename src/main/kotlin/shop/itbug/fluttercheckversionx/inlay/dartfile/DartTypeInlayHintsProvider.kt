@@ -17,8 +17,6 @@ import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
 
 
-
-
 class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider.Setting> {
 
 
@@ -131,6 +129,33 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             false
                         )
                     }
+
+
+
+//                    editor.inlayModel.addBlockElement(
+//                        EditorUtil.getPlainSpaceWidth(editor),
+//                        false,
+//                        true,
+//                        1,
+//                        object : EditorCustomElementRenderer {
+//                            override fun calcWidthInPixels(inlay: Inlay<*>): Int {
+//                                val lineNumber = editor.document.getLineNumber(element.startOffset)
+//                                val lineStartOffset = editor.document.getLineStartOffset(lineNumber)
+//                                val lineEndOffset = editor.document.getLineEndOffset(lineNumber)
+//                                return lineEndOffset - lineStartOffset
+//                            }
+//
+//                            override fun paint(
+//                                inlay: Inlay<*>,
+//                                g: Graphics2D,
+//                                targetRegion: Rectangle2D,
+//                                textAttributes: TextAttributes
+//                            ) {
+//                                g.drawString("hello world!",targetRegion.x.toFloat(),targetRegion.y.toFloat())
+//                                super.paint(inlay, g, targetRegion, textAttributes)
+//                            }
+//                        }
+//                    )
                 }
 
                 return true
