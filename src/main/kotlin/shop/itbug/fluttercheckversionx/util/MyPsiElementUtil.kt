@@ -21,6 +21,12 @@ import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 
 typealias CreatePsiFileSuccess = (psiFile: PsiFile) -> Unit
 
+fun Project.reformat(element: PsiElement) {
+    WriteCommandAction.runWriteCommandAction(this) {
+        CodeStyleManager.getInstance(this).reformat(element)
+    }
+}
+
 /**
  * psi 工具类类
  */
@@ -60,8 +66,10 @@ class MyDartPsiElementUtil {
          * 根据类名创建PsiElement
          */
         fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
-            val file = DartElementGenerator.createDummyFile(project, "class $className{\n" +
-                    "\n}")
+            val file = DartElementGenerator.createDummyFile(
+                project, "class $className{\n" +
+                        "\n}"
+            )
             return PsiTreeUtil.getChildOfType(file, DartClassDefinitionImpl::class.java)!!
         }
 
@@ -82,13 +90,15 @@ class MyDartPsiElementUtil {
                     checkFileIsExits(project, "$path/$filename") {
                         it.delete()
                     }
-                    val e = PsiFileFactory.getInstance(project)
+                    val dartFile = PsiFileFactory.getInstance(project)
                         .createFileFromText(filename, DartLanguage.INSTANCE, element.text)
+                    project.reformat(dartFile)
+                    project.toast("文件已经格式化成功.")
                     runWriteAction {
-                        findDirectory.add(e)
-                        onSuccess?.invoke(e)
+                        findDirectory.add(dartFile)
+                        onSuccess?.invoke(dartFile)
                     }
-                    return e
+                    return dartFile
                 } else {
                     project.toastWithError("查找目录失败")
                 }
@@ -237,16 +247,21 @@ class MyDartPsiElementUtil {
         /**
          * 创建dart类节点
          */
-        fun createDartNamePsiElement(name: String,project: Project) : DartComponentNameImpl {
+        fun createDartNamePsiElement(name: String, project: Project): DartComponentNameImpl {
             val createDummyFile = DartElementGenerator.createDummyFile(project, "class $name {}")!!
-            return PsiTreeUtil.getChildOfType(createDummyFile,DartComponentNameImpl::class.java)!!
+            return PsiTreeUtil.getChildOfType(createDummyFile, DartComponentNameImpl::class.java)!!
         }
 
-        fun createDartDartReferenceExpressionImplPsiElement(name: String, project: Project) : DartReferenceExpressionImpl{
-            val file = DartElementGenerator.createDummyFile(project,"class $name{" +
-                    "}" +
-                    "var b = $name();")!!
-           return PsiTreeUtil.getChildOfType(file,DartReferenceExpressionImpl::class.java)!!
+        fun createDartDartReferenceExpressionImplPsiElement(
+            name: String,
+            project: Project
+        ): DartReferenceExpressionImpl {
+            val file = DartElementGenerator.createDummyFile(
+                project, "class $name{" +
+                        "}" +
+                        "var b = $name();"
+            )!!
+            return PsiTreeUtil.getChildOfType(file, DartReferenceExpressionImpl::class.java)!!
 
         }
     }

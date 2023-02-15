@@ -6,10 +6,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.codeStyle.CodeStyleManager
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.dialog.AssetsAutoGenerateClassActionConfigDialog
@@ -63,19 +61,15 @@ class AssetsAutoGenerateClassAction : AnAction() {
                 }
             }
 
-            val file = MyDartPsiElementUtil.createDartFileWithElement(
+            project.reformat(classElement)
+
+            MyDartPsiElementUtil.createDartFileWithElement(
                 project,
                 classElement,
                 "lib",
                 "${userSetting.fileName}.dart",
                 null
             )
-
-            file?.let {
-                WriteCommandAction.runWriteCommandAction(project) {
-                    CodeStyleManager.getInstance(project).reformat(file)
-                }
-            }
         }
         names.clear()
     }

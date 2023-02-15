@@ -24,7 +24,7 @@ intellij {
         listOf(
             "yaml",
             "Dart:223.8617.8",
-            "io.flutter:72.0.4",
+            "io.flutter:72.1.4",
             "org.intellij.plugins.markdown:223.8617.3",
             "terminal", "java"
         )
@@ -73,7 +73,6 @@ tasks {
         untilBuild.set("223.8617.56")
         changeNotes.set(
             """
-                
                  <div>
                     <h1>2.3.2</h1>
                 </div>
