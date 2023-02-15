@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
 import com.intellij.codeInsight.hints.*
-import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -11,12 +10,10 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
-import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
-
-
+import java.io.File
 
 
 class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider.Setting> {
@@ -60,11 +57,12 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                             val staticType = analysisGethover[0].staticType
                             analysisGethover[0].dartdoc
                             if (staticType != null) {
-                                val ins = hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType") { _, _ ->
-                                    val ss = StringSelection(staticType)
-                                    val clipboard: Clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
-                                    clipboard.setContents(ss, null)
-                                }
+                                val ins =
+                                    hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType") { _, _ ->
+                                        val ss = StringSelection(staticType)
+                                        val clipboard: Clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
+                                        clipboard.setContents(ss, null)
+                                    }
                                 sink.addInlineElement(
                                     filterIsInstanceWithName.endOffset, false, ins, false
                                 )
@@ -100,7 +98,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                                                 sink.addInlineElement(
                                                     semicolonElement.endOffset,
                                                     false,
-                                                    hintsInlayPresentationFactory.simpleText(docMessage, ""){ _, _ ->
+                                                    hintsInlayPresentationFactory.simpleText(docMessage, "") { _, _ ->
                                                         println("被点击了...")
                                                     },
                                                     false
@@ -118,19 +116,52 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
                 }
 
 
-                if (element is DartReferenceExpressionImpl) {
-                    val models = service<AppService>().examples
-                    val strKeys = models.map { it.label }
-                    if (strKeys.contains(element.text)) {
-                        sink.addInlineElement(
-                            element.endOffset,
-                            false,
-                            hintsInlayPresentationFactory.simpleTextWithClick(
-                                "查看示例", "查看使用示例"
-                            ),
-                            false
-                        )
+                //资产图片的展示
+                if (element.lastChild is DartReferenceExpressionImpl) {
+                    element.reference?.let {
+                        val referenceValElement = it.resolve()?.parent?.parent
+                        if (referenceValElement is DartVarDeclarationListImpl && referenceValElement.lastChild is DartVarInitImpl) {
+                            val varInitElement = referenceValElement.lastChild
+                            if (varInitElement.lastChild is DartStringLiteralExpressionImpl) {
+                                val path = varInitElement.lastChild.text.replace("'", "").replace("\"", "")
+                                hintsInlayPresentationFactory.getImageWithPath(file.project.basePath + File.separator + path,path)
+                                    ?.let { it1 -> sink.addInlineElement(element.endOffset, false, it1, false) }
+                            }
+                        }
                     }
+
+
+//                    editor.inlayModel.addBlockElement(
+//                        EditorUtil.getPlainSpaceWidth(editor),
+//                        false,
+//                        true,
+//                        1,
+//                        object : EditorCustomElementRenderer {
+//                            override fun calcWidthInPixels(inlay: Inlay<*>): Int {
+//                                val lineNumber = editor.document.getLineNumber(element.startOffset)
+//                                val lineStartOffset = editor.document.getLineStartOffset(lineNumber)
+//                                val lineEndOffset = editor.document.getLineEndOffset(lineNumber)
+//                                return lineEndOffset - lineStartOffset
+//                            }
+//
+//                            override fun paint(
+//                                inlay: Inlay<*>,
+//                                g: Graphics2D,
+//                                targetRegion: Rectangle2D,
+//                                textAttributes: TextAttributes
+//                            ) {
+//                                g.drawString("hello world!",targetRegion.x.toFloat(),targetRegion.y.toFloat())
+//                                super.paint(inlay, g, targetRegion, textAttributes)
+//                            }
+//                        }
+//                    )
+                }
+
+
+                if(element is DartStringLiteralExpressionImpl) {
+                    val path = element.text.replace("'", "").replace("\"", "")
+                    hintsInlayPresentationFactory.getImageWithPath(file.project.basePath + File.separator + path,path)
+                        ?.let { it1 -> sink.addInlineElement(element.endOffset, false, it1, false) }
                 }
 
                 return true

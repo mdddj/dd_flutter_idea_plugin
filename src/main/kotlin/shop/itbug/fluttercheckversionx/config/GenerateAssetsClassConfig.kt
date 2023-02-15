@@ -11,12 +11,24 @@ data class GenerateAssetsClassConfigModel(
     var className: String = "R",
     //文件名
     var fileName: String = "R",
-    //保持路径
+    //保存路径
     var path: String = "lib",
     //不再提醒
     var dontTip: Boolean = false,
     //是否监听自动提醒
-    var autoListenFileChange: Boolean = false
+    var autoListenFileChange: Boolean = false,
+    //忽略的文件名
+    var igFiles: MutableList<String> = mutableListOf("test.json", "demo.png"),
+    //添加文件夹前缀
+    var addFolderNamePrefix: Boolean = false,
+    //命名添加文件类型后缀: test.jpg => testJpg
+    var addFileTypeSuffix: Boolean = false,
+    //如果文件名里面有特殊字符,需要将其忽略
+    var replaceTags: String = ".,-,!,@,#,$,%,^,&,*,(,),+,=,?,/,<,>,~",
+    //文件名首字符大写
+    var firstChatUpper: Boolean = true
+
+
 )
 
 @State(name = "DDGenerateAssetsClassConfig", storages = [Storage("DDGenerateAssetsClassConfig.xml")])
@@ -36,7 +48,7 @@ class GenerateAssetsClassConfig private constructor() : PersistentStateComponent
             return service()
         }
 
-        fun getGenerateAssetsSetting() : GenerateAssetsClassConfigModel {
+        fun getGenerateAssetsSetting(): GenerateAssetsClassConfigModel {
             return getInstance().state
         }
     }

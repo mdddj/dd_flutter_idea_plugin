@@ -24,7 +24,7 @@ intellij {
         listOf(
             "yaml",
             "Dart:223.8617.8",
-            "io.flutter:72.0.4",
+            "io.flutter:72.1.4",
             "org.intellij.plugins.markdown:223.8617.3",
             "terminal", "java"
         )
@@ -47,6 +47,8 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
+    implementation("com.kitfox.svg:svg-salamander:1.0")
+
 
 }
 
@@ -73,7 +75,6 @@ tasks {
         untilBuild.set("223.8617.56")
         changeNotes.set(
             """
-                
                  <div>
                     <h1>2.3.2</h1>
                 </div>
