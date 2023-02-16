@@ -1,9 +1,11 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.google.common.base.CaseFormat
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
@@ -18,6 +20,7 @@ import com.jetbrains.lang.dart.psi.impl.*
 import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
+import java.io.File
 
 typealias CreatePsiFileSuccess = (psiFile: PsiFile) -> Unit
 
@@ -159,42 +162,102 @@ class MyDartPsiElementUtil {
             project: Project,
             name: String,
             auto: Boolean = false,
-            config: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+            userSetting: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
         ) {
-            val names = mutableSetOf<String>()
-            val classElement =
-                createDartClassBodyFromClassName(project, config.className)
+
+             val names: MutableList<String> = mutableListOf()
+            /**
+             * 格式化属性名
+             */
+            fun formatName(
+                file: VirtualFile,
+                setting: GenerateAssetsClassConfigModel,
+                project: Project,
+                names: MutableList<String>
+            ): String {
+                var initFilename = file.nameWithoutExtension //默认就是文件名
+                //命名添加前缀
+                if (setting.addFolderNamePrefix) {
+                    initFilename = file.path
+                        .removeSuffix(file.extension ?: "")
+                        .replace(project.basePath ?: "", "")
+                        .replace(File.separator, "_")
+                        .removePrefix("_")
+                }
+
+                //命名添加类型后缀
+                if (setting.addFileTypeSuffix) {
+                    initFilename += file.extension
+                }
+
+
+                //进行特殊字符替换
+                val split = setting.replaceTags.split(",")
+                split.forEach {
+                    initFilename = initFilename.replace(it, "_")
+                }
+
+                //判断是否有中文
+                if (Util.isContainChinese(initFilename)) {
+                    project.toast("梁典典:[${file.name}]包含中文字符已被忽略")
+                    return ""
+                }
+                //进行命名格式化,首字母大写
+                initFilename = if (setting.firstChatUpper) {
+                    CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, initFilename)
+                } else {
+                    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, initFilename)
+                }
+
+                //判断是否有重名的
+                if (names.contains(initFilename)) {
+                    val size = names.filter { it.contains(initFilename) }.size
+                    initFilename += "${size + 1}"
+                }
+
+                //过滤忽略掉的
+                if (setting.igFiles.contains(file.name)) {
+                    project.toast("文件[${file.name}] 已被忽略")
+                    return ""
+                }
+                return initFilename
+            }
+
+            val classElement = createDartClassBodyFromClassName(project, userSetting.className)
+
             classElement.classBody?.classMembers?.let { classMembers ->
                 MyFileUtil.onFolderEachWithProject(project, name) { virtualFile ->
-                    val eleValue = virtualFile.fileNameWith(name)
-                    var filename = Util.removeSpecialCharacters(virtualFile.presentableName.split(".").first())
-                    if (names.contains(filename)) filename += "${names.filter { it.contains(filename) }.size}"
-                    if (filename.isNotEmpty() && eleValue.isNotEmpty()) {
-                        val expression = "static const $filename = '$eleValue'"
-                        names.add(filename)
-                        val ex = createVarExpressionFromText(
+                    val attrName = formatName(virtualFile, userSetting, project, names)//属性名
+                    if (attrName.isNotEmpty()) {
+                        val eleValue = virtualFile.fileNameWith(name)//属性值
+                        val expression = "static const $attrName = '$eleValue'"
+                        names.add(attrName)
+                        createVarExpressionFromText(
                             project,
                             expression
-                        )
-                        val d = createLeafPsiElement(project)
-                        runWriteAction {
-                            ex?.addAfter(d, ex.nextSibling)
-                            ex?.let { classMembers.addAfter(it, classMembers.nextSibling) }
+                        ).let {
+                            val d = createLeafPsiElement(project)
+                            runWriteAction {
+                                it?.addAfter(d, it.nextSibling)
+                                it?.let { it1 -> classMembers.addAfter(it1, classMembers.nextSibling) }
+                            }
                         }
-
                     }
                 }
             }
 
-            val file =
-                createDartFileWithElement(project, classElement, config.path, "${config.fileName}.dart", onSuccess = {
-                    project.toast(if (auto) "监听到资产文件夹变化,自动生成成功." else "生成成功:${it.name}")
-                })
+            project.reformat(classElement)
 
-            file?.let {
-                WriteCommandAction.runWriteCommandAction(project) {
-                    CodeStyleManager.getInstance(project).reformat(file)
-                }
+            createDartFileWithElement(
+                project,
+                classElement,
+                "lib",
+                "${userSetting.fileName}.dart",
+                null
+            )
+            names.clear()
+            if(auto){
+                project.toast("梁典典:自动生成资产类成功")
             }
         }
 

@@ -16,8 +16,7 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
  * 当项目打开的时候,会执行这个类的runActivity方法
  * 在这里启动一个子线程去检测项目中的pubspec.yaml文件.并执行检测新版本
  */
-class FlutterProjectOpenActivity : StartupActivity,Disposable {
-
+class FlutterProjectOpenActivity : StartupActivity, Disposable {
 
     /**
      * 项目在idea中打开时执行函数
@@ -30,15 +29,15 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
         ApplicationManager.getApplication().messageBus.connect(this).subscribe(VirtualFileManager.VFS_CHANGES, object :
             BulkFileListener {
             override fun after(events: MutableList<out VFileEvent>) {
-               val projectPath = project.basePath
-               val setting =  GenerateAssetsClassConfig.getGenerateAssetsSetting()
-                if(!setting.autoListenFileChange){
+                val projectPath = project.basePath
+                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+                if (!setting.autoListenFileChange) {
                     return
                 }
-                if(projectPath!=null){
+                if (projectPath != null) {
                     events.forEach {
                         it.file?.apply {
-                            checkAndAutoGenFile(projectPath,this,project)
+                            checkAndAutoGenFile(projectPath, this, project)
                         }
                     }
                 }
@@ -50,12 +49,12 @@ class FlutterProjectOpenActivity : StartupActivity,Disposable {
     }
 
 
-    private fun checkAndAutoGenFile(projectPath: String,file: VirtualFile,project: Project) {
-       var filePath = file.canonicalPath
-       filePath = filePath?.replace("$projectPath/","")
-        if(filePath!=null){
-            if(filePath.indexOf("assets") == 0) {
-                MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project,"assets",true)
+    private fun checkAndAutoGenFile(projectPath: String, file: VirtualFile, project: Project) {
+        var filePath = file.canonicalPath
+        filePath = filePath?.replace("$projectPath/", "")
+        if (filePath != null) {
+            if (filePath.indexOf("assets") == 0) {
+                MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project, "assets", true)
             }
         }
     }
