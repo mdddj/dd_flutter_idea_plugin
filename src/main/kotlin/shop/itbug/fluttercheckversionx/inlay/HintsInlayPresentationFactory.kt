@@ -98,7 +98,6 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
                return null
             }
             val i = ImageIcon(path).image.getScaledInstance(16,16, Image.SCALE_SMOOTH)
-
             var imageIcon : Icon = ImageIcon(i)
             if(path.endsWith(".svg")){
                 imageIcon = SVGIcon().apply {

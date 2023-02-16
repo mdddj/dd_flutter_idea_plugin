@@ -147,6 +147,9 @@ fun getGeneraAssetsPanel(
         row("监听变化") {
             checkBox("文件更改后自动生成").bindSelected(settingModel::autoListenFileChange)
         }
+        row("图标预览") {
+            checkBox("在编辑器中显示图标预览").bindSelected(settingModel::showImageIconInEditor)
+        }
         row {
             label("感谢尘定同学提出的建议").component.apply {
                 font = JBFont.small()

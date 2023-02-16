@@ -8,6 +8,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.refactoring.suggested.endOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
+import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
+import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
 import java.awt.Toolkit
@@ -16,12 +18,12 @@ import java.awt.datatransfer.StringSelection
 import java.io.File
 
 
-class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider.Setting> {
+class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigModel> {
 
 
     data class Setting(private val enable: Boolean)
 
-    override val key: SettingsKey<Setting>
+    override val key: SettingsKey<GenerateAssetsClassConfigModel>
         get() = SettingsKey("dart.type.inlay.hints.provider")
     override val name: String
         get() = "dart.type.inlay.hints.provider"
@@ -31,14 +33,14 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
             final b = false;
         """.trimIndent()
 
-    override fun createSettings(): Setting {
-        return Setting(true)
-    }
 
+    override fun createSettings(): GenerateAssetsClassConfigModel {
+        return GenerateAssetsClassConfig.getGenerateAssetsSetting()
+    }
     override fun getCollectorFor(
         file: PsiFile,
         editor: Editor,
-        settings: Setting,
+        settings: GenerateAssetsClassConfigModel,
         sink: InlayHintsSink
     ): InlayHintsCollector {
         return object : FactoryInlayHintsCollector(editor) {
@@ -117,7 +119,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
 
 
                 //资产图片的展示
-                if (element.lastChild is DartReferenceExpressionImpl) {
+                if (element.lastChild is DartReferenceExpressionImpl && settings.showImageIconInEditor) {
                     element.reference?.let {
                         val referenceValElement = it.resolve()?.parent?.parent
                         if (referenceValElement is DartVarDeclarationListImpl && referenceValElement.lastChild is DartVarInitImpl) {
@@ -171,7 +173,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<DartTypeInlayHintsProvider
     }
 
 
-    override fun createConfigurable(settings: Setting): ImmediateConfigurable {
+    override fun createConfigurable(settings: GenerateAssetsClassConfigModel): ImmediateConfigurable {
         return DefaulImmediateConfigurable()
     }
 
