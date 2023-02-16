@@ -21,7 +21,6 @@ import javax.swing.JPanel
  */
 class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
 
-
     /**
      * 详情对象
      */

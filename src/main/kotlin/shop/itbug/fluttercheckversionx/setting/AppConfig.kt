@@ -25,7 +25,6 @@ class AppConfig : Configurable, Disposable {
 
     private var generateSettingPanel =
         GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
-            println("设置发生变更::::$it")
             generaAssetsSettingPanelModelIs = it
         }
 

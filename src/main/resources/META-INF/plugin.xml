@@ -184,7 +184,7 @@
         </action>
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
-                text="OpenFlutterCheckVersionXSetting" description="打开设置"/>
+                text="OpenFlutterCheckVersionXSetting" description="打开设置" icon="/icons/setting.svg"  />
 
     </actions>
 

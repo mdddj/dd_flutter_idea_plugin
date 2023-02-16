@@ -21,7 +21,6 @@ import java.io.File
 class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigModel> {
 
 
-    data class Setting(private val enable: Boolean)
 
     override val key: SettingsKey<GenerateAssetsClassConfigModel>
         get() = SettingsKey("dart.type.inlay.hints.provider")

@@ -10,7 +10,6 @@ import com.intellij.ui.components.JBList
 import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
-import shop.itbug.fluttercheckversionx.dialog.openSocketStatusDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -238,13 +237,15 @@ class ShowParamsActionGroup(val reqList: JBList<Request>, val project: Project) 
 }
 
 
-class DioWindowSettingGroup() : DefaultActionGroup("设置", true) {
+class DioWindowSettingGroup() : DefaultActionGroup({ "设置" }, { "设置相关" }, MyIcons.setting) {
+
+
     init {
-        add(object : AnAction("服务状态", "查看dio服务状态", AllIcons.Ide.Link) {
-            override fun actionPerformed(e: AnActionEvent) {
-                e.project?.openSocketStatusDialog()
-            }
-        })
+//        add(object : AnAction("服务状态", "查看dio服务状态", AllIcons.Ide.Link) {
+//            override fun actionPerformed(e: AnActionEvent) {
+//                e.project?.openSocketStatusDialog()
+//            }
+//        })
 
         add(OpenSettingAnAction.getInstance())
 
