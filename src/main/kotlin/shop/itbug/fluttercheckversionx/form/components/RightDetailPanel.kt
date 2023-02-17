@@ -1,23 +1,25 @@
 package shop.itbug.fluttercheckversionx.form.components
 
+import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.form.socket.Request
-import shop.itbug.fluttercheckversionx.form.socket.create
+import shop.itbug.fluttercheckversionx.form.socket.createWithToolbar
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.MyActionButton
+import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 /**
@@ -36,13 +38,13 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     /**
      * json视图
      */
-    private var jsonView: JsonValueRender = JsonValueRender( project = project)
+    private var jsonView: JsonValueRender = JsonValueRender(project = project)
 
 
     init {
         border = BorderFactory.createEmptyBorder()
         jsonViewInit()
-        add(actionsToolBar,BorderLayout.NORTH)
+        add(actionsToolBar, BorderLayout.NORTH)
     }
 
 
@@ -65,41 +67,50 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         jsonView.changeValue("")
     }
 
-    private val actionsToolBar : BorderLayoutPanel get() {
-        val defaultGroup = DefaultActionGroup(*createAnActions())
-        return BorderLayoutPanel().apply {
-            addToTop(defaultGroup.create("Request Json Toolbar").component)
+    private val actionsToolBar: JComponent
+        get() {
+            val toolbar = DefaultActionGroup(*createAnActions).createWithToolbar("Request Json Toolbar")
+            toolbar.targetComponent = this
+            return toolbar.component
         }
-    }
 
-    private fun createAnActions() : Array<AnAction> {
-        return arrayOf(
-            jsonToFreezedModelAction().action
-        )
-    }
-
-
-
-    private fun jsonToFreezedModelAction() : ActionButton = MyActionButton(object  : DumbAwareAction({""},MyIcons.freezed) {
-        override fun actionPerformed(e: AnActionEvent) {
-            jsonToFreezedModel()
+    private val createAnActions
+        get() : Array<AnAction> {
+            return arrayOf(
+                MyActionButton(jsonToFreezedModelAction).action,
+                WidgetUtil.getCopyAnAction(jsonView.text)
+            )
         }
-    })
 
+    private val jsonToFreezedModelAction: AnAction
+        get() =
+            object : DumbAwareAction("Freezed to Model","将json转换成freezed 模型",MyIcons.freezed) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    jsonToFreezedModel()
+                }
 
+                override fun update(e: AnActionEvent) {
+                    e.presentation.isEnabled = jsonView.text.trim().isNotEmpty() && JSON.isValid(jsonView.text)
+                    super.update(e)
+                }
+
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+            }
 
     /**
      * 将json转成freezed模型对象
      */
     private fun jsonToFreezedModel() {
         val text = jsonView.text.trim()
-        if(text.isEmpty()){
+        if (text.isEmpty()) {
             project.toastWithError(PluginBundle.get("input.your.json"))
             return
         }
         try {
             JSONObject.parseObject(jsonView.text)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             project.toastWithError(PluginBundle.get("json.format.verification.failed"))
             return
         }

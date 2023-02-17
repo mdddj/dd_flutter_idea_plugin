@@ -9,6 +9,6 @@ class MyActionButton(
     action: AnAction, presentationText: String, placeText: String
 ) : ActionButton(action, Presentation(presentationText), placeText, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE) {
 
-    constructor(iconAnAction: AnAction) : this(iconAnAction,"","")
+    constructor(iconAnAction: AnAction) : this(iconAnAction,"DEFAULT-PLACE-PRESENT-ACTION-TEXT","DEFAULT-PLACE-TEXT")
 
 }

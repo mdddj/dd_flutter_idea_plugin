@@ -241,20 +241,16 @@ class DioWindowSettingGroup() : DefaultActionGroup({ "设置" }, { "设置相关
 
 
     init {
-//        add(object : AnAction("服务状态", "查看dio服务状态", AllIcons.Ide.Link) {
-//            override fun actionPerformed(e: AnActionEvent) {
-//                e.project?.openSocketStatusDialog()
-//            }
-//        })
-
         isPopup = true
         add(OpenSettingAnAction.getInstance())
-
     }
 }
 
 
 fun DefaultActionGroup.create(place: String): ActionPopupMenu {
-    return ActionManager.getInstance().createActionPopupMenu(place, this)
+    return ActionManager.getInstance().createActionPopupMenu(place, this,)
+}
+fun DefaultActionGroup.createWithToolbar(place: String) : ActionToolbar {
+   return ActionManager.getInstance().createActionToolbar(place,this,true)
 }
 

@@ -21,13 +21,7 @@ import javax.swing.JPanel
 class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
 
 
-    private var jsonView: LanguageTextField = LanguageTextField(
-        JsonLanguage.INSTANCE,
-        project,
-        "",
-        false
-    )
-
+    private var jsonView: LanguageTextField = LanguageTextField(JsonLanguage.INSTANCE, project, "", false)
 
     val text: String get() = jsonView.text
 
@@ -56,19 +50,20 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
      * 返回要显示的json string
      */
     private fun changeJson(json: Any): String {
-
         val isJson = if (json is String) JSON.isValid(json) else false
         return if (isJson) {
-            return JSON.toJSONString(JSON.parseObject(json.toString(), Map::class.java),JSONWriter.Feature.PrettyFormat)
+            return JSON.toJSONString(
+                JSON.parseObject(json.toString(), Map::class.java),
+                JSONWriter.Feature.PrettyFormat
+            )
         } else {
             try {
-                JSON.toJSONString(json,JSONWriter.Feature.PrettyFormat)
+                JSON.toJSONString(json, JSONWriter.Feature.PrettyFormat)
             } catch (_: Exception) {
                 json.toString()
             }
         }
     }
-
 
 }
 

@@ -95,7 +95,7 @@ class GeneraAssetsSettingPanel(
             }
         },
         WidgetUtil.getHelpAnAction {
-
+            WidgetUtil.showTopBalloon(it.inputEvent.component,"此列表中的文件将不进入资产生成循环中")
         }
     )
 
@@ -131,7 +131,7 @@ fun getGeneraAssetsPanel(
             textField().bindText({ settingModel.path }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().path = it
             })
-        }.contextHelp("如果要生成在lib下的某个文件,请设置成lib/generate (generate是文件夹名字,支持多个层级)", "提示")
+        }.contextHelp("举例: 如果要保存到lib目录下的generate目录,请将此项设置成lib/generate", "配置生成文件的存储目录")
         row("替换字符") {
             textField().bindText(settingModel::replaceTags)
         }.contextHelp("如果文件名中包含这些特殊字符,将会自动替换成下换线_,多个请用英文逗号进行分割", "替换字符")
