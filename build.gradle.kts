@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.0"
 }
 group = "shop.itbug"
-version = "2.3.2"
+version = "2.4.0"
 repositories {
     mavenCentral()
     google()
@@ -76,7 +76,17 @@ tasks {
         untilBuild.set("223.8617.56")
         changeNotes.set(
             """
-                 <div>
+                <div>
+                    <h1>2.4.0</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>New asset file generation function, welcome to experience</li>
+                    </ul>
+                </div>
+                
+                
+                <div>
                     <h1>2.3.2</h1>
                 </div>
                 <div>
