@@ -1,21 +1,26 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import javax.swing.JComponent
+import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.JBLabel
+import com.intellij.util.ui.JBUI
+import shop.itbug.fluttercheckversionx.dialog.RewardDialog
+import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
+import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.util.toast
+import java.awt.Component
+import java.awt.Point
 
 
 object WidgetUtil {
 
-
     /**
-     * 弹出一个输入框,并获取内容
+     * 弹窗一个窗口,让用户输入值,然后在[onSubmit] 获取到这个值
      */
     fun getTextEditorPopup(
         title: String,
@@ -41,16 +46,61 @@ object WidgetUtil {
     /**
      * 帮助组件
      */
-    fun getHelpIconComponent(name: String, action: (e: AnActionEvent) -> Unit): JComponent {
+    fun getHelpActionToolbar(name: String, action: (e: AnActionEvent) -> Unit): ActionToolbar {
         fun createRightActions(): Array<AnAction> = arrayOf(
-            object : DumbAwareAction(AllIcons.Actions.Help) {
-                override fun actionPerformed(e: AnActionEvent) {
-                    action.invoke(e)
+            getHelpAnAction(action)
+        )
+        return ActionManager.getInstance()
+            .createActionToolbar(name, DefaultActionGroup(*createRightActions()), true)
+    }
+
+    /**
+     * 帮助服务操作组
+     * @param action 点击帮助图标执行事件
+     */
+    fun getHelpAnAction(action: (e: AnActionEvent) -> Unit): AnAction {
+        return object : DumbAwareAction(AllIcons.Actions.Help) {
+            override fun actionPerformed(e: AnActionEvent) {
+                action.invoke(e)
+            }
+        }
+    }
+
+    /**
+     * 获取复制文本组件
+     * @param copyText 要复制的文本
+     */
+    fun getCopyAnAction(copyText: String): AnAction {
+        return object : DumbAwareAction(AllIcons.Actions.Copy) {
+            override fun actionPerformed(e: AnActionEvent) {
+                copyText.copyTextToClipboard()
+                e.project?.apply {
+                    toast("Copy succeeded!")
+                }.takeIf { copyText.trim().isNotEmpty() }
+            }
+        }
+    }
+
+    /**
+     * 显示一个气球提示文本
+     */
+    fun showTopBalloon(component: Component, text: String) {
+        JBPopupFactory.getInstance().createBalloonBuilder(JBLabel(text))
+            .setContentInsets(JBUI.insets(10)).createBalloon().show(
+                RelativePoint(component, Point(component.width / 2, 0)), Balloon.Position.above
+            )
+    }
+
+    /**
+     * 打赏组件
+     */
+    fun getMoneyAnAction(): AnAction {
+        return object : DumbAwareAction(MyIcons.money) {
+            override fun actionPerformed(e: AnActionEvent) {
+                e.project?.let {
+                    RewardDialog(it).show()
                 }
             }
-        )
-        val toolbar = ActionManager.getInstance()
-            .createActionToolbar(name, DefaultActionGroup(*createRightActions()), true)
-        return toolbar.component
+        }
     }
 }

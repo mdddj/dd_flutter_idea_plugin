@@ -1,5 +1,7 @@
 # Fluttercheckversionx
 
+<img src="https://badgen.net/badge/Version/2.4.0/blue">
+
 **点了没反应就是还在开发,部分功能都还在努力更新!**
 
 Flutter开发插件扩展

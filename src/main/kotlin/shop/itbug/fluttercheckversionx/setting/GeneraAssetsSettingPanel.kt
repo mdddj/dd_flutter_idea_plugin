@@ -44,7 +44,6 @@ class GeneraAssetsSettingPanel(
     private val dialogPanel = getGeneraAssetsPanel(settingModel, parentDisposable, modified)
 
 
-
     init {
         addToTop(createToolBar())
         addToCenter(igFilesWidget)
@@ -64,11 +63,11 @@ class GeneraAssetsSettingPanel(
                 layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
                 targetComponent = igFilesWidget
             }
+
         addToLeft(toolbar.component)
     }
 
     private fun createActions(): Array<AnAction> = arrayOf(
-        //添加
         object : DumbAwareAction(AllIcons.General.Add) {
             override fun actionPerformed(e: AnActionEvent) {
                 WidgetUtil.getTextEditorPopup("输入要忽略的文件", "", {
@@ -78,7 +77,6 @@ class GeneraAssetsSettingPanel(
                 }
             }
         },
-        //删除
         object : DumbAwareAction(AllIcons.General.Remove) {
             override fun actionPerformed(e: AnActionEvent) {
                 val selectedValue = igFilesWidget.selectedValue
@@ -95,9 +93,15 @@ class GeneraAssetsSettingPanel(
             override fun getActionUpdateThread(): ActionUpdateThread {
                 return ActionUpdateThread.BGT
             }
-        })
+        },
+        WidgetUtil.getHelpAnAction {
+            WidgetUtil.showTopBalloon(it.inputEvent.component, "此列表中的文件将不进入资产生成循环中")
+        },
+        WidgetUtil.getMoneyAnAction()
+    )
 
-    fun doApply(){
+
+    fun doApply() {
         dialogPanel.apply()
     }
 }
@@ -128,7 +132,7 @@ fun getGeneraAssetsPanel(
             textField().bindText({ settingModel.path }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().path = it
             })
-        }.contextHelp("如果要生成在lib下的某个文件,请设置成lib/generate (generate是文件夹名字,支持多个层级)", "提示")
+        }.contextHelp("举例: 如果要保存到lib目录下的generate目录,请将此项设置成lib/generate", "配置生成文件的存储目录")
         row("替换字符") {
             textField().bindText(settingModel::replaceTags)
         }.contextHelp("如果文件名中包含这些特殊字符,将会自动替换成下换线_,多个请用英文逗号进行分割", "替换字符")
@@ -147,6 +151,9 @@ fun getGeneraAssetsPanel(
         row("监听变化") {
             checkBox("文件更改后自动生成").bindSelected(settingModel::autoListenFileChange)
         }
+        row("图标预览") {
+            checkBox("在编辑器中显示图标预览").bindSelected(settingModel::showImageIconInEditor)
+        }
         row {
             label("感谢尘定同学提出的建议").component.apply {
                 font = JBFont.small()
@@ -154,7 +161,6 @@ fun getGeneraAssetsPanel(
             }
         }
     }
-
 
     val alarm = Alarm(parentDisposable)
 

@@ -26,7 +26,9 @@ data class GenerateAssetsClassConfigModel(
     //如果文件名里面有特殊字符,需要将其忽略
     var replaceTags: String = ".,-,!,@,#,$,%,^,&,*,(,),+,=,?,/,<,>,~",
     //文件名首字符大写
-    var firstChatUpper: Boolean = true
+    var firstChatUpper: Boolean = true,
+    //是否在编辑器中显示图标预览
+    var showImageIconInEditor: Boolean = true
 
 
 )

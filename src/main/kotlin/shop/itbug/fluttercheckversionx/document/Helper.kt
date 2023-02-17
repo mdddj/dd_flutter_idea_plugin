@@ -7,8 +7,6 @@ import java.awt.datatransfer.StringSelection
 class Helper {
 
     companion object {
-
-
         // key - value 格式
         fun addKeyValueSection(key: String, value: String, sb: java.lang.StringBuilder) {
             sb.append("<tr><td class='section'><p>")
@@ -73,7 +71,7 @@ class Helper {
          * 把文本设置到剪贴板（复制）
          */
         fun setClipboardString(text: String) {
-            val clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            val clipboard = Toolkit.getDefaultToolkit().systemClipboard;
             val trans = StringSelection(text);
             clipboard.setContents(trans, null);
         }
