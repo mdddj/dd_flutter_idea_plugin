@@ -54,9 +54,6 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
                         super.doOKAction()
                     }.horizontalAlign(HorizontalAlign.FILL)
                 }
-                row {
-                    comment("有任何问题请<a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues'>提交bug</a>")
-                }
             }
             return p
         }

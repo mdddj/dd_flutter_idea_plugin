@@ -84,7 +84,7 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
 
     private val jsonToFreezedModelAction: AnAction
         get() =
-            object : DumbAwareAction("Freezed to Model","将json转换成freezed 模型",MyIcons.freezed) {
+            object : DumbAwareAction("Json To Freezed Model","将json转换成freezed 模型",MyIcons.freezed) {
                 override fun actionPerformed(e: AnActionEvent) {
                     jsonToFreezedModel()
                 }

@@ -95,8 +95,9 @@ class GeneraAssetsSettingPanel(
             }
         },
         WidgetUtil.getHelpAnAction {
-            WidgetUtil.showTopBalloon(it.inputEvent.component,"此列表中的文件将不进入资产生成循环中")
-        }
+            WidgetUtil.showTopBalloon(it.inputEvent.component, "此列表中的文件将不进入资产生成循环中")
+        },
+        WidgetUtil.getMoneyAnAction()
     )
 
 
@@ -160,7 +161,6 @@ fun getGeneraAssetsPanel(
             }
         }
     }
-
 
     val alarm = Alarm(parentDisposable)
 

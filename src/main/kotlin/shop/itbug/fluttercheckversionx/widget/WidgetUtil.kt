@@ -9,11 +9,12 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
+import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.toast
 import java.awt.Component
 import java.awt.Point
-import javax.swing.JComponent
 
 
 object WidgetUtil {
@@ -88,5 +89,18 @@ object WidgetUtil {
             .setContentInsets(JBUI.insets(10)).createBalloon().show(
                 RelativePoint(component, Point(component.width / 2, 0)), Balloon.Position.above
             )
+    }
+
+    /**
+     * 打赏组件
+     */
+    fun getMoneyAnAction(): AnAction {
+        return object : DumbAwareAction(MyIcons.money) {
+            override fun actionPerformed(e: AnActionEvent) {
+                e.project?.let {
+                    RewardDialog(it).show()
+                }
+            }
+        }
     }
 }
