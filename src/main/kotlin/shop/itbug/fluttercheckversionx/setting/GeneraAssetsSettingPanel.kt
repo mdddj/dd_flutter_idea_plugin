@@ -44,7 +44,6 @@ class GeneraAssetsSettingPanel(
     private val dialogPanel = getGeneraAssetsPanel(settingModel, parentDisposable, modified)
 
 
-
     init {
         addToTop(createToolBar())
         addToCenter(igFilesWidget)
@@ -64,11 +63,11 @@ class GeneraAssetsSettingPanel(
                 layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
                 targetComponent = igFilesWidget
             }
+
         addToLeft(toolbar.component)
     }
 
     private fun createActions(): Array<AnAction> = arrayOf(
-        //添加
         object : DumbAwareAction(AllIcons.General.Add) {
             override fun actionPerformed(e: AnActionEvent) {
                 WidgetUtil.getTextEditorPopup("输入要忽略的文件", "", {
@@ -78,7 +77,6 @@ class GeneraAssetsSettingPanel(
                 }
             }
         },
-        //删除
         object : DumbAwareAction(AllIcons.General.Remove) {
             override fun actionPerformed(e: AnActionEvent) {
                 val selectedValue = igFilesWidget.selectedValue
@@ -95,9 +93,14 @@ class GeneraAssetsSettingPanel(
             override fun getActionUpdateThread(): ActionUpdateThread {
                 return ActionUpdateThread.BGT
             }
-        })
+        },
+        WidgetUtil.getHelpAnAction {
 
-    fun doApply(){
+        }
+    )
+
+
+    fun doApply() {
         dialogPanel.apply()
     }
 }

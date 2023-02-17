@@ -16,5 +16,6 @@ object MyIcons {
     var write = IconLoader.getIcon("/icons/write.svg",MyIcons::class.java)
     var add = IconLoader.getIcon("/icons/add.svg",MyIcons::class.java)
     var setting = IconLoader.getIcon("/icons/setting.svg",MyIcons::class.java)
+    var freezed = IconLoader.getIcon("/icons/freezed.svg",MyIcons::class.java)
 }
 

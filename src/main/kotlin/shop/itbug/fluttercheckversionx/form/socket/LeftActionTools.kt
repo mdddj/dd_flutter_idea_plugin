@@ -236,7 +236,7 @@ class ShowParamsActionGroup(val reqList: JBList<Request>, val project: Project) 
     }
 }
 
-
+///设置菜单
 class DioWindowSettingGroup() : DefaultActionGroup({ "设置" }, { "设置相关" }, MyIcons.setting) {
 
 
@@ -247,6 +247,7 @@ class DioWindowSettingGroup() : DefaultActionGroup({ "设置" }, { "设置相关
 //            }
 //        })
 
+        isPopup = true
         add(OpenSettingAnAction.getInstance())
 
     }

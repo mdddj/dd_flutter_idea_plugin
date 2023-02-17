@@ -43,14 +43,21 @@ object WidgetUtil {
      */
     fun getHelpIconComponent(name: String, action: (e: AnActionEvent) -> Unit): JComponent {
         fun createRightActions(): Array<AnAction> = arrayOf(
-            object : DumbAwareAction(AllIcons.Actions.Help) {
-                override fun actionPerformed(e: AnActionEvent) {
-                    action.invoke(e)
-                }
-            }
+            getHelpAnAction(action)
         )
         val toolbar = ActionManager.getInstance()
             .createActionToolbar(name, DefaultActionGroup(*createRightActions()), true)
         return toolbar.component
+    }
+
+    /**
+     * 帮助操作
+     */
+    fun getHelpAnAction(action: (e: AnActionEvent) -> Unit) : AnAction {
+        return object : DumbAwareAction(AllIcons.Actions.Help) {
+            override fun actionPerformed(e: AnActionEvent) {
+                action.invoke(e)
+            }
+        }
     }
 }

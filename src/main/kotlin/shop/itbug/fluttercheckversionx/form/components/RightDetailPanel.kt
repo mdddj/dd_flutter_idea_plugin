@@ -1,14 +1,21 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.alibaba.fastjson2.JSONObject
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.form.socket.create
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.toastWithError
+import shop.itbug.fluttercheckversionx.widget.MyActionButton
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -58,17 +65,26 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         jsonView.changeValue("")
     }
 
-    private val actionsToolBar : DialogPanel get() {
-        val p : DialogPanel = panel {
-            row {
-                button(PluginBundle.get("freezed.btn.text")) {
-                    jsonToFreezedModel()
-                }
-            }
+    private val actionsToolBar : BorderLayoutPanel get() {
+        val defaultGroup = DefaultActionGroup(*createAnActions())
+        return BorderLayoutPanel().apply {
+            addToTop(defaultGroup.create("Request Json Toolbar").component)
         }
-        return p
     }
 
+    private fun createAnActions() : Array<AnAction> {
+        return arrayOf(
+            jsonToFreezedModelAction().action
+        )
+    }
+
+
+
+    private fun jsonToFreezedModelAction() : ActionButton = MyActionButton(object  : DumbAwareAction({""},MyIcons.freezed) {
+        override fun actionPerformed(e: AnActionEvent) {
+            jsonToFreezedModel()
+        }
+    })
 
 
 
