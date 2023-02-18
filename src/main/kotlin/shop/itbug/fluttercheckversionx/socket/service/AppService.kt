@@ -64,6 +64,8 @@ class AppService {
 
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
+    //当前选中的方法
+    var currentSelectMethodType: AtomicReference<String?> = AtomicReference(null)
 
     val dioServerStatus: StateMachineEnum? get() = socketServerState
 
@@ -175,6 +177,14 @@ class AppService {
         fireChangeToListening()
     }
 
+    /**
+     * 更新过滤类型
+     */
+    fun changeCurrentSelectFilterMethodType(type: String) {
+        currentSelectMethodType.updateAndGet { type }
+        fireChangeToListening()
+    }
+
 
     /**
      * 当有新连接进来的时候处理函数
@@ -197,11 +207,18 @@ class AppService {
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             responseModel.projectName?.apply {
+                if(!flutterProjects.keys.contains(this)){
+                    val old = mutableListOf<String>()
+                    flutterProjects.keys.forEach {
+                        old.add(it)
+                    }
+                    old.add(this)
+                    fireFlutterNamesChangeBus(old.toList())
+                }
+
                 flutterProjects[this] = reqsAdded
-                fireFlutterNamesChangeBus(this)
             }
             projectNames = flutterProjects.keys.toList()
-
             SocketMessageBus.fire(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e")
@@ -209,10 +226,8 @@ class AppService {
     }
 
 
-    private fun fireFlutterNamesChangeBus(projectName:String) {
-        if(flutterProjects.keys.contains(projectName).not()){
-            ProjectListChangeBus.fire(flutterProjects.keys.toList())
-        }
+    private fun fireFlutterNamesChangeBus(list: List<String>) {
+            ProjectListChangeBus.fire(list)
     }
 
     fun getRequestsWithProjectName(projectName: String): List<Request> {

@@ -80,8 +80,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
 
-
-
     ///添加帮助性文档
     private fun setApiListEmptyText() {
         setEmptyText(PluginBundle.get("empty"))
