@@ -202,8 +202,7 @@ class AppService {
             }
             projectNames = flutterProjects.keys.toList()
 
-            messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
-                .handleData(responseModel)
+            SocketMessageBus.fire(responseModel)
         } catch (e: Exception) {
             Console.log("解析出错了:$e")
         }
@@ -240,8 +239,6 @@ class AppService {
      */
     fun cleanAllRequest() {
         flutterProjects.clear()
-        messageBus.syncPublisher(SocketMessageBus.CHANGE_ACTION_TOPIC)
-            .handleData(null)
     }
 
 

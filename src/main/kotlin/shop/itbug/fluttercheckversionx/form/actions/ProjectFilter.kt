@@ -4,12 +4,15 @@ import com.intellij.ide.ActivityTracker
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.*
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import shop.itbug.fluttercheckversionx.bus.ProjectListChangeBus
 import shop.itbug.fluttercheckversionx.form.MyProjectProviders
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.util.projectClosed
 import java.util.*
 import javax.swing.JComponent
 
@@ -46,12 +49,7 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
             ideaProject.add(e.project!!)
             val changeNameRunnable = Runnable { updateSelect(e) }
             service<AppService>().addListening(changeNameRunnable)
-            ProjectManager.getInstance().addProjectManagerListener(e.project!!, object : ProjectManagerListener {
-                override fun projectClosed(project: Project) {
-                    service<AppService>().removeListening(changeNameRunnable)
-                    super.projectClosed(project)
-                }
-            })
+            e.project?.projectClosed { service<AppService>().removeListening(changeNameRunnable) }
             ProjectListChangeBus.lisening {
                 updateSelect(e)
             }

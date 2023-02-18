@@ -1,7 +1,7 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
@@ -11,17 +11,19 @@ import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
+import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.util.projectClosed
 import javax.swing.DefaultListModel
+import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 /**
  * api列表
  */
-class ApiListPanel(val project: Project):JBList<Request>(), ListSelectionListener {
+class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
 
-    private fun listModel() : DefaultListModel<Request> = model as DefaultListModel
+    private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
 
     init {
         model = DefaultListModel()
@@ -29,22 +31,55 @@ class ApiListPanel(val project: Project):JBList<Request>(), ListSelectionListene
         setNewApiInChangeList()
         setApiListEmptyText()
         addListSelectionListener(this)
+        addListening()
     }
 
+
+    private fun addListening() {
+        SwingUtilities.invokeLater {
+            val runnable = Runnable { projectChange() }
+            service<AppService>().addListening(runnable)
+            project.projectClosed { service<AppService>().removeListening(runnable) }
+        }
+    }
+
+    /**
+     * 项目被切换事件
+     */
+    private fun projectChange() {
+        val appService = service<AppService>()
+        val projectName = appService.currentSelectName.get()
+        projectName?.let {
+            val apis = appService.getRequestsWithProjectName(projectName)
+            changeApis(apis)
+        }
+    }
+
+    /**
+     * 更新api列表
+     */
+    private fun changeApis(apis: List<Request>) {
+        listModel().apply {
+            clear()
+            addAll(apis)
+        }
+    }
 
     /**
      * 监听到api进入,更新模型
      */
-    private fun setNewApiInChangeList(){
-        ApplicationManager.getApplication().messageBus.connect().subscribe(SocketMessageBus.CHANGE_ACTION_TOPIC, object :
-            SocketMessageBus {
-            override fun handleData(data: ProjectSocketService.SocketResponseModel?) {
-                data?.let {
-                    listModel().addElement(data)
-                }
+    private fun setNewApiInChangeList() {
+        val appService = service<AppService>()
+        SocketMessageBus.listening {
+            val currentProjectName = appService.currentSelectName.get()
+            //如果没有选中项目, 或者当前选中项目等于进入api的项目,才被加进列表中
+            if(currentProjectName == null || currentProjectName == it.projectName ) {
+                listModel().addElement(it)
             }
-        })
+        }
     }
+
+
 
 
     ///添加帮助性文档
