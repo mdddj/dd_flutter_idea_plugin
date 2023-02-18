@@ -52,6 +52,10 @@ fun requestDetailLayout(request: Request, isSelected: Boolean,setting: DioxListe
                 font = JBFont.small()
                 foreground = color
             }
+            label(request.projectName?:"").component.apply {
+                font = JBFont.small()
+                foreground = color
+            }
         }.visible(setting.showStatusCode || setting.showMethod || setting.showTimestamp || setting.showDate)
     }
     p.background = if(isSelected)  UIUtil.getListBackground(true,false)  else UIUtil.getPanelBackground()

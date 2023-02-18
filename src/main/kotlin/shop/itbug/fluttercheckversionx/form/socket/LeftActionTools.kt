@@ -64,6 +64,10 @@ class LeftActionTools(
                 }
             }
         }
+
+        override fun getActionUpdateThread(): ActionUpdateThread {
+            return ActionUpdateThread.BGT
+        }
     }
 
     //复制api url 到剪贴板
@@ -113,15 +117,6 @@ class LeftActionTools(
         return sortAction.s
     }
 
-    companion object {
-        fun create(model: LeftActionTools): ActionToolbar {
-            return ActionManager.getInstance().createActionToolbar(
-                "Dio Tool Left Action",
-                model,
-                false
-            )
-        }
-    }
 
     private val showParamsActionGroup: ActionPopupMenu
         get() = ActionManager.getInstance()
@@ -160,6 +155,10 @@ class MySortToggleAction(private val handle: RequestSort) :
     }
 
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
 }
 
 //
@@ -191,6 +190,10 @@ class ViewGetQueryParamsAction(private val reqList: JBList<Request>, private val
     }
 
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
 }
 
 ///查看post方法下,query params参数的功能
@@ -213,6 +216,11 @@ class ViewPostQueryParamsAction(reqList: JBList<Request>, private val project: P
         val body = selectValue?.body
         e.presentation.isEnabled = selectValue != null && body != null && body is Map<*, *> && body.isNotEmpty()
         super.update(e)
+    }
+
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return  ActionUpdateThread.BGT
     }
 
 }
@@ -250,7 +258,7 @@ class DioWindowSettingGroup() : DefaultActionGroup({ "设置" }, { "设置相关
 fun DefaultActionGroup.create(place: String): ActionPopupMenu {
     return ActionManager.getInstance().createActionPopupMenu(place, this,)
 }
-fun DefaultActionGroup.createWithToolbar(place: String) : ActionToolbar {
-   return ActionManager.getInstance().createActionToolbar(place,this,true)
+fun DefaultActionGroup.createWithToolbar(place: String,horizontal: Boolean = true) : ActionToolbar {
+   return ActionManager.getInstance().createActionToolbar(place,this,horizontal)
 }
 

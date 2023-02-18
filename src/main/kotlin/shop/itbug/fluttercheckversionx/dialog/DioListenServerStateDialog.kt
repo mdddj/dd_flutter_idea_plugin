@@ -8,7 +8,7 @@ import com.intellij.ui.dsl.builder.panel
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.StateMachineEnum.*
 import org.smartboot.socket.transport.AioSession
-import shop.itbug.fluttercheckversionx.services.event.SocketConnectStatusMessageBus
+import shop.itbug.fluttercheckversionx.bus.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import javax.swing.JComponent
 

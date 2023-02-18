@@ -4,7 +4,6 @@ import com.intellij.openapi.components.service
 import com.intellij.ui.SearchTextField
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.AppService
-import javax.swing.BorderFactory
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -16,9 +15,7 @@ typealias FilterUrls = (result: List<Request>) -> Unit
 class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextField(), DocumentListener {
 
     init {
-        border = BorderFactory.createEmptyBorder()
         addDocumentListener(this)
-
     }
 
 
