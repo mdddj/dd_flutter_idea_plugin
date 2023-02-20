@@ -35,8 +35,14 @@
 
     <actions>
         <group id="dio-window-view-params">
+            <action id="DioWindowShowDetailPanel" class="shop.itbug.fluttercheckversionx.actions.DioWindowShowDetailPanel" text="滚动到最底部" />
+            <separator/>
+            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction" text="复制URL" icon="/icons/copy.svg" />
+            <separator />
             <action class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
                     id="dio-window-view-GET" text="查看Get参数"/>
+            <action id="DioWindowViewPostParamsAction"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction" text="查看Post参数"/>
         </group>
     </actions>
 

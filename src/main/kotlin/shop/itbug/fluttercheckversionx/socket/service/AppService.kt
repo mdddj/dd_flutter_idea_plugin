@@ -69,6 +69,9 @@ class AppService {
 
     val dioServerStatus: StateMachineEnum? get() = socketServerState
 
+    //自动滚动到底部
+     var apiListAutoScrollerToMax = true
+
     /**
      * 存储了flutter项目
      * 键是项目名称
@@ -87,6 +90,14 @@ class AppService {
         ChatSocketService.connect()
         note.jdbc.SqliteConnectManager
     }
+
+    /**
+     * 如果监听到api接口请求,是否自动滚动到最底部
+     */
+    fun setIsAutoScrollToMax(value: Boolean) {
+        apiListAutoScrollerToMax = value
+    }
+
 
     /**
      * 初始化socket服务,并处理flutter端传输过来的值

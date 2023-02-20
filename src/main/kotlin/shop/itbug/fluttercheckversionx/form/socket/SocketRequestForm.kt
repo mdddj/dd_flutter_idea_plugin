@@ -1,17 +1,20 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.components.BorderLayoutPanel
+import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
+import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.CardLayout
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
@@ -20,6 +23,9 @@ typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
 class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel() {
+
+
+    private val appService = service<AppService>()
 
     //项目筛选
     private val projectFilterBox = ProjectFilter()
@@ -43,7 +49,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         add(rightNextPanel, "right_detail_panel")
     }
 
-
     //左侧工具栏
     private var leftToolBarCore: LeftActionTools =
         LeftActionTools(project, apiList, myRightComponent, rightNextPanel) {}
@@ -53,7 +58,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     private val createTopToolbarGroup: DefaultActionGroup = object : DefaultActionGroup() {
         init {
             this.add(projectFilterBox)
-//            this.add(stateCodeFilterBox)
         }
     }
 
@@ -91,31 +95,24 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         SwingUtilities.invokeLater {
             addToCenter(mainPanel)
         }
+        SocketMessageBus.listening {
+            autoScrollToMax()
+        }
     }
 
-//
-//    //切换接口详情显示
-//    override fun valueChanged(e: ListSelectionEvent?) {
-//        if (e?.valueIsAdjusting == false) {
-//            val firstIndex = requestsJBList.selectedIndex
-//            if (firstIndex < 0) return
-//            val element = requestsJBList.model.getElementAt(firstIndex)
-//            if (leftToolBarCore.isInDetailView) {
-//                leftToolBarCore.changeRequestInDetail(element)
-//
-//                val content = ContentFactory.getInstance()
-//                    .createContent(JBScrollPane(requestDetailPanel(element, project)), "API", false).apply {
-//                        isCloseable = true
-//                        icon = AllIcons.Actions.Close
-//                    }
-//
-//                toolWindow.contentManager.addContent(content)
-//                toolWindow.contentManager.setSelectedContent(content)
-//            } else {
-//                rightFirstPanel.changeShowValue(element)
-//            }
-//        }
-//    }
+
+    /**
+     * 自动滚动到最底部
+     */
+    private fun autoScrollToMax() {
+        if (appService.apiListAutoScrollerToMax) {
+            SwingUtilities.invokeLater {
+                apiListWrapper.verticalScrollBar.apply {
+                    value = maximum
+                }
+            }
+        }
+    }
 
 
     companion object {

@@ -1,10 +1,10 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.impl.AsyncDataContext
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
@@ -34,6 +34,7 @@ import javax.swing.event.ListSelectionListener
 class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
 
     private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
+
     init {
         model = DefaultListModel()
         cellRenderer = MyCustomItemRender()
@@ -48,7 +49,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
      * 右键菜单监听
      */
     private fun addRightPopupMenuClick() {
-
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent?) {
                 super.mouseClicked(e)
@@ -68,38 +68,21 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
      * 查看菜单
      */
     fun createPopupMenu(): ListPopup {
-
         return JBPopupFactory.getInstance()
-            .createActionGroupPopup("选择你的操作", myActionGroup, myDataContext, false, { dispose() }, 10)
-
+            .createActionGroupPopup("菜单", myActionGroup, myDataContext, true, { dispose() }, 10)
 
     }
 
     private val myActionGroup: ActionGroup
-        get() = DefaultActionGroup().apply {
-            this.add(showGetParamsDialog)
-        }
+        get() = ActionManager.getInstance().getAction("dio-window-view-params") as ActionGroup
 
 
-    /**
-     * 查看get参数的操作
-     */
-    private val showGetParamsDialog:DumbAwareAction = object :DumbAwareAction() {
-        override fun actionPerformed(e: AnActionEvent) {
-        }
-        override fun update(e: AnActionEvent) {
-            super.update(e)
-            e.presentation.isEnabled = selectedValue?.queryParams?.isNotEmpty() == true && e.project != null
-        }
-        override fun getActionUpdateThread(): ActionUpdateThread {
-            return ActionUpdateThread.BGT
-        }
-    }
-
-    private val myDataContext: DataContext = object : AsyncDataContext {
+    private val myDataContext: AsyncDataContext = object : AsyncDataContext {
         override fun getData(dataId: String): Any? {
             if (dataId == SELECT_KEY) {
                 return this@ApiListPanel.selectedValue
+            } else if (dataId == PROJECT_KEY) {
+                return project
             }
             return null
         }
@@ -111,6 +94,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     private fun dispose() {
 
     }
+
 
     /**
      * 项目切换监听
@@ -200,6 +184,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     companion object {
         const val SELECT_KEY = "select-api"
+        const val PROJECT_KEY = "project-"
     }
 
 }

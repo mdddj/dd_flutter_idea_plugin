@@ -10,6 +10,7 @@ import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
 
 //是否开启找工作窗口
 const val ENABLE_FIND_JOBS_WINDOW = false
+const val ENABLE_CHAT_ROOM_WINDOW = false
 
 /**
  * dio 的请求监听窗口, 在这个窗口中,会将手机里面的一系列请求在这个窗口中显示,并可以查看详细信息
@@ -27,10 +28,12 @@ class SocketWindow : ToolWindowFactory {
         p1.contentManager.addContent(createContent)
 
         //在线聊天窗口
-        val flutterChatWindow = FlutterChatMessageWindow(p0, p1)
-        val flutterChatWindowContent =
-            instance.createContent(flutterChatWindow, PluginBundle.get("window.idea.chat.title"), false)
-        p1.contentManager.addContent(flutterChatWindowContent)
+        if (ENABLE_CHAT_ROOM_WINDOW) {
+            val flutterChatWindow = FlutterChatMessageWindow(p0, p1)
+            val flutterChatWindowContent =
+                instance.createContent(flutterChatWindow, PluginBundle.get("window.idea.chat.title"), false)
+            p1.contentManager.addContent(flutterChatWindowContent)
+        }
 
 
         //找工作窗口
