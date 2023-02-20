@@ -55,6 +55,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
+
+
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
@@ -158,6 +160,10 @@
 
     </extensions>
 
+
+
+    <extensionPoints>
+    </extensionPoints>
 
     <projectListeners>
         <listener class="shop.itbug.fluttercheckversionx.listeners.PubspecYamlVersionFixedListener"

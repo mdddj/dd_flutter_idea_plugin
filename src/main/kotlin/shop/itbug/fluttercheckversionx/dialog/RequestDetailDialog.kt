@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
+import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.dialog.components.MarkdownShowComponent
 import shop.itbug.fluttercheckversionx.document.Helper
 import shop.itbug.fluttercheckversionx.document.MyMarkdownDocRenderObject
@@ -18,6 +19,9 @@ class RequestDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     init {
         border = BorderFactory.createEmptyBorder()
         add(JBScrollPane(htmlView), BorderLayout.CENTER)
+        FlutterApiClickBus.listening {
+            changeRequest(it)
+        }
     }
 
 
@@ -37,7 +41,7 @@ class RequestDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         Helper.addKeyValueSection("Url", request.url ?: "", sb)
 
         //请求方法
-        Helper.addKeyValueSection("Method", request.method ?:"", sb)
+        Helper.addKeyValueSection("Method", request.method ?: "", sb)
 
         //请求耗时
         Helper.addKeyValueSection("Time", "${request.timestamp}ms", sb)

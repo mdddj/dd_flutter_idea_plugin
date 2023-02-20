@@ -8,7 +8,6 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
-import shop.itbug.fluttercheckversionx.form.actions.MethodFilter
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
@@ -28,8 +27,8 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     //搜索输入框
     private var searchTextField = DioRequestSearch {
     }
-    //状态筛选
-    private val stateCodeFilterBox = MethodFilter()
+    //状态筛选,暂时弃用
+//    private val stateCodeFilterBox = MethodFilter()
 
     //接口列表组件
     private var apiList = ApiListPanel(project)
@@ -47,15 +46,14 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     //左侧工具栏
     private var leftToolBarCore: LeftActionTools =
-        LeftActionTools(project, apiList, myRightComponent, rightNextPanel, rightFirstPanel) {
-        }
+        LeftActionTools(project, apiList, myRightComponent, rightNextPanel) {}
 
 
     //顶部组件
     private val createTopToolbarGroup: DefaultActionGroup = object : DefaultActionGroup() {
         init {
             this.add(projectFilterBox)
-            this.add(stateCodeFilterBox)
+//            this.add(stateCodeFilterBox)
         }
     }
 
@@ -90,10 +88,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     }
 
     init {
-//        val initProjects = service.getAllProjectNames()
-//        if (initProjects.isNotEmpty()) {
-//            projectFilterBox.change(initProjects)
-//        }
         SwingUtilities.invokeLater {
             addToCenter(mainPanel)
         }

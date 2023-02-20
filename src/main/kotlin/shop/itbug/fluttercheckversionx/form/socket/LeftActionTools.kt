@@ -8,10 +8,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
 import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
+import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
-import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -29,7 +29,6 @@ class LeftActionTools(
     val reqList: JBList<Request>,
     rightCardPanel: JPanel,
     private val requestDetailPanel: RequestDetailPanel,
-    responseBodyPanel: RightDetailPanel,
     requestSort: RequestSort,
 ) : DefaultActionGroup() {
 
@@ -59,7 +58,7 @@ class LeftActionTools(
                     changeRequestInDetail(it)
                     cardLayout.show(rightCardPanel, "right_detail_panel")
                 } else {
-                    responseBodyPanel.changeShowValue(it)
+                    FlutterApiClickBus.fire(it)
                     cardLayout.show(rightCardPanel, "response_body_panel")
                 }
             }
@@ -104,7 +103,6 @@ class LeftActionTools(
         addSeparator()
         add(detailAction)
         add(copyAction)
-        add(showParamsActionGroup.actionGroup)
         add(DioWindowSettingGroup().create("设置").actionGroup)
     }
 
@@ -117,10 +115,6 @@ class LeftActionTools(
         return sortAction.s
     }
 
-
-    private val showParamsActionGroup: ActionPopupMenu
-        get() = ActionManager.getInstance()
-            .createActionPopupMenu("show-params", ShowParamsActionGroup(reqList = reqList, project = project))
 }
 
 //清理
@@ -223,25 +217,6 @@ class ViewPostQueryParamsAction(reqList: JBList<Request>, private val project: P
         return  ActionUpdateThread.BGT
     }
 
-}
-
-///查看参数的选项
-class ShowParamsActionGroup(val reqList: JBList<Request>, val project: Project) :
-    DefaultActionGroup("请求参数查询", true) {
-
-    private val viewQueryParamsAction = ViewGetQueryParamsAction(reqList, project = project)
-    private val viewPostParamsAction = ViewPostQueryParamsAction(reqList, project = project)
-
-    init {
-
-        add(viewQueryParamsAction)
-        add(viewPostParamsAction)
-        super.getTemplatePresentation().icon = MyIcons.params
-
-        reqList.addListSelectionListener {
-        }
-
-    }
 }
 
 ///设置菜单

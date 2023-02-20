@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.util.projectClosed
@@ -26,16 +27,17 @@ class MethodFilter : ComboBoxAction() {
     private val projects: MutableList<Project> = Collections.synchronizedList(mutableListOf())
 
     override fun createPopupActionGroup(button: JComponent, dataContext: DataContext): DefaultActionGroup {
+        println("create popup")
         methodActions.clear()
+        methodActions.add(MethodAnAction(all))
         val currentSelect = appService.currentSelectName.get()
         if (currentSelect != null) {
             val apis = appService.getRequestsWithProjectName(currentSelect)
             val methods = apis.map { it.method ?: "" }.toSet()
             methodActions.addAll(methods.map { MethodAnAction(it) })
-            methodActions.add(0, MethodAnAction(all))
             return DefaultActionGroup(methodActions)
         }
-        return DefaultActionGroup()
+        return DefaultActionGroup(methodActions)
     }
 
     override fun update(e: AnActionEvent) {
@@ -47,32 +49,39 @@ class MethodFilter : ComboBoxAction() {
         e.project?.let {
             if (!projects.contains(it)) {
                 projects.add(it)
-                val runnable = Runnable { doUpdate() }
+                val runnable = Runnable { doUpdate(e,"runable") }
                 appService.addListening(runnable)
                 it.projectClosed {
                     appService.removeListening(runnable)
                 }
+
+                SocketMessageBus.listening {
+                    doUpdate(e,"新的接口来了")
+                }
             }
         }
-        doUpdate()
+        doUpdate(e)
     }
 
 
     /**
      * 执行更新
      */
-    private fun doUpdate() {
+    private fun doUpdate(e: AnActionEvent,tag: String = "default update") {
+        println("$tag : 更新   actions len: ${methodActions.size}  当前项目:${appService.currentSelectName.get()}")
         val currType = appService.currentSelectMethodType.get()
         if (currType == null && methodActions.size == 1) {
-            setDefault()
+
+            setDefault(e)
         }
     }
 
     /**
      * 选中
      */
-    private fun setDefault() {
+    private fun setDefault(e: AnActionEvent) {
         appService.changeCurrentSelectFilterMethodType(all)
+        changeText(e,all)
     }
 
     /**

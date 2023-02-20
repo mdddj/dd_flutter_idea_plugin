@@ -307,7 +307,6 @@ fun MarkdownNode.toHtml(): String {
             }
         }
     }
-    println(sb)
     return sb.toString().trimEnd()
 }
 

@@ -18,7 +18,7 @@
     </actions>
 
     <actions>
-        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/diandian.svg" >
+        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/diandian.svg">
             <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
                     text="Add Comments to Functions">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
@@ -26,8 +26,18 @@
             <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
                     text="Model to Freezed">
             </action>
-            <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed" text="Function Params To Freezed" />
-            <add-to-group group-id="EditorPopupMenu" />
+            <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
+                    text="Function Params To Freezed"/>
+            <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>
+
+
+    <actions>
+        <group id="dio-window-view-params">
+            <action class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
+                    id="dio-window-view-GET" text="查看Get参数"/>
+        </group>
+    </actions>
+
 </idea-plugin>
