@@ -12,6 +12,7 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
+import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
@@ -33,6 +34,7 @@ import javax.swing.event.ListSelectionListener
  */
 class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
 
+    private val appService = service<AppService>()
     private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
 
     init {
@@ -43,6 +45,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         addListSelectionListener(this)
         addListening()
         addRightPopupMenuClick()
+        DioWindowApiSearchBus.listing { doSearch(it) }
     }
 
     /**
@@ -69,7 +72,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
      */
     fun createPopupMenu(): ListPopup {
         return JBPopupFactory.getInstance()
-            .createActionGroupPopup("菜单", myActionGroup, myDataContext, true, { dispose() }, 10)
+            .createActionGroupPopup(PluginBundle.get("menu"), myActionGroup, myDataContext, true, { dispose() }, 10)
 
     }
 
@@ -95,6 +98,25 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     }
 
+
+    /**
+     * 搜索接口
+     */
+    private fun doSearch(keyword: String) {
+        val allRequest = appService.getAllRequest()
+        val results = allRequest.filter { it.url?.uppercase()?.contains(keyword.uppercase()) ?: false }
+        if(results.isNotEmpty()){
+            listModel().apply {
+                clear()
+                addAll(results)
+            }
+        }else{
+            listModel().apply {
+                clear()
+                addAll(appService.getCurrentProjectAllRequest())
+            }
+        }
+    }
 
     /**
      * 项目切换监听
@@ -156,14 +178,14 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md")
             }
-            appendText(" 丨 ")
+            appendText(PluginBundle.get("split.symbol"))
             appendText(
                 PluginBundle.get("reward"),
                 SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED, JBUI.CurrentTheme.Link.Foreground.ENABLED)
             ) {
                 RewardDialog(project).show()
             }
-            appendText(" 丨 ")
+            appendText(PluginBundle.get("split.symbol"))
             appendText(
                 PluginBundle.get("bugs"),
                 SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED, JBUI.CurrentTheme.Link.Foreground.ENABLED)

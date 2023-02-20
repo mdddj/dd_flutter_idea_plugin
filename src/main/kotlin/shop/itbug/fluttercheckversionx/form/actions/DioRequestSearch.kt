@@ -1,26 +1,19 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
-import com.intellij.openapi.components.service
 import com.intellij.ui.SearchTextField
-import shop.itbug.fluttercheckversionx.form.socket.Request
-import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-typealias FilterUrls = (result: List<Request>) -> Unit
 
 /**
  * 接口搜索框,当用户输入接口URL后,只显示匹配的结果
  */
-class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextField(), DocumentListener {
+class DioRequestSearch : SearchTextField(), DocumentListener {
 
     init {
         addDocumentListener(this)
     }
-
-
-    private val appService get() = service<AppService>()
-
     /**
      * 提取用户输入的字符串
      */
@@ -29,25 +22,14 @@ class DioRequestSearch (private val filterUrlHandler: FilterUrls) : SearchTextFi
     }
 
 
-    private fun handleDocument(e: DocumentEvent?){
-        if(e!=null){
-            val document = e.document
-            val text = document.getText(0, document.length)
-            val allRequest = appService.getAllRequest()
-            val results = allRequest.filter { it.url?.uppercase()?.contains(text.uppercase()) ?: false }
-            if(results.isNotEmpty()){
-                filterUrlHandler.invoke(results)
-                history = results.map { it.url }
-            }else{
-                filterUrlHandler.invoke(allRequest)
-                setEmptyHistory()
-            }
-        }
+    private fun handleDocument(e: DocumentEvent?) {
+        e?.document?.apply { DioWindowApiSearchBus.fire(getText(0, length)) }
     }
 
     override fun removeUpdate(e: DocumentEvent?) {
         handleDocument(e)
     }
+
     override fun changedUpdate(e: DocumentEvent?) {
     }
 }

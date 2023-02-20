@@ -5,10 +5,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 
-///是否展示详情面板
-class DioWindowShowDetailPanel : ToggleAction(), DumbAware {
+/**
+ * 自动滚动到最底部
+ */
+class DioWindowAutoScrollToMaxAction : ToggleAction(PluginBundle.getLazyMessage("auto.scroll.to.the.bottom")),
+    DumbAware {
 
     private val appService = service<AppService>()
     override fun isSelected(e: AnActionEvent): Boolean {

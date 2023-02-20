@@ -260,6 +260,14 @@ class AppService {
         return all
     }
 
+
+    fun getCurrentProjectAllRequest() : List<Request> {
+        if(currentSelectName.get()!=null){
+            return flutterProjects[currentSelectName.get()!!]?.toList() ?: emptyList()
+        }
+        return emptyList()
+    }
+
     /**
      * 清空全部的请求
      */

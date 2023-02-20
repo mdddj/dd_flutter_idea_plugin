@@ -6,9 +6,12 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
-///查看get参数
-open class DioWindowViewGetParamsAction : DumbAwareAction() {
+/**
+ * 查看get参数
+ */
+open class DioWindowViewGetParamsAction : DumbAwareAction(PluginBundle.getLazyMessage("dio.toolbar.get.params")) {
 
     override fun actionPerformed(e: AnActionEvent) {
         val api = e.api()!!
