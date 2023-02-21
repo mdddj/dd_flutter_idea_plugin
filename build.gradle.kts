@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.0"
 }
 group = "shop.itbug"
-version = "2.4.0"
+version = "3.0.0"
 repositories {
     mavenCentral()
     google()
@@ -76,6 +76,17 @@ tasks {
         untilBuild.set("223.8617.56")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.0.0</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>Major change: change diox to dio</li>
+                        <li>Major changes: part of the operation of the dio window is transferred to the right-click menu</li>
+                        <li>New function: more complete asset generation function</li>
+                    </ul>
+                </div>
+                
                 <div>
                     <h1>2.4.0</h1>
                 </div>

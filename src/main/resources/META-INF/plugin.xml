@@ -133,7 +133,7 @@
 
         <!--    dart文档的HTML实现    -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
-                                    language="Dart" order="first"/>
+                                    language="Dart" order="first, after Translation.TranslatedDocumentationProvider.Dart"/>
 
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
