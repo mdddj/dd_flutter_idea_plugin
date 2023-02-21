@@ -32,11 +32,9 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     //搜索输入框
     private var searchTextField = DioRequestSearch()
-    //状态筛选,暂时弃用
-//    private val stateCodeFilterBox = MethodFilter()
 
     //接口列表组件
-    private var apiList = ApiListPanel(project)
+    private var apiList = ApiListPanel(project,toolWindow)
 
     private val apiListWrapper = JBScrollPane(apiList)
 

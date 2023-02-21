@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
@@ -20,7 +19,4 @@ class DioWindowViewPostParamsAction : AnAction(PluginBundle.getLazyMessage("dio.
         e.presentation.isEnabled = e.api()?.body is Map<*, *> && e.apiListProject() != null
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }

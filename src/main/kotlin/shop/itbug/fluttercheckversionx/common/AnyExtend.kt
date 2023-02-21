@@ -9,10 +9,6 @@ import shop.itbug.fluttercheckversionx.dialog.FreezedClassesGenerateDialog
 import shop.itbug.fluttercheckversionx.services.impl.ModelToFreezedModelServiceImpl
 import shop.itbug.fluttercheckversionx.util.toastWithError
 
-fun Any.toJsonFormart() : String {
-   return JSONObject.toJSONString(this,JSONWriter.Feature.PrettyFormat)
-}
-
 fun String.getVirtualFile() : VirtualFile? {
  return  LocalFileSystem.getInstance().findFileByPath(this)
 }

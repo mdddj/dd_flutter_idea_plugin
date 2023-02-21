@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.0"
 }
 group = "shop.itbug"
-version = "3.0.0"
+version = "3.0.0.as"
 repositories {
     mavenCentral()
     google()
@@ -14,18 +14,18 @@ repositories {
     }
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 intellij {
-    version.set("2022.3.2")
-    type.set("IC")
+    version.set("2022.1.1.19")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8617.8",
-            "io.flutter:72.1.4",
-            "org.intellij.plugins.markdown:223.8617.3",
+            "Dart:221.6096",
+            "io.flutter:72.1.2",
+            "org.intellij.plugins.markdown:221.5787.39",
             "terminal", "java"
         )
     )
@@ -49,12 +49,10 @@ dependencies {
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("com.kitfox.svg:svg-salamander:1.0")
-
-
 }
 
 
-var javaVersion = "17"
+var javaVersion = "11"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
@@ -68,12 +66,9 @@ tasks {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
 
-    listProductsReleases {
-    }
-
     patchPluginXml {
-        sinceBuild.set("223.8617.56")
-        untilBuild.set("223.8617.56")
+        sinceBuild.set("221.6008.13")
+        untilBuild.set("221.6008.13")
         changeNotes.set(
             """
                 <div>

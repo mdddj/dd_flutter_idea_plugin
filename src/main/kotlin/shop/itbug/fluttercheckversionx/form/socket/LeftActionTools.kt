@@ -57,9 +57,6 @@ class LeftActionTools(
             }
         }
 
-        override fun getActionUpdateThread(): ActionUpdateThread {
-            return ActionUpdateThread.BGT
-        }
     }
 
 

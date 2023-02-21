@@ -74,6 +74,9 @@ class AppService {
     //自动滚动到底部
     var apiListAutoScrollerToMax = true
 
+    //当前选中的api,不够优雅,后期需要优化
+    var currentSelectApi: Request? = null
+
     private val messageBus get() = ApplicationManager.getApplication().messageBus
 
     /**

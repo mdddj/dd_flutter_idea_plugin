@@ -6,7 +6,10 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.LabelPosition
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.ValidationInfoBuilder
 import org.intellij.plugins.markdown.lang.MarkdownFileType
 import org.intellij.plugins.markdown.ui.preview.MarkdownEditorWithPreview
@@ -25,7 +28,7 @@ class AddJobsDialog(val project: Project) : DialogWrapper(project) {
 
     private val vF = LightVirtualFile("D", MarkdownFileType.INSTANCE, "# 请输入招聘内容")
     private val mkEdit =
-        FileEditorProviderManager.getInstance().getProviderList(project, vF).first() as MarkdownSplitEditorProvider
+        FileEditorProviderManager.getInstance(). getProviders(project, vF).first() as MarkdownSplitEditorProvider
     private val edit = mkEdit.createEditor(project, vF)
     private val mkComp = edit as MarkdownEditorWithPreview
     private val citySelect = JobsCitySelectWidgetWithComBox(project)
@@ -45,7 +48,7 @@ class AddJobsDialog(val project: Project) : DialogWrapper(project) {
     override fun createCenterPanel(): JComponent {
         return panel {
             row("标题") {
-                titleTextField = textField().bindText({ title }, { title = it }).align(Align.FILL).validationOnInput {
+                titleTextField = textField().bindText({ title }, { title = it }).validationOnInput {
                     if (it.text.length <= 10) {
                         ValidationInfoBuilder(titleTextField.component).error("标题不能少于10字")
                     }

@@ -1,13 +1,15 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.impl.AsyncDataContext
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
@@ -33,7 +35,7 @@ import javax.swing.event.ListSelectionListener
 /**
  * api列表
  */
-class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
+class ApiListPanel(val project: Project, val toolwindow: ToolWindow) : JBList<Request>(), ListSelectionListener {
 
     private val appService = service<AppService>()
     private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
@@ -60,6 +62,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
                 if (e != null && SwingUtilities.isRightMouseButton(e)) {
                     val index = this@ApiListPanel.locationToIndex(e.point)
                     selectedIndex = index
+                    appService.currentSelectApi = selectedValue
                     SwingUtilities.invokeLater {
                         createPopupMenu().show(RelativePoint(Point(e.locationOnScreen)))
                     }
@@ -74,31 +77,32 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
      */
     fun createPopupMenu(): ListPopup {
         return JBPopupFactory.getInstance()
-            .createActionGroupPopup(PluginBundle.get("menu"), myActionGroup, myDataContext, true, { dispose() }, 10)
+            .createActionGroupPopup(
+                PluginBundle.get("menu"),
+                myActionGroup,
+                myDataContext(),
+                true,
+                { dispose() },
+                10
+            )
+    }
 
+    /**
+     * 数据仓库,方便AnAction拿取这个组件的相关数据
+     */
+    private fun myDataContext(): DataContext {
+        return DataManager.getInstance().getDataContext(this)
     }
 
     private val myActionGroup: ActionGroup
-        get() = ActionManager.getInstance().getAction("dio-window-view-params") as ActionGroup
+        get() = ActionManager.getInstance().getAction(RIGHT_MENU_KEY) as ActionGroup
 
 
-    private val myDataContext: AsyncDataContext = object : AsyncDataContext {
-        override fun getData(dataId: String): Any? {
-            if (dataId == SELECT_KEY) {
-                return this@ApiListPanel.selectedValue
-            } else if (dataId == PROJECT_KEY) {
-                return project
-            }
-            return null
-        }
-    }
 
     /**
      * 菜单销毁回调
      */
-    private fun dispose() {
-
-    }
+    private fun dispose() {}
 
 
     /**
@@ -208,7 +212,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     companion object {
         const val SELECT_KEY = "select-api"
-        const val PROJECT_KEY = "project-"
+        const val RIGHT_MENU_KEY = "dio-window-view-params"
     }
 
 }

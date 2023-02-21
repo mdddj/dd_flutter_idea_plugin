@@ -63,6 +63,10 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
         doUpdate(e)
     }
 
+    override fun createPopupActionGroup(p0: JComponent?): DefaultActionGroup {
+        return createDefaultGroup()
+    }
+
 
     private fun changeProjectNameAction() {
         actions.clear()
@@ -102,9 +106,6 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
     }
 
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }
 
 /**

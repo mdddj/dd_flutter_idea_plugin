@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -27,6 +26,10 @@ class MethodFilter : ComboBoxAction() {
     private val projects: MutableList<Project> = Collections.synchronizedList(mutableListOf())
 
     override fun createPopupActionGroup(button: JComponent, dataContext: DataContext): DefaultActionGroup {
+       return createDefaultGroup()
+    }
+
+    private fun createDefaultGroup() : DefaultActionGroup {
         println("create popup")
         methodActions.clear()
         methodActions.add(MethodAnAction(all))
@@ -63,6 +66,10 @@ class MethodFilter : ComboBoxAction() {
         doUpdate(e)
     }
 
+    override fun createPopupActionGroup(p0: JComponent?): DefaultActionGroup {
+        return createDefaultGroup()
+    }
+
 
     /**
      * 执行更新
@@ -92,9 +99,6 @@ class MethodFilter : ComboBoxAction() {
     }
 
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 
 
 }

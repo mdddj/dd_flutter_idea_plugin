@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.actions.jobs
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
@@ -47,7 +46,4 @@ class JobsCityAddAction: AnAction() {
         super.update(e)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }
