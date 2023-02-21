@@ -13,6 +13,7 @@ import org.smartboot.socket.transport.AioSession
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.ProjectListChangeBus
 import shop.itbug.fluttercheckversionx.bus.SocketConnectStatusMessageBus
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
@@ -64,13 +65,16 @@ class AppService {
 
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
+
     //当前选中的方法
     var currentSelectMethodType: AtomicReference<String?> = AtomicReference(null)
 
     val dioServerStatus: StateMachineEnum? get() = socketServerState
 
     //自动滚动到底部
-     var apiListAutoScrollerToMax = true
+    var apiListAutoScrollerToMax = true
+
+    private val messageBus get() = ApplicationManager.getApplication().messageBus
 
     /**
      * 存储了flutter项目
@@ -97,6 +101,8 @@ class AppService {
     fun setIsAutoScrollToMax(value: Boolean) {
         apiListAutoScrollerToMax = value
     }
+
+
 
 
     /**
@@ -198,16 +204,6 @@ class AppService {
 
 
     /**
-     * 当有新连接进来的时候处理函数
-     */
-    private fun newSessionHandle() {
-        MyNotificationUtil.toolWindowShowMessage(project, "FlutterCheckX Connection succeeded")
-    }
-
-
-    private val messageBus get() = ApplicationManager.getApplication().messageBus
-
-    /**
      * flutter端穿过来的json数据
      * 对齐进一步处理
      * 通过idea的开发消息总线进行传输到UI工具窗口对用户进行展示内容
@@ -218,7 +214,7 @@ class AppService {
             val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
             val reqsAdded = reqs.plus(responseModel)
             responseModel.projectName?.apply {
-                if(!flutterProjects.keys.contains(this)){
+                if (!flutterProjects.keys.contains(this)) {
                     val old = mutableListOf<String>()
                     flutterProjects.keys.forEach {
                         old.add(it)
@@ -238,7 +234,7 @@ class AppService {
 
 
     private fun fireFlutterNamesChangeBus(list: List<String>) {
-            ProjectListChangeBus.fire(list)
+        ProjectListChangeBus.fire(list)
     }
 
     fun getRequestsWithProjectName(projectName: String): List<Request> {
@@ -261,20 +257,23 @@ class AppService {
     }
 
 
-    fun getCurrentProjectAllRequest() : List<Request> {
-        if(currentSelectName.get()!=null){
+    fun getCurrentProjectAllRequest(): List<Request> {
+        if (currentSelectName.get() != null) {
             return flutterProjects[currentSelectName.get()!!]?.toList() ?: emptyList()
         }
         return emptyList()
     }
 
     /**
+     * 只支持当前选中的项目
      * 清空全部的请求
      */
     fun cleanAllRequest() {
-        flutterProjects.clear()
+        currentSelectName.get()?.apply {
+            flutterProjects[this] = emptyList()
+            DioWindowCleanRequests.fire()
+        }
     }
-
 
     /**
      * 执行登录

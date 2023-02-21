@@ -18,6 +18,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import com.intellij.vcs.commit.NonModalCommitPanel.Companion.showAbove
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import javax.swing.BorderFactory
 import javax.swing.DefaultListCellRenderer
@@ -33,7 +34,7 @@ typealias GeneraAssetsSettingPanelIsModified = (value: Boolean) -> Unit
 class GeneraAssetsSettingPanel(
     var settingModel: GenerateAssetsClassConfigModel,
     val parentDisposable: Disposable,
-    private val modified: GeneraAssetsSettingPanelIsModified
+    modified: GeneraAssetsSettingPanelIsModified
 ) :
     BorderLayoutPanel() {
 
@@ -70,7 +71,7 @@ class GeneraAssetsSettingPanel(
     private fun createActions(): Array<AnAction> = arrayOf(
         object : DumbAwareAction(AllIcons.General.Add) {
             override fun actionPerformed(e: AnActionEvent) {
-                WidgetUtil.getTextEditorPopup("输入要忽略的文件", "", {
+                WidgetUtil.getTextEditorPopup(PluginBundle.get("g.13"), "", {
                     it.showAbove(igFilesWidget)
                 }) {
                     this@GeneraAssetsSettingPanel.igFilesWidget.addItemString(it)
@@ -95,7 +96,7 @@ class GeneraAssetsSettingPanel(
             }
         },
         WidgetUtil.getHelpAnAction {
-            WidgetUtil.showTopBalloon(it.inputEvent.component, "此列表中的文件将不进入资产生成循环中")
+            WidgetUtil.showTopBalloon(it.inputEvent.component, PluginBundle.get("g.14"))
         },
         WidgetUtil.getMoneyAnAction()
     )
@@ -118,44 +119,44 @@ fun getGeneraAssetsPanel(
 
 
     val p: DialogPanel = panel {
-        row("类名") {
+        row(PluginBundle.get("g.1")) {
             textField().bindText({ settingModel.className }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().className = it
             })
         }
-        row("文件名") {
+        row(PluginBundle.get("g.2")) {
             textField().bindText({ settingModel.fileName }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().fileName = it
             })
         }
-        row("保存路径") {
+        row(PluginBundle.get("g.3")) {
             textField().bindText({ settingModel.path }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().path = it
             })
-        }.contextHelp("举例: 如果要保存到lib目录下的generate目录,请将此项设置成lib/generate", "配置生成文件的存储目录")
-        row("替换字符") {
+        }.contextHelp(PluginBundle.get("g.3.t"), PluginBundle.get("g.3.t1"))
+        row(PluginBundle.get("g.4")) {
             textField().bindText(settingModel::replaceTags)
-        }.contextHelp("如果文件名中包含这些特殊字符,将会自动替换成下换线_,多个请用英文逗号进行分割", "替换字符")
-        row("命名规范") {
-            checkBox("属性值首字母大写").bindSelected(settingModel::firstChatUpper)
+        }.contextHelp(PluginBundle.get("g.4.1"), PluginBundle.get("g.4"))
+        row(PluginBundle.get("g.5.1")) {
+            checkBox(PluginBundle.get("g.5.2")).bindSelected(settingModel::firstChatUpper)
         }
-        row("命名前缀") {
-            checkBox("命名添加文件夹路径").bindSelected(settingModel::addFolderNamePrefix)
+        row(PluginBundle.get("g.6.1")) {
+            checkBox(PluginBundle.get("g.6.2")).bindSelected(settingModel::addFolderNamePrefix)
         }
-        row("命名后缀") {
-            checkBox("命名添加文件类型后缀").bindSelected(settingModel::addFileTypeSuffix)
+        row(PluginBundle.get("g.7.1")) {
+            checkBox(PluginBundle.get("g.7.2")).bindSelected(settingModel::addFileTypeSuffix)
         }
-        row("弹窗提醒") {
-            checkBox("每次生成不需要弹窗").bindSelected(settingModel::dontTip)
+        row(PluginBundle.get("g.8.1")) {
+            checkBox(PluginBundle.get("g.8.2")).bindSelected(settingModel::dontTip)
         }
-        row("监听变化") {
-            checkBox("文件更改后自动生成").bindSelected(settingModel::autoListenFileChange)
+        row(PluginBundle.get("g.9.1")) {
+            checkBox(PluginBundle.get("g.9.2")).bindSelected(settingModel::autoListenFileChange)
         }
-        row("图标预览") {
-            checkBox("在编辑器中显示图标预览").bindSelected(settingModel::showImageIconInEditor)
+        row(PluginBundle.get("g.10.1")) {
+            checkBox(PluginBundle.get("g.10.2")).bindSelected(settingModel::showImageIconInEditor)
         }
         row {
-            label("感谢尘定同学提出的建议").component.apply {
+            label(PluginBundle.get("g.11")).component.apply {
                 font = JBFont.small()
                 foreground = JBUI.CurrentTheme.Link.Foreground.DISABLED
             }
@@ -167,9 +168,6 @@ fun getGeneraAssetsPanel(
 
     fun initValidation() {
         alarm.addRequest({
-//            if (p.isModified()) {
-//                p.apply()
-//            }
             isModified.invoke(p.isModified())
             initValidation()
         }, 1000)
@@ -198,7 +196,7 @@ class IgFileList : JBList<String>() {
             addAll(GenerateAssetsClassConfig.getGenerateAssetsSetting().igFiles)
         }
         border = BorderFactory.createLineBorder(JBColor.border())
-        emptyText.appendText("暂无忽略&过滤的文件")
+        emptyText.appendText(PluginBundle.get("g.12"))
     }
 
     fun addItemString(name: String) {

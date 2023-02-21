@@ -13,6 +13,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
+import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
@@ -46,6 +47,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         addListening()
         addRightPopupMenuClick()
         DioWindowApiSearchBus.listing { doSearch(it) }
+        DioWindowCleanRequests.listening { listModel().clear() }
     }
 
     /**
@@ -105,12 +107,12 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     private fun doSearch(keyword: String) {
         val allRequest = appService.getAllRequest()
         val results = allRequest.filter { it.url?.uppercase()?.contains(keyword.uppercase()) ?: false }
-        if(results.isNotEmpty()){
+        if (results.isNotEmpty()) {
             listModel().apply {
                 clear()
                 addAll(results)
             }
-        }else{
+        } else {
             listModel().apply {
                 clear()
                 addAll(appService.getCurrentProjectAllRequest())

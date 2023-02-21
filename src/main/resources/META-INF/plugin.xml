@@ -175,15 +175,15 @@
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
         </action>
-        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"
-                text="合并Dart导入">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-        </action>
+<!--        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"-->
+<!--                text="合并Dart导入">-->
+<!--            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>-->
+<!--        </action>-->
 
         <action id="AssetsAutoGenerateClassAction"
-                class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction" text="更新资产文件"
+                class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction"
                 icon="/icons/refresh.svg">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="DartFileGroupAction"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"

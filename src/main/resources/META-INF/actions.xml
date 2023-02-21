@@ -39,10 +39,12 @@
             <separator/>
             <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction" icon="/icons/copy.svg" />
             <separator />
-            <action class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
-                    id="dio-window-view-GET" text="View Get Parameters"/>
+            <action id="DioWindowViewHeadersAction" class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
+            <action id="dio-window-view-GET" class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
+                    />
             <action id="DioWindowViewPostParamsAction"
-                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction" text="View Post Parameters"/>
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction" />
+
         </group>
     </actions>
 
