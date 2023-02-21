@@ -30,8 +30,8 @@ class AppConfig : Configurable, Disposable {
 
     override fun createComponent(): JComponent {
         return JBTabbedPane().apply {
-            add("基本", panel)
-            add("资产生成", generateSettingPanel)
+            add(PluginBundle.get("basic"), panel)
+            add(PluginBundle.get("assets.gen"), generateSettingPanel)
         }
     }
 

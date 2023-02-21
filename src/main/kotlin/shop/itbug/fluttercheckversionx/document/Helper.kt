@@ -71,9 +71,9 @@ class Helper {
          * 把文本设置到剪贴板（复制）
          */
         fun setClipboardString(text: String) {
-            val clipboard = Toolkit.getDefaultToolkit().systemClipboard;
-            val trans = StringSelection(text);
-            clipboard.setContents(trans, null);
+            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+            val trans = StringSelection(text)
+            clipboard.setContents(trans, null)
         }
     }
 }

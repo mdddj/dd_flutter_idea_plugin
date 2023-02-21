@@ -6,6 +6,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.LanguageTextField
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import javax.swing.JComponent
 
 ///简单的一个json查看弹窗
@@ -20,7 +21,7 @@ class SimpleJsonViewDialog(jsonObject: Any, project: Project) : DialogWrapper(pr
 
     init {
         init()
-        title = "JSON查看器"
+        title = PluginBundle.get("json.viewer")
     }
 
     override fun createCenterPanel(): JComponent {
