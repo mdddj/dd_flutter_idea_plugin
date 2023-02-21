@@ -180,6 +180,9 @@ tasks {
         autoReloadPlugins.set(true)
     }
 
+    listProductsReleases {
+    }
+
 
     buildSearchableOptions {
         enabled = false
