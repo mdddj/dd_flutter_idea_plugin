@@ -198,7 +198,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
     override fun valueChanged(e: ListSelectionEvent?) {
-        if (e != null) {
+        if (e != null && !project.isDisposed) {
             if (!e.valueIsAdjusting && selectedValue != null) {
                 FlutterApiClickBus.fire(selectedValue)
             }
