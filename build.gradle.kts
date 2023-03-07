@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.0"
 }
 group = "shop.itbug"
-version = "3.0.0.Giraffe"
+version = "3.0.2"
 repositories {
     mavenCentral()
     google()
@@ -75,6 +75,18 @@ tasks {
         untilBuild.set("223.8617.*")
         changeNotes.set(
             """
+                
+                 <div>
+                    <h1>3.0.2</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>fix: Fix the problem that the item selector cannot be clicked under multiple windows</li>
+                        <li>fix: Fix the problem of clicking the API item to report errors after the project is destroyed</li>
+                    </ul>
+                </div>
+                
+                
                 <div>
                     <h1>3.0.0</h1>
                 </div>
