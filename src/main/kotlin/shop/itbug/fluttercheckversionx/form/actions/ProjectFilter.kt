@@ -45,9 +45,7 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
         e.project?.apply {
             if (!ideaProject.contains(this)) {
                 ideaProject.add(this)
-                val changeNameRunnable = Runnable {
-                    doUpdate(e)
-                }
+                val changeNameRunnable = Runnable {}
                 appService.addListening(changeNameRunnable)
                 this.projectClosed {
                     appService.removeListening(changeNameRunnable)
@@ -55,7 +53,6 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
                 ProjectListChangeBus.lisening {
                     projectNames = it
                     changeProjectNameAction()
-                    doUpdate(e)
                 }
 
             }
@@ -82,13 +79,22 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
             e.presentation.isEnabled = false
             e.presentation.text = PluginBundle.get("empty")
             e.presentation.icon = MyIcons.flutter
+        }else{
+            e.presentation.isEnabled = true
         }
+
         val appName = appService.currentSelectName.get()
         if (appName != null) {
             changeText(e.presentation, appName)
         }
         if (appName == null && actions.size == 1) {
             appService.changeCurrentSelectFlutterProjectName(actions[0].getText())
+        }
+
+        //主要是解决新开项目后选项会被禁用的问题
+        if(appName!=null && actions.isEmpty()){
+            projectNames = appService.projectNames
+            changeProjectNameAction()
         }
     }
 
