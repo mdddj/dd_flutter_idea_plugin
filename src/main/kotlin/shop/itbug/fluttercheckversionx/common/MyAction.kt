@@ -11,7 +11,11 @@ abstract class MyAction : AnAction {
 
     constructor()
     constructor(name: Supplier<String>) : super(name)
-    constructor(icon: Icon):super(icon)
+    constructor(icon: Icon) : super(icon)
+
+    constructor(name: Supplier<String>, icon: Icon) : super(name, icon)
+    constructor(title: String, desc: String, icon: Icon) : super(title, desc, icon)
+
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }
@@ -20,17 +24,20 @@ abstract class MyAction : AnAction {
 abstract class MyDumbAwareAction : DumbAwareAction {
     constructor()
 
-    constructor(name: Supplier<String>):super(name)
+    constructor(name: Supplier<String>) : super(name)
+    constructor(icon: Icon) : super(icon)
+
+    constructor(title: String, desc: String, icon: Icon) : super(title, desc, icon)
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }
 }
 
-abstract class  MyToggleAction : ToggleAction {
+abstract class MyToggleAction : ToggleAction {
 
     constructor()
-    constructor(name: Supplier<String>): super(name)
+    constructor(name: Supplier<String>) : super(name)
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT

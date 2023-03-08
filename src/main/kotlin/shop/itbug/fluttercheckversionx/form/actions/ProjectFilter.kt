@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.util.ModalityUiUtil
 import shop.itbug.fluttercheckversionx.bus.ProjectListChangeBus
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -116,7 +117,7 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
 /**
  * 项目选择操作
  */
-class ProjectAnAction(private val projectName: String) : AnAction({ projectName }, MyIcons.flutter) {
+class ProjectAnAction(private val projectName: String) : MyAction({ projectName }, MyIcons.flutter) {
     override fun actionPerformed(e: AnActionEvent) {
         service<AppService>().changeCurrentSelectFlutterProjectName(projectName)
     }
