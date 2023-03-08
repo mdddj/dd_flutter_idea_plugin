@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -16,9 +15,6 @@ class OpenSettingAnAction : AnAction(AllIcons.General.Settings) {
         ShowSettingsUtil.getInstance().showSettingsDialog(e.project, AppConfig::class.java)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 
     companion object {
         fun getInstance(): AnAction =

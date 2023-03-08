@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.form.components
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -98,9 +97,6 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
                     super.update(e)
                 }
 
-                override fun getActionUpdateThread(): ActionUpdateThread {
-                    return ActionUpdateThread.BGT
-                }
             }
 
     /**

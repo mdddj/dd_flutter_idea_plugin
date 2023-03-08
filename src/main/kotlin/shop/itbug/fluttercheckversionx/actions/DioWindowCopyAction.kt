@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
@@ -20,11 +19,6 @@ class DioWindowCopyAction : AnAction(PluginBundle.getLazyMessage("window.idea.di
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.apiListProject() != null && e.api() != null
         super.update(e)
-    }
-
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
     }
 
 }

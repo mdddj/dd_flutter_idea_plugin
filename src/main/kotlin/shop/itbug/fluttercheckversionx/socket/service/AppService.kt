@@ -235,6 +235,10 @@ class AppService {
         ProjectListChangeBus.fire(list)
     }
 
+
+    /**
+     * 根据项目名称获取api列表
+     */
     fun getRequestsWithProjectName(projectName: String): List<Request> {
         val d = flutterProjects.filter { it.key == projectName }
         if (d.isNotEmpty()) {

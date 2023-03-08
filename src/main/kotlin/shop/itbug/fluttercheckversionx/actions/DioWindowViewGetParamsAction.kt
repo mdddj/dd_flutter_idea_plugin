@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
@@ -24,9 +23,6 @@ open class DioWindowViewGetParamsAction : DumbAwareAction(PluginBundle.getLazyMe
         e.presentation.isEnabled = e.api()?.queryParams?.isNotEmpty() == true && e.apiListProject() !=null
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 
 
     companion object {

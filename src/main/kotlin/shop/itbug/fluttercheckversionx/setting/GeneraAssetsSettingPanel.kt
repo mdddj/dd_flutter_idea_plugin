@@ -91,9 +91,6 @@ class GeneraAssetsSettingPanel(
                 super.update(e)
             }
 
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.BGT
-            }
         },
         WidgetUtil.getHelpAnAction {
             WidgetUtil.showTopBalloon(it.inputEvent.component, PluginBundle.get("g.14"))
