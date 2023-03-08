@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dialog.FreezedCovertDialog
 import shop.itbug.fluttercheckversionx.services.impl.ModelToFreezedModelServiceImpl
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
@@ -11,7 +11,7 @@ import shop.itbug.fluttercheckversionx.util.getDartClassDefinition
 /**
  * 模型转freezed
  */
-class FxModelToFreezedModel : AnAction() {
+class FxModelToFreezedModel : MyAction() {
 
     private val toFreezedService = ModelToFreezedModelServiceImpl()
     override fun actionPerformed(e: AnActionEvent) {

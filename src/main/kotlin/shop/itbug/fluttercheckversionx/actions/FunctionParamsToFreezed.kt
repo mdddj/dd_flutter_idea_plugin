@@ -1,11 +1,10 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.impl.*
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dialog.FreezedCovertDialog
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
@@ -43,7 +42,7 @@ fun DartOptionalFormalParametersImpl.covertDartPropertyModels(): MutableList<Dar
 /**
  * 参数转freezed model
  */
-class FunctionParamsToFreezed : AnAction() {
+class FunctionParamsToFreezed : MyAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val element = e.getData(CommonDataKeys.PSI_ELEMENT)!! as DartComponentNameImpl
         val paramsElement = element.nextSibling as DartFormalParameterListImpl
@@ -73,7 +72,5 @@ class FunctionParamsToFreezed : AnAction() {
         super.update(e)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
+
 }

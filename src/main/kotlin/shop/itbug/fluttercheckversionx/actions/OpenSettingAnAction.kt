@@ -6,12 +6,13 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.setting.AppConfig
 
 /**
  * 打开设置
  */
-class OpenSettingAnAction : AnAction(AllIcons.General.Settings) {
+class OpenSettingAnAction : MyAction(AllIcons.General.Settings) {
     override fun actionPerformed(e: AnActionEvent) {
         ShowSettingsUtil.getInstance().showSettingsDialog(e.project, AppConfig::class.java)
     }

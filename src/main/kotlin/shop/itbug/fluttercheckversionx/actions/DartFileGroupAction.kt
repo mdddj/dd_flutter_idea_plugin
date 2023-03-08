@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
@@ -14,6 +13,7 @@ import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.util.ui.FormBuilder
 import com.jetbrains.lang.dart.DartFileType
 import icons.DartIcons
+import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.BorderFactory
@@ -23,7 +23,7 @@ import javax.swing.JPanel
 /**
  * 合并dart导入
  */
-class DartFileGroupAction : AnAction() {
+class DartFileGroupAction : MyDumbAwareAction() {
 
     private val fileNameTextFiled: ExtendableTextField = ExtendableTextField()
     private val sb: java.lang.StringBuilder = java.lang.StringBuilder()
