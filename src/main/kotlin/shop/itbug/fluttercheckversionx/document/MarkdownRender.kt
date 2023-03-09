@@ -158,7 +158,7 @@ fun MarkdownNode.toHtml(): String {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append("<code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                    sb.append("<code style='display:block;background-color: yellow;border: 1px solid blue;font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
                     sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
                         DocumentationSettings.getInlineCodeHighlightingMode(),
                         comment.project,
@@ -167,7 +167,7 @@ fun MarkdownNode.toHtml(): String {
                     )
                     sb.append("</code>")
                 } else {
-                    sb.append("<code>$nodeText</code>")
+                    sb.append("<code style='display:block;background-color: yellow;border: 1px solid blue;' >$nodeText</code>")
                 }
             }
 
@@ -279,7 +279,7 @@ fun MarkdownNode.toHtml(): String {
             GFMElementTypes.TABLE -> {
                 val alignment: List<String> = getTableAlignment(node)
                 var addedBody = false
-                sb.append("<table>")
+                sb.append("<table style='width:100%;color:#adb5bd'>")
 
                 for (child in node.children) {
                     if (child.type == GFMElementTypes.HEADER) {
