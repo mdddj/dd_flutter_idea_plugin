@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.util.ModalityUiUtil
 import shop.itbug.fluttercheckversionx.bus.ProjectListChangeBus
 import shop.itbug.fluttercheckversionx.common.MyAction
+import shop.itbug.fluttercheckversionx.common.MyComboBoxAction
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -23,7 +24,7 @@ import javax.swing.JComponent
  * 因为可能会多开多个项目,所以要支持过滤
  * 当然socket也根据项目分离Request请求
  */
-class ProjectFilter : ComboBoxAction(), DumbAware {
+class ProjectFilter : MyComboBoxAction(), DumbAware {
 
 
     private val actions = mutableListOf<ProjectAnAction>()
@@ -109,9 +110,6 @@ class ProjectFilter : ComboBoxAction(), DumbAware {
     }
 
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }
 
 /**
