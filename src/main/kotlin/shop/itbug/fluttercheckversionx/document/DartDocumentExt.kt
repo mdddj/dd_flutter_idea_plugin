@@ -17,30 +17,28 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationProvider {
 
 
-    override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
+    override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String {
 
-        try {
-            if (element == null) return ""
-            val reference = originalElement?.parent?.parent?.reference?.resolve()
-            val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
-                element.containingFile.virtualFile,
-                element.textOffset
-            )
-            if (result.isEmpty()) return ""
-            val docInfo = result.first()
-            val dartFormalParameterList =
-                reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
-            return renderView(
-                docInfo,
-                element.project,
-                if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first(),
-                element,
-                originalElement
-            )
 
-        } catch (e: Exception) {
-            return ""
-        }
+
+        val reference = element.parent?.parent?.reference?.resolve()
+        val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
+            element.containingFile.virtualFile,
+            element.textOffset
+        )
+        println("文档result是否为空:${result.isEmpty()}")
+        if (result.isEmpty()) return ""
+        val docInfo = result.first()
+        val dartFormalParameterList =
+            reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
+        return renderView(
+            docInfo,
+            element.project,
+            if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first(),
+            element,
+            originalElement
+        )
+
     }
 
 

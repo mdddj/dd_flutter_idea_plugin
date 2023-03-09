@@ -3,8 +3,9 @@ package shop.itbug.fluttercheckversionx.actions
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dialog.DartDocGenerateDialog
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
-class DartDocumentGenerateAction: MyAction({"生成文档"}) {
+class DartDocumentGenerateAction: MyAction(PluginBundle.getLazyMessage("dart.doc.markdown")) {
     override fun actionPerformed(e: AnActionEvent) {
         DartDocGenerateDialog(e.project!!).show()
     }

@@ -6,6 +6,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import org.intellij.plugins.markdown.ui.preview.MarkdownEditorWithPreview
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.SwingUtil
 import shop.itbug.fluttercheckversionx.util.Util
 import javax.swing.JComponent
@@ -17,11 +18,12 @@ import javax.swing.JComponent
 class DartDocGenerateDialog(override val project: Project): MyDialogWrapper(project) {
 
 
-    private var mkEditor : MarkdownEditorWithPreview = SwingUtil.getMkEditor(project,"编写你的文档")
-    private var prefixTextField = JBTextField("/// ")
+    private var mkEditor : MarkdownEditorWithPreview = SwingUtil.getMkEditor(project,"")
+    private var prefixTextField = JBTextField("///")
 
     init {
         super.init()
+        title = PluginBundle.get("dart.doc.markdown")
     }
 
     override fun createCenterPanel(): JComponent {

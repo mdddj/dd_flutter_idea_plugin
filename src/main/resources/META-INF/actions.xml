@@ -27,7 +27,7 @@
                     text="Model to Freezed">
             </action>
             <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
-                    text="Function Params To Freezed"/>
+                    text="Function Params To Freezed"  />
             <action id="dart-document-generate-action"
                     class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
             <add-to-group group-id="EditorPopupMenu"/>
