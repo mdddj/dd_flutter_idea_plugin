@@ -1,12 +1,18 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
+import com.intellij.openapi.project.Project
+import com.intellij.testFramework.LightVirtualFile
+import org.intellij.plugins.markdown.lang.MarkdownFileType
+import org.intellij.plugins.markdown.ui.preview.MarkdownEditorWithPreview
+import org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider
 import java.awt.*
 import java.net.URL
 import javax.swing.Icon
 import javax.swing.ImageIcon
 
 
-internal object SwingUtil {
+object SwingUtil {
     /**创建一个可以自适应组件大小的ImageIcon对象
      * @param image 从` Image `对象来创建ImageIcon
      * @param constrained 是否等比例缩放 。当为` true `时，可通过
@@ -94,5 +100,13 @@ internal object SwingUtil {
             g.dispose()
             image
         }
+    }
+
+    fun getMkEditor(project: Project, initText: String = ""): MarkdownEditorWithPreview {
+        val vF = LightVirtualFile("D", MarkdownFileType.INSTANCE, initText)
+        val mkEdit =
+            FileEditorProviderManager.getInstance().getProviderList(project, vF).first() as MarkdownSplitEditorProvider
+        val edit = mkEdit.createEditor(project, vF)
+        return edit as MarkdownEditorWithPreview
     }
 }

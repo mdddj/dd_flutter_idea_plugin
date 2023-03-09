@@ -2,13 +2,12 @@ package shop.itbug.fluttercheckversionx.form.components
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
+import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.socket.createWithToolbar
@@ -86,9 +85,9 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
             )
         }
 
-    private val jsonToFreezedModelAction: AnAction
+    private val jsonToFreezedModelAction: MyDumbAwareAction
         get() =
-            object : DumbAwareAction("Json To Freezed Model","将json转换成freezed 模型",MyIcons.freezed) {
+            object : MyDumbAwareAction("Json To Freezed Model","将json转换成freezed 模型",MyIcons.freezed) {
                 override fun actionPerformed(e: AnActionEvent) {
                     jsonToFreezedModel()
                 }
@@ -98,9 +97,6 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
                     super.update(e)
                 }
 
-                override fun getActionUpdateThread(): ActionUpdateThread {
-                    return ActionUpdateThread.BGT
-                }
             }
 
     /**

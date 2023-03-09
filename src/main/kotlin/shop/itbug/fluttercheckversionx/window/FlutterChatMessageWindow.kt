@@ -5,7 +5,6 @@ import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
@@ -21,6 +20,7 @@ import com.intellij.ui.components.fields.ExtendableTextField
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dsl.changeRoomPanel
 import shop.itbug.fluttercheckversionx.dsl.show
 import shop.itbug.fluttercheckversionx.dsl.userDetailSimplePanel
@@ -57,7 +57,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
     var userInfo: User? = appService.user // 用户信息
 
     //用户信息&用户登录
-    private var userAvatarWidget = object : AnAction("登录", "登录典典账号使用更多功能", AllIcons.General.User) {
+    private var userAvatarWidget = object : MyAction("登录", "登录典典账号使用更多功能", AllIcons.General.User) {
         override fun actionPerformed(e: AnActionEvent) {
             if (userInfo == null) {
                 showLoginDialog()
@@ -72,7 +72,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
 
     //切换房间列表功能
     private val chatRoomsWidget =
-        object : AnAction("切换房间", "切换聊天房间", AllIcons.Toolwindows.ToolWindowMessages) {
+        object : MyAction("切换房间", "切换聊天房间", AllIcons.Toolwindows.ToolWindowMessages) {
             override fun actionPerformed(e: AnActionEvent) {
                 changeRoomPanel {
                     loadRoomsHistory()

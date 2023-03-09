@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.0"
 }
 group = "shop.itbug"
-version = "3.0.2"
+version = "3.0.4"
 repositories {
     mavenCentral()
     google()
@@ -71,12 +71,26 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.8213.*")
-        untilBuild.set("223.8617.*")
+        sinceBuild.set("223.0000.*")
+        untilBuild.set("223.9999.*")
         changeNotes.set(
             """
                 
-                 <div>
+                
+                
+                <div>
+                    <h1>3.0.4</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>Update dart document display content</li>
+                        <li>New feature: add a markdown editor for dart documents</li>
+                    </ul>
+                </div>
+                
+                
+                
+                <div>
                     <h1>3.0.2</h1>
                 </div>
                 <div>

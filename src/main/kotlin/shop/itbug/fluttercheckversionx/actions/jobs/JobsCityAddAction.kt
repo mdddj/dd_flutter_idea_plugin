@@ -1,12 +1,11 @@
 package shop.itbug.fluttercheckversionx.actions.jobs
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.JSONResult
 import shop.itbug.fluttercheckversionx.services.SERVICE
@@ -18,7 +17,7 @@ import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 /**
  * 添加城市操作
  */
-class JobsCityAddAction: AnAction() {
+class JobsCityAddAction: MyAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
 
@@ -47,7 +46,4 @@ class JobsCityAddAction: AnAction() {
         super.update(e)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }

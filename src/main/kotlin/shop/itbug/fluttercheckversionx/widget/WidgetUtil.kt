@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
+import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -59,7 +60,7 @@ object WidgetUtil {
      * @param action 点击帮助图标执行事件
      */
     fun getHelpAnAction(action: (e: AnActionEvent) -> Unit): AnAction {
-        return object : DumbAwareAction(AllIcons.Actions.Help) {
+        return object : MyDumbAwareAction(AllIcons.Actions.Help) {
             override fun actionPerformed(e: AnActionEvent) {
                 action.invoke(e)
             }
@@ -71,7 +72,7 @@ object WidgetUtil {
      * @param copyText 要复制的文本
      */
     fun getCopyAnAction(copyText: String): AnAction {
-        return object : DumbAwareAction(AllIcons.Actions.Copy) {
+        return object : MyDumbAwareAction(AllIcons.Actions.Copy) {
             override fun actionPerformed(e: AnActionEvent) {
                 copyText.copyTextToClipboard()
                 e.project?.apply {

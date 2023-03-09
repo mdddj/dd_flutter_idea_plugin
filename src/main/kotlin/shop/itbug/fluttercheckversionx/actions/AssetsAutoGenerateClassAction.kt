@@ -1,9 +1,8 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.dialog.AssetsAutoGenerateClassActionConfigDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -12,7 +11,7 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 /// 自动正常资产文件调用
 ///
-class AssetsAutoGenerateClassAction : AnAction(PluginBundle.getLazyMessage("assets.gen")) {
+class AssetsAutoGenerateClassAction : MyAction(PluginBundle.getLazyMessage("assets.gen")) {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getData(CommonDataKeys.PROJECT)!!
@@ -33,7 +32,4 @@ class AssetsAutoGenerateClassAction : AnAction(PluginBundle.getLazyMessage("asse
         super.update(e)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
 }

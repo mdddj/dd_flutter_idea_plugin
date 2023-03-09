@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
 import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
+import shop.itbug.fluttercheckversionx.common.MyToggleAction
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -31,7 +32,7 @@ class LeftActionTools(
 
 
     //查看请求头的工具
-    private var detailAction = object : ToggleAction(
+    private var detailAction = object : MyToggleAction(
         PluginBundle.get("window.idea.dio.view.detail"),
         PluginBundle.get("window.idea.dio.view.detail.desc"),
         MyIcons.infos
@@ -57,9 +58,6 @@ class LeftActionTools(
             }
         }
 
-        override fun getActionUpdateThread(): ActionUpdateThread {
-            return ActionUpdateThread.BGT
-        }
     }
 
 

@@ -27,7 +27,9 @@
                     text="Model to Freezed">
             </action>
             <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
-                    text="Function Params To Freezed"/>
+                    text="Function Params To Freezed"  />
+            <action id="dart-document-generate-action"
+                    class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
             <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>
@@ -35,15 +37,19 @@
 
     <actions>
         <group id="dio-window-view-params">
-            <action id="DioWindowShowDetailPanel" class="shop.itbug.fluttercheckversionx.actions.DioWindowAutoScrollToMaxAction" />
+            <action id="DioWindowShowDetailPanel"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowAutoScrollToMaxAction"/>
             <separator/>
-            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction" icon="/icons/copy.svg" />
-            <separator />
-            <action id="DioWindowViewHeadersAction" class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
-            <action id="dio-window-view-GET" class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
-                    />
+            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"
+                    icon="/icons/copy.svg"/>
+            <separator/>
+            <action id="DioWindowViewHeadersAction"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
+            <action id="dio-window-view-GET"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
+            />
             <action id="DioWindowViewPostParamsAction"
-                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction" />
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
 
         </group>
     </actions>

@@ -1,20 +1,16 @@
 package shop.itbug.fluttercheckversionx.dialog.jobs
 
-import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
-import org.intellij.plugins.markdown.lang.MarkdownFileType
-import org.intellij.plugins.markdown.ui.preview.MarkdownEditorWithPreview
 import org.intellij.plugins.markdown.ui.preview.MarkdownPreviewFileEditor
-import org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.params.AddJobParams
+import shop.itbug.fluttercheckversionx.util.SwingUtil
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.jobs.JobsCitySelectWidgetWithComBox
@@ -23,11 +19,7 @@ import javax.swing.JComponent
 
 class AddJobsDialog(val project: Project) : DialogWrapper(project) {
 
-    private val vF = LightVirtualFile("D", MarkdownFileType.INSTANCE, "# 请输入招聘内容")
-    private val mkEdit =
-        FileEditorProviderManager.getInstance().getProviderList(project, vF).first() as MarkdownSplitEditorProvider
-    private val edit = mkEdit.createEditor(project, vF)
-    private val mkComp = edit as MarkdownEditorWithPreview
+    private val mkComp = SwingUtil.getMkEditor(project,"# 请输入招聘内容")
     private val citySelect = JobsCitySelectWidgetWithComBox(project)
 
     private var title: String = ""
@@ -54,7 +46,7 @@ class AddJobsDialog(val project: Project) : DialogWrapper(project) {
             }
             row("城市") {
                 cell(citySelect)
-                textField().bindText({ tag }, { tag = it }).label("月薪",LabelPosition.LEFT)
+                textField().bindText({ tag }, { tag = it }).label("月薪", LabelPosition.LEFT)
             }
             row {
                 cell(mkComp.component)
