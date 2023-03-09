@@ -158,7 +158,9 @@ fun MarkdownNode.toHtml(): String {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append("<code style='display:block;background-color: yellow;border: 1px solid blue;font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                    sb.append("<code style='display:block;background-color: #${
+                        UIUtil.getEditorPaneBackground().toHexString()
+                    };border: 1px solid blue;padding:4px;font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
                     sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
                         DocumentationSettings.getInlineCodeHighlightingMode(),
                         comment.project,
@@ -167,7 +169,9 @@ fun MarkdownNode.toHtml(): String {
                     )
                     sb.append("</code>")
                 } else {
-                    sb.append("<code style='display:block;background-color: yellow;border: 1px solid blue;' >$nodeText</code>")
+                    sb.append("<code style='display:block;background-color: #${
+                        UIUtil.getEditorPaneBackground().toHexString()
+                    };border: 1px solid blue;padding:4px;' >$nodeText</code>")
                 }
             }
 
@@ -176,7 +180,7 @@ fun MarkdownNode.toHtml(): String {
                 sb.append(
                     "<div style='background-color:#${
                         UIUtil.getEditorPaneBackground().toHexString()
-                    };padding: 12px;border-radius: 25px;margin: 12px 0px;'><pre><code style='font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>"
+                    };padding: 12px;border-radius: 25px;margin: 12px 0px;'><pre style='display:block;'><code style='display:block;font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>"
                 )
                 processChildren()
                 sb.append("</code></pre></div>")
