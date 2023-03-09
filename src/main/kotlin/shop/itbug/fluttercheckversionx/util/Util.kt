@@ -3,6 +3,9 @@ package shop.itbug.fluttercheckversionx.util
 import com.google.common.base.CaseFormat
 import shop.itbug.fluttercheckversionx.constance.dartKeys
 import java.awt.Color
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -188,6 +191,17 @@ class Util {
             val p: Pattern = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]")
             val m: Matcher = p.matcher(str)
             return m.find()
+        }
+
+
+
+        fun addStringToLineStart(text:String, value:String) : String {
+            val bufferedReader = BufferedReader(InputStreamReader(ByteArrayInputStream(text.toByteArray())))
+            val sb = StringBuilder()
+            bufferedReader.forEachLine {
+                sb.appendLine("$value $it")
+            }
+            return sb.toString()
         }
 
     }
