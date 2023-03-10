@@ -1,5 +1,6 @@
 package note.jdbc
 
+import cn.hutool.db.sql.SqlExecutor
 import shop.itbug.fluttercheckversionx.util.Util
 import java.io.File
 import java.sql.Connection
@@ -8,13 +9,27 @@ import java.sql.SQLException
 
 object SqliteConnectManager {
 
-    private var connect: Connection? = null
+     lateinit var connect: Connection
+     val FlutterPluginTableName  = "FlutterPluginsCollect"
 
-
-    val connection: Connection? = connect
 
     init {
         initConnect()
+    }
+
+
+    /**
+     * 创建表
+     */
+    fun createFlutterPluginTable() {
+        val createTableSql = """
+            create table $FlutterPluginTableName(
+                id INT PRIMARY KEY AUTOINCREMENT,
+                name CHAR(64) NOT NULL,
+                time CHAR(64) NOT NULL 
+            );
+        """.trimIndent()
+        SqlExecutor.execute(connect,createTableSql)
     }
 
     /**
