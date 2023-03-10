@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.common
 
 import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.JSONWriter
+import com.alibaba.fastjson2.toJSONString
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -21,8 +22,9 @@ fun Project.jsonToFreezedRun(jsonText: String) {
     try {
         val jsonObject = JSONObject.parseObject(jsonText)
         val jsonObjectToFreezedCovertModelList = ModelToFreezedModelServiceImpl().jsonObjectToFreezedCovertModelList(jsonObject)
+        print(">>>>json to freezed run"+jsonObjectToFreezedCovertModelList.toJSONString())
         FreezedClassesGenerateDialog(this,jsonObjectToFreezedCovertModelList).show()
     }catch (e: Exception) {
-        this.toastWithError("转模型失败:$e")
+        this.toastWithError("error:$e")
     }
 }

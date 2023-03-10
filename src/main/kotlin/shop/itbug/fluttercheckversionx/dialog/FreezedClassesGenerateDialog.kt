@@ -1,11 +1,11 @@
 package shop.itbug.fluttercheckversionx.dialog
 
+import cn.hutool.core.swing.ScreenUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBTabbedPane
@@ -15,6 +15,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.lang.dart.DartLanguage
 import org.jetbrains.plugins.terminal.TerminalView
+import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
@@ -23,12 +24,14 @@ import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 
-class FreezedClassesGenerateDialog(val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>) :
-    DialogWrapper(project) {
+class FreezedClassesGenerateDialog(override val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>) :
+    MyDialogWrapper(project) {
 
     private val tabView = JBTabbedPane()
     private var fileName: String = DEFAULT_CLASS_NAME
@@ -39,10 +42,13 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
 
     init {
         super.init()
+        setBaseSize()
         title = PluginBundle.get("freezed.title")
-        initTabView()
         setOKButtonText(PluginBundle.get("freezed.btn.ok"))
         setCancelButtonText(PluginBundle.get("cancel"))
+        SwingUtilities.invokeLater {
+            initTabView()
+        }
     }
 
 
@@ -141,5 +147,10 @@ class FreezedClassesGenerateDialog(val project: Project, private val freezedClas
             sb.appendLine()
         }
         return sb.toString()
+    }
+
+
+    override fun getPreferredSize(): Dimension {
+        return ScreenUtil.dimension
     }
 }

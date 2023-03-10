@@ -49,9 +49,7 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
 
 
     private fun getSettingPanel(): DialogPanel {
-        return freezedCovertModelSetting(model){
-            changeModel(model)
-        }
+        return freezedCovertModelSetting(model, { changeModel(model) })
     }
 
 
@@ -59,20 +57,40 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
 
 }
 
-fun freezedCovertModelSetting(model: FreezedCovertModel,submit: () -> Unit): DialogPanel {
+fun freezedCovertModelSetting(
+    model: FreezedCovertModel,
+    submit: () -> Unit
+): DialogPanel {
     lateinit var p: DialogPanel
     p = panel {
 
         row(PluginBundle.get("rename")) {
-            textField().bindText(model::className)
+            textField().bindText(model::className).bindText({
+                model.className
+            }, {
+                model.className = it
+                p.apply()
+                submit.invoke()
+            })
         }
 
         row(PluginBundle.get("hump.variable")) {
-            checkBox(PluginBundle.get("variable.is.named.with.hump")).bindSelected(model::upperCamelStyle)
+            checkBox(PluginBundle.get("variable.is.named.with.hump")).bindSelected(model::upperCamelStyle).bindSelected(
+                { model.upperCamelStyle }, {
+                    model.upperCamelStyle = it
+                    p.apply()
+                    submit.invoke()
+                }
+            )
         }
 
         row(PluginBundle.get("default.value")) {
             checkBox(PluginBundle.get("default.value.tip")).bindSelected(model::useDefaultValueIfNull)
+                .bindSelected({ model.useDefaultValueIfNull }, {
+                    model.useDefaultValueIfNull = it
+                    p.apply()
+                    submit.invoke()
+                })
         }
 
         row {
