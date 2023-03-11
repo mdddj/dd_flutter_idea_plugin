@@ -6,8 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.plugins.markdown.lang.MarkdownFileType
-import org.intellij.plugins.markdown.ui.preview.MarkdownEditorWithPreview
-import org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider
 import java.awt.*
 import java.net.URL
 import javax.swing.Icon
@@ -104,18 +102,29 @@ object SwingUtil {
         }
     }
 
-    fun getMkEditor(project: Project, initText: String = ""): MarkdownEditorWithPreview {
+
+
+    fun getMkEditorByAS(project: Project, initText: String = ""): PsiAwareTextEditorImpl {
         val vF = LightVirtualFile("D", MarkdownFileType.INSTANCE, initText)
         val mkEdit =
-            FileEditorProviderManager.getInstance().getProviderList(project, vF).first() as MarkdownSplitEditorProvider
+            FileEditorProviderManager.getInstance().getProviders(project, vF).first()
         val edit = mkEdit.createEditor(project, vF)
-        return edit as MarkdownEditorWithPreview
+        println(" ${mkEdit::class.java} ${edit::class.java}")
+        return edit as PsiAwareTextEditorImpl
     }
+
+//    fun getMkEditor(project: Project, initText: String = ""): MarkdownEditorWithPreview {
+//        val vF = LightVirtualFile("D", MarkdownFileType.INSTANCE, initText)
+//        val mkEdit =
+//            FileEditorProviderManager.getInstance().getProviders(project, vF).first() as MarkdownSplitEditorProvider
+//        val edit = mkEdit.createEditor(project, vF)
+//        return edit as MarkdownEditorWithPreview
+//    }
 
     fun getDartEditor(project: Project,initText: String="")  : PsiAwareTextEditorImpl {
         val vF = LightVirtualFile("freezed.dart", DartLanguage.INSTANCE, initText)
         val mkEdit =
-            FileEditorProviderManager.getInstance().getProviderList(project, vF).first()
+            FileEditorProviderManager.getInstance().getProviders(project, vF).first()
         val edit = mkEdit.createEditor(project, vF)
         println("edit:::${edit::class.java}")
         return edit as PsiAwareTextEditorImpl

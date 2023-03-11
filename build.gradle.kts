@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.2"
 }
 group = "shop.itbug"
-version = "3.0.5"
+version = "3.0.5.as"
 repositories {
     mavenCentral()
     google()
@@ -14,19 +14,19 @@ repositories {
     }
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 intellij {
-    version.set("2022.3.2")
-    type.set("IC")
+    version.set("2022.1.1.19")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8888",
-            "io.flutter:72.1.4",
-            "org.intellij.plugins.markdown:223.8617.3",
+            "Dart:221.6103",
+            "io.flutter:72.1.2",
+            "org.intellij.plugins.markdown:221.5787.39",
             "terminal", "java"
         )
     )
@@ -53,7 +53,7 @@ dependencies {
 }
 
 
-var javaVersion = "17"
+var javaVersion = "11"
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
@@ -71,13 +71,13 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.0000.*")
-        untilBuild.set("223.9999.*")
+        sinceBuild.set("221.1000.00")
+        untilBuild.set("221.9999.00")
         changeNotes.set(
             """
                 
                 <div>
-                    <h1>3.1.0</h1>
+                    <h1>3.0.5.as</h1>
                 </div>
                 <div>
                     <ul>

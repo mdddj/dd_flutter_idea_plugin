@@ -4,9 +4,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.LabelPosition
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.ValidationInfoBuilder
-import org.intellij.plugins.markdown.ui.preview.MarkdownPreviewFileEditor
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.params.AddJobParams
@@ -19,7 +21,7 @@ import javax.swing.JComponent
 
 class AddJobsDialog(val project: Project) : DialogWrapper(project) {
 
-    private val mkComp = SwingUtil.getMkEditor(project,"# 请输入招聘内容")
+    private val mkComp = SwingUtil.getMkEditorByAS(project,"# 请输入招聘内容")
     private val citySelect = JobsCitySelectWidgetWithComBox(project)
 
     private var title: String = ""
@@ -31,13 +33,13 @@ class AddJobsDialog(val project: Project) : DialogWrapper(project) {
         super.init()
         title = "发布新职位"
         setSize(800, 600)
-        (mkComp.previewEditor as MarkdownPreviewFileEditor).selectNotify()
+        mkComp.selectNotify()
     }
 
     override fun createCenterPanel(): JComponent {
         return panel {
             row("标题") {
-                titleTextField = textField().bindText({ title }, { title = it }).align(Align.FILL).validationOnInput {
+                titleTextField = textField().bindText({ title }, { title = it }).validationOnInput {
                     if (it.text.length <= 10) {
                         ValidationInfoBuilder(titleTextField.component).error("标题不能少于10字")
                     }

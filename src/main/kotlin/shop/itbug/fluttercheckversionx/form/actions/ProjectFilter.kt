@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
@@ -60,6 +59,10 @@ class ProjectFilter : MyComboBoxAction(), DumbAware {
             }
         }
         doUpdate(e)
+    }
+
+    override fun createPopupActionGroup(p0: JComponent?): DefaultActionGroup {
+       return  createDefaultGroup()
     }
 
 
