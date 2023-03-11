@@ -165,7 +165,8 @@ class MyDartPsiElementUtil {
             userSetting: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
         ) {
 
-             val names: MutableList<String> = mutableListOf()
+            val names: MutableList<String> = mutableListOf()
+
             /**
              * 格式化属性名
              */
@@ -256,7 +257,7 @@ class MyDartPsiElementUtil {
                 null
             )
             names.clear()
-            if(auto){
+            if (auto) {
                 project.toast("梁典典:自动生成资产类成功")
             }
         }
@@ -280,13 +281,21 @@ class MyDartPsiElementUtil {
         }
 
 
-        fun genFreezedClass(project: Project, className: String, properties: String = ""): PsiFile {
+        fun genFreezedClass(
+            project: Project,
+            className: String,
+            properties: String = "",
+            addConstructor: Boolean = true,
+            addFromJson: Boolean = true
+        ): PsiFile {
             return DartElementGenerator.createDummyFile(
                 project, "@freezed\n" +
                         "class $className with _\$$className {\n" +
+                        (if (addConstructor) "  const $className._();\n\n" else "") +
+
                         "  const factory $className({\n$properties    }) = _$className;\n" +
-                        "  \n  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);\n" +
-                        "}"
+                        (if (addFromJson) "  \n  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);\n\n" else "") +
+                                "}"
             )
         }
 

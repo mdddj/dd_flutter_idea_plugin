@@ -27,7 +27,6 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JPanel
-import javax.swing.SwingUtilities
 
 
 class FreezedClassesGenerateDialog(override val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>) :
@@ -42,13 +41,10 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
 
     init {
         super.init()
-        setBaseSize()
+        initTabView()
         title = PluginBundle.get("freezed.title")
         setOKButtonText(PluginBundle.get("freezed.btn.ok"))
         setCancelButtonText(PluginBundle.get("cancel"))
-        SwingUtilities.invokeLater {
-            initTabView()
-        }
     }
 
 
@@ -75,12 +71,14 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
      * 存储设置
      */
     fun getGlobalSettingPanel(): DialogPanel {
+
         settingPanel = panel {
             group(PluginBundle.get("global.settings")) {
                 row(PluginBundle.get("save.to.directory")) {
                     textFieldWithBrowseButton(
                         fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().apply {
-                            roots = ProjectRootManager.getInstance(project).contentRoots.toMutableList()
+                            println(ProjectRootManager.getInstance(project).contentRoots.toMutableList())
+                            withRoots(ProjectRootManager.getInstance(project).contentRoots.toMutableList())
                         },
                         project = project
                     ).bindText({
@@ -88,6 +86,7 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
                     }, {
                         filePath = it
                     })
+
 
                 }
                 row(PluginBundle.get("file.name")) {

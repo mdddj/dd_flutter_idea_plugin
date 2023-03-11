@@ -4,13 +4,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.JBTreeTable
-import com.intellij.ui.treeStructure.treetable.ListTreeTableModel
-import com.intellij.util.ui.tree.AbstractTreeModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jdesktop.swingx.treetable.AbstractTreeTableModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.model.getElementVersion
@@ -21,13 +17,12 @@ import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
-import javax.swing.tree.DefaultTreeModel
 
 ///检测版本小窗口
 class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
 
-    private var topTipLabel = JBLabel("检测插件版本")
-    private var bottomTipLabel = JBLabel("等待检测中")
+    private var topTipLabel = JBLabel("check")
+    private var bottomTipLabel = JBLabel("loading...")
 
     //插件列表
     private var plugins: MutableMap<FlutterPluginType, List<FlutterPluginElementModel>> =
@@ -37,11 +32,10 @@ class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
     private val listView = JBList<FlutterPluginElementModel>()
 
 
-
     init {
         add(topTipLabel, BorderLayout.NORTH)
         add(JBScrollPane(listView), BorderLayout.CENTER)
-        add(bottomTipLabel,BorderLayout.SOUTH)
+        add(bottomTipLabel, BorderLayout.SOUTH)
         listView.model = PluginListModel(emptyList())
         listView.cellRenderer = PluginListCellRender()
         initRequest()
@@ -53,19 +47,19 @@ class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun initRequest() {
-        topTipLabel.text = "检测中..."
+        topTipLabel.text = "loading..."
         GlobalScope.launch {
             for (item in plugins.values) {
-                bottomTipLabel.text = "获取到插件数量:${item.size}"
+                bottomTipLabel.text = "all size:${item.size}"
                 item.forEach { model ->
-                    bottomTipLabel.text = "正在检测${model.name}"
+                    bottomTipLabel.text = "checking: ${model.name}"
                     val r = ServiceCreate.create<PubService>().callPluginDetails(model.name).execute()
                     if (r.isSuccessful) {
 
                         val rModel = r.body()
                         if (rModel != null) {
                             model.pubData = rModel
-                            if(!model.isLastVersion()){
+                            if (!model.isLastVersion()) {
                                 val oldList = (listView.model as PluginListModel).list
                                 val l = oldList.toMutableList()
                                 l.add(model)
@@ -75,7 +69,7 @@ class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
                         }
                     }
                 }
-                bottomTipLabel.text = "检测完成"
+                bottomTipLabel.text = "Done"
             }
         }
     }

@@ -151,7 +151,11 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
 
 
     private fun jsonToFreezedRun() {
-        JsonToFreezedInputDialog(project).show()
+        try {
+            JsonToFreezedInputDialog(project).show()
+        }catch (e:Exception){
+            println("...$e")
+        }
     }
 
     private fun runCommand(code: String) {

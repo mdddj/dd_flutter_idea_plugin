@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.model
 
 import com.alibaba.fastjson2.JSONArray
-import com.google.common.base.CaseFormat
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.formatDartName
@@ -68,9 +67,7 @@ fun DartClassProperty.formatName(upperCamelStyle: Boolean, isJson: Boolean = tru
         return name
     }
     if (upperCamelStyle) {
-        var s = CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, name)
-        s = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_CAMEL, s)
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, s)
+        return name
     }
 
     return name
@@ -145,6 +142,8 @@ data class FreezedCovertModel(
     //如果变量为空,则设置一个默认值
     var useDefaultValueIfNull: Boolean = true,
 
-    var isDartClassElementType: Boolean = false
+    var isDartClassElementType: Boolean = false,
+    var addConstructorFun:Boolean = true,
+    var addFromJson:Boolean = true
 
 )

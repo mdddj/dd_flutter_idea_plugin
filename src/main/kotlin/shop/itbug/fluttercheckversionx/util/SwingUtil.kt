@@ -1,8 +1,10 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
+import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightVirtualFile
+import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.plugins.markdown.lang.MarkdownFileType
 import org.intellij.plugins.markdown.ui.preview.MarkdownEditorWithPreview
 import org.intellij.plugins.markdown.ui.preview.MarkdownSplitEditorProvider
@@ -108,5 +110,14 @@ object SwingUtil {
             FileEditorProviderManager.getInstance().getProviderList(project, vF).first() as MarkdownSplitEditorProvider
         val edit = mkEdit.createEditor(project, vF)
         return edit as MarkdownEditorWithPreview
+    }
+
+    fun getDartEditor(project: Project,initText: String="")  : PsiAwareTextEditorImpl {
+        val vF = LightVirtualFile("freezed.dart", DartLanguage.INSTANCE, initText)
+        val mkEdit =
+            FileEditorProviderManager.getInstance().getProviderList(project, vF).first()
+        val edit = mkEdit.createEditor(project, vF)
+        println("edit:::${edit::class.java}")
+        return edit as PsiAwareTextEditorImpl
     }
 }
