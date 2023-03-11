@@ -15,7 +15,6 @@ import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginActions.*
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -25,7 +24,7 @@ import javax.swing.JComponent
 
 enum class PluginActions(val title: String) {
     SearchPlugin(PluginBundle.get("search.pub.plugin")),
-    CheckVersion(PluginBundle.get("check.flutter.plugin")),
+//    CheckVersion(PluginBundle.get("check.flutter.plugin")),
     RunBuilder(PluginBundle.get("run.build_runner.build")),
     FlutterClan(PluginBundle.get("flutter.clean")),
     FlutterPushPlugin(PluginBundle.get("dart.pub.publish")),
@@ -135,13 +134,13 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
                 SearchDialog(project).show()
             }
 
-            CheckVersion -> {
-                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-                pubspecFile?.let {
-                    val plugins = MyPsiElementUtil.getAllPlugins(project)
-                    print(plugins)
-                }
-            }
+//            CheckVersion -> {
+//                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
+//                pubspecFile?.let {
+//                    val plugins = MyPsiElementUtil.getAllPlugins(project)
+//                    print(plugins)
+//                }
+//            }
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")
             FlutterPushPlugin -> runCommand(" dart pub publish")
