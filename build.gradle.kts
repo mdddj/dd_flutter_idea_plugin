@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.2"
 }
 group = "shop.itbug"
-version = "3.0.4"
+version = "3.0.5"
 repositories {
     mavenCentral()
     google()
@@ -76,6 +76,15 @@ tasks {
         changeNotes.set(
             """
                 
+                <div>
+                    <h1>3.1.0</h1>
+                </div>
+                <div>
+                    <ul>
+                        <li>Optimize the frozen to model tool</li>
+                        <li>I18n adaptation</li>
+                    </ul>
+                </div>
                 
                 
                 <div>
