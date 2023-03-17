@@ -19,7 +19,7 @@ java {
 }
 
 intellij {
-    version.set("2022.3.2")
+    version.set("2022.3.3")
     type.set("IC")
     plugins.set(
         listOf(

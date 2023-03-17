@@ -42,6 +42,11 @@ class SocketWindow : ToolWindowFactory {
             val jobsContent = instance.createContent(jobsWindow, "找工作", false)
             p1.contentManager.addContent(jobsContent)
         }
+
+        //api索引窗口
+        val apiIndexWindow = BaseApiIndexWindow(p0,p1)
+        val apiIndexContent = instance.createContent(apiIndexWindow,"接口管理",false)
+        p1.contentManager.addContent(apiIndexContent)
     }
 
 }
