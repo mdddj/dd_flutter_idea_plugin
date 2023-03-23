@@ -17,7 +17,6 @@ import shop.itbug.fluttercheckversionx.bus.FlutterPluginCollectEvent
 import shop.itbug.fluttercheckversionx.bus.FlutterPluginCollectEventType
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import shop.itbug.fluttercheckversionx.dialog.MyPluginAddToPubspecFileDialog
-import shop.itbug.fluttercheckversionx.util.toast
 import java.awt.Component
 import javax.swing.DefaultListModel
 import javax.swing.JList
@@ -111,10 +110,9 @@ class DartPluginList(val project: Project) : JBList<Entity>() {
         if (selectedIndex >= 0) {
             //删除选中
             val remove = FlutterCollectService.remove(selectedValue.getStr("name"))
-            if (remove) {
+            DaemonCodeAnalyzer.getInstance(project).restart()
+            if (remove && selectedIndex >= 0) {
                 (model as DefaultListModel).remove(selectedIndex)
-            } else {
-                project.toast("Delete failed")
             }
         }
     }
