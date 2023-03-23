@@ -12,9 +12,9 @@ import com.intellij.ui.components.JBLabel
 import org.jetbrains.plugins.terminal.TerminalView
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginActions.*
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -23,13 +23,11 @@ import javax.swing.JComponent
 
 
 enum class PluginActions(val title: String) {
-    SearchPlugin("搜索pub包"), CheckVersion("检测版本更新"), GetAllPlugins("获取全部插件"), RunBuilder("生成代码"), FlutterClan(
-        "清理"
-    ),
-    FlutterPushPlugin("发布插件"),
-    BuildApk("构建安卓包"),
-    BuildIos("构建IOS包"),
-    FlutterDoctor("颤抖医生"),
+    SearchPlugin(PluginBundle.get("search.pub.plugin")),
+//    CheckVersion(PluginBundle.get("check.flutter.plugin")),
+    RunBuilder(PluginBundle.get("run.build_runner.build")),
+    FlutterClan(PluginBundle.get("flutter.clean")),
+    FlutterPushPlugin(PluginBundle.get("dart.pub.publish")),
     JsonToFreezed("Json to Freezed")
 }
 
@@ -121,7 +119,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
                     border = BorderFactory.createEmptyBorder(6, 6, 6, 6)
                 }
             }
-            .setTitle("典典工具包")
+            .setTitle(PluginBundle.get("br.title"))
             .createPopup()
     }
 
@@ -136,32 +134,31 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
                 SearchDialog(project).show()
             }
 
-            CheckVersion -> {
-                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-                pubspecFile?.let {
-                    val plugins = MyPsiElementUtil.getAllPlugins(project)
-                    print(plugins)
-                }
-            }
-
-            GetAllPlugins -> MyPsiElementUtil.getAllFlutters(project)
+//            CheckVersion -> {
+//                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
+//                pubspecFile?.let {
+//                    val plugins = MyPsiElementUtil.getAllPlugins(project)
+//                    print(plugins)
+//                }
+//            }
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")
             FlutterPushPlugin -> runCommand(" dart pub publish")
-            BuildApk -> runCommand("flutter build apk")
-            BuildIos -> runCommand("flutter build ios")
-            FlutterDoctor -> runCommand("flutter doctor")
             JsonToFreezed -> jsonToFreezedRun()
         }
     }
 
 
     private fun jsonToFreezedRun() {
-        JsonToFreezedInputDialog(project).show()
+        try {
+            JsonToFreezedInputDialog(project).show()
+        }catch (e:Exception){
+            println("...$e")
+        }
     }
 
     private fun runCommand(code: String) {
-        TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "梁典典").executeCommand(code)
+        TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX").executeCommand(code)
     }
 
 }

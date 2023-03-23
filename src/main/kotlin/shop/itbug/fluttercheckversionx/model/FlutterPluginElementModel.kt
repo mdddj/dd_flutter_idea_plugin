@@ -1,13 +1,12 @@
 package shop.itbug.fluttercheckversionx.model
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.psi.PsiElement
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 
 ///插件的类型
-enum class FlutterPluginType(val type: String){
-    dependencies("dependencies"),devDependencies("dev_dependencies"),dependencyOverrides("dependency_overrides")
+enum class FlutterPluginType(val type: String,val title: String){
+    Dependencies("dependencies","Default"),DevDependencies("dev_dependencies","Dev"),DependencyOverrides("dependency_overrides","Overrides")
 }
 ///flutter插件节点
 data class FlutterPluginElementModel(val name: String,val element: YAMLKeyValueImpl,val type: FlutterPluginType,var pubData: PubVersionDataModel? = null)

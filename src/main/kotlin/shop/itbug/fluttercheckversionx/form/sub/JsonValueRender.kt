@@ -38,7 +38,7 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
      * 外部调用,改变json内容
      */
     fun changeValue(json: Any?) {
-        if (json != null) {
+        if (json != null && !project.isDisposed) {
             val changeJson = changeJson(json)
             jsonView.text = changeJson
         }

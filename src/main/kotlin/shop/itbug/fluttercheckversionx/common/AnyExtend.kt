@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import shop.itbug.fluttercheckversionx.dialog.FreezedClassesGenerateDialog
 import shop.itbug.fluttercheckversionx.services.impl.ModelToFreezedModelServiceImpl
-import shop.itbug.fluttercheckversionx.util.toastWithError
 
 fun Any.toJsonFormart() : String {
    return JSONObject.toJSONString(this,JSONWriter.Feature.PrettyFormat)
@@ -23,6 +22,6 @@ fun Project.jsonToFreezedRun(jsonText: String) {
         val jsonObjectToFreezedCovertModelList = ModelToFreezedModelServiceImpl().jsonObjectToFreezedCovertModelList(jsonObject)
         FreezedClassesGenerateDialog(this,jsonObjectToFreezedCovertModelList).show()
     }catch (e: Exception) {
-        this.toastWithError("转模型失败:$e")
+        println("error:$e")
     }
 }

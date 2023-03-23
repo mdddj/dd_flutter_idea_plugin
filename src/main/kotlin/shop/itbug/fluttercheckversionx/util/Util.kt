@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.constance.dartKeys
 import java.awt.Color
 import java.io.BufferedReader
@@ -34,26 +35,8 @@ class Util {
 
         val userHomePath: String get() = System.getProperty("user.home")
 
-        /**
-         * Color对象转换成字符串
-         * @param color Color对象
-         * @return 16进制颜色字符串
-         */
          fun toHexFromColor(color: Color): String {
-            val su = StringBuilder()
-            var r: String = Integer.toHexString(color.red)
-            var g: String = Integer.toHexString(color.green)
-            var b: String = Integer.toHexString(color.blue)
-            r = if (r.length == 1) "0$r" else r
-            g = if (g.length == 1) "0$g" else g
-            b = if (b.length == 1) "0$b" else b
-            r = r.uppercase(Locale.getDefault())
-            g = g.uppercase(Locale.getDefault())
-            b = b.uppercase(Locale.getDefault())
-            su.append(r)
-            su.append(g)
-            su.append(b)
-            return su.toString()
+            return UIUtil.colorToHex(color)
         }
 
         /**

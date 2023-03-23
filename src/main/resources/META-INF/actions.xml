@@ -30,6 +30,7 @@
                     text="Function Params To Freezed"  />
             <action id="dart-document-generate-action"
                     class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
+            <action class="shop.itbug.fluttercheckversionx.actions.BaseApiSearchAction" id="base-api-search" text="API检测" />
             <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>

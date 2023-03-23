@@ -16,8 +16,11 @@ open class DynamicPluginBundle(pathToBundle: String): AbstractBundle(pathToBundl
     ): ResourceBundle {
         val base = super.findBundle(pathToBundle, loader, control)
         val ideLocale = LangBundle.getLocale()
-        if(PluginStateService.getInstance().state?.lang != "中文"){
+        val settingLang = PluginStateService.getInstance().state?.lang ?: ""
+        println("语言: $settingLang   $base")
+        if(settingLang != "中文"){
             val localizedPath = pathToBundle + "_"+ideLocale.language
+            println("localized path is $localizedPath")
             val localBundle = super.findBundle(localizedPath, DynamicPluginBundle::class.java.classLoader, control)
             if(base != localBundle){
                 setParent(localBundle,base)
