@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.2"
 }
 group = "shop.itbug"
-version = "3.2.0"
+version = "3.2.0.as"
 repositories {
     mavenCentral()
     google()
@@ -16,14 +16,14 @@ repositories {
 
 
 intellij {
-    version.set("2022.3.3")
-    type.set("IC")
+    version.set("2022.1.1.19")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8888",
-            "io.flutter:72.1.4",
-            "org.intellij.plugins.markdown:223.8617.3",
+            "Dart:221.6103.1",
+            "io.flutter:72.1.2",
+            "org.intellij.plugins.markdown:221.5787.39",
             "terminal", "java"
         )
     )
@@ -50,11 +50,7 @@ dependencies {
 }
 
 
-//var javaVersion = "17"
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//        kotlinOptions.jvmTarget = javaVersion
-    }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
@@ -64,13 +60,13 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.0000.*")
-        untilBuild.set("223.9999.*")
+        sinceBuild.set("221.1000.00")
+        untilBuild.set("221.9999.00")
         changeNotes.set(
             """
                 
                 <div>
-                    <h1>3.2.0</h1>
+                    <h1>3.2.0.as</h1>
                     <ul>
                         <li>Add a favorite plugin function, which will be saved in the local sqlite database.</br> File default path<pre>~/FlutterCheckVersionXNote.db</pre></li>
                     </ul>
@@ -226,10 +222,8 @@ tasks {
     }
 
     compileKotlin {
-//        kotlinOptions.jvmTarget = javaVersion
     }
 
     compileTestKotlin {
-//        kotlinOptions.jvmTarget = javaVersion
     }
 }
