@@ -4,6 +4,7 @@ import com.intellij.openapi.util.IconLoader
 
 object MyIcons {
     var dartPackageIcon = IconLoader.getIcon("/icons/dart.svg", MyIcons::class.java)
+    var dartPackageIconRed = IconLoader.getIcon("/icons/dart-red.svg", MyIcons::class.java)
     var imageIcon = IconLoader.getIcon("/icons/image.svg", MyIcons::class.java)
     var dartPluginIcon = IconLoader.getIcon("/icons/pluginIcon.svg", MyIcons::class.java)
     var apiIcon = IconLoader.getIcon("/icons/api.svg",MyIcons::class.java)
@@ -18,5 +19,10 @@ object MyIcons {
     var setting = IconLoader.getIcon("/icons/setting.svg",MyIcons::class.java)
     var freezed = IconLoader.getIcon("/icons/freezed.svg",MyIcons::class.java)
     var money = IconLoader.getIcon("/icons/money.svg",MyIcons::class.java)
+
+    //收藏图标(未选中)
+    var collectUn = IconLoader.getIcon("/icons/collect-un.svg",MyIcons::class.java)
+    //收藏图标(选中)
+    var collect = IconLoader.getIcon("/icons/collect.svg",MyIcons::class.java)
 }
 

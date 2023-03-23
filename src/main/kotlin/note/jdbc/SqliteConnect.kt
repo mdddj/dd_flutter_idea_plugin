@@ -1,5 +1,6 @@
 package note.jdbc
 
+import cn.hutool.db.handler.EntityListHandler
 import cn.hutool.db.sql.SqlExecutor
 import shop.itbug.fluttercheckversionx.util.Util
 import java.io.File
@@ -9,8 +10,8 @@ import java.sql.SQLException
 
 object SqliteConnectManager {
 
-     lateinit var connect: Connection
-     val FlutterPluginTableName  = "FlutterPluginsCollect"
+    lateinit var connect: Connection
+    const val FlutterPluginTableName = "FlutterPluginsCollect"
 
 
     init {
@@ -22,14 +23,19 @@ object SqliteConnectManager {
      * 创建表
      */
     fun createFlutterPluginTable() {
+        if(isExits(FlutterPluginTableName)){
+            println("表已经存在了")
+            return
+        }
         val createTableSql = """
             create table $FlutterPluginTableName(
-                id INT PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name CHAR(64) NOT NULL,
                 time CHAR(64) NOT NULL 
             );
         """.trimIndent()
-        SqlExecutor.execute(connect,createTableSql)
+        val result = SqlExecutor.execute(connect, createTableSql)
+        println("返回:$result")
     }
 
     /**
@@ -54,5 +60,25 @@ object SqliteConnectManager {
             println("连接sql失败:$e")
         }
 
+    }
+
+    /**
+     *
+     *  检测表是否已经存在
+     *
+     *   @return true -> 表已经存在
+     */
+    private fun isExits(tableName: String): Boolean {
+       try {
+           val sql = """
+            SELECT name FROM sqlite_master WHERE type='table' AND name=?;
+        """.trimIndent()
+          val result = SqlExecutor.query(connect,sql, EntityListHandler(),tableName)
+           return result.isNotEmpty()
+       }catch (e:Exception){
+           println("检测表失败")
+           e.printStackTrace()
+       }
+        return false
     }
 }

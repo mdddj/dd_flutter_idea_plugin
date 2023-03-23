@@ -11,22 +11,28 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
+import note.jdbc.FlutterCollectService
+import note.jdbc.SqliteConnectManager
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
+import shop.itbug.fluttercheckversionx.util.toast
 import java.awt.event.MouseEvent
 import javax.swing.Icon
+
+
 
 class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        if ( element.isDartPluginElement() && element is YAMLKeyValueImpl) {
+        if (element.isDartPluginElement() && element is YAMLKeyValueImpl) {
+            val isExits = FlutterCollectService.exits(element.getPluginName()) //是否已经收藏了
             return LineMarkerInfo(
                 element.firstChild, element.firstChild.textRange,
-                MyIcons.dartPackageIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),
+                if(isExits)  MyIcons.collect else  MyIcons.dartPackageIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),
                 GutterIconRenderer.Alignment.LEFT
             ) { "111" }
         }
@@ -46,10 +52,20 @@ class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavi
 
 data class PluginDartIconActionMenuItem(val title: String, val type: String, val icon: Icon)
 class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
+
+    private val isExites = FlutterCollectService.exits(element.getPluginName()) //是否已经收藏
+
     private val menus
         get() = listOf(
             PluginDartIconActionMenuItem(
-                title = "${PluginBundle.get("nav.to")} pub.dev", type = "navToPub", icon = AllIcons.Toolwindows.WebToolWindow
+                title = "${PluginBundle.get("nav.to")} pub.dev",
+                type = "navToPub",
+                icon = AllIcons.Toolwindows.WebToolWindow
+            ),
+            PluginDartIconActionMenuItem(
+                PluginBundle.get("plugin.collect"),
+                "collect",
+                if (isExites) MyIcons.collect else MyIcons.collectUn
             )
         )
 
@@ -67,7 +83,39 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
             menus[0].type -> {
                 BrowserUtil.browse("$PUB_URL${element.getPluginName()}")
             }
+
+            menus[1].type -> {
+                addToCollect()
+            }
         }
         return super.onChosen(selectedValue, finalChoice)
+    }
+
+
+    ///添加收藏
+    private fun addToCollect() {
+        if (isExites) {
+            removeCollect()
+            return
+        }
+        SqliteConnectManager.createFlutterPluginTable()
+        FlutterCollectService.add(element.getPluginName(), element.project)
+        /// TODO update the icon
+    }
+
+
+    ///移除收藏
+    private fun removeCollect() {
+        val success = FlutterCollectService.remove(element.getPluginName())
+        if (success) {
+            element.project.toast("Delete succeeded")
+
+            /// TODO update the icon
+        } else {
+            element.project.toast("Delete failed")
+        }
+
+
+
     }
 }

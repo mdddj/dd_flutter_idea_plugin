@@ -13,10 +13,7 @@ repositories {
         url = uri("https://plugins.gradle.org/m2/")
     }
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
+
 
 intellij {
     version.set("2022.3.3")
@@ -53,14 +50,10 @@ dependencies {
 }
 
 
-var javaVersion = "17"
+//var javaVersion = "17"
 tasks {
-    withType<JavaCompile> {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-    }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = javaVersion
+//        kotlinOptions.jvmTarget = javaVersion
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -217,6 +210,7 @@ tasks {
 
     runIde {
         autoReloadPlugins.set(true)
+        jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
     }
 
 
@@ -225,10 +219,10 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = javaVersion
+//        kotlinOptions.jvmTarget = javaVersion
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = javaVersion
+//        kotlinOptions.jvmTarget = javaVersion
     }
 }

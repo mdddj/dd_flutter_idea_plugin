@@ -44,9 +44,14 @@ class SocketWindow : ToolWindowFactory {
         }
 
         //api索引窗口
-        val apiIndexWindow = BaseApiIndexWindow(p0,p1)
-        val apiIndexContent = instance.createContent(apiIndexWindow,"接口管理",false)
-        p1.contentManager.addContent(apiIndexContent)
+//        val apiIndexWindow = BaseApiIndexWindow(p0,p1)
+//        val apiIndexContent = instance.createContent(apiIndexWindow,"接口管理",false)
+//        p1.contentManager.addContent(apiIndexContent)
+
+        //flutter收藏窗口
+        var dartPluginWindow = DartPluginsWindow(p1,p0)
+        var dartPluginContent = instance.createContent(dartPluginWindow,"Plugin Collects",false)
+        p1.contentManager.addContent(dartPluginContent)
     }
 
 }
