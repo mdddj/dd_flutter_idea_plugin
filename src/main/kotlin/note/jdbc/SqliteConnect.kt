@@ -22,20 +22,29 @@ object SqliteConnectManager {
     /**
      * 创建表
      */
-    fun createFlutterPluginTable() {
-        if(isExits(FlutterPluginTableName)){
-            println("表已经存在了")
-            return
-        }
-        val createTableSql = """
+    fun createFlutterPluginTable() : Boolean {
+       try{
+           if (!isExits(FlutterPluginTableName)) {
+               val createTableSql = """
             create table $FlutterPluginTableName(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name CHAR(64) NOT NULL,
-                time CHAR(64) NOT NULL 
+                name varchat(64) NOT NULL,
+                time varchat(64) NOT NULL,
+                icon varchat(64) DEFAULT '/icons/collect.svg',
+                type varchat(64) DEFAULT '',
+                ext varchat(64) DEFAULT '',
+                ext2 varchat(64) DEFAULT ''
             );
         """.trimIndent()
-        val result = SqlExecutor.execute(connect, createTableSql)
-        println("返回:$result")
+               SqlExecutor.execute(connect, createTableSql)
+               println("flutter插件表创建成功")
+               return true
+           }
+       }catch (e: Exception){
+           return false
+       }
+        return false
+
     }
 
     /**
@@ -68,17 +77,17 @@ object SqliteConnectManager {
      *
      *   @return true -> 表已经存在
      */
-    private fun isExits(tableName: String): Boolean {
-       try {
-           val sql = """
+     fun isExits(tableName: String): Boolean {
+        try {
+            val sql = """
             SELECT name FROM sqlite_master WHERE type='table' AND name=?;
         """.trimIndent()
-          val result = SqlExecutor.query(connect,sql, EntityListHandler(),tableName)
-           return result.isNotEmpty()
-       }catch (e:Exception){
-           println("检测表失败")
-           e.printStackTrace()
-       }
+            val result = SqlExecutor.query(connect, sql, EntityListHandler(), tableName)
+            return result.isNotEmpty()
+        } catch (e: Exception) {
+            println("检测表失败")
+            e.printStackTrace()
+        }
         return false
     }
 }

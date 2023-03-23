@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.linemark
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
@@ -99,8 +100,9 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
             return
         }
         SqliteConnectManager.createFlutterPluginTable()
-        FlutterCollectService.add(element.getPluginName(), element.project)
-        /// TODO update the icon
+        FlutterCollectService.add(element.getPluginName())
+        /// update the icon
+        DaemonCodeAnalyzer.getInstance(element.project).restart()
     }
 
 
@@ -110,7 +112,8 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
         if (success) {
             element.project.toast("Delete succeeded")
 
-            /// TODO update the icon
+            /// update the icon
+            DaemonCodeAnalyzer.getInstance(element.project).restart()
         } else {
             element.project.toast("Delete failed")
         }

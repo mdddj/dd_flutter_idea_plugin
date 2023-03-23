@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.2"
 }
 group = "shop.itbug"
-version = "3.0.5"
+version = "3.2.0"
 repositories {
     mavenCentral()
     google()
@@ -34,16 +34,16 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.4")
-    implementation("cn.hutool:hutool-all:5.8.12")
-    implementation("org.smartboot.socket:aio-core:1.6.2")
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.24")
-    implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.24")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
+    implementation("cn.hutool:hutool-all:5.8.15")
+    implementation("org.smartboot.socket:aio-core:1.6.3")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.25")
+    implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("org.hildan.krossbow:krossbow-stomp-core:5.0.0")
-    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0")
+    implementation("org.hildan.krossbow:krossbow-stomp-core:5.1.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.1.0")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("com.kitfox.svg:svg-salamander:1.0")
@@ -68,6 +68,13 @@ tasks {
         untilBuild.set("223.9999.*")
         changeNotes.set(
             """
+                
+                <div>
+                    <h1>3.2.0</h1>
+                    <ul>
+                        <li>Add a favorite plugin function, which will be saved in the local sqlite database.</br> File default path<pre>~/FlutterCheckVersionXNote.db</pre></li>
+                    </ul>
+                </div>
                 
                 <div>
                     <h1>3.1.0</h1>

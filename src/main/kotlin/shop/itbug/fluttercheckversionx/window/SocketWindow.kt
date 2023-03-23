@@ -49,8 +49,8 @@ class SocketWindow : ToolWindowFactory {
 //        p1.contentManager.addContent(apiIndexContent)
 
         //flutter收藏窗口
-        var dartPluginWindow = DartPluginsWindow(p1,p0)
-        var dartPluginContent = instance.createContent(dartPluginWindow,"Plugin Collects",false)
+        val dartPluginWindow = DartPluginsWindow(p1,p0)
+        val dartPluginContent = instance.createContent(dartPluginWindow,"Plugin Collects",false)
         p1.contentManager.addContent(dartPluginContent)
     }
 

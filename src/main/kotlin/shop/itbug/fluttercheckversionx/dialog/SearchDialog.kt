@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.dialog
 import PluginVersionModel
 import cn.hutool.http.HttpRequest
 import com.google.gson.Gson
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
@@ -11,11 +10,8 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
-import com.intellij.util.IncorrectOperationException
-import org.jetbrains.yaml.YAMLElementGenerator
-import org.jetbrains.yaml.YAMLUtil
-import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.BorderLayout
 import java.awt.Button
@@ -79,25 +75,12 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
     //执行插入
     private fun doInset() {
         selectedModel?.let {
-            val pluginName = it.`package`
-
-
-            val psiFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-            if (psiFile != null) {
-                val qualifiedKeyInFile = YAMLUtil.getQualifiedKeyInFile(psiFile as YAMLFile, "dependencies")
-                val version = "^" + versionSelect.item
-                val blockElement = YAMLElementGenerator.getInstance(project)
-                    .createYamlKeyValue(pluginName, version)
-                val eolElement = YAMLElementGenerator.getInstance(project).createEol()
-                WriteCommandAction.runWriteCommandAction(project) {
-                    try {
-                        qualifiedKeyInFile?.add(eolElement)
-                        qualifiedKeyInFile?.add(blockElement)
-                    } catch (_: IncorrectOperationException) {
-                    }
-                }
-
-            }
+            MyPsiElementUtil.insertPluginToPubspecFile(
+                project,
+                it.`package`,
+                versionSelect.item,
+                FlutterPluginType.Dependencies
+            )
         }
     }
 
@@ -149,9 +132,9 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
         searchButton.addActionListener {
             doSearch()
         }
-        searchTextField.addKeyListener(object : KeyAdapter(){
+        searchTextField.addKeyListener(object : KeyAdapter() {
             override fun keyTyped(e: KeyEvent?) {
-                if(e?.keyChar == KeyEvent.VK_ENTER.toChar()){
+                if (e?.keyChar == KeyEvent.VK_ENTER.toChar()) {
                     doSearch()
                 }
                 super.keyTyped(e)

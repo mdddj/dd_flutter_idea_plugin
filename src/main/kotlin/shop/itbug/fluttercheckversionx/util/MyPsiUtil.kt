@@ -1,14 +1,23 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.parents
+import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.IncorrectOperationException
+import com.jetbrains.lang.dart.DartFileType
+import org.jetbrains.yaml.YAMLElementGenerator
+import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
@@ -20,12 +29,66 @@ import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import java.io.File
 
 
+
 /**
  * PSI 操作相关类
  */
 class MyPsiElementUtil {
 
     companion object {
+
+
+        /**
+         * 创建yaml的虚拟文件
+         */
+        private fun createYamlDummyFile(myProject: Project, text: String): PsiFile? {
+            val factory = PsiFileFactory.getInstance(myProject)
+            val name = "dummy.yaml"
+            val virtualFile = LightVirtualFile(
+                name, DartFileType.INSTANCE,
+                text
+            )
+            return (factory as PsiFileFactoryImpl).trySetupPsiForFile(virtualFile, YAMLLanguage.INSTANCE, false, true)
+        }
+
+
+        ///创建一个yaml keyValue节点
+        fun createYamlKeyValueElement(project: Project, key: String, value: String): YAMLKeyValueImpl? {
+            val createYamlDummyFile = createYamlDummyFile(project, "$key : $value")
+            if (createYamlDummyFile != null) {
+                return PsiTreeUtil.findChildOfType(createYamlDummyFile,YAMLKeyValueImpl::class.java)
+            }
+            return null
+        }
+
+
+        /**
+         * 插入节点到pubspec文件
+         */
+        fun insertPluginToPubspecFile(
+            project: Project,
+            pluginName: String,
+            version: String = "any",
+            type: FlutterPluginType = FlutterPluginType.Dependencies
+        ) {
+            val psiFile = getPubSecpYamlFile(project)
+            if (psiFile != null) {
+                val qualifiedKeyInFile = YAMLUtil.getQualifiedKeyInFile(psiFile as YAMLFile, type.type)
+                val insetVersion = "^$version"
+                val blockElement = YAMLElementGenerator.getInstance(project)
+                    .createYamlKeyValue(pluginName, insetVersion)
+                val eolElement = YAMLElementGenerator.getInstance(project).createEol()
+                WriteCommandAction.runWriteCommandAction(project) {
+                    try {
+                        qualifiedKeyInFile?.add(eolElement)
+                        qualifiedKeyInFile?.add(blockElement)
+                    } catch (e: IncorrectOperationException) {
+                        project.toastWithError("add to file error: $e")
+                    }
+                }
+            }
+        }
+
 
         /**
          * 获取插件名字
