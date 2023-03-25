@@ -50,10 +50,10 @@ dependencies {
 }
 
 
-//var javaVersion = "17"
+var javaVersion = "17"
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -226,10 +226,10 @@ tasks {
     }
 
     compileKotlin {
-//        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     compileTestKotlin {
-//        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = javaVersion
     }
 }

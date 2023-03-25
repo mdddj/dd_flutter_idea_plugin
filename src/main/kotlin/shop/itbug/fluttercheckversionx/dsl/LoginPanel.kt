@@ -2,46 +2,44 @@ package shop.itbug.fluttercheckversionx.dsl
 
 import cn.hutool.core.lang.Validator
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Disposer
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.ui.JBFont
-import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.UserAccount
+import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.LoginParam
 import shop.itbug.fluttercheckversionx.services.SERVICE
-import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
 
 ///登录弹窗
-fun loginPanel(parentDisposable: Disposable): DialogPanel {
+fun loginPanel(parentDisposable: Disposable,account: UserAccount,success: (user: User)->Unit): DialogPanel {
     lateinit var panel: DialogPanel
-    val account = UserAccount()
+
     val passwordJBTextField = JBPasswordField()
-    val errorLabel = JBLabel("").apply {
-        foreground = UIUtil.getErrorForeground()
-    }
+    var errorMsg = ""
     fun userLogin() {
-        if(errorLabel.text.isNotEmpty()){
-            errorLabel.text = ""
-        }
+
         val r =  SERVICE.create(ItbugService::class.java).login(LoginParam(account.username,account.password)).execute().body()
+
+
+
+        println("登录结果:$r")
+
         if(r?.state == 200) {
              r.data?.let {
-                 CredentialUtil.saveToken(it)
-                 service<AppService>().login()
 
+                 println("进来了..")
             }
         }else{
-            errorLabel.text = r?.message
+            errorMsg = r?.message ?: ""
+            panel.reset()
         }
     }
     panel = panel {
@@ -72,12 +70,7 @@ fun loginPanel(parentDisposable: Disposable): DialogPanel {
             }.gap(RightGap.SMALL).horizontalAlign(HorizontalAlign.RIGHT)
         }.topGap(TopGap.SMALL)
         row {
-            cell(errorLabel)
-        }
-        row {
-            label("登录服务出现错误,正在抢修中").component.apply {
-                foreground = UIUtil.getErrorForeground()
-            }
+            label(errorMsg)
         }
     }.addBorder()
     val newDisposable = Disposer.newDisposable()
