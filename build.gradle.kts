@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.2"
 }
 group = "shop.itbug"
-version = "3.2.0"
+version = "3.2.0.231"
 repositories {
     mavenCentral()
     google()
@@ -50,10 +50,10 @@ dependencies {
 }
 
 
-//var javaVersion = "17"
+var javaVersion = "17"
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -65,9 +65,16 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("223.0000.*")
-        untilBuild.set("223.9999.*")
+        untilBuild.set("231.9999.*")
         changeNotes.set(
             """
+                
+                <div>
+                    <h1>3.2.0.231</h1>
+                     <ul>
+                        <li>Adaptation 2023.1</li>
+                     </ul>
+                </div>
                 
                 <div>
                     <h1>3.2.0</h1>
@@ -226,10 +233,10 @@ tasks {
     }
 
     compileKotlin {
-//        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     compileTestKotlin {
-//        kotlinOptions.jvmTarget = javaVersion
+        kotlinOptions.jvmTarget = javaVersion
     }
 }

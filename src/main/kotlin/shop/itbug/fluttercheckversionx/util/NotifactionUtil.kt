@@ -2,12 +2,11 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
-import shop.itbug.fluttercheckversionx.dsl.loginPanel
+import shop.itbug.fluttercheckversionx.dialog.LoginDialogV2
 import javax.swing.JComponent
 
 //通知相关工具类
@@ -39,13 +38,16 @@ class MyNotificationUtil {
             }
         }
 
-        fun showLoginDialog(project: Project, preferableFocusComponent: JComponent, parentDisposable: Disposable) {
-            JBPopupFactory.getInstance()
-                .createComponentPopupBuilder(loginPanel(parentDisposable), preferableFocusComponent)
-                .setMovable(true)
-                .setRequestFocus(true)
-                .setFocusable(true)
-                .createPopup().showCenteredInCurrentWindow(project)
+
+        ///弹出登录的窗口
+        fun showLoginDialog(project: Project) {
+//            JBPopupFactory.getInstance()
+//                .createComponentPopupBuilder(loginPanel(parentDisposable), preferableFocusComponent)
+//                .setMovable(true)
+//                .setRequestFocus(true)
+//                .setFocusable(true)
+//                .createPopup().showCenteredInCurrentWindow(project)
+            LoginDialogV2(project).show()
         }
 
     }

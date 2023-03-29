@@ -50,7 +50,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     //左侧工具栏
     private var leftToolBarCore: LeftActionTools =
-        LeftActionTools(project, apiList, myRightComponent, rightNextPanel) {}
+        LeftActionTools(project, apiList, myRightComponent, rightNextPanel)
 
 
     //顶部组件

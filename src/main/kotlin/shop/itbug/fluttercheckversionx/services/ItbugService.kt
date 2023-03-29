@@ -12,7 +12,7 @@ import shop.itbug.fluttercheckversionx.services.params.AddCityApiModel
 import shop.itbug.fluttercheckversionx.services.params.AddJobParams
 
 data class LoginParam(val loginNumber: String, val password: String)
-
+data class LoginResult(val token: String, val user: User)
 interface ItbugService {
 
     /**
@@ -20,7 +20,7 @@ interface ItbugService {
      * @return 成功返回一个接口
      */
     @POST("api/user-public/login")
-    fun login(@Body param: LoginParam): Call<JSONResult<String?>>
+    fun login(@Body param: LoginParam): Call<JSONResult<LoginResult?>>
 
     /**
      * 加载用户信息接口

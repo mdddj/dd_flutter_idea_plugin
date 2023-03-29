@@ -56,7 +56,6 @@
     <extensions defaultExtensionNs="com.intellij">
 
 
-
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
@@ -95,6 +94,7 @@
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.inlay.DartAISetting"/>
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <!--   dio socket 相关通知    -->
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
@@ -120,6 +120,10 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
+        <!--     AI的提示   -->
+<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"-->
+<!--                                   language="Dart"/>-->
+
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
@@ -133,7 +137,8 @@
 
         <!--    dart文档的HTML实现    -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
-                                    language="Dart" order="first, after Translation.TranslatedDocumentationProvider.Dart"/>
+                                    language="Dart"
+                                    order="first, after Translation.TranslatedDocumentationProvider.Dart"/>
 
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
@@ -161,7 +166,6 @@
     </extensions>
 
 
-
     <extensionPoints>
     </extensionPoints>
 
@@ -175,20 +179,20 @@
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
         </action>
-<!--        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"-->
-<!--                text="合并Dart导入">-->
-<!--            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>-->
-<!--        </action>-->
+        <!--        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"-->
+        <!--                text="合并Dart导入">-->
+        <!--            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>-->
+        <!--        </action>-->
 
         <action id="AssetsAutoGenerateClassAction"
                 class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction"
                 icon="/icons/refresh.svg">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>
-
 
 
     </actions>

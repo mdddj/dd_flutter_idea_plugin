@@ -7,7 +7,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -91,13 +90,10 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
     init {
         uiInit()
         userInfo = service<AppService>().user
-        ApplicationManager.getApplication().messageBus.connect()
-            .subscribe(UserLoginStatusEvent.TOPIC, object : UserLoginStatusEvent {
-                override fun loginSuccess(user: User?) {
-                    userInfo = user
-                    userInfoHandle()
-                }
-            })
+        UserLoginStatusEvent.listening {
+            userInfo = it
+            userInfoHandle()
+        }
         userInfoHandle()
 
         //加载历史消息记录
@@ -163,7 +159,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
 
     //登录弹窗
     private fun showLoginDialog() {
-        MyNotificationUtil.showLoginDialog(project,toolWindow.component,this)
+        MyNotificationUtil.showLoginDialog(project)
     }
 
 

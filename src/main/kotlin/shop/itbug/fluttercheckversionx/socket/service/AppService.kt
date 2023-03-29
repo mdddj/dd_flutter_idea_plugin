@@ -4,6 +4,8 @@ import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONObject
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import org.smartboot.socket.MessageProcessor
@@ -34,6 +36,7 @@ import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.SwingUtilities
 
+@Service
 class AppService {
 
 
@@ -65,9 +68,6 @@ class AppService {
 
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
-
-    //当前选中的方法
-    var currentSelectMethodType: AtomicReference<String?> = AtomicReference(null)
 
     val dioServerStatus: StateMachineEnum? get() = socketServerState
 
@@ -189,14 +189,6 @@ class AppService {
     //更新当前选中的项目名称
     fun changeCurrentSelectFlutterProjectName(appName: String) {
         currentSelectName.updateAndGet { appName }
-        fireChangeToListening()
-    }
-
-    /**
-     * 更新过滤类型
-     */
-    fun changeCurrentSelectFilterMethodType(type: String) {
-        currentSelectMethodType.updateAndGet { type }
         fireChangeToListening()
     }
 
@@ -322,6 +314,12 @@ class AppService {
 
         })
 
+    }
+
+
+    companion object {
+        @JvmStatic
+        fun getInstance() = service<AppService>()
     }
 
 }

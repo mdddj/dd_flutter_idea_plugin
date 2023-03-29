@@ -36,8 +36,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             docInfo,
             element.project,
             if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first(),
-            element,
-            originalElement
+            element
         )
 
     }
@@ -132,8 +131,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         info: HoverInformation,
         project: Project,
         referenceElement: PsiElement?,
-        element: PsiElement,
-        originalElement: PsiElement?
+        element: PsiElement
     ): String {
         val sb = StringBuilder()
 

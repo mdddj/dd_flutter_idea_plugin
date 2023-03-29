@@ -1,6 +1,6 @@
 # Fluttercheckversionx
 
-<img src="https://badgen.net/badge/Version/3.0.2/blue">
+<img src="https://badgen.net/badge/Version/3.2.0.231/blue">
 
 
 Flutter development assistant, Dio monitoring, variable type display, generation of asset file dictionary, beautification of Dart documents and other tools, documents are under preparation

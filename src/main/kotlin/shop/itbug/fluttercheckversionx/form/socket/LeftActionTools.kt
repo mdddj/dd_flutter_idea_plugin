@@ -16,8 +16,6 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import java.awt.CardLayout
 import javax.swing.JPanel
 
-typealias RequestSort = (state: Boolean) -> Unit
-
 
 //左侧工具栏操作区域
 class LeftActionTools(
@@ -25,7 +23,6 @@ class LeftActionTools(
     val reqList: JBList<Request>,
     rightCardPanel: JPanel,
     private val requestDetailPanel: RequestDetailPanel,
-    requestSort: RequestSort,
 ) : DefaultActionGroup() {
 
     private val deleteButton = DelButton()
