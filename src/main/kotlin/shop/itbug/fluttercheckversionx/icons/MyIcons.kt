@@ -24,5 +24,9 @@ object MyIcons {
     var collectUn = IconLoader.getIcon("/icons/collect-un.svg",MyIcons::class.java)
     //收藏图标(选中)
     var collect = IconLoader.getIcon("/icons/collect.svg",MyIcons::class.java)
+
+    //收藏图标(选中)
+    var openai = IconLoader.getIcon("/icons/openai.svg",MyIcons::class.java)
 }
+
 

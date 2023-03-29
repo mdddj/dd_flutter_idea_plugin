@@ -1,22 +1,23 @@
 package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.codeInsight.hints.*
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.codeInsight.hints.presentation.InlayPresentation
+import com.intellij.codeInsight.hints.presentation.PresentationListener
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
-import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.startOffset
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.psi.impl.DartMethodDeclarationImpl
-import java.awt.Graphics
+import shop.itbug.fluttercheckversionx.icons.MyIcons
+import java.awt.Dimension
+import java.awt.Graphics2D
 import java.awt.Rectangle
 import javax.swing.JComponent
 
@@ -39,14 +40,14 @@ class DartAISetting private constructor() : PersistentStateComponent<DartAIConfi
     }
 }
 
-/**
- * dart ai 助手
- */
+
 class DartCodeAIInlay : InlayHintsProvider<DartAISetting> {
+
     override val key: SettingsKey<DartAISetting>
         get() = SettingsKey(name)
+
     override val name: String
-        get() = "Flutter-Check-AI-Setting"
+        get() = "Open-AI-Setting"
     override val previewText: String
         get() {
             return """
@@ -69,23 +70,24 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting> {
         settings: DartAISetting,
         sink: InlayHintsSink
     ): InlayHintsCollector {
-        return object : InlayHintsCollector {
-
-
-            ///检索组件
+        return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+                HintsInlayPresentationFactory(factory)
 
-                //如果是一个psi组件,将添加一个ai问询的layout
+
+                val offset = element.textRange.startOffset
+                val line = editor.document.getLineNumber(offset)
+                val lineStart = editor.document.getLineStartOffset(line)
+                val indent = offset - lineStart //缩进
+                val indentText = StringUtil.repeat(" ", indent)
                 if (element is DartMethodDeclarationImpl) {
-                    println("进来了:${element.text}")
-                    ApplicationManager.getApplication().invokeLater {
-                        val line = editor.document.getLineNumber(element.startOffset)
-                        val s = editor.document.getLineStartOffset(line)
-                        val e = editor.document.getLineEndOffset(line)
-                        editor.inlayModel.addBlockElement(e, true, true, 1, CustomRender())
-                    }
-                }
+                    val text = factory.text("$indentText ")
+                    val icon = factory.smallScaledIcon(MyIcons.openai)
 
+                    val ai = factory.smallText(" 求助AI")
+                    val newF = factory.seq(text,factory.roundWithBackgroundAndSmallInset(factory.seq(icon, ai)) )
+                    sink.addBlockElement(lineStart, true, true, 0, CustomRender(newF))
+                }
                 return true
             }
         }
@@ -95,18 +97,39 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting> {
         return AISettingPanel()
     }
 
-
 }
 
 
-class CustomRender : EditorCustomElementRenderer {
-    override fun calcWidthInPixels(inlay: Inlay<*>): Int {
-        return 200
+class CustomRender(val text: InlayPresentation) : InlayPresentation {
+
+
+    override val height: Int
+        get() = text.height
+    override val width: Int
+        get() = text.width
+
+    override fun addListener(listener: PresentationListener) {
+        text.addListener(listener)
     }
 
-    override fun paint(inlay: Inlay<*>, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
-        super.paint(inlay, g, targetRegion, textAttributes)
-        g.drawString("呼叫AI", targetRegion.x, targetRegion.y)
+    override fun fireContentChanged(area: Rectangle) {
+        text.fireContentChanged(area)
+    }
+
+    override fun fireSizeChanged(previous: Dimension, current: Dimension) {
+        text.fireSizeChanged(previous, current)
+    }
+
+    override fun paint(g: Graphics2D, attributes: TextAttributes) {
+        text.paint(g, attributes)
+    }
+
+    override fun removeListener(listener: PresentationListener) {
+        text.removeListener(listener)
+    }
+
+    override fun toString(): String {
+        return "11"
     }
 
 }
@@ -114,7 +137,7 @@ class CustomRender : EditorCustomElementRenderer {
 class AISettingPanel : ImmediateConfigurable {
     override fun createComponent(listener: ChangeListener): JComponent {
         return BorderLayoutPanel().apply {
-            addToTop(JBLabel("AI设置"))
+            addToTop(JBLabel(""))
         }
     }
 

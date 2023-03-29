@@ -34,7 +34,7 @@ fun settingPanel(
         row {
             button(PluginBundle.get("window.chat.loginDialog.text")) {
                 val project = ProjectManager.getInstance().defaultProject
-                MyNotificationUtil.showLoginDialog(project, myPanel, parentDisposable)
+                MyNotificationUtil.showLoginDialog(project)
             }
         }
 

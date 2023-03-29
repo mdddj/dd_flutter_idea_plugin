@@ -12,14 +12,12 @@ import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.ui.JBFont
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.UserAccount
-import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.LoginParam
 import shop.itbug.fluttercheckversionx.services.SERVICE
-import shop.itbug.fluttercheckversionx.util.CredentialUtil
 
 ///登录弹窗
-fun loginPanel(parentDisposable: Disposable,account: UserAccount,success: (user: User)->Unit): DialogPanel {
+fun loginPanel(parentDisposable: Disposable, account: UserAccount): DialogPanel {
     lateinit var panel: DialogPanel
 
     val passwordJBTextField = JBPasswordField()

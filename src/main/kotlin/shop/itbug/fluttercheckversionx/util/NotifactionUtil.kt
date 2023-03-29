@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -41,7 +40,7 @@ class MyNotificationUtil {
 
 
         ///弹出登录的窗口
-        fun showLoginDialog(project: Project, preferableFocusComponent: JComponent, parentDisposable: Disposable) {
+        fun showLoginDialog(project: Project) {
 //            JBPopupFactory.getInstance()
 //                .createComponentPopupBuilder(loginPanel(parentDisposable), preferableFocusComponent)
 //                .setMovable(true)

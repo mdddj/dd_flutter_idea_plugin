@@ -159,7 +159,7 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
 
     //登录弹窗
     private fun showLoginDialog() {
-        MyNotificationUtil.showLoginDialog(project,toolWindow.component,this)
+        MyNotificationUtil.showLoginDialog(project)
     }
 
 
