@@ -1,13 +1,11 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
-import com.alibaba.fastjson2.JSONObject
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
-import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
@@ -16,27 +14,23 @@ import retrofit2.Callback
 import retrofit2.Response
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.ProjectListChangeBus
-import shop.itbug.fluttercheckversionx.bus.SocketConnectStatusMessageBus
-import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.JSONResult
-import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.services.SERVICE
 import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
 import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
-import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
 import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.SwingUtilities
 
 @Service
-class AppService {
+class AppService : DioApiService.HandleFlutterApiModel {
 
 
     lateinit var project: Project
@@ -80,7 +74,7 @@ class AppService {
      * 键是项目名称
      * 值是请求列表
      */
-    private var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
+    var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
 
 
     private val userRunStartManager = Thread(UserRunStartService())
@@ -108,48 +102,49 @@ class AppService {
     fun initSocketService(p: Project) {
         if (socketIsInit) return
         project = p
-        val port = PluginStateService.appSetting.serverPort
-        server = AioQuickServer(port.toInt(), StringProtocol(), object : MessageProcessor<String?> {
-            override fun process(session: AioSession?, msg: String?) {
-                msg?.let { flutterClientJsonHandle(msg) }
-            }
+//        val port = PluginStateService.appSetting.serverPort
 
-            override fun stateEvent(
-                session: AioSession?,
-                stateMachineEnum: StateMachineEnum?,
-                throwable: Throwable?
-            ) {
-                super.stateEvent(session, stateMachineEnum, throwable)
-                socketServerState = stateMachineEnum
-                messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC)
-                    .statusChange(aioSession = session, stateMachineEnum = stateMachineEnum)
-                when (stateMachineEnum) {
-                    StateMachineEnum.NEW_SESSION -> {
-//                        newSessionHandle()
-                        println("新的链接.....")
-                    }
-
-                    StateMachineEnum.SESSION_CLOSED -> {
-                        MyNotificationUtil.toolWindowShowMessage(
-                            project,
-                            "典典:dio监听模块意外断开,请重新连接",
-                        )
-                        println("aio已断开: $throwable")
-                    }
-
-                    else -> {
-                        println("aio意外断开: $throwable")
-                    }
-                }
-            }
-        })
-        server.setBannerEnabled(false)
-        server.setReadBufferSize(10485760 * 2) // 20m
-        val appSocketThread = AppSocketThread(server, project) {
-            socketIsInit = it
-        }
-        dioThread = Thread(appSocketThread)
-        dioThread.start()
+//        server = AioQuickServer(port.toInt(), StringProtocol(), object : MessageProcessor<String?> {
+//            override fun process(session: AioSession?, msg: String?) {
+////                msg?.let { flutterClientJsonHandle(msg) }
+//            }
+//
+//            override fun stateEvent(
+//                session: AioSession?,
+//                stateMachineEnum: StateMachineEnum?,
+//                throwable: Throwable?
+//            ) {
+//                super.stateEvent(session, stateMachineEnum, throwable)
+//                socketServerState = stateMachineEnum
+//                messageBus.syncPublisher(SocketConnectStatusMessageBus.CHANGE_ACTION_TOPIC)
+//                    .statusChange(aioSession = session, stateMachineEnum = stateMachineEnum)
+//                when (stateMachineEnum) {
+//                    StateMachineEnum.NEW_SESSION -> {
+////                        newSessionHandle()
+//                        println("新的链接.....")
+//                    }
+//
+//                    StateMachineEnum.SESSION_CLOSED -> {
+//                        MyNotificationUtil.toolWindowShowMessage(
+//                            project,
+//                            "典典:dio监听模块意外断开,请重新连接",
+//                        )
+//                        println("aio已断开: $throwable")
+//                    }
+//
+//                    else -> {
+//                        println("aio意外断开: $throwable")
+//                    }
+//                }
+//            }
+//        })
+//        server.setBannerEnabled(false)
+//        server.setReadBufferSize(10485760 * 2) // 20m
+//        val appSocketThread = AppSocketThread(server, project) {
+//            socketIsInit = it
+//        }
+//        dioThread = Thread(appSocketThread)
+//        dioThread.start()
     }
 
 
@@ -197,32 +192,32 @@ class AppService {
      * 对齐进一步处理
      * 通过idea的开发消息总线进行传输到UI工具窗口对用户进行展示内容
      */
-    private fun flutterClientJsonHandle(json: String) {
-        try {
-            val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
-            val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
-            val reqsAdded = reqs.plus(responseModel)
-            responseModel.projectName?.apply {
-                if (!flutterProjects.keys.contains(this)) {
-                    val old = mutableListOf<String>()
-                    flutterProjects.keys.forEach {
-                        old.add(it)
-                    }
-                    old.add(this)
-                    fireFlutterNamesChangeBus(old.toList())
-                }
+//    private fun flutterClientJsonHandle(json: String) {
+//        try {
+//            val responseModel = JSONObject.parseObject(json, ProjectSocketService.SocketResponseModel::class.java)
+//            val reqs = flutterProjects[responseModel.projectName] ?: emptyList()
+//            val reqsAdded = reqs.plus(responseModel)
+//            responseModel.projectName?.apply {
+//                if (!flutterProjects.keys.contains(this)) {
+//                    val old = mutableListOf<String>()
+//                    flutterProjects.keys.forEach {
+//                        old.add(it)
+//                    }
+//                    old.add(this)
+//                    fireFlutterNamesChangeBus(old.toList())
+//                }
+//
+//                flutterProjects[this] = reqsAdded
+//            }
+//            projectNames = flutterProjects.keys.toList()
+//            SocketMessageBus.fire(responseModel)
+//        } catch (e: Exception) {
+//            println("解析出错了:$e")
+//        }
+//    }
 
-                flutterProjects[this] = reqsAdded
-            }
-            projectNames = flutterProjects.keys.toList()
-            SocketMessageBus.fire(responseModel)
-        } catch (e: Exception) {
-            println("解析出错了:$e")
-        }
-    }
 
-
-    private fun fireFlutterNamesChangeBus(list: List<String>) {
+    fun fireFlutterNamesChangeBus(list: List<String>) {
         ProjectListChangeBus.fire(list)
     }
 
@@ -319,6 +314,15 @@ class AppService {
     companion object {
         @JvmStatic
         fun getInstance() = service<AppService>()
+    }
+
+    override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+    }
+
+    override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
+    }
+
+    override fun covertJsonError(e: Exception, aio: AioSession?) {
     }
 
 }

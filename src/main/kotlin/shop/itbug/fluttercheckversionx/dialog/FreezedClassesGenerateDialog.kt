@@ -8,7 +8,9 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
@@ -17,6 +19,7 @@ import com.jetbrains.lang.dart.DartLanguage
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
+import shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.services.DEFAULT_CLASS_NAME
@@ -29,15 +32,20 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 
-class FreezedClassesGenerateDialog(override val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>) :
+class FreezedClassesGenerateDialog(
+    override val project: Project,
+    private val freezedClasses: MutableList<FreezedCovertModel>
+) :
     MyDialogWrapper(project) {
 
+    private val settingInstance = JsonToFreezedSettingModelConfig.getInstance(project)
+    private val setting = settingInstance.state
     private val tabView = JBTabbedPane()
     private var fileName: String = DEFAULT_CLASS_NAME
-    private var filePath: String = ""
+    private var filePath: String = setting.generateToPath
     private val widgets: MutableList<FreezedCovertModelWidget> = mutableListOf()
     private lateinit var settingPanel: DialogPanel
-    private var autoRunBuildCommod: Boolean = true
+    private val filePathLabel = JBLabel(filePath)
 
     init {
         super.init()
@@ -76,13 +84,15 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
             group(PluginBundle.get("global.settings")) {
                 row(PluginBundle.get("save.to.directory")) {
                     textFieldWithBrowseButton(
-                        fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withRoots(ProjectRootManager.getInstance(project).contentRoots.first()),
+                        fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+                            .withRoots(ProjectRootManager.getInstance(project).contentRoots.first()),
                         project = project
                     ).bindText({
                         filePath
                     }, {
                         filePath = it
-                    })
+                        filePathLabel.text = it
+                    }).align(Align.FILL)
                 }
                 row(PluginBundle.get("file.name")) {
                     textField().bindText({ fileName }, {
@@ -90,9 +100,10 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
                     })
                 }
                 row {
-                    checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected({ autoRunBuildCommod },
-                        {
-                            autoRunBuildCommod = it
+                    checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
+                        { setting.autoRunDartBuilder },
+                        { v ->
+                            settingInstance.changeState { it.copy(autoRunDartBuilder = v) }
                         })
                 }
             }
@@ -103,13 +114,17 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
 
     override fun doOKAction() {
         settingPanel.apply()
+
+        ///保存此路径
+        settingInstance.changeState { it.copy(generateToPath = filePath) }
+
         val psiFile =
             PsiFileFactory.getInstance(project)
                 .createFileFromText("$fileName.dart", DartLanguage.INSTANCE, generateFileText())
         val virtualFile = filePath.getVirtualFile()
         if (virtualFile == null) {
             project.toastWithError(PluginBundle.get("unable.to.find.directory"))
-        }else{
+        } else {
             val findDirectory = PsiManager.getInstance(project).findDirectory(virtualFile)
             if (findDirectory == null) {
                 project.toastWithError(PluginBundle.get("unable.to.find.directory"))
@@ -119,13 +134,22 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
                     pd.add(psiFile)
                 }
                 project.toast(PluginBundle.get("build.succeeded"))
-                if (autoRunBuildCommod) {
-                    TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath, "freezed gen").executeCommand("flutter pub run build_runner build")
+                if (setting.autoRunDartBuilder) {
+                    TerminalToolWindowManager.getInstance(project)
+                        .createLocalShellWidget(project.basePath, "freezed gen")
+                        .executeCommand("flutter pub run build_runner build")
                 }
                 FileBasedIndex.getInstance().requestReindex(virtualFile)
                 super.doOKAction()
             }
         }
+    }
+
+    override fun doCancelAction() {
+        settingPanel.apply()
+        ///保存路径
+        settingInstance.changeState { it.copy(generateToPath = filePath) }
+        super.doCancelAction()
     }
 
     private fun generateFileText(): String {

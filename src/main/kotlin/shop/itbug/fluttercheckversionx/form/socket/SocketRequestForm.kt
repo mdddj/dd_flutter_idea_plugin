@@ -7,6 +7,8 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.components.BorderLayoutPanel
+import org.smartboot.socket.StateMachineEnum
+import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.dialog.RequestDetailPanel
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
@@ -15,6 +17,7 @@ import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import java.awt.CardLayout
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
@@ -22,7 +25,8 @@ import javax.swing.SwingUtilities
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel() {
+class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),DioApiService.HandleFlutterApiModel {
+
 
 
     private val appService = service<AppService>()
@@ -118,6 +122,32 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         const val SPLIT_KEY = "Dio Panel Re Key"
         const val TOP_KET = "Dio Top Toolbar Key"
         const val LEFT_KEY = "Dio Left Toolbar Key"
+    }
+
+    override fun handleModel(model: SocketResponseModel) {
+        val flutterProjects = appService.flutterProjects
+        val reqs = flutterProjects[model.projectName] ?: emptyList()
+        val reqsAdded = reqs.plus(model)
+        model.projectName?.apply {
+            if (!flutterProjects.keys.contains(this)) {
+                val old = mutableListOf<String>()
+                flutterProjects.keys.forEach {
+                    old.add(it)
+                }
+                old.add(this)
+                appService.fireFlutterNamesChangeBus(old.toList())
+            }
+
+            flutterProjects[this] = reqsAdded
+        }
+        appService.projectNames = flutterProjects.keys.toList()
+        SocketMessageBus.fire(model)
+    }
+
+    override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
+    }
+
+    override fun covertJsonError(e: Exception, aio: AioSession?) {
     }
 
 }

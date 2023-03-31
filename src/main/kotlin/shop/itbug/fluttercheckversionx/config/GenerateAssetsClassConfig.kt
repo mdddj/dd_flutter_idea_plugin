@@ -31,6 +31,9 @@ data class GenerateAssetsClassConfigModel(
     var showImageIconInEditor: Boolean = true
 
 
+    //--------------------
+
+
 )
 
 @State(name = "DDGenerateAssetsClassConfig", storages = [Storage("DDGenerateAssetsClassConfig.xml")])

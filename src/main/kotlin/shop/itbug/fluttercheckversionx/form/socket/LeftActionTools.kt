@@ -58,7 +58,6 @@ class LeftActionTools(
     }
 
 
-
     /**
      * 更新详情面板的html数据
      */
@@ -69,7 +68,7 @@ class LeftActionTools(
     init {
         add(deleteButton.action)
         addSeparator()
-        add(detailAction)
+//        add(detailAction)
         add(DioWindowSettingGroup().create("设置").actionGroup)
     }
 
@@ -95,7 +94,6 @@ class DelButton : ActionButton(
 )
 
 
-
 ///设置菜单
 class DioWindowSettingGroup : DefaultActionGroup({ "设置" }, { "设置相关" }, MyIcons.setting) {
 
@@ -107,9 +105,10 @@ class DioWindowSettingGroup : DefaultActionGroup({ "设置" }, { "设置相关" 
 
 
 fun DefaultActionGroup.create(place: String): ActionPopupMenu {
-    return ActionManager.getInstance().createActionPopupMenu(place, this,)
+    return ActionManager.getInstance().createActionPopupMenu(place, this)
 }
-fun DefaultActionGroup.createWithToolbar(place: String,horizontal: Boolean = true) : ActionToolbar {
-   return ActionManager.getInstance().createActionToolbar(place,this,horizontal)
+
+fun DefaultActionGroup.createWithToolbar(place: String, horizontal: Boolean = true): ActionToolbar {
+    return ActionManager.getInstance().createActionToolbar(place, this, horizontal)
 }
 

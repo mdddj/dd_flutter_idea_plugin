@@ -1,13 +1,14 @@
 package shop.itbug.fluttercheckversionx.socket
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
-import shop.itbug.fluttercheckversionx.socket.service.AppService
+import com.intellij.openapi.startup.ProjectActivity
 
-class ProjectOpenListeners: StartupActivity {
-    override fun runActivity(project: Project) {
-        service<AppService>().initSocketService(project)
+/**
+ * 项目被打开事件监听
+ */
+class ProjectOpenListeners: ProjectActivity {
+    override suspend fun execute(project: Project) {
+
     }
 
 
