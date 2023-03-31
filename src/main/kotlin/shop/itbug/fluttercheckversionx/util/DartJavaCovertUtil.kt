@@ -48,7 +48,7 @@ object DartJavaCovertUtil {
                     }
 
                 }
-                "List<${getDartType(arr.first(),key)}>"
+                "List<${ if(arr.isEmpty()) "dynamic" else  getDartType(arr.first(),key)}>"
 
             }
             else -> {

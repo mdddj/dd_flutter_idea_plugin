@@ -89,7 +89,7 @@ class DartPluginList(val project: Project) : JBList<Entity>() {
         }
         cellRenderer = DartPluginNameCellRender()
 
-        FlutterPluginCollectEvent.listen { type, name ->
+        FlutterPluginCollectEvent.listen { type, _ ->
             when (type) {
                 FlutterPluginCollectEventType.add -> refresh()
                 FlutterPluginCollectEventType.remove -> refresh()

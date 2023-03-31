@@ -14,7 +14,7 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.lang.dart.DartLanguage
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -76,18 +76,13 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
             group(PluginBundle.get("global.settings")) {
                 row(PluginBundle.get("save.to.directory")) {
                     textFieldWithBrowseButton(
-                        fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().apply {
-                            println(ProjectRootManager.getInstance(project).contentRoots.toMutableList())
-                            withRoots(ProjectRootManager.getInstance(project).contentRoots.toMutableList())
-                        },
+                        fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withRoots(ProjectRootManager.getInstance(project).contentRoots.first()),
                         project = project
                     ).bindText({
                         filePath
                     }, {
                         filePath = it
                     })
-
-
                 }
                 row(PluginBundle.get("file.name")) {
                     textField().bindText({ fileName }, {
@@ -119,13 +114,13 @@ class FreezedClassesGenerateDialog(override val project: Project, private val fr
             if (findDirectory == null) {
                 project.toastWithError(PluginBundle.get("unable.to.find.directory"))
             }
-            findDirectory?.let {
+            findDirectory?.let { pd ->
                 runWriteAction {
-                    findDirectory.add(psiFile)
+                    pd.add(psiFile)
                 }
                 project.toast(PluginBundle.get("build.succeeded"))
                 if (autoRunBuildCommod) {
-                    TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "freezed gen").executeCommand("flutter pub run build_runner build")
+                    TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath, "freezed gen").executeCommand("flutter pub run build_runner build")
                 }
                 FileBasedIndex.getInstance().requestReindex(virtualFile)
                 super.doOKAction()

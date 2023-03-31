@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.8.0"
-    id("org.jetbrains.intellij") version "1.13.2"
+    id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
 version = "3.2.0.231"
@@ -16,14 +16,14 @@ repositories {
 
 
 intellij {
-    version.set("2022.3.3")
+    version.set("2023.1")
     type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8888",
-            "io.flutter:72.1.4",
-            "org.intellij.plugins.markdown:223.8617.3",
+            "Dart:231.8109.91",
+            "io.flutter:72.1.5",
+            "markdown",
             "terminal", "java"
         )
     )
@@ -64,7 +64,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.0000.*")
+        sinceBuild.set("231.0000.*")
         untilBuild.set("231.9999.*")
         changeNotes.set(
             """

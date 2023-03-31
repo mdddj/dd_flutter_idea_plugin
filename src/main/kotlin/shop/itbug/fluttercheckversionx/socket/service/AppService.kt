@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
-import cn.hutool.core.lang.Console
 import com.alibaba.fastjson2.JSONObject
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.application.ApplicationManager
@@ -218,7 +217,7 @@ class AppService {
             projectNames = flutterProjects.keys.toList()
             SocketMessageBus.fire(responseModel)
         } catch (e: Exception) {
-            Console.log("解析出错了:$e")
+            println("解析出错了:$e")
         }
     }
 

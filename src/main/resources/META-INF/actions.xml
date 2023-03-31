@@ -18,7 +18,7 @@
     </actions>
 
     <actions>
-        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/diandian.svg">
+        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/flutter.svg">
             <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
                     text="Add Comments to Functions">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
