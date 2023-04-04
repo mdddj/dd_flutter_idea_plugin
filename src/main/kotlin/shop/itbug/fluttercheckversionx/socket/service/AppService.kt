@@ -84,7 +84,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
     init {
         userRunStartManager.start()
         chatRoomLoadManager.start()
-        ChatSocketService.connect()
+//        ChatSocketService.connect()
         note.jdbc.SqliteConnectManager
     }
 

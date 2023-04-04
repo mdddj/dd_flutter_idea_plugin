@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.inlay
 
-import com.aallam.openai.api.BetaOpenAI
 import com.intellij.codeInsight.hints.*
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
@@ -11,6 +10,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -26,14 +26,15 @@ import com.intellij.util.lateinitVal
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.psi.impl.DartMethodDeclarationImpl
-import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
+import shop.itbug.fluttercheckversionx.common.toJsonFormart
 import shop.itbug.fluttercheckversionx.dialog.AiApiKeyConfigDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.util.OpenAiUtil
+import shop.itbug.fluttercheckversionx.widget.AiChatListWidget
 import java.awt.Dimension
 import java.awt.event.MouseEvent
+import java.io.Serializable
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
 
@@ -106,7 +107,7 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
                     val click = factory.mouseHandling(
                         newF,
                         { event, _ ->
-                            showDialogPanel(event)
+                            showDialogPanel(event, editor.project!!)
                         }, null
                     )
                     sink.addBlockElement(lineStart, true, true, 0, click)
@@ -116,8 +117,8 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
         }
     }
 
-    fun showDialogPanel(event: MouseEvent) {
-        JBPopupFactory.getInstance().createBalloonBuilder(createAIPanel(this))
+    fun showDialogPanel(event: MouseEvent,project: Project) {
+        JBPopupFactory.getInstance().createBalloonBuilder(createAIPanel(this,project))
             .setFillColor(UIUtil.getPanelBackground())
             .setBorderColor(UIUtil.getFocusedBorderColor())
             .setHideOnAction(false)
@@ -139,7 +140,7 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
 data class AIPanelModel(
     var content: String = "帮我写一个dart函数,功能是复制文本到剪贴板",
     var chats: MutableList<MyAIChatModel> = mutableListOf()
-)
+) : Serializable
 
 
 ///聊天模型
@@ -148,20 +149,21 @@ data class MyAIChatModel(
     val isMe: Boolean = false,
     val q: StringBuilder = StringBuilder(""),
     val id: String = ""
-)
+) : Serializable
 
 
 ///聊天列表
 
-@OptIn(BetaOpenAI::class, DelicateCoroutinesApi::class)
-fun createAIPanel(parentDisposable: Disposable): DialogPanel {
+fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
     var p by lateinitVal<DialogPanel>()
     val alarm = Alarm(parentDisposable)
-    var model = AIPanelModel()
+    val model = AIPanelModel()
+    val aiList = AiChatListWidget(project)
 
     fun initValidation() {
         alarm.addRequest({
             if (p.isModified()) {
+                println(model.chats.toJsonFormart())
                 runWriteAction {
                     p.revalidate()
                     p.repaint()
@@ -172,44 +174,9 @@ fun createAIPanel(parentDisposable: Disposable): DialogPanel {
     }
 
 
-    fun refreshUi() {
-        runWriteAction {
-            p.revalidate()
-            p.repaint()
-        }
-    }
-
     fun submit() {
         p.apply()
-        model = model.copy(chats = model.chats.apply {
-            add(MyAIChatModel(content = java.lang.StringBuilder(model.content), isMe = true))
-        })
-        refreshUi()
-        GlobalScope.launch(Dispatchers.IO) {
-            val qJob = async {
-                OpenAiUtil.askSimple(model.content).collect { chunk ->
-                    val list = model.chats
-                    val index = list.indexOfLast { it.id == chunk.id }
-                    if (index != -1) {
-                        val ele = model.chats[index]
-                        val r = chunk.choices.first().delta?.content ?: ""
-                        ele.content.append(r)
-                    } else {
-                        val newChat = MyAIChatModel(
-                            content = java.lang.StringBuilder(chunk.choices.first().delta?.content ?: ""),
-                            id = chunk.id
-                        )
-                        model = model.copy(chats = model.chats.apply {
-                            add(newChat)
-                        })
-                    }
-                    runWriteAction {
-                        p.repaint()
-                    }
-                }
-            }
-            qJob.await()
-        }
+        aiList.addQ(model.content)
     }
 
     p = panel {
@@ -245,13 +212,10 @@ fun createAIPanel(parentDisposable: Disposable): DialogPanel {
             }
         })
 
-        for (item in model.chats) {
-            row("Q: ") {
-                label(item.content.toString())
-            }.visible(item.isMe)
-            row("AI:") {
-                label(item.content.toString())
-            }
+
+
+        row {
+            scrollCell(aiList).align(Align.FILL)
         }
 
     }

@@ -19,10 +19,12 @@ object OpenAiUtil {
     /**
      * open ai 实例
      */
-    private fun getOpenAi(): OpenAI = OpenAI(OpenAIConfig(
-        token = CredentialUtil.openApiKey,
-        timeout = Timeout()
-    ))
+    private fun getOpenAi(): OpenAI = OpenAI(
+        OpenAIConfig(
+            token = CredentialUtil.openApiKey,
+            timeout = Timeout()
+        )
+    )
 
     @OptIn(BetaOpenAI::class)
     fun createQ(q: String): ChatCompletionRequest {
