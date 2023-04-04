@@ -1,10 +1,9 @@
 plugins {
-    id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.8.20"
     id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
-version = "3.2.0.231"
+version = "3.3.0"
 repositories {
     mavenCentral()
     google()
@@ -22,14 +21,14 @@ intellij {
         listOf(
             "yaml",
             "Dart:231.8109.91",
-            "io.flutter:72.1.5",
+            "io.flutter:73.0.4",
             "markdown",
-            "terminal", "java"
+            "terminal"
         )
     )
     downloadSources.set(true)
 }
-
+val ktor_version = "2.2.1"
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -46,7 +45,8 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.1.0")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("com.kitfox.svg:svg-salamander:1.0")
+    implementation("com.aallam.openai:openai-client:3.2.0")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
 }
 
 
@@ -70,9 +70,10 @@ tasks {
             """
                 
                 <div>
-                    <h1>3.2.0.231</h1>
+                    <h1>3.3.0</h1>
                      <ul>
                         <li>Adaptation 2023.1</li>
+                        <li>bug fixed</li>
                      </ul>
                 </div>
                 

@@ -8,6 +8,7 @@ import shop.itbug.fluttercheckversionx.model.UserAccount
 
 val ca = CredentialAttributes(generateServiceName("ldd", "user"))
 val tokenCa = CredentialAttributes(generateServiceName("ldd", "token"))
+val openAiCa = CredentialAttributes(generateServiceName("openai", "apiKey"))
 
 ///密码存储相关工具类
 object CredentialUtil {
@@ -44,6 +45,19 @@ object CredentialUtil {
 
 
     /**
+     * 设置openAi的key
+     */
+    fun setOpenAiKey(apiKey: String) {
+        PasswordSafe.instance.setPassword(openAiCa, apiKey)
+    }
+
+    /**
+     * 读取openAi的key
+     */
+    val openApiKey: String get() = PasswordSafe.instance.getPassword(openAiCa) ?: ""
+
+
+    /**
      * 保存一个token
      */
     fun saveToken(token: String) {
@@ -53,7 +67,7 @@ object CredentialUtil {
     /**
      * 读取本机token
      */
-    val token : String? get() =  PasswordSafe.instance.get(tokenCa)?.getPasswordAsString()
+    val token: String? get() = PasswordSafe.instance.get(tokenCa)?.getPasswordAsString()
 
     /**
      * 删除本机token

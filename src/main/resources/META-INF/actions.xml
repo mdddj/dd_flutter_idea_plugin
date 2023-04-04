@@ -32,6 +32,9 @@
                     class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
 <!--            <action class="shop.itbug.fluttercheckversionx.actions.BaseApiSearchAction" id="base-api-search" text="API检测" />-->
             <action class="shop.itbug.fluttercheckversionx.actions.MoveClassToOtherFile" id="MoveClassToOtherFile"/>
+            <action id="DartAiSwitchAction" class="shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction"
+                    description="Dart file ai switch">
+            </action>
             <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>

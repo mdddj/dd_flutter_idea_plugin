@@ -9,10 +9,8 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.ui.awt.RelativePoint
-import com.kitfox.svg.app.beans.SVGIcon
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import java.awt.Dimension
 import java.awt.Image
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -98,16 +96,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
                return null
             }
             val i = ImageIcon(path).image.getScaledInstance(16,16, Image.SCALE_SMOOTH)
-            var imageIcon : Icon = ImageIcon(i)
-            if(path.endsWith(".svg")){
-                imageIcon = SVGIcon().apply {
-                    svgURI = File(path).toURI()
-                    antiAlias = true
-                    isScaleToFit = true
-                    preferredSize = Dimension(16,16)
-                }
-            }
-
+            val imageIcon : Icon = ImageIcon(i)
             return factory.icon(imageIcon).addTip(basePath)
         }catch (e:Exception){
             println("$path 读取图片失败:$e")

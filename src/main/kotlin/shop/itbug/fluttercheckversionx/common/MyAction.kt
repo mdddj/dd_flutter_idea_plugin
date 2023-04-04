@@ -40,14 +40,14 @@ abstract class MyToggleAction : ToggleAction {
     constructor()
     constructor(name: Supplier<String>) : super(name)
 
-    constructor(name:String,desc:String,icon: Icon):super(name,desc,icon)
+    constructor(name: String, desc: String, icon: Icon) : super(name, desc, icon)
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }
 }
 
-abstract class MyComboBoxAction : ComboBoxAction(){
+abstract class MyComboBoxAction : ComboBoxAction() {
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }

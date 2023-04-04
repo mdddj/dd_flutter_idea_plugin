@@ -73,8 +73,9 @@
                          implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
                          groupName="Dart public api fix"/>
 
-        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold"
-                             language="yaml"/>
+        <!--     yaml折叠   -->
+        <!--        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold"-->
+        <!--                             language="yaml"/>-->
 
 
         <!--    plugin版本自动联想功能    -->
@@ -120,9 +121,9 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
-        <!--     AI的提示   -->
-<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"-->
-<!--                                   language="Dart"/>-->
+        <!--        open ai-->
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"
+                                   language="Dart"/>
 
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
@@ -194,6 +195,7 @@
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>
+
 
 
     </actions>
