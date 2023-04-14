@@ -18,7 +18,7 @@
     </actions>
 
     <actions>
-        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/diandian.svg">
+        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/flutter.svg">
             <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
                     text="Add Comments to Functions">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
@@ -32,6 +32,9 @@
                     class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
 <!--            <action class="shop.itbug.fluttercheckversionx.actions.BaseApiSearchAction" id="base-api-search" text="API检测" />-->
             <action class="shop.itbug.fluttercheckversionx.actions.MoveClassToOtherFile" id="MoveClassToOtherFile"/>
+            <action id="DartAiSwitchAction" class="shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction"
+                    description="Dart file ai switch">
+            </action>
             <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>

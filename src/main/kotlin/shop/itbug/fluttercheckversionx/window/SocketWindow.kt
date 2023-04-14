@@ -1,11 +1,17 @@
 package shop.itbug.fluttercheckversionx.window
 
+import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.PluginStateService
+import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
+import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
 
 //是否开启找工作窗口
@@ -26,6 +32,21 @@ class SocketWindow : ToolWindowFactory {
             instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
 
         p1.contentManager.addContent(createContent)
+
+        val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
+
+
+        if(AppService.getInstance().dioIsStart.not()){
+            p1.activate {
+                try {
+                    DioApiService.builder(port, socketRequestForm).start()
+                    p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
+                    AppService.getInstance().setDioSocketState(true)
+                } catch (e: Exception) {
+                    p0.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
+                }
+            }
+        }
 
         //在线聊天窗口
         if (ENABLE_CHAT_ROOM_WINDOW) {
@@ -49,8 +70,8 @@ class SocketWindow : ToolWindowFactory {
 //        p1.contentManager.addContent(apiIndexContent)
 
         //flutter收藏窗口
-        val dartPluginWindow = DartPluginsWindow(p1,p0)
-        val dartPluginContent = instance.createContent(dartPluginWindow,"Plugin Collects",false)
+        val dartPluginWindow = DartPluginsWindow(p1, p0)
+        val dartPluginContent = instance.createContent(dartPluginWindow, "Plugin Collects", false)
         p1.contentManager.addContent(dartPluginContent)
     }
 

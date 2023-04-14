@@ -9,7 +9,7 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -24,7 +24,6 @@ import javax.swing.JComponent
 
 enum class PluginActions(val title: String) {
     SearchPlugin(PluginBundle.get("search.pub.plugin")),
-//    CheckVersion(PluginBundle.get("check.flutter.plugin")),
     RunBuilder(PluginBundle.get("run.build_runner.build")),
     FlutterClan(PluginBundle.get("flutter.clean")),
     FlutterPushPlugin(PluginBundle.get("dart.pub.publish")),
@@ -60,6 +59,7 @@ class MyUserBarFactory : StatusBarWidgetFactory {
 
 /**
  * 底部工具栏中的扩展操作
+ *
  */
 class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
 
@@ -152,13 +152,14 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     private fun jsonToFreezedRun() {
         try {
             JsonToFreezedInputDialog(project).show()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             println("...$e")
         }
     }
 
     private fun runCommand(code: String) {
-        TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX").executeCommand(code)
+        TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX")
+            .executeCommand(code)
     }
 
 }

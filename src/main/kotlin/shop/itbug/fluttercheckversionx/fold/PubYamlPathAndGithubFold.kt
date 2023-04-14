@@ -25,11 +25,8 @@ class PubYamlPathAndGithubFold : FoldingBuilderEx(), DumbAware {
                         if (childOfType != null) {
                             array.add(FoldingDescriptor(childOfType, childOfType.textRange))
                         }
-
                     }
-
                 }
-
             }
         }
 

@@ -73,8 +73,9 @@
                          implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
                          groupName="Dart public api fix"/>
 
-        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold"
-                             language="yaml"/>
+        <!--     yaml折叠   -->
+        <!--        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold"-->
+        <!--                             language="yaml"/>-->
 
 
         <!--    plugin版本自动联想功能    -->
@@ -120,13 +121,14 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
-        <!--     AI的提示   -->
-<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"-->
-<!--                                   language="Dart"/>-->
+        <!--        open ai-->
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"
+                                   language="Dart"/>
 
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
+        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -142,7 +144,7 @@
 
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
-                    icon="AllIcons.Debugger.ThreadStates.Socket"/>
+                    icon="/icons/flutter.svg"/>
 
         <!--   底部状态栏展示小部件     -->
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"/>
@@ -193,6 +195,7 @@
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>
+
 
 
     </actions>

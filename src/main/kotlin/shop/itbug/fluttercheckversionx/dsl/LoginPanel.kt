@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.ui.JBFont
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -51,13 +50,13 @@ fun loginPanel(parentDisposable: Disposable, account: UserAccount): DialogPanel 
             }
         }
         row(PluginBundle.get("password.text")) {
-            cell(passwordJBTextField).horizontalAlign(HorizontalAlign.FILL).validationOnInput {
+            cell(passwordJBTextField).align(Align.FILL).validationOnInput {
                 val pass = String(it.password)
                 if (pass.length < 6 || pass.length > 20) ValidationInfo("密码字符6-20长度") else null
             }
         }
         row {
-            checkBox(PluginBundle.get("window.idea.loginDialog.remember")).enabled(true).horizontalAlign(HorizontalAlign.LEFT)
+            checkBox(PluginBundle.get("window.idea.loginDialog.remember")).enabled(true).align(Align.FILL)
         }.topGap(TopGap.SMALL)
         row {
             comment(PluginBundle.get("window.chat.loginDialog.register.comment"))
@@ -65,7 +64,7 @@ fun loginPanel(parentDisposable: Disposable, account: UserAccount): DialogPanel 
                 account.password = String(passwordJBTextField.password)
                 panel.apply()
                 userLogin()
-            }.gap(RightGap.SMALL).horizontalAlign(HorizontalAlign.RIGHT)
+            }.gap(RightGap.SMALL).align(Align.FILL)
         }.topGap(TopGap.SMALL)
         row {
             label(errorMsg)

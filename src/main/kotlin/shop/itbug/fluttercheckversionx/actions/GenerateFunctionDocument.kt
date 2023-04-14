@@ -34,19 +34,25 @@ class GenerateFunctionDocument : MyAction() {
                     sb.append("/// [$name] - \n")
                 }.takeIf { psis.isNotEmpty() }
                 e.project?.let {
-                   val psiFile = e.getData(CommonDataKeys.PSI_FILE)
-                   val document = e.getData(CommonDataKeys.EDITOR)?.document
-                    createDartDocPsiElement(it, data.parent, sb.toString(),psiFile,document)
+                    val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+                    val document = e.getData(CommonDataKeys.EDITOR)?.document
+                    createDartDocPsiElement(it, data.parent, sb.toString(), psiFile, document)
                 }
             }
         }
     }
 
-    private fun createDartDocPsiElement(project: Project, element: PsiElement, text: String,file: PsiFile?,doc : Document?) {
+    private fun createDartDocPsiElement(
+        project: Project,
+        element: PsiElement,
+        text: String,
+        file: PsiFile?,
+        doc: Document?
+    ) {
         println(text)
         val psiFile = PsiFileFactory.getInstance(project).createFileFromText(DartLanguage.INSTANCE, text)
         WriteCommandAction.runWriteCommandAction(project) {
-            element.addBefore(psiFile.navigationElement,element.originalElement)
+            element.addBefore(psiFile.navigationElement, element.originalElement)
             doc?.let {
                 PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(doc)
                 file?.let {

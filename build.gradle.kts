@@ -1,10 +1,9 @@
 plugins {
-    id("java")
     id("org.jetbrains.kotlin.jvm") version "1.8.0"
-    id("org.jetbrains.intellij") version "1.13.2"
+    id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
-version = "3.2.0.231"
+version = "3.3.0"
 repositories {
     mavenCentral()
     google()
@@ -16,24 +15,21 @@ repositories {
 
 
 intellij {
-    version.set("2022.3.3")
+    version.set("2023.1")
     type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8888",
-            "io.flutter:72.1.4",
-            "org.intellij.plugins.markdown:223.8617.3",
-            "terminal", "java"
+            "Dart:231.8109.91",
+            "io.flutter:73.0.4",
+            "markdown",
+            "terminal"
         )
     )
-    downloadSources.set(true)
 }
-
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
     implementation("cn.hutool:hutool-all:5.8.15")
     implementation("org.smartboot.socket:aio-core:1.6.3")
@@ -42,11 +38,10 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("org.hildan.krossbow:krossbow-stomp-core:5.1.0")
-    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.1.0")
-    implementation("com.google.guava:guava:31.1-jre")
+//    implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("com.kitfox.svg:svg-salamander:1.0")
+    implementation("com.aallam.openai:openai-client:3.2.0")
+    implementation("io.ktor:ktor-client-cio-jvm:2.2.4")
 }
 
 
@@ -64,15 +59,16 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.0000.*")
+        sinceBuild.set("231.0000.*")
         untilBuild.set("231.9999.*")
         changeNotes.set(
             """
                 
                 <div>
-                    <h1>3.2.0.231</h1>
+                    <h1>3.3.0</h1>
                      <ul>
                         <li>Adaptation 2023.1</li>
+                        <li>bug fixed</li>
                      </ul>
                 </div>
                 
@@ -239,4 +235,16 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = javaVersion
     }
+}
+
+configurations.all {
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-core")
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-core-jvm")
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-jdk8")
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-slf4j")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-common")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk7")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk8")
+//    exclude(group = "org.slf4j",module = "slf4j-api")
 }

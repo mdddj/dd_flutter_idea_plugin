@@ -63,11 +63,7 @@ class DioListenServerStateDialog(val project: Project) : DialogWrapper(project) 
                 }
                 label(if(threadIsAlive) "活跃状态" else "已关闭")
             }
-            row {
-                button("重启Dio服务"){
-                    service.initSocketService(project)
-                }.enabled(!threadIsAlive)
-            }
+
         }
     }
 

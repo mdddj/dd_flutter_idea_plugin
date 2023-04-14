@@ -1,32 +1,48 @@
 package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.codeInsight.hints.*
-import com.intellij.codeInsight.hints.presentation.InlayPresentation
-import com.intellij.codeInsight.hints.presentation.PresentationListener
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.dsl.builder.*
+import com.intellij.util.Alarm
+import com.intellij.util.lateinitVal
+import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.psi.impl.DartMethodDeclarationImpl
+import shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction
+import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
+import shop.itbug.fluttercheckversionx.dialog.AiApiKeyConfigDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.widget.AiChatListWidget
 import java.awt.Dimension
-import java.awt.Graphics2D
-import java.awt.Rectangle
+import java.awt.event.MouseEvent
+import java.io.Serializable
 import javax.swing.JComponent
+import javax.swing.SwingUtilities
 
 
 data class DartAIConfig(var showInEditor: Boolean = true)
 
 @State(name = "DartAIConfig", storages = [Storage("DartAIConfig.xml")])
 class DartAISetting private constructor() : PersistentStateComponent<DartAIConfig> {
-    var st = DartAIConfig()
+    private var st = DartAIConfig()
     override fun getState(): DartAIConfig {
         return st
     }
@@ -41,7 +57,7 @@ class DartAISetting private constructor() : PersistentStateComponent<DartAIConfi
 }
 
 
-class DartCodeAIInlay : InlayHintsProvider<DartAISetting> {
+class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
 
     override val key: SettingsKey<DartAISetting>
         get() = SettingsKey(name)
@@ -72,67 +88,145 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting> {
     ): InlayHintsCollector {
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                HintsInlayPresentationFactory(factory)
 
+
+                val isShow = settings.state.showInEditor
 
                 val offset = element.textRange.startOffset
                 val line = editor.document.getLineNumber(offset)
                 val lineStart = editor.document.getLineStartOffset(line)
                 val indent = offset - lineStart //缩进
                 val indentText = StringUtil.repeat(" ", indent)
-                if (element is DartMethodDeclarationImpl) {
-                    val text = factory.text("$indentText ")
+                if (element is DartMethodDeclarationImpl && isShow) {
+                    val text = factory.text("$indentText  ")
                     val icon = factory.smallScaledIcon(MyIcons.openai)
 
                     val ai = factory.smallText(" 求助AI")
-                    val newF = factory.seq(text,factory.roundWithBackgroundAndSmallInset(factory.seq(icon, ai)) )
-                    sink.addBlockElement(lineStart, true, true, 0, CustomRender(newF))
+                    val newF = factory.seq(text, factory.roundWithBackgroundAndSmallInset(factory.seq(icon, ai)))
+                    val click = factory.mouseHandling(
+                        newF,
+                        { event, _ ->
+                            showDialogPanel(event, editor.project!!)
+                        }, null
+                    )
+                    sink.addBlockElement(lineStart, true, true, 0, click)
                 }
                 return true
             }
         }
     }
 
+    fun showDialogPanel(event: MouseEvent,project: Project) {
+        JBPopupFactory.getInstance().createBalloonBuilder(createAIPanel(this,project))
+            .setFillColor(UIUtil.getPanelBackground())
+            .setBorderColor(UIUtil.getFocusedBorderColor())
+            .setHideOnAction(false)
+            .createBalloon()
+            .show(RelativePoint(event.locationOnScreen), Balloon.Position.atRight)
+    }
+
     override fun createConfigurable(settings: DartAISetting): ImmediateConfigurable {
         return AISettingPanel()
     }
 
-}
-
-
-class CustomRender(val text: InlayPresentation) : InlayPresentation {
-
-
-    override val height: Int
-        get() = text.height
-    override val width: Int
-        get() = text.width
-
-    override fun addListener(listener: PresentationListener) {
-        text.addListener(listener)
-    }
-
-    override fun fireContentChanged(area: Rectangle) {
-        text.fireContentChanged(area)
-    }
-
-    override fun fireSizeChanged(previous: Dimension, current: Dimension) {
-        text.fireSizeChanged(previous, current)
-    }
-
-    override fun paint(g: Graphics2D, attributes: TextAttributes) {
-        text.paint(g, attributes)
-    }
-
-    override fun removeListener(listener: PresentationListener) {
-        text.removeListener(listener)
-    }
-
-    override fun toString(): String {
-        return "11"
+    override fun dispose() {
+        println("销毁了...")
     }
 
 }
+
+///ai面板
+data class AIPanelModel(
+    var content: String = "帮我写一个dart函数,功能是复制文本到剪贴板",
+    var chats: MutableList<MyAIChatModel> = mutableListOf()
+) : Serializable
+
+
+///聊天模型
+data class MyAIChatModel(
+    var content: StringBuilder = StringBuilder(""),
+    val isMe: Boolean = false,
+    val q: StringBuilder = StringBuilder(""),
+    val id: String = ""
+) : Serializable
+
+
+///聊天列表
+
+fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
+    var p by lateinitVal<DialogPanel>()
+    val alarm = Alarm(parentDisposable)
+    val model = AIPanelModel()
+    val aiList = AiChatListWidget(project)
+
+    fun initValidation() {
+        alarm.addRequest({
+            if (p.isModified()) {
+                runWriteAction {
+                    p.revalidate()
+                    p.repaint()
+                }
+            }
+            initValidation()
+        }, 1000)
+    }
+
+
+    fun submit() {
+        p.apply()
+        aiList.addQ(model.content)
+    }
+
+    p = panel {
+        row("Question") {
+            textArea()
+                .columns(40)
+                .rows(3)
+                .bindText(model::content)
+                .gap(RightGap.SMALL)
+                .focused()
+                .align(Align.FILL).component.apply {
+                    minimumSize = Dimension(-1, 160)
+                }
+        }.enabled(false)
+        row("") {
+            button("Submit") {
+                submit()
+            }
+            actionsButton(
+                DartAiSwitchAction.getInstance(),
+                object : MyDumbAwareAction({ "Setting" }) {
+                    override fun actionPerformed(e: AnActionEvent) {
+                        AiApiKeyConfigDialog(e.project!!).show()
+                    }
+                }, object : MyDumbAwareAction({ "Help" }) {
+                    override fun actionPerformed(e: AnActionEvent) {
+                    }
+                }, icon = AllIcons.General.Settings
+            )
+        }.actionButton(object : MyDumbAwareAction("历史记录", "查看历史记录", AllIcons.General.Beta) {
+            override fun actionPerformed(e: AnActionEvent) {
+
+            }
+        })
+
+
+
+        row {
+            scrollCell(aiList).align(Align.FILL)
+        }
+
+    }
+    val disposable = Disposer.newDisposable()
+    p.registerValidators(disposable)
+    Disposer.register(parentDisposable, disposable)
+
+    SwingUtilities.invokeLater {
+        initValidation()
+    }
+    return p
+}
+
 
 class AISettingPanel : ImmediateConfigurable {
     override fun createComponent(listener: ChangeListener): JComponent {

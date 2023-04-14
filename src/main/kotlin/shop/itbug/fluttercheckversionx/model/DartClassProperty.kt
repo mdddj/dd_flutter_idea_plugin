@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.model
 
 import com.alibaba.fastjson2.JSONArray
+import com.google.common.base.CaseFormat
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.formatDartName
@@ -20,7 +21,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
             }
 
             val jsonKeyString =
-                if (upperCamelStyle && !this.isDartClassElementType) "@JsonKey(name: '${it.finalPropertyName}') " else ""
+                if (!this.isDartClassElementType) "@JsonKey(name: '${it.finalPropertyName}') " else ""
 
 
             if (it.isNonNull) {
@@ -31,10 +32,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
                             !this.isDartClassElementType
                         )
                     } ${
-                        it.formatName(
-                            upperCamelStyle,
-                            !this.isDartClassElementType
-                        )
+                        it.formatName().dartNameStandard().nomenclatureOfHumps(upperCamelStyle)
                     },"
                 )
             } else {
@@ -44,7 +42,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
                             useDefaultValueIfNull,
                             defaultValue
                         )
-                    } ${it.type} ${it.formatName(upperCamelStyle, !this.isDartClassElementType)},"
+                    } ${it.type} ${it.formatName().dartNameStandard().nomenclatureOfHumps(upperCamelStyle)},"
                 )
             }
             sb.append("\n")
@@ -54,7 +52,7 @@ fun FreezedCovertModel.getPropertiesString(): String {
 }
 
 
-fun showRequiredString(useDefaultValue: Boolean, defaultValue: String): String {
+private fun showRequiredString(useDefaultValue: Boolean, defaultValue: String): String {
     return if (useDefaultValue.not()) {
         "required"
     } else {
@@ -62,15 +60,23 @@ fun showRequiredString(useDefaultValue: Boolean, defaultValue: String): String {
     }
 }
 
-fun DartClassProperty.formatName(upperCamelStyle: Boolean, isJson: Boolean = true): String {
-    if (!isJson) {
-        return name
-    }
-    if (upperCamelStyle) {
-        return name
-    }
-
+private fun DartClassProperty.formatName(): String {
     return name
+}
+
+
+/**
+ * 对命名进行修改,如果存在特殊字符都标识为下滑线
+ */
+private fun String.dartNameStandard(): String {
+    return this.replace("-", "_")
+}
+
+/**
+ * 对命名进行驼峰格式化
+ */
+private fun String.nomenclatureOfHumps(isEnable: Boolean): String {
+    return if (isEnable) CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this) else this
 }
 
 fun DartClassProperty.formatType(useDefaultValue: Boolean, isJson: Boolean = true): String {
@@ -143,7 +149,7 @@ data class FreezedCovertModel(
     var useDefaultValueIfNull: Boolean = true,
 
     var isDartClassElementType: Boolean = false,
-    var addConstructorFun:Boolean = true,
-    var addFromJson:Boolean = true
+    var addConstructorFun: Boolean = true,
+    var addFromJson: Boolean = true
 
 )
