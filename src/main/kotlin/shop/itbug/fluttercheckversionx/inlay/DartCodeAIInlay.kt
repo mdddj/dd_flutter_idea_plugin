@@ -28,7 +28,6 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.psi.impl.DartMethodDeclarationImpl
 import shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
-import shop.itbug.fluttercheckversionx.common.toJsonFormart
 import shop.itbug.fluttercheckversionx.dialog.AiApiKeyConfigDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.widget.AiChatListWidget
@@ -163,7 +162,6 @@ fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
     fun initValidation() {
         alarm.addRequest({
             if (p.isModified()) {
-                println(model.chats.toJsonFormart())
                 runWriteAction {
                     p.revalidate()
                     p.repaint()

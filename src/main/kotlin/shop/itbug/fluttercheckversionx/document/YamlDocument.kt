@@ -92,7 +92,7 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
     ): String {
         val sb = StringBuilder()
         sb.append(DocumentationMarkup.DEFINITION_START)
-        sb.append("Plugin detail (插件详情)")
+        sb.append("Plugin detail")
         sb.append(DocumentationMarkup.DEFINITION_END)
         sb.append(DocumentationMarkup.CONTENT_START)
         sb.append(desc)
@@ -101,19 +101,15 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         addKeyValueSection("Name:", "<b><strong>$pluginName</strong></b>", sb)
         addKeyValueSection("Latest Version:", lastVersion, sb)
         if (githubUrl != null) {
-            addKeyValueSection("Homepage:", "<a href='$githubUrl'>跳转到Github查看</>", sb)
+            addKeyValueSection("Homepage:", "<a href='$githubUrl'>Github</>", sb)
         }
         addKeyValueSection(
             "Pub.dev:",
-            "<a href='https://pub.dev/packages/$pluginName'>跳转到Pub查看</>",
+            "<a href='https://pub.dev/packages/$pluginName'>Pub</>",
             sb
         )
         addKeyValueSection("LastUpdate:", lastUpdate, sb)
         sb.append(DocumentationMarkup.SECTIONS_END)
-        sb.append("<br/>")
-        sb.append("<p style='color:gray;padding: 6px;font-size: 8px;'><a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues'>梁典典:插件意见&bug反馈</a></p>")
-        sb.append("<br />")
-        sb.append("<b>QQ群:706438100</b>")
         return sb.toString()
     }
 

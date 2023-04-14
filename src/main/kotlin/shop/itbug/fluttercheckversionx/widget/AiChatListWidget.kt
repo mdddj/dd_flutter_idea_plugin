@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.aallam.openai.api.BetaOpenAI
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBList
 import com.intellij.ui.dsl.builder.panel
@@ -20,7 +21,7 @@ import javax.swing.ListCellRenderer
 
 class AiChatListWidget(val project: Project) : JBList<MyAIChatModel>() {
 
-    val mutex = Mutex()
+    private val mutex = Mutex()
 
     init {
         model = DefaultListModel()
@@ -53,30 +54,34 @@ class AiChatListWidget(val project: Project) : JBList<MyAIChatModel>() {
      */
     @OptIn(BetaOpenAI::class, DelicateCoroutinesApi::class)
     fun startChat(content: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            OpenAiUtil.askSimple(content).collect { chunk ->
-                val r = chunk.choices.first().delta?.content ?: ""
-                if(r.isNotEmpty()){
-                    val index = getListModel().toArray().indexOfLast { obj ->
-                        val it = obj as MyAIChatModel
-                        it.id == chunk.id && it.id.isNotEmpty() && it.isMe.not()
-                    }
-                    mutex.withLock {
-                        if (index != -1) {
-                            val ele = getListModel()[index]
-                            ele.content.append(r)
-                            getListModel()[index] = ele
-                            println(getListModel().toArray().toJsonFormart())
-                        } else {
-                            val newChat = MyAIChatModel(
-                                content = StringBuilder(r),
-                                id = chunk.id
-                            )
-                            getListModel().addElement(newChat)
+        GlobalScope.launch(Dispatchers.EDT) {
+            try {
+                OpenAiUtil.askSimple(content).collect { chunk ->
+                    val r = chunk.choices.first().delta?.content ?: ""
+                    if(r.isNotEmpty()){
+                        val index = getListModel().toArray().indexOfLast { obj ->
+                            val it = obj as MyAIChatModel
+                            it.id == chunk.id && it.id.isNotEmpty() && it.isMe.not()
+                        }
+                        mutex.withLock {
+                            if (index != -1) {
+                                val ele = getListModel()[index]
+                                ele.content.append(r)
+                                getListModel()[index] = ele
+                                println(getListModel().toArray().toJsonFormart())
+                            } else {
+                                val newChat = MyAIChatModel(
+                                    content = StringBuilder(r),
+                                    id = chunk.id
+                                )
+                                getListModel().addElement(newChat)
 
+                            }
                         }
                     }
                 }
+            }catch (e: Exception) {
+                println("出错了...$e")
             }
         }
     }

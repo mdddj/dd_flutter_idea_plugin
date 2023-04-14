@@ -25,8 +25,8 @@ import javax.swing.SwingUtilities
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),DioApiService.HandleFlutterApiModel {
-
+class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),
+    DioApiService.HandleFlutterApiModel {
 
 
     private val appService = service<AppService>()
@@ -36,8 +36,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     //搜索输入框
     private var searchTextField = DioRequestSearch()
-    //状态筛选,暂时弃用
-//    private val stateCodeFilterBox = MethodFilter()
 
     //接口列表组件
     private var apiList = ApiListPanel(project)
@@ -53,8 +51,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     }
 
     //左侧工具栏
-    private var leftToolBarCore: LeftActionTools =
-        LeftActionTools(project, apiList, myRightComponent, rightNextPanel)
+    private var leftToolBarCore = LeftActionTools(project)
 
 
     //顶部组件

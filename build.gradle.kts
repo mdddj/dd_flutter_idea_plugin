@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.8.20"
+    id("org.jetbrains.kotlin.jvm") version "1.8.0"
     id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
@@ -26,13 +26,10 @@ intellij {
             "terminal"
         )
     )
-    downloadSources.set(true)
 }
-val ktor_version = "2.2.1"
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
     implementation("cn.hutool:hutool-all:5.8.15")
     implementation("org.smartboot.socket:aio-core:1.6.3")
@@ -41,12 +38,10 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-//    implementation("org.hildan.krossbow:krossbow-stomp-core:5.1.0")
-//    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:5.1.0")
-    implementation("com.google.guava:guava:31.1-jre")
+//    implementation("com.google.guava:guava:31.1-jre")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("com.aallam.openai:openai-client:3.2.0")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-cio-jvm:2.2.4")
 }
 
 
@@ -240,4 +235,16 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = javaVersion
     }
+}
+
+configurations.all {
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-core")
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-core-jvm")
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-jdk8")
+//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-slf4j")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-common")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk7")
+//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk8")
+//    exclude(group = "org.slf4j",module = "slf4j-api")
 }
