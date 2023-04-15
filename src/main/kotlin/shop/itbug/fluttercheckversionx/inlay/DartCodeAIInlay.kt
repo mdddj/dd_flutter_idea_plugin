@@ -187,7 +187,7 @@ fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
                 .bindText(model::content)
                 .gap(RightGap.SMALL)
                 .focused()
-                .align(Align.FILL).component.apply {
+                .component.apply {
                     minimumSize = Dimension(-1, 160)
                 }
         }.enabled(false)
@@ -220,7 +220,7 @@ fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
 
 
         row {
-            scrollCell(aiList).align(Align.FILL)
+            scrollCell(aiList)
         }
 
     }

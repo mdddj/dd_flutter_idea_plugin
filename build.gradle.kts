@@ -15,15 +15,15 @@ repositories {
 
 
 intellij {
-    version.set("2023.1")
-    type.set("IC")
+    version.set("2022.2.1.18")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:231.8109.91",
-            "io.flutter:73.0.4",
-            "markdown",
-            "terminal"
+            "Dart:222.4560",
+            "io.flutter:73.0.2",
+            "org.intellij.plugins.markdown",
+            "terminal", "java"
         )
     )
 }
@@ -117,8 +117,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("231.0000.*")
-        untilBuild.set("231.9999.*")
+        sinceBuild.set("222.0000.*")
+        untilBuild.set("222.9999.*")
         changeNotes.set(
             """
                 <div>
@@ -303,15 +303,6 @@ tasks {
 }
 
 configurations.all {
-//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-core")
-//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-core-jvm")
-//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-jdk8")
-//    exclude(group = "org.jetbrains.kotlinx",module = "kotlinx-coroutines-slf4j")
-//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib")
-//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-common")
-//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk7")
-//    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk8")
-//    exclude(group = "org.slf4j",module = "slf4j-api")
     exclude(group = "io.ktor", module = "kotlinx-coroutines-jdk8")
     exclude(group = "io.ktor", module = "kotlinx-coroutines-core")
     exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-jdk8")

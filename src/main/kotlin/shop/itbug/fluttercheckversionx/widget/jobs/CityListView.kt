@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.widget.jobs
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
@@ -20,7 +19,7 @@ class CityListView(val project: Project,onListSelect: (category: ResourceCategor
 
     private val cityWidget = JobsCitySelectWidget(project)
 
-    private val refresh = DumbAwareAction.create(AllIcons.Actions.Refresh){
+    private val refresh = DumbAwareAction.create(){
         refreshList()
     }
 

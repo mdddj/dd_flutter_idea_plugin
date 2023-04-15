@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
@@ -62,26 +61,30 @@ class ProjectFilter : MyComboBoxAction(), DumbAware {
         doUpdate(e)
     }
 
+    override fun createPopupActionGroup(p0: JComponent?): DefaultActionGroup {
+        return createDefaultGroup()
+    }
+
 
     private fun changeProjectNameAction() {
         actions.clear()
         actions.addAll(projectNames.map { ProjectAnAction(it) })
     }
 
-     private fun doUpdate(e: AnActionEvent) {
-         ModalityUiUtil.invokeLaterIfNeeded(ModalityState.defaultModalityState()) {
-             updateSelect(e)
-         }
-     }
+    private fun doUpdate(e: AnActionEvent) {
+        ModalityUiUtil.invokeLaterIfNeeded(ModalityState.defaultModalityState()) {
+            updateSelect(e)
+        }
+    }
 
 
     //更新选中
     private fun updateSelect(e: AnActionEvent) {
-        if(actions.isEmpty()){
+        if (actions.isEmpty()) {
             e.presentation.isEnabled = false
             e.presentation.text = PluginBundle.get("empty")
             e.presentation.icon = MyIcons.flutter
-        }else{
+        } else {
             e.presentation.isEnabled = true
         }
 
@@ -94,7 +97,7 @@ class ProjectFilter : MyComboBoxAction(), DumbAware {
         }
 
         //主要是解决新开项目后选项会被禁用的问题
-        if(appName!=null && actions.isEmpty()){
+        if (appName != null && actions.isEmpty()) {
             projectNames = appService.projectNames
             changeProjectNameAction()
         }

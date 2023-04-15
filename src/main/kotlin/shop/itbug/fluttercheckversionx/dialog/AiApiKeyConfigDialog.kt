@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
@@ -21,7 +20,7 @@ class AiApiKeyConfigDialog(override val project: Project) : MyDialogWrapper(proj
     override fun createCenterPanel(): JComponent {
         return panel {
             row("ApiKey") {
-                passwordField().bindText({ apiKey }, { apiKey = it }).align(Align.FILL)
+                textField().bindText({ apiKey }, { apiKey = it })
             }
             row {
                 comment("The plugin will not collect your data, it will be securely saved locally")

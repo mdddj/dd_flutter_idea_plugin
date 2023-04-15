@@ -4,7 +4,6 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
@@ -62,7 +61,7 @@ class MyResourcesListWidget(val project: Project) : JBList<MyResource>() {
                             font = JBFont.label()
                             foreground = JBUI.CurrentTheme.Link.Foreground.ENABLED
                         }
-                        cell(JBLabel(AllIcons.Actions.DeleteTag)).align(Align.FILL)
+                        cell(JBLabel(AllIcons.Actions.DeleteTag))
                     }
                 }.apply {
                     border = RoundBorderStyle()

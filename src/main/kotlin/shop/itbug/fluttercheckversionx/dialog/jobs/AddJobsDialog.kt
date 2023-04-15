@@ -4,7 +4,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.LabelPosition
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.ValidationInfoBuilder
 import org.intellij.plugins.markdown.ui.preview.MarkdownPreviewFileEditor
 import shop.itbug.fluttercheckversionx.services.ItbugService
@@ -37,7 +40,7 @@ class AddJobsDialog(val project: Project) : DialogWrapper(project) {
     override fun createCenterPanel(): JComponent {
         return panel {
             row("标题") {
-                titleTextField = textField().bindText({ title }, { title = it }).align(Align.FILL).validationOnInput {
+                titleTextField = textField().bindText({ title }, { title = it }).validationOnInput {
                     if (it.text.length <= 10) {
                         ValidationInfoBuilder(titleTextField.component).error("标题不能少于10字")
                     }

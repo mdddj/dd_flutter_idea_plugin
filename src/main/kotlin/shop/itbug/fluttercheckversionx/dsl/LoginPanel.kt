@@ -50,13 +50,13 @@ fun loginPanel(parentDisposable: Disposable, account: UserAccount): DialogPanel 
             }
         }
         row(PluginBundle.get("password.text")) {
-            cell(passwordJBTextField).align(Align.FILL).validationOnInput {
+            cell(passwordJBTextField).validationOnInput {
                 val pass = String(it.password)
                 if (pass.length < 6 || pass.length > 20) ValidationInfo("密码字符6-20长度") else null
             }
         }
         row {
-            checkBox(PluginBundle.get("window.idea.loginDialog.remember")).enabled(true).align(Align.FILL)
+            checkBox(PluginBundle.get("window.idea.loginDialog.remember")).enabled(true)
         }.topGap(TopGap.SMALL)
         row {
             comment(PluginBundle.get("window.chat.loginDialog.register.comment"))
@@ -64,7 +64,7 @@ fun loginPanel(parentDisposable: Disposable, account: UserAccount): DialogPanel 
                 account.password = String(passwordJBTextField.password)
                 panel.apply()
                 userLogin()
-            }.gap(RightGap.SMALL).align(Align.FILL)
+            }.gap(RightGap.SMALL)
         }.topGap(TopGap.SMALL)
         row {
             label(errorMsg)

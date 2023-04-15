@@ -162,7 +162,7 @@
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
 
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"/>
+<!--        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"/>-->
 
 
     </extensions>
