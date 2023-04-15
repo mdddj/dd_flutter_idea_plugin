@@ -36,7 +36,7 @@ class PubYamlPathAndGithubFold : FoldingBuilderEx(), DumbAware {
     }
 
     override fun getPlaceholderText(node: ASTNode): String {
-        return "本地插件和github插件已被折叠"
+        return "..."
     }
 
     override fun isCollapsedByDefault(node: ASTNode): Boolean {

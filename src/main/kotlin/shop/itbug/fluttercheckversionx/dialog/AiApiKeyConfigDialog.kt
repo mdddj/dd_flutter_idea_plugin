@@ -24,7 +24,7 @@ class AiApiKeyConfigDialog(override val project: Project) : MyDialogWrapper(proj
                 passwordField().bindText({ apiKey }, { apiKey = it }).align(Align.FILL)
             }
             row {
-                comment("The plugin will not collect your data, it will be securely saved locally", maxLineLength = 30)
+                comment("The plugin will not collect your data, it will be securely saved locally")
             }
         }
     }

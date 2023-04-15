@@ -6,6 +6,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -28,9 +29,15 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
     init {
         border = BorderFactory.createEmptyBorder()
         jsonView.border = BorderFactory.createEmptyBorder()
+        jsonView.background = UIUtil.getPanelBackground()
+        jsonView.border = null
+        jsonView.isOpaque = false
         val s = JBScrollPane(jsonView)
         s.border = BorderFactory.createEmptyBorder()
         add(s, BorderLayout.CENTER)
+        background = UIUtil.getPanelBackground()
+        isOpaque = false
+        border = null
     }
 
 
