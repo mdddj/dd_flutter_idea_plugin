@@ -30,14 +30,10 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
         border = BorderFactory.createEmptyBorder()
         jsonView.border = BorderFactory.createEmptyBorder()
         jsonView.background = UIUtil.getPanelBackground()
-        jsonView.border = null
-        jsonView.isOpaque = false
         val s = JBScrollPane(jsonView)
         s.border = BorderFactory.createEmptyBorder()
         add(s, BorderLayout.CENTER)
         background = UIUtil.getPanelBackground()
-        isOpaque = false
-        border = null
     }
 
 
