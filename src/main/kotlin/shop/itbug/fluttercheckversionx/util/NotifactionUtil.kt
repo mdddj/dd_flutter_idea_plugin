@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import shop.itbug.fluttercheckversionx.dialog.LoginDialogV2
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import javax.swing.JComponent
 
 //通知相关工具类
@@ -18,7 +19,9 @@ class MyNotificationUtil {
         //socket 相关通知
         fun socketNotify(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
             NotificationGroupManager.getInstance().getNotificationGroup("dio_socket_notify")
-                .createNotification(message, type)
+                .createNotification(message, type).apply {
+                    icon = MyIcons.flutter
+                }
                 .notify(project)
         }
 

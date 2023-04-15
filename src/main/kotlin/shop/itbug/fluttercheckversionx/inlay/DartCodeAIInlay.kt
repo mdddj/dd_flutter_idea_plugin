@@ -30,6 +30,8 @@ import shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import shop.itbug.fluttercheckversionx.dialog.AiApiKeyConfigDialog
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.util.CredentialUtil
+import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.widget.AiChatListWidget
 import java.awt.Dimension
 import java.awt.event.MouseEvent
@@ -101,7 +103,7 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
                     val text = factory.text("$indentText  ")
                     val icon = factory.smallScaledIcon(MyIcons.openai)
 
-                    val ai = factory.smallText(" 求助AI")
+                    val ai = factory.smallText(" AI")
                     val newF = factory.seq(text, factory.roundWithBackgroundAndSmallInset(factory.seq(icon, ai)))
                     val click = factory.mouseHandling(
                         newF,
@@ -116,8 +118,8 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
         }
     }
 
-    fun showDialogPanel(event: MouseEvent,project: Project) {
-        JBPopupFactory.getInstance().createBalloonBuilder(createAIPanel(this,project))
+    fun showDialogPanel(event: MouseEvent, project: Project) {
+        JBPopupFactory.getInstance().createBalloonBuilder(createAIPanel(this, project))
             .setFillColor(UIUtil.getPanelBackground())
             .setBorderColor(UIUtil.getFocusedBorderColor())
             .setHideOnAction(false)
@@ -137,7 +139,7 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
 
 ///ai面板
 data class AIPanelModel(
-    var content: String = "帮我写一个dart函数,功能是复制文本到剪贴板",
+    var content: String = "",
     var chats: MutableList<MyAIChatModel> = mutableListOf()
 ) : Serializable
 
@@ -192,6 +194,10 @@ fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
         row("") {
             button("Submit") {
                 submit()
+            }.component.apply {
+                icon = MyIcons.flutter
+            }.apply {
+                isEnabled = CredentialUtil.openApiKey.isNotEmpty()
             }
             actionsButton(
                 DartAiSwitchAction.getInstance(),
@@ -201,12 +207,13 @@ fun createAIPanel(parentDisposable: Disposable, project: Project): DialogPanel {
                     }
                 }, object : MyDumbAwareAction({ "Help" }) {
                     override fun actionPerformed(e: AnActionEvent) {
+                        e.project?.toast("The tutorial is currently in production")
                     }
                 }, icon = AllIcons.General.Settings
             )
-        }.actionButton(object : MyDumbAwareAction("历史记录", "查看历史记录", AllIcons.General.Beta) {
+        }.actionButton(object : MyDumbAwareAction("History", "View History", AllIcons.General.Beta) {
             override fun actionPerformed(e: AnActionEvent) {
-
+                e.project?.toast("This feature is currently not supported")
             }
         })
 

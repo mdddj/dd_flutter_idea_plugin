@@ -5,6 +5,7 @@ import com.aallam.openai.api.chat.ChatCompletionChunk
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
+import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
@@ -19,6 +20,7 @@ object OpenAiUtil {
     private fun getOpenAi(): OpenAI = OpenAI(
         OpenAIConfig(
             token = CredentialUtil.openApiKey,
+            timeout = Timeout()
         )
     )
 

@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
-version = "3.3.0"
+version = "3.3.1"
 repositories {
     mavenCentral()
     google()
@@ -27,21 +27,79 @@ intellij {
         )
     )
 }
+
+///
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
-    implementation("cn.hutool:hutool-all:5.8.15")
-    implementation("org.smartboot.socket:aio-core:1.6.3")
+    {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("cn.hutool:hutool-all:5.8.15") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("org.smartboot.socket:aio-core:1.6.3") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("com.alibaba.fastjson2:fastjson2:2.0.25")
+    {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
+    {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-//    implementation("com.google.guava:guava:31.1-jre")
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("com.aallam.openai:openai-client:3.2.0")
-    implementation("io.ktor:ktor-client-cio-jvm:2.2.4")
+    {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.google.code.gson:gson:2.10.1") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("org.xerial:sqlite-jdbc:3.40.1.0") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.aallam.openai:openai-client:3.2.0") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("io.ktor:ktor-client-cio-jvm:2.2.4") {
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.jetbrains.kotlin")
+    }
 }
 
 
@@ -63,6 +121,13 @@ tasks {
         untilBuild.set("231.9999.*")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.3.1</h1>
+                     <ul>
+                        <li>Add openai service</li>
+                        <li>bug fixed</li>
+                     </ul>
+                </div>
                 
                 <div>
                     <h1>3.3.0</h1>
@@ -247,4 +312,8 @@ configurations.all {
 //    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk7")
 //    exclude(group = "org.jetbrains.kotlin",module = "kotlin-stdlib-jdk8")
 //    exclude(group = "org.slf4j",module = "slf4j-api")
+    exclude(group = "io.ktor", module = "kotlinx-coroutines-jdk8")
+    exclude(group = "io.ktor", module = "kotlinx-coroutines-core")
+    exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-jdk8")
+    exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-core")
 }
