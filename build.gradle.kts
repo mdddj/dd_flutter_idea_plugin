@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
-version = "3.3.1"
+version = "3.3.1.as"
 repositories {
     mavenCentral()
     google()
@@ -30,75 +30,29 @@ intellij {
 
 ///
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.9.0") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("cn.hutool:hutool-all:5.8.15") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("org.smartboot.socket:aio-core:1.6.3") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    implementation("cn.hutool:hutool-all:5.8.15")
+    implementation("org.smartboot.socket:aio-core:1.6.3")
     implementation("com.alibaba.fastjson2:fastjson2:2.0.25")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("com.google.code.gson:gson:2.10.1") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("com.aallam.openai:openai-client:3.2.0") {
-        exclude(group = "org.jetbrains.kotlinx")
         exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
     }
     implementation("io.ktor:ktor-client-cio-jvm:2.2.4") {
         exclude(group = "org.jetbrains.kotlinx")
         exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation("com.squareup.retrofit2:retrofit:2.9.0"){
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+    }
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC"){
+        exclude(group = "org.slf4j")
     }
 }
 
@@ -303,8 +257,5 @@ tasks {
 }
 
 configurations.all {
-    exclude(group = "io.ktor", module = "kotlinx-coroutines-jdk8")
-    exclude(group = "io.ktor", module = "kotlinx-coroutines-core")
-    exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-jdk8")
-    exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-core")
+    exclude("org.jetbrains.kotlinx")
 }

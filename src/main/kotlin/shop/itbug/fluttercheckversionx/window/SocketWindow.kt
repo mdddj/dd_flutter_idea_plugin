@@ -46,6 +46,8 @@ class SocketWindow : ToolWindowFactory {
                     p0.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
                 }
             }
+        }else{
+            p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))//已经启用了,更新图标
         }
 
         //在线聊天窗口
