@@ -1,12 +1,13 @@
 package shop.itbug.fluttercheckversionx.common
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAwareAction
+import shop.itbug.fluttercheckversionx.services.ItbugService
+import shop.itbug.fluttercheckversionx.services.SERVICE
 import java.util.function.Supplier
 import javax.swing.Icon
+import javax.swing.JComponent
 
 abstract class MyAction : AnAction {
 
@@ -51,4 +52,5 @@ abstract class MyComboBoxAction : ComboBoxAction() {
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }
+
 }

@@ -295,7 +295,7 @@ class MyDartPsiElementUtil {
 
                         "  const factory $className({\n$properties    }) = _$className;\n" +
                         (if (addFromJson) "  \n  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);\n\n" else "") +
-                                "}"
+                        "}"
             )
         }
 
@@ -336,6 +336,22 @@ class MyDartPsiElementUtil {
             return PsiTreeUtil.getChildOfType(file, DartReferenceExpressionImpl::class.java)!!
 
         }
+
+
+        ///生成一个单例类
+        fun genClassConstructor(project: Project, className: String): PsiFile? {
+            val text = """
+                class $className {
+                  $className._();
+                  static $className get _instance => $className._();
+                  factory $className() => _instance;
+                }
+            """.trimIndent()
+            return DartElementGenerator.createDummyFile(project, text)
+        }
+
+
+
     }
 
 

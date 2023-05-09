@@ -1,8 +1,11 @@
 package shop.itbug.fluttercheckversionx.tools
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import com.intellij.util.indexing.FileBasedIndex
 import shop.itbug.fluttercheckversionx.fix.NewVersionFix
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
@@ -21,16 +24,13 @@ class AutoVersionTool : LocalInspectionTool() {
         return YamlElementVisitor(holder)
     }
 
-    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-        println("check file : ...")
-        return super.checkFile(file, manager, isOnTheFly)
-    }
-
     override fun runForWholeFile(): Boolean {
         return false
     }
 }
 
+
+///检测版本
 class YamlElementVisitor(
     private val holder: ProblemsHolder
 ) : PsiElementVisitor() {
@@ -38,9 +38,12 @@ class YamlElementVisitor(
 
 
     private val plugins = MyPsiElementUtil.getAllFlutters(holder.project)
+    private val pubFile = MyPsiElementUtil.getPubSecpYamlFile(holder.project)
+
 
     override fun visitFile(file: PsiFile) {
         super.visitFile(file)
+
         for (arr in plugins.values) {
             arr.forEach { ele ->
                 regProblem(ele)
@@ -68,9 +71,21 @@ class YamlElementVisitor(
                     ele.element.lastChild,
                     "${PluginBundle.get("version.tip.1")}:${it}  (${PluginBundle.get("version.tip.2")}:${cacheModel.lastVersionUpdateTimeString})",
                     ProblemHighlightType.WARNING,
-                    NewVersionFix(ele.element, it,model),
+                    NewVersionFix(ele.element, it,model){
+                    }
                 )
             }
+        }
+    }
+
+
+    private fun re() {
+    }
+
+    private fun reIndex() {
+
+        pubFile?.let { psiFile ->
+            FileBasedIndex.getInstance().requestReindex(psiFile.virtualFile)
         }
     }
 

@@ -46,7 +46,6 @@
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
-    <depends>com.intellij.java</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
@@ -151,18 +150,11 @@
 
         <diff.DiffExtension implementation="shop.itbug.fluttercheckversionx.diff.PubYamlGithubAndPathDiff"/>
 
-
-        <!--     自定义模板 riverpod   -->
-        <!--        <defaultLiveTemplates file="/temp/Flutter.xml"/>-->
-        <!--        <liveTemplateContext implementation="shop.itbug.fluttercheckversionx.temp.ConsumerfulTemp" contextId="DART"/>-->
-
         <!--        系统设置-->
         <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"/>
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
-
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.socket.ProjectOpenListeners"/>
 
 
     </extensions>
@@ -197,7 +189,10 @@
                 text="Setting" icon="/icons/setting.svg"/>
 
 
-
+        <action id="shop.itbug.fluttercheckversionx.actions.blog.WriteConfigAction"
+                class="shop.itbug.fluttercheckversionx.actions.blog.WriteConfigAction" text="WriteConfigAction">
+            <add-to-group group-id="EditorPopupMenu3" anchor="first"/>
+        </action>
     </actions>
 
 

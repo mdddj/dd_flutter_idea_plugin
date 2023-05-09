@@ -35,6 +35,10 @@
             <action id="DartAiSwitchAction" class="shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction"
                     description="Dart file ai switch">
             </action>
+            <action id="GenerateClassSingletonModel"
+                    class="shop.itbug.fluttercheckversionx.actions.GenerateClassSingletonModel"
+                    text="Create a Singleton Class" description="Convert to singleton object">
+            </action>
             <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>
@@ -47,6 +51,10 @@
             <separator/>
             <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"
                     icon="/icons/copy.svg"/>
+            <action id="ApiCopyPathAction"
+                    class="shop.itbug.fluttercheckversionx.actions.ApiCopyPathAction"/>
+            <action id="ApiCopyAll"
+                    class="shop.itbug.fluttercheckversionx.actions.ApiCopyAll"/>
             <separator/>
             <action id="DioWindowViewHeadersAction"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
@@ -55,6 +63,7 @@
             />
             <action id="DioWindowViewPostParamsAction"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
+
 
         </group>
     </actions>
