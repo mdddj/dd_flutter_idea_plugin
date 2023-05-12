@@ -17,7 +17,8 @@ import shop.itbug.fluttercheckversionx.util.CacheUtil
 class NewVersionFix(
     psiElement: PsiElement,
     private val newVersion: String,
-    private val model: PubVersionDataModel
+    private val pubVersionDataModel: PubVersionDataModel,
+    val invokeCallback: () -> Unit
 ) : LocalQuickFixOnPsiElement(psiElement) {
 
     override fun getFamilyName(): String {
@@ -32,7 +33,8 @@ class NewVersionFix(
         val pluginName = (startElement as YAMLKeyValueImpl).keyText
         val newElement = YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginName, newVersion)
         startElement.replace(newElement)
-        CacheUtil.remove(model.name)
+        CacheUtil.remove(pubVersionDataModel.name)
+        invokeCallback()
     }
 
 }

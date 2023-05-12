@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
+import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 /**
@@ -59,6 +60,15 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
                 super.after(events)
             }
         })
+
+        cleanPubPluginsCache()
+    }
+
+
+
+    ///清理插件的数据缓存
+    private fun cleanPubPluginsCache() {
+        CacheUtil.clean()
     }
 
     override fun runActivity(p0: Project) {

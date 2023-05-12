@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import com.jetbrains.lang.dart.DartLanguage
+import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 
 class FreezedPartAutoComplicate : CompletionContributor() {
@@ -34,9 +35,24 @@ class FreezedPartAutoComplicateProvider : CompletionProvider<CompletionParameter
         val isGen = result.prefixMatcher.prefix == "pg"
         if (isGen) {
             val create = LookupElementBuilder.create("part '$name.g.dart'; ").withIcon(MyIcons.diandianLogoIcon)
-
             result.addElement(create)
         }
+
+
+        ///构造函数添加
+        val offset = parameters.editor.caretModel.offset
+        val findElementAt = parameters.originalFile.findElementAt(offset)
+        if (findElementAt?.parent?.parent is DartClassDefinitionImpl) {
+            val classPsi = findElementAt.parent.parent as DartClassDefinitionImpl
+            println(result.prefixMatcher.prefix == "cc")
+            if (result.prefixMatcher.prefix == "cc") {
+
+                result.addElement(
+                    LookupElementBuilder.create("${classPsi.componentName}._();").withIcon(MyIcons.diandianLogoIcon)
+                )
+            }
+        }
+
     }
 
 }

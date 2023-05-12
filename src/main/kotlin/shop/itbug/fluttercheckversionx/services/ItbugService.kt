@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.services
 
 import retrofit2.Call
 import retrofit2.http.*
+import shop.itbug.fluttercheckversionx.model.BlogCategory
 import shop.itbug.fluttercheckversionx.model.Pageable
 import shop.itbug.fluttercheckversionx.model.chat.IdeaMessage
 import shop.itbug.fluttercheckversionx.model.chat.SendTextModel
@@ -27,13 +28,13 @@ interface ItbugService {
      *
      */
     @GET("api/get-user-by-token")
-    fun getUserInfo(@Query("token") token: String) : Call<JSONResult<User?>>
+    fun getUserInfo(@Query("token") token: String): Call<JSONResult<User?>>
 
     /**
      * 查询资源分类列表
      */
     @GET("api/rc/findByType")
-    fun getResourceCategorys(@Query("type") type: String) : Call<JSONResult<List<ResourceCategory>>>
+    fun getResourceCategorys(@Query("type") type: String): Call<JSONResult<List<ResourceCategory>>>
 
     /**
      * 发送一条简单的聊天信息
@@ -46,7 +47,11 @@ interface ItbugService {
      * @param [roomId] 房间ID
      */
     @GET("idea-chat/history")
-    fun findRoomHistory(@Query("roomId") roomId: Int,@Query("page") page: Int,@Query("pageSize") pageSize: Int): Call<JSONResult<Pageable<IdeaMessage>>>
+    fun findRoomHistory(
+        @Query("roomId") roomId: Int,
+        @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
+    ): Call<JSONResult<Pageable<IdeaMessage>>>
 
 
     /**
@@ -59,7 +64,7 @@ interface ItbugService {
      * 查询所有城市
      */
     @GET("api/public/jobs/city")
-    fun findAllJobCity() : Call<JSONResult<List<ResourceCategory>>>
+    fun findAllJobCity(): Call<JSONResult<List<ResourceCategory>>>
 
     /**
      * 发布职位
@@ -72,5 +77,11 @@ interface ItbugService {
      * 查询职位
      */
     @GET("api/public/jobs/find-job")
-    fun findAllJob(@QueryMap params: MutableMap<String,Any>): Call<JSONResult<Pageable<MyResource>>>
+    fun findAllJob(@QueryMap params: MutableMap<String, Any>): Call<JSONResult<Pageable<MyResource>>>
+
+    /**
+     * 获取所有的博客分类
+     */
+    @GET("api/blog/category-list")
+    fun findAllBlogCategory(): Call<JSONResult<List<BlogCategory>>>
 }

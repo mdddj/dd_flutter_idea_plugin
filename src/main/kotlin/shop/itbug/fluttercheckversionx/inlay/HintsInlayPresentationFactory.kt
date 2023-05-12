@@ -5,9 +5,12 @@ import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -24,7 +27,44 @@ import javax.swing.ImageIcon
  * 提供了一些的悬浮提示工具函数
  */
 typealias InlayPresentationClickHandle = (MouseEvent, Point) -> Unit
+
+
+fun Editor.getLineStart(element: PsiElement): Int {
+    val offset = element.textRange.startOffset
+    val line = document.getLineNumber(offset)
+    return document.getLineStartOffset(line)
+}
+
+/**
+ * 获取缩进长度
+ */
+fun Editor.getIndent(element: PsiElement): Int {
+    val offset = element.textRange.startOffset
+    val line = document.getLineNumber(offset)
+    val lineStart = document.getLineStartOffset(line)
+    return offset - lineStart
+}
+
+
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
+
+     fun lineStart(editor: Editor,element: PsiElement): InlayPresentation {
+        val indent = editor.getIndent(element)
+        val indentText = StringUtil.repeat("\t\t", indent)
+        return factory.text(indentText)
+    }
+
+    fun iconText(icon: Icon,text: String) : InlayPresentation {
+        return factory.seq(factory.smallScaledIcon(icon),factory.smallText(text)).addRoundBg()
+    }
+
+    fun lineStartText(editor: Editor,element: PsiElement,text: String) : InlayPresentation {
+        return factory.seq(lineStart(editor, element),factory.smallText(text).addRoundBg())
+    }
+
+    fun InlayPresentation.addRoundBg() : InlayPresentation {
+        return factory.roundWithBackgroundAndSmallInset(this)
+    }
 
     private fun InlayPresentation.clickHandle(handle:  InlayPresentationClickHandle?) : InlayPresentation {
         return  factory.mouseHandling(this, clickListener = handle,null)

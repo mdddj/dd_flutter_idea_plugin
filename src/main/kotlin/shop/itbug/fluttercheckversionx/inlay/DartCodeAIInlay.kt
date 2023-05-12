@@ -15,7 +15,6 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.ui.awt.RelativePoint
@@ -91,28 +90,35 @@ class DartCodeAIInlay : InlayHintsProvider<DartAISetting>, Disposable {
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
 
+                val myFactory = HintsInlayPresentationFactory(factory)
 
                 val isShow = settings.state.showInEditor
-
-                val offset = element.textRange.startOffset
-                val line = editor.document.getLineNumber(offset)
-                val lineStart = editor.document.getLineStartOffset(line)
-                val indent = offset - lineStart //缩进
-                val indentText = StringUtil.repeat(" ", indent)
                 if (element is DartMethodDeclarationImpl && isShow) {
-                    val text = factory.text("$indentText  ")
-                    val icon = factory.smallScaledIcon(MyIcons.openai)
-
-                    val ai = factory.smallText(" AI")
-                    val newF = factory.seq(text, factory.roundWithBackgroundAndSmallInset(factory.seq(icon, ai)))
+                    val text = myFactory.lineStart(editor, element)
+                    val iconText = myFactory.iconText(MyIcons.openai, " AI")
+                    val newF = factory.seq(text, iconText)
                     val click = factory.mouseHandling(
                         newF,
                         { event, _ ->
                             showDialogPanel(event, editor.project!!)
                         }, null
                     )
-                    sink.addBlockElement(lineStart, true, true, 0, click)
+                    sink.addBlockElement(editor.getLineStart(element), true, true, 0, click)
                 }
+
+
+
+
+//                if (element is DartClassDefinitionImpl) {
+//                    sink.addBlockElement(
+//                        editor.getLineStart(element),
+//                        true,
+//                        true,
+//                        0,
+//                        myFactory.lineStartText(editor, element, "Actions")
+//                    )
+//                }
+
                 return true
             }
         }
