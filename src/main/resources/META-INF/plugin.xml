@@ -121,8 +121,8 @@
                 language="Dart"/>
 
         <!--        open ai-->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"
-                                   language="Dart"/>
+<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"-->
+<!--                                   language="Dart"/>-->
 
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>

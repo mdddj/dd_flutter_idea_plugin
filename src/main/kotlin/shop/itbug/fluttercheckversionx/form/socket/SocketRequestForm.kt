@@ -13,6 +13,7 @@ import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
+import shop.itbug.fluttercheckversionx.form.components.ApiListStatusBar
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -42,12 +43,12 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     private val apiListWrapper = JBScrollPane(apiList)
 
+    private val apiWindowStatusText = ApiListStatusBar()
+
     //右侧面板
     private val rightFirstPanel = RightDetailPanel(project)
-//    private val rightNextPanel = RequestDetailPanel(project)
     private val myRightComponent = JPanel(CardLayout()).apply {
         add(rightFirstPanel, "response_body_panel")
-//        add(rightNextPanel, "right_detail_panel")
     }
 
     //左侧工具栏
@@ -98,6 +99,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         SocketMessageBus.listening {
             autoScrollToMax()
         }
+        addToBottom(apiWindowStatusText)
     }
 
 
@@ -150,3 +152,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     }
 
 }
+
+
+
