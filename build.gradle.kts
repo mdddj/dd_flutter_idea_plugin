@@ -71,8 +71,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222.0000.*")
-        untilBuild.set("222.9999.*")
+        sinceBuild.set("222")
+        untilBuild.set("222.*")
         changeNotes.set(
             """
                 <div>
