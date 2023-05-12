@@ -85,16 +85,12 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                                     val args = children[0].children.filterIsInstance<DartNamedArgumentImpl>() /// 参数列表
                                     for (arg in args) {
                                         if (arg.firstChild.text == "message") {
-//                                            val docMessage = arg.lastChild.text.replace("\"","")
                                             val docMessage =
                                                 (arg.lastChild as DartStringLiteralExpressionImpl).canonicalText.replace(
                                                     "\"",
                                                     ""
                                                 ).replace("\'", "")
-
-                                            //判断是否有";"
                                             val semicolonElement = element.parent.nextSibling;
-                                            ///忽略掉换行符号
                                             if (semicolonElement is LeafPsiElement) {
                                                 sink.addInlineElement(
                                                     semicolonElement.endOffset,

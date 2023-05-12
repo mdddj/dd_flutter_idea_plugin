@@ -36,7 +36,7 @@ class SocketWindow : ToolWindowFactory {
         val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
 
 
-        if(AppService.getInstance().dioIsStart.not()){
+        if (AppService.getInstance().dioIsStart.not()) {
             p1.activate {
                 try {
                     DioApiService.builder(port, socketRequestForm).start()
@@ -46,6 +46,8 @@ class SocketWindow : ToolWindowFactory {
                     p0.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
                 }
             }
+        } else {
+            p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
         }
 
         //在线聊天窗口
@@ -73,6 +75,8 @@ class SocketWindow : ToolWindowFactory {
         val dartPluginWindow = DartPluginsWindow(p1, p0)
         val dartPluginContent = instance.createContent(dartPluginWindow, "Plugin Collects", false)
         p1.contentManager.addContent(dartPluginContent)
+
+
     }
 
 }
