@@ -41,7 +41,7 @@ class LoginDialogV2(project: Project): MyDialogWrapper(project),Disposable {
                 textField().bindText(account::username)
             }
             row {
-                passwordField().bindText(account::password)
+                textField().bindText(account::password)
             }
         }
 

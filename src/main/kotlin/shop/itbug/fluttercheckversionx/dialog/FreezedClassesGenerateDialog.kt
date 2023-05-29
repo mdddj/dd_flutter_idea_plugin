@@ -10,13 +10,12 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.lang.dart.DartLanguage
-import org.jetbrains.plugins.terminal.TerminalToolWindowManager
+import org.jetbrains.plugins.terminal.TerminalView
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig
@@ -92,7 +91,7 @@ class FreezedClassesGenerateDialog(
                     }, {
                         filePath = it
                         filePathLabel.text = it
-                    }).align(Align.FILL)
+                    })
                 }
                 row(PluginBundle.get("file.name")) {
                     textField().bindText({ fileName }, {
@@ -135,7 +134,7 @@ class FreezedClassesGenerateDialog(
                 }
                 project.toast(PluginBundle.get("build.succeeded"))
                 if (setting.autoRunDartBuilder) {
-                    TerminalToolWindowManager.getInstance(project)
+                    TerminalView.getInstance(project)
                         .createLocalShellWidget(project.basePath, "freezed gen")
                         .executeCommand("flutter pub run build_runner build")
                 }

@@ -124,11 +124,22 @@ object FlutterCollectService {
             select * from ${SqliteConnectManager.FlutterPluginTableName}
         """.trimIndent()
             val query = SqlExecutor.query(SqliteConnectManager.connect, sql, EntityListHandler())
-            println(query.size)
             list = query.toList()
         }
         return list
 
+    }
+
+
+
+
+    ///禁用检查
+    fun disableCheckPlugin( pluginName: String,check: Boolean) {
+        check {
+            val sql = """
+                
+            """.trimIndent()
+        }
     }
 
 }

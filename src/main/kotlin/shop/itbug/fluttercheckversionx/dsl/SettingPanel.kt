@@ -51,6 +51,9 @@ fun settingPanel(
                     override fun afterChange(listener: (String) -> Unit) {
                     }
 
+                    override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
+                    }
+
                     override fun get(): String {
                         return model.lang
                     }

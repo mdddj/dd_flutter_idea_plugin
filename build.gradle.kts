@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
-version = "3.3.2"
+version = "3.3.3.as"
 repositories {
     mavenCentral()
     google()
@@ -14,16 +14,17 @@ repositories {
 }
 
 
+
 intellij {
-    version.set("2023.1")
-    type.set("IC")
+    version.set("2022.2.1.18")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:231.8109.91",
-            "io.flutter:73.0.4",
-            "markdown",
-            "terminal"
+            "Dart:222.4582",
+            "io.flutter:73.0.2",
+            "org.intellij.plugins.markdown",
+            "terminal", "java"
         )
     )
 }
@@ -126,14 +127,23 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
-        untilBuild.set("231.*")
+        sinceBuild.set("222")
+        untilBuild.set("222.*")
         changeNotes.set(
             """
                 <div>
-                    <h1>3.3.2</h1>
+                    <h1>3.3.3.as</h1>
                      <ul>
                         <li>Optimize the Dio request window tool</li>
+                        <li>freezed class model add <pre>ff</pre> command，Quickly generate the from Json function </li>
+                        <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.3.2.as/images/freezed_ff.png?raw=true' />
+                     </ul>
+                </div>
+                <div>
+                    <h1>3.3.2.as</h1>
+                     <ul>
+                        <li>Optimize the Dio request window tool</li>
+                        <li>OpenAI function removal</li>
                      </ul>
                 </div>
                 

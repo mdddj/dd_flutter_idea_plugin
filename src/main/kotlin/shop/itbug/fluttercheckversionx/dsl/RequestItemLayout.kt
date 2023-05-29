@@ -1,13 +1,11 @@
 package shop.itbug.fluttercheckversionx.dsl
 
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
 import shop.itbug.fluttercheckversionx.form.socket.Request
-import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.net.URI
 import javax.swing.BorderFactory
 
@@ -27,9 +25,6 @@ fun requestDetailLayout(request: Request, isSelected: Boolean,setting: DioxListe
     val color = UIUtil.getLabelDisabledForeground()
     val p = panel {
         row {
-            cell(JBLabel(MyIcons.apiIcon).apply {
-                foreground = UIUtil.getListForeground()
-            })
             label(request.url!!.formatUrl(setting)).component.apply {
                 foreground = if(isSelected) UIUtil.getListSelectionForeground(false) else UIUtil.getLabelForeground()
             }

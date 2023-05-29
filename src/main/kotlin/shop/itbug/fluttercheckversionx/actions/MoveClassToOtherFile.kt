@@ -8,7 +8,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
@@ -56,7 +55,7 @@ class MoveClassToOtherFile : MyAction({ "将类转移到其他文件" }) {
              row ("转移到文件") {
                  textFieldWithBrowseButton("选择文件",project, FileChooserDescriptorFactory.createSingleFileDescriptor("dart").withRoots(
                      ProjectRootManager.getInstance(project).contentSourceRoots.first()
-                 )).align(Align.FILL)
+                 ))
              }
              row ("转移的类") {
                  label(psiElement.name?:"...?")
