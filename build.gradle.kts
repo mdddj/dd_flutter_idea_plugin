@@ -135,7 +135,8 @@ tasks {
                     <h1>3.3.3.as</h1>
                      <ul>
                         <li>Optimize the Dio request window tool</li>
-                        <li>OpenAI function removal</li>
+                        <li>freezed class model add <pre>ff</pre> command，Quickly generate the from Json function </li>
+                        <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.3.2.as/images/freezed_ff.png?raw=true' />
                      </ul>
                 </div>
                 <div>
