@@ -21,6 +21,7 @@ import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.util.Util
 import shop.itbug.fluttercheckversionx.util.projectClosed
 import java.awt.Point
 import java.awt.event.MouseAdapter
@@ -171,7 +172,9 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     ///添加帮助性文档
     private fun setApiListEmptyText() {
         setEmptyText(PluginBundle.get("empty"))
+
         emptyText.apply {
+            appendLine("")
             appendLine(
                 PluginBundle.get("help"), SimpleTextAttributes(
                     SimpleTextAttributes.STYLE_PLAIN,
@@ -194,6 +197,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
+            appendLine("IP:${Util.resolveLocalAddresses().filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }.map { it.hostAddress }}", SimpleTextAttributes.GRAYED_ATTRIBUTES){}
         }
     }
 

@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
@@ -11,6 +12,7 @@ import com.jetbrains.lang.dart.psi.impl.DartTypeImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.covertDartClassPropertyModel
+
 
 /**
  * 获取类节点
@@ -93,6 +95,15 @@ object DartPsiElementUtil {
             nameElement.addBefore(generateMixins,classElement.nextSibling)
         }
 
+    }
+
+    fun findParentElementOfType(element: PsiElement, parentClass: Class<out PsiElement?>): PsiElement? {
+        val parent = element.parent
+        return if (parent == null || parentClass.isInstance(parent)) {
+            parent
+        } else {
+            findParentElementOfType(parent, parentClass)
+        }
     }
 
 

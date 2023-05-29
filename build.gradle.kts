@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.13.3"
 }
 group = "shop.itbug"
-version = "3.3.2.as"
+version = "3.3.3.as"
 repositories {
     mavenCentral()
     google()
@@ -21,7 +21,7 @@ intellij {
     plugins.set(
         listOf(
             "yaml",
-            "Dart:222.4560",
+            "Dart:222.4582",
             "io.flutter:73.0.2",
             "org.intellij.plugins.markdown",
             "terminal", "java"
@@ -131,6 +131,13 @@ tasks {
         untilBuild.set("222.*")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.3.3.as</h1>
+                     <ul>
+                        <li>Optimize the Dio request window tool</li>
+                        <li>OpenAI function removal</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.3.2.as</h1>
                      <ul>

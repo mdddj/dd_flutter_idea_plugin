@@ -13,7 +13,6 @@ import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
-import shop.itbug.fluttercheckversionx.form.components.ApiListStatusBar
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -43,7 +42,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     private val apiListWrapper = JBScrollPane(apiList)
 
-    private val apiWindowStatusText = ApiListStatusBar()
+//    private val apiWindowStatusText = ApiListStatusBar()
 
     //右侧面板
     private val rightFirstPanel = RightDetailPanel(project)
@@ -99,7 +98,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         SocketMessageBus.listening {
             autoScrollToMax()
         }
-        addToBottom(apiWindowStatusText)
+//        addToBottom(apiWindowStatusText)
     }
 
 
