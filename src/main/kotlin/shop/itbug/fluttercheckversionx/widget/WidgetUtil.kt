@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.popup.Balloon
@@ -78,6 +79,18 @@ object WidgetUtil {
                 e.project?.apply {
                     toast("Copy succeeded!")
                 }.takeIf { copyText.trim().isNotEmpty() }
+            }
+        }
+    }
+
+
+    /**
+     * 反馈论坛
+     */
+    fun getDiscordAction() :AnAction {
+        return object : MyDumbAwareAction(MyIcons.discord) {
+            override fun actionPerformed(p0: AnActionEvent) {
+                BrowserUtil.browse("https://discord.gg/6PJ5czXn")
             }
         }
     }

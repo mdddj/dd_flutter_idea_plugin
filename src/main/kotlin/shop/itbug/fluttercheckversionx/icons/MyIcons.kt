@@ -27,6 +27,8 @@ object MyIcons {
 
     //收藏图标(选中)
     var openai = IconLoader.getIcon("/icons/openai.svg",MyIcons::class.java)
+
+    val discord = IconLoader.getIcon("/icons/discord.svg",MyIcons::class.java)
 }
 
 

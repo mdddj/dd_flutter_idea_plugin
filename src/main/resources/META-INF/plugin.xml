@@ -94,15 +94,15 @@
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
-<!--        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.inlay.DartAISetting"/>-->
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <!--   dio socket 相关通知    -->
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
+        <!--flutter新版本通知-->
+        <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
 
         <!--    检查插件是否在项目中已经使用过     -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
                                    language="yaml"
-
         />
 
         <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
@@ -120,14 +120,8 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
-        <!--        open ai-->
-<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"-->
-<!--                                   language="Dart"/>-->
-
         <!--   插件socket服务     -->
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
-        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -173,11 +167,6 @@
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
         </action>
-        <!--        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"-->
-        <!--                text="合并Dart导入">-->
-        <!--            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>-->
-        <!--        </action>-->
-
         <action id="AssetsAutoGenerateClassAction"
                 class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction"
                 icon="/icons/refresh.svg">

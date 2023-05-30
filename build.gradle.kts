@@ -1,9 +1,10 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.21"
     id("org.jetbrains.intellij") version "1.13.3"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.3.3.as"
+version = "3.4.0.as"
 repositories {
     mavenCentral()
     google()
@@ -35,6 +36,8 @@ kotlin {
             languageVersion = "2.0"
         }
     }
+
+
 }
 
 ///
@@ -109,6 +112,7 @@ dependencies {
         exclude(group = "org.slf4j")
         exclude(group = "org.jetbrains.kotlin")
     }
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 }
 
 
@@ -131,6 +135,13 @@ tasks {
         untilBuild.set("222.*")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.4.0.as</h1>
+                     <ul>
+                        <li>New: Flutter version detection</li>
+                        <li>New: Community Link Entry</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.3.3.as</h1>
                      <ul>

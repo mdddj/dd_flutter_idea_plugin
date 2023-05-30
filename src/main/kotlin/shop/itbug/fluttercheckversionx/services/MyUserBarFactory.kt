@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -27,7 +28,8 @@ enum class PluginActions(val title: String) {
     RunBuilder(PluginBundle.get("run.build_runner.build")),
     FlutterClan(PluginBundle.get("flutter.clean")),
     FlutterPushPlugin(PluginBundle.get("dart.pub.publish")),
-    JsonToFreezed("Json to Freezed")
+    JsonToFreezed("Json to Freezed"),
+    Discord("Discord")
 }
 
 ///用户面板
@@ -37,7 +39,7 @@ class MyUserBarFactory : StatusBarWidgetFactory {
     }
 
     override fun getDisplayName(): String {
-        return "典典账号登录"
+        return "FlutterCheckVersionX"
     }
 
     override fun isAvailable(project: Project): Boolean {
@@ -133,18 +135,11 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             SearchPlugin -> {
                 SearchDialog(project).show()
             }
-
-//            CheckVersion -> {
-//                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-//                pubspecFile?.let {
-//                    val plugins = MyPsiElementUtil.getAllPlugins(project)
-//                    print(plugins)
-//                }
-//            }
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")
             FlutterPushPlugin -> runCommand(" dart pub publish")
             JsonToFreezed -> jsonToFreezedRun()
+            Discord -> BrowserUtil.browse("https://discord.gg/6PJ5czXn")
         }
     }
 

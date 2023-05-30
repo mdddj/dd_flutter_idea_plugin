@@ -10,7 +10,7 @@ import java.net.URI
 import javax.swing.BorderFactory
 
 
-fun String.formatUrl(setting: DioxListeningSetting): String{
+fun String.formatUrl(setting: DioxListeningSetting): String {
     if(setting.showHost.not()){
        return URI(this).path
     }
