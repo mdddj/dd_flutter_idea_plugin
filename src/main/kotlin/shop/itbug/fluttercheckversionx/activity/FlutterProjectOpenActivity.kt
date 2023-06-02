@@ -17,7 +17,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import io.flutter.sdk.FlutterSdk
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.FlutterService
@@ -82,9 +82,9 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
         CacheUtil.clean()
     }
 
-    override fun runActivity(p0: Project) {
-        execute(p0)
-        checkFlutterLastVersion(p0)
+    override fun runActivity(project: Project) {
+        execute(project)
+        checkFlutterLastVersion(project)
     }
 
 
@@ -130,7 +130,8 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
 
         createNotification.addAction(object : AnAction("Upgrade") {
             override fun actionPerformed(p0: AnActionEvent) {
-                TerminalView.getInstance(project).createLocalShellWidget(project.basePath,"flutter upgrade").executeCommand("flutter upgrade")
+
+                TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath,"flutter upgrade").executeCommand("flutter upgrade")
                 createNotification.hideBalloon()
             }
 

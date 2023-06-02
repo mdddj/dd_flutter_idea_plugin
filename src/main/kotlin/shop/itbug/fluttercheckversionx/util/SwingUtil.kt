@@ -107,7 +107,7 @@ object SwingUtil {
     fun getMkEditor(project: Project, initText: String = ""): MarkdownEditorWithPreview {
         val vF = LightVirtualFile("D", MarkdownFileType.INSTANCE, initText)
         val mkEdit =
-            FileEditorProviderManager.getInstance().getProviders(project, vF).first() as MarkdownSplitEditorProvider
+            FileEditorProviderManager.getInstance().getProviderList(project, vF).first() as MarkdownSplitEditorProvider
         val edit = mkEdit.createEditor(project, vF)
         return edit as MarkdownEditorWithPreview
     }
@@ -115,7 +115,7 @@ object SwingUtil {
     fun getDartEditor(project: Project,initText: String="")  : PsiAwareTextEditorImpl {
         val vF = LightVirtualFile("freezed.dart", DartLanguage.INSTANCE, initText)
         val mkEdit =
-            FileEditorProviderManager.getInstance().getProviders(project, vF).first()
+            FileEditorProviderManager.getInstance().getProviderList(project, vF).first()
         val edit = mkEdit.createEditor(project, vF)
         return edit as PsiAwareTextEditorImpl
     }

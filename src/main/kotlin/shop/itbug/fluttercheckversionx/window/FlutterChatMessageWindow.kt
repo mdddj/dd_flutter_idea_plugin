@@ -62,8 +62,11 @@ class FlutterChatMessageWindow(val project: Project, private val toolWindow: Too
                 showLoginDialog()
             } else {
                 println("----${JSONObject.toJSONString(userInfo)}")
-                JBPopupFactory.getInstance().createComponentPopupBuilder(userDetailSimplePanel(userInfo!!), null)
-                    .createPopup().show(RelativePoint(e.inputEvent.component.locationOnScreen))
+                e.inputEvent?.let {
+                    JBPopupFactory.getInstance().createComponentPopupBuilder(userDetailSimplePanel(userInfo!!), null)
+                        .createPopup().show(RelativePoint(it.component.locationOnScreen))
+                }
+
             }
 
         }

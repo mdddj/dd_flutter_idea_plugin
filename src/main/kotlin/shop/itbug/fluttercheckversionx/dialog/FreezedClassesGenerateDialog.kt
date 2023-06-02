@@ -15,7 +15,7 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.lang.dart.DartLanguage
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig
@@ -134,7 +134,7 @@ class FreezedClassesGenerateDialog(
                 }
                 project.toast(PluginBundle.get("build.succeeded"))
                 if (setting.autoRunDartBuilder) {
-                    TerminalView.getInstance(project)
+                    TerminalToolWindowManager.getInstance(project)
                         .createLocalShellWidget(project.basePath, "freezed gen")
                         .executeCommand("flutter pub run build_runner build")
                 }

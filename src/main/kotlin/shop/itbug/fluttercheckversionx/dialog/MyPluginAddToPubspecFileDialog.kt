@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import cn.hutool.db.Entity
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.panel
@@ -43,9 +42,6 @@ class MyPluginAddToPubspecFileDialog(override val project: Project, entity: Enti
                     }
 
                     override fun afterChange(listener: (FlutterPluginType) -> Unit) {
-                    }
-
-                    override fun afterChange(listener: (FlutterPluginType) -> Unit, parentDisposable: Disposable) {
                     }
 
                     override fun get(): FlutterPluginType {

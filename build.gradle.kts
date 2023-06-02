@@ -17,13 +17,13 @@ repositories {
 
 
 intellij {
-    version.set("2022.2.1.18")
-    type.set("AI")
+    version.set("232-EAP-SNAPSHOT")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:222.4582",
-            "io.flutter:73.0.2",
+            "Dart:232.6734.4",
+            "io.flutter:74.0.5",
             "org.intellij.plugins.markdown",
             "terminal", "java"
         )
@@ -131,8 +131,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
-        untilBuild.set("222.*")
+        sinceBuild.set("232")
+        untilBuild.set("232.*")
         changeNotes.set(
             """
                 <div>

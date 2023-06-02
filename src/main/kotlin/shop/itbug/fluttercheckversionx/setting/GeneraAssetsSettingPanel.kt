@@ -96,7 +96,7 @@ class GeneraAssetsSettingPanel(
             }
         },
         WidgetUtil.getHelpAnAction {
-            WidgetUtil.showTopBalloon(it.inputEvent.component, PluginBundle.get("g.14"))
+            it.inputEvent?.let { it1 -> WidgetUtil.showTopBalloon(it1.component, PluginBundle.get("g.14")) }
         },
         WidgetUtil.getMoneyAnAction()
     )

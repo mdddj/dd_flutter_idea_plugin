@@ -133,13 +133,4 @@ object FlutterCollectService {
 
 
 
-    ///禁用检查
-    fun disableCheckPlugin( pluginName: String,check: Boolean) {
-        check {
-            val sql = """
-                
-            """.trimIndent()
-        }
-    }
-
 }

@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.i18n
 
 import com.intellij.AbstractBundle
-import com.intellij.lang.LangBundle
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import java.lang.invoke.MethodHandles
 import java.lang.reflect.Method
@@ -15,12 +14,9 @@ open class DynamicPluginBundle(pathToBundle: String): AbstractBundle(pathToBundl
         control: ResourceBundle.Control
     ): ResourceBundle {
         val base = super.findBundle(pathToBundle, loader, control)
-        val ideLocale = LangBundle.getLocale()
         val settingLang = PluginStateService.getInstance().state?.lang ?: ""
-        println("语言: $settingLang   $base")
         if(settingLang != "中文"){
-            val localizedPath = pathToBundle + "_"+ideLocale.language
-            println("localized path is $localizedPath")
+            val localizedPath = pathToBundle + "_en"
             val localBundle = super.findBundle(localizedPath, DynamicPluginBundle::class.java.classLoader, control)
             if(base != localBundle){
                 setParent(localBundle,base)

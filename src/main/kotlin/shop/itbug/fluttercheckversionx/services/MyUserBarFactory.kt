@@ -10,7 +10,7 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -153,7 +153,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     }
 
     private fun runCommand(code: String) {
-        TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX")
+        TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX")
             .executeCommand(code)
     }
 
