@@ -1,10 +1,10 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.21"
-    id("org.jetbrains.intellij") version "1.13.3"
+    id("org.jetbrains.intellij") version "1.14.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.4.0.as"
+version = "3.4.0.eap"
 repositories {
     mavenCentral()
     google()
@@ -136,7 +136,7 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                    <h1>3.4.0.as</h1>
+                    <h1>3.4.0.eap</h1>
                      <ul>
                         <li>New: Flutter version detection</li>
                         <li>New: Community Link Entry</li>

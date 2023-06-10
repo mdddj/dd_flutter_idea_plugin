@@ -27,9 +27,8 @@ fun settingPanel(
 ): DialogPanel {
 
     val alarm = Alarm(parentDisposable)
-    lateinit var myPanel: DialogPanel
 
-    myPanel = panel {
+    val myPanel: DialogPanel = panel {
 
         row {
             button(PluginBundle.get("window.chat.loginDialog.text")) {
