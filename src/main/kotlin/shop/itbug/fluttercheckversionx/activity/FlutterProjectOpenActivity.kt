@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.activity
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -139,9 +138,6 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
                 super.update(e)
             }
 
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.BGT
-            }
         },)
         createNotification.addAction(object : AnAction("Cancel"){
             override fun actionPerformed(p0: AnActionEvent) {

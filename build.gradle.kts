@@ -1,10 +1,10 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.21"
-    id("org.jetbrains.intellij") version "1.13.3"
+    id("org.jetbrains.intellij") version "1.14.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.4.0.as"
+version = "3.4.0.221.fix"
 repositories {
     mavenCentral()
     google()
@@ -17,13 +17,13 @@ repositories {
 
 
 intellij {
-    version.set("2022.2.1.18")
-    type.set("AI")
+    version.set("2022.1.4")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:222.4582",
-            "io.flutter:73.0.2",
+            "Dart:221.6103.1",
+            "io.flutter:74.0.1",
             "org.intellij.plugins.markdown",
             "terminal", "java"
         )
@@ -40,7 +40,6 @@ kotlin {
 
 }
 
-///
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0") {
         exclude(group = "org.jetbrains.kotlinx")
@@ -116,7 +115,10 @@ dependencies {
 }
 
 
-var javaVersion = "17"
+
+
+
+var javaVersion = "11"
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = javaVersion
@@ -131,13 +133,20 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
-        untilBuild.set("222.*")
+        sinceBuild.set("221")
+        untilBuild.set("221.*")
         changeNotes.set(
             """
                 <div>
-                    <h1>3.4.0.as</h1>
+                    <h1>3.4.0.221.fix</h1>
                      <ul>
+                        <li>Fix bug that cannot be enabled in version 3.4.0.221</li>
+                     </ul>
+                </div>
+                <div>
+                    <h1>3.4.0.221</h1>
+                     <ul>
+                        <li>Adaptation 221</li>
                         <li>New: Flutter version detection</li>
                         <li>New: Community Link Entry</li>
                      </ul>
