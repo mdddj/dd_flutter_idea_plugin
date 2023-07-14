@@ -8,6 +8,9 @@ import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 
 class ApiCopyAll:MyAction({"Copy All"}) {
     override fun actionPerformed(e: AnActionEvent) {
+
+
+
         val api = e.api()!!
         val dataMap = mutableMapOf(
             "url" to api.url,

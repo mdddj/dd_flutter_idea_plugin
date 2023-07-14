@@ -48,6 +48,18 @@ fun Editor.getIndent(element: PsiElement): Int {
 
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
+
+    fun blockIconAndText(editor: Editor,element: PsiElement,icon: Icon,text: String) : InlayPresentation {
+        val lWidth = lineStart(editor, element)
+        val iText = iconText(icon, text)
+        return factory.seq(lWidth,iText)
+    }
+
+    fun blockText(editor: Editor,element: PsiElement,text: String) : InlayPresentation {
+        val lWitth = lineStart(editor, element)
+        return factory.seq(lWitth,factory.smallText(text).addRoundBg())
+    }
+
      fun lineStart(editor: Editor,element: PsiElement): InlayPresentation {
         val indent = editor.getIndent(element)
         val indentText = StringUtil.repeat("\t\t", indent)
@@ -55,14 +67,15 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     }
 
     fun iconText(icon: Icon,text: String) : InlayPresentation {
-        return factory.seq(factory.smallScaledIcon(icon),factory.smallText(text)).addRoundBg()
+        val iconInlay = factory.smallScaledIcon(icon)
+        return factory.seq(iconInlay,factory.smallText(text)).addRoundBg()
     }
 
     fun lineStartText(editor: Editor,element: PsiElement,text: String) : InlayPresentation {
         return factory.seq(lineStart(editor, element),factory.smallText(text).addRoundBg())
     }
 
-    fun InlayPresentation.addRoundBg() : InlayPresentation {
+    private fun InlayPresentation.addRoundBg() : InlayPresentation {
         return factory.roundWithBackgroundAndSmallInset(this)
     }
 

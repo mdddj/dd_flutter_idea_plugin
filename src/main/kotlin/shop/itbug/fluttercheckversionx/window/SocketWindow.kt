@@ -8,6 +8,7 @@ import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.request.RequestPanelUi
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
@@ -27,7 +28,7 @@ class SocketWindow : ToolWindowFactory {
     override fun createToolWindowContent(p0: Project, p1: ToolWindow) {
         //dio 监听窗口
         val socketRequestForm = SocketRequestForm(p0, p1)
-        val instance = ContentFactory.SERVICE.getInstance()
+        val instance = ContentFactory.getInstance()
         val createContent =
             instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
 
@@ -77,6 +78,14 @@ class SocketWindow : ToolWindowFactory {
         p1.contentManager.addContent(dartPluginContent)
 
 
+
+        //简单的一个处理请求的函数
+        val requestPanel = RequestPanelUi(p1,p0)
+        val requestPanelContent = instance.createContent(requestPanel,"Simple Request",false)
+        p1.contentManager.addContent(requestPanelContent)
+
     }
 
 }
+
+//

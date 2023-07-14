@@ -1,10 +1,10 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.8.21"
-    id("org.jetbrains.intellij") version "1.14.1"
+    id("org.jetbrains.kotlin.jvm") version "1.9.0-RC"
+    id("org.jetbrains.intellij") version "1.15.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.4.0.221.fix"
+version = "3.4.5"
 repositories {
     mavenCentral()
     google()
@@ -17,13 +17,13 @@ repositories {
 
 
 intellij {
-    version.set("2022.1.4")
-    type.set("IC")
+    version.set("2022.2.1.18")
+    type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:221.6103.1",
-            "io.flutter:74.0.1",
+            "Dart:222.4582",
+            "io.flutter:74.0.2",
             "org.intellij.plugins.markdown",
             "terminal", "java"
         )
@@ -41,76 +41,18 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.9.0") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("cn.hutool:hutool-all:5.8.15") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("org.smartboot.socket:aio-core:1.6.3") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    implementation("cn.hutool:hutool-all:5.8.15")
+    implementation("org.smartboot.socket:aio-core:1.6.3")
     implementation("com.alibaba.fastjson2:fastjson2:2.0.25")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("com.google.code.gson:gson:2.10.1") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("com.aallam.openai:openai-client:3.2.0") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    implementation("io.ktor:ktor-client-cio-jvm:2.2.4") {
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
+    implementation("io.ktor:ktor-client-cio-jvm:2.2.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 }
 
@@ -118,27 +60,28 @@ dependencies {
 
 
 
-var javaVersion = "11"
+var javaVersion = "17"
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = javaVersion
-    }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = javaVersion
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+        compilerOptions {
+
+        }
     }
 
     listProductsReleases {
     }
 
     patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("221.*")
+        sinceBuild.set("222")
+        untilBuild.set("222.*")
         changeNotes.set(
             """
                 <div>
-                    <h1>3.4.0.221.fix</h1>
+                    <h1>3.4.1.221</h1>
                      <ul>
                         <li>Fix bug that cannot be enabled in version 3.4.0.221</li>
                      </ul>
@@ -348,9 +291,4 @@ tasks {
     }
 }
 
-configurations.all {
-    exclude(group = "io.ktor", module = "kotlinx-coroutines-jdk8")
-    exclude(group = "io.ktor", module = "kotlinx-coroutines-core")
-    exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-jdk8")
-    exclude(group = "com.aallam.openai", module = "kotlinx-coroutines-core")
-}
+
