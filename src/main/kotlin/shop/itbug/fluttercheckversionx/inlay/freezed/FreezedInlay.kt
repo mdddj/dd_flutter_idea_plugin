@@ -49,8 +49,9 @@ class FreezedInlayCollector(edit:Editor) : FactoryInlayHintsCollector(edit) {
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
         val isFreezedClass = DartClassUtil.hasMetadata(element,"freezed") || DartClassUtil.hasMetadata(element,"Freezed")
         if(isFreezedClass){
+            println("是否为freezed对象")
             val lineStart = editor.getLineStart(element)
-            val inlayPresentation = inlayFactory.iconText(AllIcons.Actions.Properties,"Freezed class actions")
+            val inlayPresentation = inlayFactory.iconText(AllIcons.Actions.Properties,"Freezed Actions")
             sink.addBlockElement(lineStart,true,true,0,inlayPresentation)
         }
         return true

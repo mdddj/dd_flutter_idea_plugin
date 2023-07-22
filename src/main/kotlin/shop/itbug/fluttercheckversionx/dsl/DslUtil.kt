@@ -22,8 +22,11 @@ fun DialogPanel.showCenter(project: Project) {
 }
 
 fun DialogPanel.show(anActionEvent: AnActionEvent) {
-    JBPopupFactory.getInstance().createComponentPopupBuilder(this,null)
-        .createPopup().show(RelativePoint(anActionEvent.inputEvent.component.locationOnScreen))
+    anActionEvent.inputEvent?.let {
+        JBPopupFactory.getInstance().createComponentPopupBuilder(this,null)
+            .createPopup().show(RelativePoint(it.component.locationOnScreen))
+    }
+
 }
 
 /**

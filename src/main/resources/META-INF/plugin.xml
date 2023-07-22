@@ -47,6 +47,7 @@
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
+    <depends>org.jetbrains.idea.maven</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
@@ -160,10 +161,6 @@
     <extensionPoints>
     </extensionPoints>
 
-    <projectListeners>
-        <listener class="shop.itbug.fluttercheckversionx.listeners.PubspecYamlVersionFixedListener"
-                  topic="com.intellij.analysis.problemsView.ProblemsListener"/>
-    </projectListeners>
 
 
     <actions>
@@ -180,6 +177,10 @@
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>
 
+        <action id="IosFrameworkScanAction" class="shop.itbug.fluttercheckversionx.actions.IosFrameworkScanAction"
+                text="FrameworkScan">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
+        </action>
     </actions>
 
 
