@@ -12,8 +12,6 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
-import com.intellij.util.ui.JBFont
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.intellij.vcs.commit.NonModalCommitPanel.Companion.showAbove
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
@@ -91,12 +89,12 @@ class GeneraAssetsSettingPanel(
                 super.update(e)
             }
 
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.BGT
-            }
         },
-        WidgetUtil.getHelpAnAction {
-            WidgetUtil.showTopBalloon(it.inputEvent.component, PluginBundle.get("g.14"))
+        WidgetUtil.getHelpAnAction { it ->
+            it.inputEvent?.let {
+                WidgetUtil.showTopBalloon(it.component, PluginBundle.get("g.14"))
+            }
+
         },
         WidgetUtil.getMoneyAnAction()
     )
@@ -154,12 +152,6 @@ fun getGeneraAssetsPanel(
         }
         row(PluginBundle.get("g.10.1")) {
             checkBox(PluginBundle.get("g.10.2")).bindSelected(settingModel::showImageIconInEditor)
-        }
-        row {
-            label(PluginBundle.get("g.11")).component.apply {
-                font = JBFont.small()
-                foreground = JBUI.CurrentTheme.Link.Foreground.DISABLED
-            }
         }
     }
 

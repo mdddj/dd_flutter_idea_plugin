@@ -482,11 +482,11 @@ open class EditorTextPanel @JvmOverloads constructor(
                 CellRendererPane::class.java as Class<out CellRendererPane?>,
                 this as Component
             ) != null && (StartupUiUtil
-                .isUnderDarcula() || UIUtil.isUnderIntelliJLaF())
+                .isUnderDarcula || UIUtil.isUnderIntelliJLaF())
         ) {
             return parent.background
         }
-        if (StartupUiUtil.isUnderDarcula() /* || UIUtil.isUnderIntelliJLaF()*/) return UIUtil.getTextFieldBackground()
+        if (StartupUiUtil.isUnderDarcula) return UIUtil.getTextFieldBackground()
         return if (enabled) colorsScheme.defaultBackground else UIUtil.getInactiveTextFieldBackgroundColor()
     }
 
@@ -533,7 +533,7 @@ open class EditorTextPanel @JvmOverloads constructor(
         val size: Dimension = JBUI.size(1, 10)
         if (myEditor != null) {
             size.height = myEditor!!.lineHeight
-            if (UIUtil.isUnderDefaultMacTheme() || StartupUiUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF()) {
+            if (UIUtil.isUnderDefaultMacTheme() || StartupUiUtil.isUnderDarcula || UIUtil.isUnderIntelliJLaF()) {
                 size.height = Math.max(size.height, scale(16))
             }
             JBInsets.addTo(size, insets)

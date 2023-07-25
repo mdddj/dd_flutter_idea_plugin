@@ -30,7 +30,6 @@ fun String.getVirtualFile(): VirtualFile? {
 
 fun Project.jsonToFreezedRun(jsonText: String) {
     try {
-
         val jsonObject = JSON.parseObject(jsonText, JSONReader.Feature.SupportArrayToBean)
         val jsonObjectToFreezedCovertModelList =
             ModelToFreezedModelServiceImpl().jsonObjectToFreezedCovertModelList(jsonObject)

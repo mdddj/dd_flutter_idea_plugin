@@ -42,10 +42,12 @@
         ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
+    <depends>org.jetbrains.idea.maven</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
@@ -94,16 +96,19 @@
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
-<!--        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.inlay.DartAISetting"/>-->
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <!--   dio socket 相关通知    -->
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
+        <!--flutter新版本通知-->
+        <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
 
         <!--    检查插件是否在项目中已经使用过     -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
                                    language="yaml"
-
         />
+
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
+                                   language="Dart"/>
 
         <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
@@ -120,14 +125,8 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
-        <!--        open ai-->
-<!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartCodeAIInlay"-->
-<!--                                   language="Dart"/>-->
-
         <!--   插件socket服务     -->
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.socket.service.AppService"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
-        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -163,21 +162,11 @@
     <extensionPoints>
     </extensionPoints>
 
-    <projectListeners>
-        <listener class="shop.itbug.fluttercheckversionx.listeners.PubspecYamlVersionFixedListener"
-                  topic="com.intellij.analysis.problemsView.ProblemsListener"/>
-    </projectListeners>
-
 
     <actions>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
         </action>
-        <!--        <action id="DartFileGroupAction" class="shop.itbug.fluttercheckversionx.actions.DartFileGroupAction"-->
-        <!--                text="合并Dart导入">-->
-        <!--            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>-->
-        <!--        </action>-->
-
         <action id="AssetsAutoGenerateClassAction"
                 class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction"
                 icon="/icons/refresh.svg">
@@ -188,6 +177,11 @@
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>
 
+        <action id="IosFrameworkScanAction" class="shop.itbug.fluttercheckversionx.actions.IosFrameworkScanAction"
+                text="FrameworkScan">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
+        </action>
     </actions>
 
 

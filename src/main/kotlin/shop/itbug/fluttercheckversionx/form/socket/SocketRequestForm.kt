@@ -42,8 +42,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     private val apiListWrapper = JBScrollPane(apiList)
 
-//    private val apiWindowStatusText = ApiListStatusBar()
-
     //右侧面板
     private val rightFirstPanel = RightDetailPanel(project)
     private val myRightComponent = JPanel(CardLayout()).apply {
@@ -98,7 +96,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         SocketMessageBus.listening {
             autoScrollToMax()
         }
-//        addToBottom(apiWindowStatusText)
     }
 
 

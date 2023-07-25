@@ -4,10 +4,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -27,7 +24,6 @@ import shop.itbug.fluttercheckversionx.constance.igFlutterPlugin
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import java.io.File
-
 
 
 /**
@@ -56,7 +52,7 @@ class MyPsiElementUtil {
         fun createYamlKeyValueElement(project: Project, key: String, value: String): YAMLKeyValueImpl? {
             val createYamlDummyFile = createYamlDummyFile(project, "$key : $value")
             if (createYamlDummyFile != null) {
-                return PsiTreeUtil.findChildOfType(createYamlDummyFile,YAMLKeyValueImpl::class.java)
+                return PsiTreeUtil.findChildOfType(createYamlDummyFile, YAMLKeyValueImpl::class.java)
             }
             return null
         }
@@ -174,12 +170,58 @@ class MyPsiElementUtil {
             return map
         }
 
+        fun modifyPsiElementText(psiElement: PsiElement, newText: String) {
+            // 使用WriteCommandAction来执行修改操作
+            WriteCommandAction.runWriteCommandAction(psiElement.project) {
+
+                // 获取当前Psi文件的文档对象
+                val document = PsiDocumentManager.getInstance(psiElement.project)
+                    .getDocument(psiElement.containingFile)
+                if (document != null) {
+                    // 获取要修改的文本范围
+                    val startOffset = psiElement.textRange.startOffset
+                    val endOffset = psiElement.textRange.endOffset
+                    // 替换文本内容
+                    document.replaceString(startOffset, endOffset, newText)
+                    // 提交更改并更新Psi文件
+                    PsiDocumentManager.getInstance(psiElement.project).commitDocument(document)
+                }
+            }
+        }
+
+        fun findAllMatchingElements(psiElement: PsiElement, matchText: (text: String,psiElement: PsiElement) -> Boolean): List<PsiElement> {
+            val matchingElements: MutableList<PsiElement> = ArrayList()
+            if (matchText(psiElement.text,psiElement)) {
+                matchingElements.add(psiElement)
+            }
+            val children = psiElement.children
+            for (child in children) {
+                val childMatchingElements: List<PsiElement> = findAllMatchingElements(child, matchText)
+                matchingElements.addAll(childMatchingElements)
+            }
+
+            return matchingElements
+        }
 
     }
 
 
 }
 
+
+fun PsiElement.exByModifyPsiElementText(newText: String) {
+    MyPsiElementUtil.modifyPsiElementText(this, newText)
+}
+
+fun PsiElement.exByModifyAllPsiElementText(newText: String, oldText: String) {
+    val children = MyPsiElementUtil.findAllMatchingElements(this) { text,_ ->
+        return@findAllMatchingElements text == oldText
+    }
+    children.forEach {
+        it.exByModifyPsiElementText(newText)
+    }
+
+}
 
 /**
  * 判断此节点是否为flutter插件

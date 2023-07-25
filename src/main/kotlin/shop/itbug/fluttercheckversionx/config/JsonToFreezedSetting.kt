@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.config
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
@@ -24,6 +25,7 @@ data class JsonToFreezedSettingModel(
  * 状态存储
  */
 @State(name = "JsonToFreezedSettingModelConfig", storages = [Storage("JsonToFreezedSettingModelConfig.xml")])
+@Service(Service.Level.PROJECT)
 class JsonToFreezedSettingModelConfig : PersistentStateComponent<JsonToFreezedSettingModel> {
     private var stateModel = JsonToFreezedSettingModel()
     override fun getState(): JsonToFreezedSettingModel {

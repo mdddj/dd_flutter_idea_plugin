@@ -85,7 +85,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     private val myDataContext: AsyncDataContext = object : AsyncDataContext {
         override fun getData(dataId: String): Any? {
-            if (dataId == SELECT_KEY) {
+            if (dataId == "select-api") {
                 return this@ApiListPanel.selectedValue
             } else if (dataId == PROJECT_KEY) {
                 return project

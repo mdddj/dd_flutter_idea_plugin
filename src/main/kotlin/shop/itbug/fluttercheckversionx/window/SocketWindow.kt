@@ -77,6 +77,14 @@ class SocketWindow : ToolWindowFactory {
         p1.contentManager.addContent(dartPluginContent)
 
 
+
+        //简单的一个处理请求的函数
+//        val requestPanel = RequestPanelUi(p1,p0)
+//        val requestPanelContent = instance.createContent(requestPanel,"Simple Request",false)
+//        p1.contentManager.addContent(requestPanelContent)
+
     }
 
 }
+
+//

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -9,7 +10,8 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
+import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -27,7 +29,8 @@ enum class PluginActions(val title: String) {
     RunBuilder(PluginBundle.get("run.build_runner.build")),
     FlutterClan(PluginBundle.get("flutter.clean")),
     FlutterPushPlugin(PluginBundle.get("dart.pub.publish")),
-    JsonToFreezed("Json to Freezed")
+    JsonToFreezed("Json to Freezed"),
+    Discord("Discord")
 }
 
 ///用户面板
@@ -37,7 +40,7 @@ class MyUserBarFactory : StatusBarWidgetFactory {
     }
 
     override fun getDisplayName(): String {
-        return "典典账号登录"
+        return "FlutterCheckVersionX"
     }
 
     override fun isAvailable(project: Project): Boolean {
@@ -133,18 +136,11 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             SearchPlugin -> {
                 SearchDialog(project).show()
             }
-
-//            CheckVersion -> {
-//                val pubspecFile = MyPsiElementUtil.getPubSecpYamlFile(project)
-//                pubspecFile?.let {
-//                    val plugins = MyPsiElementUtil.getAllPlugins(project)
-//                    print(plugins)
-//                }
-//            }
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")
             FlutterPushPlugin -> runCommand(" dart pub publish")
             JsonToFreezed -> jsonToFreezedRun()
+            Discord -> BrowserUtil.browse(discordUrl)
         }
     }
 
@@ -158,7 +154,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     }
 
     private fun runCommand(code: String) {
-        TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX")
+        TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX")
             .executeCommand(code)
     }
 

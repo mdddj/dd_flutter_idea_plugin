@@ -1,5 +1,7 @@
 package note.setting
 
+import com.intellij.execution.filters.TextConsoleBuilderFactory
+import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.panel
 import note.jdbc.SqliteConnectManager
@@ -13,6 +15,7 @@ class InitFlutterPluginSettingDialog( override val project: Project) : MyDialogW
     init {
         super.init()
         title = "插件收藏"
+
     }
 
     override fun createCenterPanel(): JComponent {

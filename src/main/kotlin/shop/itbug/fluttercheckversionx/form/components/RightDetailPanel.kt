@@ -44,7 +44,7 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
     init {
         border = BorderFactory.createEmptyBorder()
         jsonViewInit()
-        add(actionsToolBar, BorderLayout.NORTH)
+        add(actionsToolBar(), BorderLayout.NORTH)
         FlutterApiClickBus.listening {
             changeShowValue(it)
         }
@@ -70,18 +70,18 @@ class RightDetailPanel(val project: Project) : JPanel(BorderLayout()) {
         jsonView.changeValue("")
     }
 
-    private val actionsToolBar: JComponent
-        get() {
-            val toolbar = DefaultActionGroup(*createAnActions).createWithToolbar("Request Json Toolbar")
+    private fun actionsToolBar() : JComponent
+        {
+            val toolbar = DefaultActionGroup(*createAnActions()).createWithToolbar("Request Json Toolbar")
             toolbar.targetComponent = this
             return toolbar.component
         }
 
-    private val createAnActions
-        get() : Array<AnAction> {
+    private fun createAnActions() : Array<AnAction> {
             return arrayOf(
                 MyActionButton(jsonToFreezedModelAction).action,
-                WidgetUtil.getCopyAnAction(jsonView.text)
+                WidgetUtil.getCopyAnAction(jsonView.text),
+                WidgetUtil.getDiscordAction()
             )
         }
 

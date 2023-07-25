@@ -1,9 +1,19 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import shop.itbug.fluttercheckversionx.constance.dartKeys
+import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclarationImplManager
 import java.awt.Color
+import java.awt.Point
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -30,6 +40,51 @@ fun String.firstChatToUpper() : String {
     return  CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, this)
 }
 
+/**
+ * 格式化文档
+ */
+fun PsiElement.reformatText() {
+    WriteCommandAction.runWriteCommandAction(this.project) {
+        CodeStyleManager.getInstance(this.project).reformatText(this.containingFile, 0, this.containingFile.textLength)
+    }
+}
+
+
+fun PsiElement.runWriteCommandAction(runnable: Runnable) {
+    WriteCommandAction.runWriteCommandAction(project,runnable)
+}
+
+/**
+ * 根据文本查找psi节点
+ * @param findText 要查找的文本
+ */
+fun PsiFile.findPsiElementByText(findText: String) : PsiElement? {
+    val c  = MyPsiElementUtil.findAllMatchingElements(this){ text: String, psiElement: PsiElement ->
+        return@findAllMatchingElements findText == text
+    }
+    return if(c.isNotEmpty()) c.first() else null
+}
+
+fun PsiElement.getRelativePoint(editor: Editor): RelativePoint {
+    val startPoint: Point = editor.offsetToXY(textRange.startOffset)
+    val endPoint: Point = editor.offsetToXY(textRange.endOffset)
+    val x: Int = (startPoint.x + endPoint.x) / 2
+    val y: Int = startPoint.y
+    return RelativePoint(editor.contentComponent, Point(x, y))
+}
+
+/**
+ * 根据psi节点获取文件名
+ */
+fun PsiElement.getFileName() : String {
+    return FileUtilRt.getNameWithoutExtension(this.containingFile.name)
+}
+
+
+fun DartFactoryConstructorDeclarationImpl.manager() = DartFactoryConstructorDeclarationImplManager(this)
+
+
+
 class Util {
     companion object {
 
@@ -39,16 +94,6 @@ class Util {
             return UIUtil.colorToHex(color)
         }
 
-        /**
-         * 字符串转换成Color对象
-         * @param colorStr 16进制颜色字符串
-         * @return Color对象
-         */
-        fun toColorFromString(colorStr: String): Color {
-            var c = colorStr
-            c = c.substring(4)
-            return Color(c.toInt(16))
-        }
 
 
         fun removeSpecialCharacters(string: String): String {

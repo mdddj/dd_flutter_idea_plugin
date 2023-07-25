@@ -16,7 +16,6 @@
             />
         </group>
     </actions>
-
     <actions>
         <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/flutter.svg">
             <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
@@ -30,11 +29,7 @@
                     text="Function Params To Freezed"  />
             <action id="dart-document-generate-action"
                     class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
-<!--            <action class="shop.itbug.fluttercheckversionx.actions.BaseApiSearchAction" id="base-api-search" text="API检测" />-->
             <action class="shop.itbug.fluttercheckversionx.actions.MoveClassToOtherFile" id="MoveClassToOtherFile"/>
-<!--            <action id="DartAiSwitchAction" class="shop.itbug.fluttercheckversionx.actions.DartAiSwitchAction"-->
-<!--                    description="Dart file ai switch">-->
-<!--            </action>-->
             <action id="GenerateClassSingletonModel"
                     class="shop.itbug.fluttercheckversionx.actions.GenerateClassSingletonModel"
                     text="Create a Singleton Class" description="Convert to singleton object">

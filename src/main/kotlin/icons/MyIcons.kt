@@ -11,6 +11,10 @@ object MyImages {
     @JvmField
     val test : Icon = load("/images/test.png")
 
+
+
+
+
     @JvmStatic
     fun load(path: String): Icon {
         return IconLoader.getIcon(path, MyImages::class.java)
