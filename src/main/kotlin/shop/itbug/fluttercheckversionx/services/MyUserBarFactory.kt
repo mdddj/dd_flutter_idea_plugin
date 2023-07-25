@@ -10,13 +10,13 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
-import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginActions.*
+import shop.itbug.fluttercheckversionx.util.RunUtil
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -115,7 +115,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     }
 
     private fun createPop(): JBPopup {
-        return JBPopupFactory.getInstance().createPopupChooserBuilder(values().asList())
+        return JBPopupFactory.getInstance().createPopupChooserBuilder(entries)
             .setItemChosenCallback { doActions(it) }
             .setRenderer { _, value, _, _, _ ->
                 return@setRenderer JBLabel(value.title).apply {
@@ -154,8 +154,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     }
 
     private fun runCommand(code: String) {
-        TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath, "FlutterCheckVersionX")
-            .executeCommand(code)
+        RunUtil.runCommand(project,"FlutterCheckVersionX",code)
     }
 
 }

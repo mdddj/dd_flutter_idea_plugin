@@ -15,11 +15,11 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
-import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.manager.DartClassManager
+import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.dart.DartClassUtil
 import shop.itbug.fluttercheckversionx.util.exByModifyAllPsiElementText
 import shop.itbug.fluttercheckversionx.util.toast
@@ -179,9 +179,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
             })
             add(object : MyAction({ "Run build runner" }) {
                 override fun actionPerformed(e: AnActionEvent) {
-                    TerminalToolWindowManager.getInstance(psiElement.project)
-                        .createLocalShellWidget(psiElement.project.basePath, "FlutterCheckVersionX")
-                        .executeCommand("flutter pub run build_runner build")
+                    RunUtil.runCommand(psiElement.project,"FlutterCheckVersionX","flutter pub run build_runner build")
                 }
             })
 
