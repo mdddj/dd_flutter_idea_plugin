@@ -59,7 +59,7 @@ fun PsiElement.runWriteCommandAction(runnable: Runnable) {
  * @param findText 要查找的文本
  */
 fun PsiFile.findPsiElementByText(findText: String) : PsiElement? {
-    val c  = MyPsiElementUtil.findAllMatchingElements(this){ text: String, psiElement: PsiElement ->
+    val c  = MyPsiElementUtil.findAllMatchingElements(this){ text: String, _: PsiElement ->
         return@findAllMatchingElements findText == text
     }
     return if(c.isNotEmpty()) c.first() else null

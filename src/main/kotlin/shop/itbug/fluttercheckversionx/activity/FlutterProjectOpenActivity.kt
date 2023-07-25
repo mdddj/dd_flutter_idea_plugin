@@ -11,26 +11,26 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import io.flutter.sdk.FlutterSdk
-import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.FlutterService
 import shop.itbug.fluttercheckversionx.services.Release
 import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.RunUtil
 
 /**
  * 梁典典
  * 当项目打开的时候,会执行这个类的runActivity方法
  * 在这里启动一个子线程去检测项目中的pubspec.yaml文件.并执行检测新版本
  */
-class FlutterProjectOpenActivity : ProjectActivity, Disposable {
+class FlutterProjectOpenActivity : StartupActivity, Disposable {
 
     /**
      * 项目在idea中打开时执行函数
@@ -85,10 +85,7 @@ class FlutterProjectOpenActivity : ProjectActivity, Disposable {
     }
 
 
-    override suspend fun execute(project: Project) {
-        run(project)
-        checkFlutterLastVersion(project)
-    }
+
 
 
     /**
@@ -128,22 +125,24 @@ class FlutterProjectOpenActivity : ProjectActivity, Disposable {
 
 
 
-        createNotification.addAction(object : AnAction("Upgrade") {
-            override fun actionPerformed(p0: AnActionEvent) {
-                TerminalToolWindowManager.getInstance(project).createLocalShellWidget(project.basePath,"flutter upgrade").executeCommand("flutter upgrade")
-                createNotification.hideBalloon()
-            }
+        createNotification.addAction(
+            object : AnAction("Upgrade") {
+                override fun actionPerformed(p0: AnActionEvent) {
+                    RunUtil.runCommand(project,"flutter upgrade","flutter upgrade")
+                    createNotification.hideBalloon()
+                }
 
-            override fun update(e: AnActionEvent) {
-                e.presentation.icon = MyIcons.flutter
-                super.update(e)
-            }
+                override fun update(e: AnActionEvent) {
+                    e.presentation.icon = MyIcons.flutter
+                    super.update(e)
+                }
 
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.BGT
-            }
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
 
-        },)
+            },
+        )
         createNotification.addAction(object : AnAction("Cancel"){
             override fun actionPerformed(p0: AnActionEvent) {
                 createNotification.hideBalloon()
@@ -151,5 +150,10 @@ class FlutterProjectOpenActivity : ProjectActivity, Disposable {
             }
         })
         createNotification.notify(project)
+    }
+
+    override fun runActivity(project: Project) {
+        run(project)
+        checkFlutterLastVersion(project)
     }
 }
