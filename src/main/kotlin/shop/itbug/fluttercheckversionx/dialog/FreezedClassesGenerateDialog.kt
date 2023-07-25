@@ -36,7 +36,6 @@ class FreezedClassesGenerateDialog(
     private val freezedClasses: MutableList<FreezedCovertModel>
 ) :
     MyDialogWrapper(project) {
-
     private val settingInstance = JsonToFreezedSettingModelConfig.getInstance(project)
     private val setting = settingInstance.state
     private val tabView = JBTabbedPane()

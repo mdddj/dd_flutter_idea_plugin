@@ -299,9 +299,6 @@ class MyDartPsiElementUtil {
             )
         }
 
-        fun freezedGetDartFactoryConstructorDeclarationImpl(file: PsiFile): DartFactoryConstructorDeclarationImpl {
-            return PsiTreeUtil.findChildOfType(file, DartFactoryConstructorDeclarationImpl::class.java)!!
-        }
 
         /**
          * 生成可空的属性
@@ -348,6 +345,12 @@ class MyDartPsiElementUtil {
                 }
             """.trimIndent()
             return DartElementGenerator.createDummyFile(project, text)
+        }
+
+
+        fun createDartPart(text: String,project: Project) : DartPartStatementImpl? {
+            val createDummyFile = DartElementGenerator.createDummyFile(project, text)
+            return PsiTreeUtil.getChildOfType(createDummyFile,DartPartStatementImpl::class.java)
         }
 
 

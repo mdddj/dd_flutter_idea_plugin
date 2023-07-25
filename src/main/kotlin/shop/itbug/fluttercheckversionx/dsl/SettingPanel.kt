@@ -27,9 +27,8 @@ fun settingPanel(
 ): DialogPanel {
 
     val alarm = Alarm(parentDisposable)
-    lateinit var myPanel: DialogPanel
 
-    myPanel = panel {
+    val myPanel: DialogPanel = panel {
 
         row {
             button(PluginBundle.get("window.chat.loginDialog.text")) {
@@ -42,7 +41,7 @@ fun settingPanel(
 
 
             row(PluginBundle.get("setting.language")) {
-                segmentedButton(listOf("System", "中文", "English")) { it }.bind(object :
+                segmentedButton(listOf("System", "中文", "繁體", "English","한국어","日本語")) { it }.bind(object :
                     ObservableMutableProperty<String> {
                     override fun set(value: String) {
                         model.lang = value
@@ -51,23 +50,20 @@ fun settingPanel(
                     override fun afterChange(listener: (String) -> Unit) {
                     }
 
-                    override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
-                    }
-
                     override fun get(): String {
                         return model.lang
                     }
 
                 })
             }
-            //.comment(PluginBundle.get("setting.reset.tip"))
+            .comment(PluginBundle.get("setting.reset.tip"))
 
         }
 
-        group("Diox") {
-            row("Diox ${PluginBundle.get("setting.listening.port")}") {
+        group("Dio") {
+            row("Dio ${PluginBundle.get("setting.listening.port")}") {
                 textField().bindText(model::serverPort)
-            }
+            }.comment(PluginBundle.get("setting.reset.tip"))
 
 
 //            新接口弹出提醒
@@ -104,15 +100,12 @@ fun settingPanel(
             row(PluginBundle.get("ass.1")) {
                 textField().bindText(model::assetCompilationTriggerString)
             }
-            //.comment(PluginBundle.get("ass.2"))
             row(PluginBundle.get("ass.3")) {
                 intTextField().bindIntText(model::assetCompilationTriggerLen)
             }
-            //.comment(PluginBundle.get("ass.4"))
             row(PluginBundle.get("ass.5")) {
                 textField().bindText(model::assetScanFolderName)
             }
-            //.comment(PluginBundle.get("ass.6"))
         }
     }
 

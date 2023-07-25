@@ -49,41 +49,59 @@ fun Editor.getIndent(element: PsiElement): Int {
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
-    fun blockIconAndText(editor: Editor,element: PsiElement,icon: Icon,text: String) : InlayPresentation {
+    fun blockIconAndText(editor: Editor, element: PsiElement, icon: Icon, text: String): InlayPresentation {
         val lWidth = lineStart(editor, element)
         val iText = iconText(icon, text)
-        return factory.seq(lWidth,iText)
+        return factory.seq(lWidth, iText)
     }
 
-    fun blockText(editor: Editor,element: PsiElement,text: String) : InlayPresentation {
-        val lWitth = lineStart(editor, element)
-        return factory.seq(lWitth,factory.smallText(text).addRoundBg())
+    fun blockText(editor: Editor, element: PsiElement, text: String): InlayPresentation {
+        val w = lineStart(editor, element)
+        return factory.seq(w, factory.smallText(text).addRoundBg())
     }
 
-     fun lineStart(editor: Editor,element: PsiElement): InlayPresentation {
+    private fun lineStart(editor: Editor, element: PsiElement): InlayPresentation {
         val indent = editor.getIndent(element)
         val indentText = StringUtil.repeat("\t\t", indent)
         return factory.text(indentText)
     }
 
-    fun iconText(icon: Icon,text: String) : InlayPresentation {
+
+    fun iconRoundClick(icon: Icon,clicked: InlayPresentationClickHandle? = null): InlayPresentation {
+        return factory.smallScaledIcon(icon).addRoundBg().clickHandle(clicked)
+    }
+
+    /**
+     * 图标+文字
+     * @param iconIsInLeft 图标是否在左边,false: 图标在右边
+     */
+    fun iconText(
+        icon: Icon,
+        text: String,
+        iconIsInLeft: Boolean = true,
+        handle: InlayPresentationClickHandle? = null
+    ): InlayPresentation {
         val iconInlay = factory.smallScaledIcon(icon)
-        return factory.seq(iconInlay,factory.smallText(text)).addRoundBg()
+        return if (iconIsInLeft) {
+            factory.seq(iconInlay, factory.smallText(text)).addRoundBg().clickHandle(handle)
+        } else {
+            factory.seq(factory.smallText(text), iconInlay).addRoundBg().clickHandle(handle)
+        }
     }
 
-    fun lineStartText(editor: Editor,element: PsiElement,text: String) : InlayPresentation {
-        return factory.seq(lineStart(editor, element),factory.smallText(text).addRoundBg())
+    fun lineStartText(editor: Editor, element: PsiElement, text: String): InlayPresentation {
+        return factory.seq(lineStart(editor, element), factory.smallText(text).addRoundBg())
     }
 
-    private fun InlayPresentation.addRoundBg() : InlayPresentation {
+    private fun InlayPresentation.addRoundBg(): InlayPresentation {
         return factory.roundWithBackgroundAndSmallInset(this)
     }
 
-    private fun InlayPresentation.clickHandle(handle:  InlayPresentationClickHandle?) : InlayPresentation {
-        return  factory.mouseHandling(this, clickListener = handle,null)
+    private fun InlayPresentation.clickHandle(handle: InlayPresentationClickHandle?): InlayPresentation {
+        return factory.mouseHandling(this, clickListener = handle, null)
     }
 
-    fun simpleText(text: String, tip: String?,handle: InlayPresentationClickHandle?): InlayPresentation {
+    fun simpleText(text: String, tip: String?, handle: InlayPresentationClickHandle?): InlayPresentation {
         return text(text).bg().addTip(tip ?: text).clickHandle(handle)
     }
 
@@ -137,21 +155,19 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     )
 
 
-
-
     private fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> =
         MyPluginMenusAvtionPopup(actionMenus, itemSelected)
 
 
-    fun getImageWithPath(path: String,basePath: String) : InlayPresentation? {
-        return try{
-            if(!File(path).exists()){
-               return null
+    fun getImageWithPath(path: String, basePath: String): InlayPresentation? {
+        return try {
+            if (!File(path).exists()) {
+                return null
             }
-            val i = ImageIcon(path).image.getScaledInstance(16,16, Image.SCALE_SMOOTH)
-            val imageIcon : Icon = ImageIcon(i)
+            val i = ImageIcon(path).image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)
+            val imageIcon: Icon = ImageIcon(i)
             return factory.icon(imageIcon).addTip(basePath)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             println("$path 读取图片失败:$e")
             null
         }

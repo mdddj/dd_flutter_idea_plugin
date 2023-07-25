@@ -107,7 +107,8 @@
                                    language="yaml"
         />
 
-        <codeInsight.inlayProvider  implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay" language="Dart"  />
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
+                                   language="Dart"/>
 
         <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
@@ -162,7 +163,6 @@
     </extensionPoints>
 
 
-
     <actions>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
                 text="搜索pub包">
@@ -179,7 +179,8 @@
 
         <action id="IosFrameworkScanAction" class="shop.itbug.fluttercheckversionx.actions.IosFrameworkScanAction"
                 text="FrameworkScan">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
     </actions>
 

@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.4.5"
+version = "3.5.0.eap"
 repositories {
     mavenCentral()
     google()
@@ -79,6 +79,24 @@ tasks {
         sinceBuild.set("222")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.5.0.eap (2023-07-25)</h1>
+                     <ul>
+                        <li>添加freezed快捷操作菜单</li>
+                        <li>新增韩语,日语,繁体等多国语言</li>
+                        <li>其他若干细节优化</li>
+                     </ul>
+                     <ul>
+                        <li>freezedショートカットメニューの追加</li>
+                        <li>韓国語、日本語、繁体字など多言語を追加</li>
+                        <li>その他の詳細の最適化</li>
+                     </ul>
+                     <ul>
+                        <li>freezed 바로 가기 메뉴 추가</li>
+                        <li>한국어, 일본어, 번체 등 다국어 추가</li>
+                        <li>기타 몇 가지 세부 최적화</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.4.1.221</h1>
                      <ul>

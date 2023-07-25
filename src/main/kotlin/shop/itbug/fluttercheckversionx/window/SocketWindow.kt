@@ -8,7 +8,6 @@ import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.request.RequestPanelUi
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
@@ -80,9 +79,9 @@ class SocketWindow : ToolWindowFactory {
 
 
         //简单的一个处理请求的函数
-        val requestPanel = RequestPanelUi(p1,p0)
-        val requestPanelContent = instance.createContent(requestPanel,"Simple Request",false)
-        p1.contentManager.addContent(requestPanelContent)
+//        val requestPanel = RequestPanelUi(p1,p0)
+//        val requestPanelContent = instance.createContent(requestPanel,"Simple Request",false)
+//        p1.contentManager.addContent(requestPanelContent)
 
     }
 

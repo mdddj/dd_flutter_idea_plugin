@@ -11,6 +11,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
+import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -90,7 +91,7 @@ object WidgetUtil {
     fun getDiscordAction() :AnAction {
         return object : MyDumbAwareAction(MyIcons.discord) {
             override fun actionPerformed(p0: AnActionEvent) {
-                BrowserUtil.browse("https://discord.gg/6PJ5czXn")
+                BrowserUtil.browse(discordUrl)
             }
         }
     }

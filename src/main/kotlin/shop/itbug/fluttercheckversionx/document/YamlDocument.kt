@@ -7,9 +7,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.elementType
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
-import org.slf4j.LoggerFactory
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.PubService
@@ -21,9 +19,6 @@ import shop.itbug.fluttercheckversionx.util.isDartPluginElement
  * pub包自动提示的文档
  */
 class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
-
-    private val logger = LoggerFactory.getLogger(YamlDocument::class.java)
-
 
     /**
      * 生成插件版本的提示
@@ -115,7 +110,6 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
 
     @Deprecated("Deprecated in Java")
     override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
-        logger.info("hasDocumentationFor >> ${element.elementType}")
         return false
     }
 
