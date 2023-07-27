@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.5.0.as"
+version = "3.5.1.as"
 repositories {
     mavenCentral()
     google()
@@ -17,13 +17,13 @@ repositories {
 
 
 intellij {
-    version.set("2022.2.1.18")
+    version.set("2022.3.1.18")
     type.set("AI")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:222.4582",
-            "io.flutter:74.0.2",
+            "Dart:223.8950",
+            "io.flutter:74.0.3",
             "org.intellij.plugins.markdown",
             "terminal"
         )
@@ -76,12 +76,17 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
-        untilBuild.set("222.*")
+        sinceBuild.set("223")
+        untilBuild.set("223.*")
         changeNotes.set(
             """
                 <div>
-                    <h1>3.5.0.as (2023-07-25)</h1>
+                    <h1>3.5.1.as (2023-07-27)</h1>
+                    <ul>
+                        <li>Add Freezed Shortcut Menu</li>
+                        <li>Added multiple languages such as Korean, Japanese, and Traditional Chinese</li>
+                        <li>Optimization of other details</li>
+                     </ul>
                      <ul>
                         <li>添加freezed快捷操作菜单</li>
                         <li>新增韩语,日语,繁体等多国语言</li>

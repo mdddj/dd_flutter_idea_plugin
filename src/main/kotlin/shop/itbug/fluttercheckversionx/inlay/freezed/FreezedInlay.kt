@@ -67,12 +67,6 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
         val isFreezedClass =
             DartClassUtil.hasMetadata(element, "freezed") || DartClassUtil.hasMetadata(element, "Freezed")
         if (isFreezedClass) {
-//            val lineStart = editor.getLineStart(element)
-//            val inlayPresentation =
-//                inlayFactory.iconText(AllIcons.General.ChevronDown, "Freezed Actions ", false) { mouseEvent, point ->
-//                    showFreezedActionMenu(mouseEvent, point, element)
-//                }
-//            sink.addBlockElement(lineStart, true, true, 0, inlayPresentation)
             val manager = DartClassManager(psiElement = element as DartClassDefinitionImpl)
             val freezedElement = manager.findMataDataByText("freezed") ?: manager.findMataDataByText("Freezed")
             freezedElement?.let {
