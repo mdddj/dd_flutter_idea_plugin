@@ -36,6 +36,23 @@ import javax.swing.event.ListSelectionListener
  */
 class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
 
+    fun createPopupMenu(): ListPopup {
+        return JBPopupFactory.getInstance()
+            .createActionGroupPopup(PluginBundle.get("menu"), myActionGroup, myDataContext, true, { dispose() }, 10)
+
+    }
+    private val myDataContext: AsyncDataContext = object : AsyncDataContext {
+        override fun getData(dataId: String): Any? {
+            if (dataId == "select-api") {
+                return this@ApiListPanel.selectedValue
+            } else if (dataId == PROJECT_KEY) {
+                return project
+            }
+            return null
+        }
+    }
+
+
     private val appService = service<AppService>()
     private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
 
@@ -70,29 +87,9 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
 
-    /**
-     * 查看菜单
-     */
-    fun createPopupMenu(): ListPopup {
-        return JBPopupFactory.getInstance()
-            .createActionGroupPopup(PluginBundle.get("menu"), myActionGroup, myDataContext, true, { dispose() }, 10)
-
-    }
-
     private val myActionGroup: ActionGroup
         get() = ActionManager.getInstance().getAction("dio-window-view-params") as ActionGroup
 
-
-    private val myDataContext: AsyncDataContext = object : AsyncDataContext {
-        override fun getData(dataId: String): Any? {
-            if (dataId == "select-api") {
-                return this@ApiListPanel.selectedValue
-            } else if (dataId == PROJECT_KEY) {
-                return project
-            }
-            return null
-        }
-    }
 
     /**
      * 菜单销毁回调
@@ -197,7 +194,13 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
-            appendLine("IP:${Util.resolveLocalAddresses().filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }.map { it.hostAddress }}", SimpleTextAttributes.GRAYED_ATTRIBUTES){}
+            appendLine(
+                "IP:${
+                    Util.resolveLocalAddresses()
+                        .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
+                        .map { it.hostAddress }
+                }", SimpleTextAttributes.GRAYED_ATTRIBUTES
+            ) {}
         }
     }
 
