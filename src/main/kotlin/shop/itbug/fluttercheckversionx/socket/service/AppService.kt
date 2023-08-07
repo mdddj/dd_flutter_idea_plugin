@@ -63,6 +63,9 @@ class AppService : DioApiService.HandleFlutterApiModel {
     //自动滚动到底部
     var apiListAutoScrollerToMax = true
 
+    //右键选中的项目
+    var currentSelectRequest : Request? = null
+
     private val messageBus get() = ApplicationManager.getApplication().messageBus
 
     /**

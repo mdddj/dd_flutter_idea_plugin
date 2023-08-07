@@ -1,9 +1,10 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.impl.AsyncDataContext
+import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -31,25 +32,25 @@ import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
+
 /**
  * api列表
  */
 class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
 
-    fun createPopupMenu(): ListPopup {
-        return JBPopupFactory.getInstance()
-            .createActionGroupPopup(PluginBundle.get("menu"), myActionGroup, myDataContext, true, { dispose() }, 10)
 
-    }
-    private val myDataContext: AsyncDataContext = object : AsyncDataContext {
-        override fun getData(dataId: String): Any? {
-            if (dataId == "select-api") {
-                return this@ApiListPanel.selectedValue
-            } else if (dataId == PROJECT_KEY) {
-                return project
-            }
-            return null
-        }
+    fun createPopupMenu(): ListPopup {
+
+        return JBPopupFactory.getInstance()
+            .createActionGroupPopup(
+                PluginBundle.get("menu"),
+                myActionGroup,
+                DataManager.getInstance().getDataContext(this),
+                true,
+                { dispose() },
+                10
+            )
+
     }
 
 
@@ -68,6 +69,18 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         DioWindowCleanRequests.listening { listModel().clear() }
     }
 
+
+    override fun setDataProvider(provider: DataProvider) {
+        super.setDataProvider { s ->
+            {
+                if (s == SELECT_KEY) {
+                    this.selectedValue
+                }
+            }
+        }
+    }
+
+
     /**
      * 右键菜单监听
      */
@@ -78,6 +91,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
                 if (e != null && SwingUtilities.isRightMouseButton(e)) {
                     val index = this@ApiListPanel.locationToIndex(e.point)
                     selectedIndex = index
+                    appService.currentSelectRequest = selectedValue
                     SwingUtilities.invokeLater {
                         createPopupMenu().show(RelativePoint(Point(e.locationOnScreen)))
                     }
@@ -215,7 +229,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     companion object {
         const val SELECT_KEY = "select-api"
-        const val PROJECT_KEY = "project-"
     }
 
 }

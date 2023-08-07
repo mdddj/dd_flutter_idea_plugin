@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.actions
 
 import cn.hutool.core.util.URLUtil
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
@@ -14,13 +15,17 @@ class ApiCopyPathAction: MyAction({"Copy Path"}) {
         val path = URLUtil.getPath(url)
 
         path.copyTextToClipboard().apply {
-            e.apiListProject()?.toast("Copy succeeded!")
+            e.project?.toast("Copy succeeded!")
         }
     }
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.api()!=null
         super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 
 }

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
@@ -12,13 +13,17 @@ import shop.itbug.fluttercheckversionx.util.toast
 class DioWindowCopyAction : MyAction(PluginBundle.getLazyMessage("window.idea.dio.view.copy")) {
     override fun actionPerformed(e: AnActionEvent) {
         e.api()?.url?.copyTextToClipboard()?.apply {
-            e.apiListProject()?.toast("Copy succeeded!")
+            e.project?.toast("Copy succeeded!")
         }
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.apiListProject() != null && e.api() != null
+        e.presentation.isEnabled =  e.api() != null
         super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 
 

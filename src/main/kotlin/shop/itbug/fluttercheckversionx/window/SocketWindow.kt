@@ -13,6 +13,8 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
+import shop.itbug.fluttercheckversionx.window.hive.HiveWindow
+import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
 //是否开启找工作窗口
 const val ENABLE_FIND_JOBS_WINDOW = false
@@ -78,11 +80,16 @@ class SocketWindow : ToolWindowFactory {
 
 
 
-        //简单的一个处理请求的函数
-//        val requestPanel = RequestPanelUi(p1,p0)
-//        val requestPanelContent = instance.createContent(requestPanel,"Simple Request",false)
-//        p1.contentManager.addContent(requestPanelContent)
+        // sp工具
+        val spWindow = SpWindow(p0,p1)
+        val spContent = instance.createContent(spWindow,"Shared Preferences Tool",false)
+        p1.contentManager.addContent(spContent)
 
+
+        // hive 工具
+        val hiveWindow = HiveWindow()
+        val hiveContent = instance.createContent(hiveWindow,"Hive Tool",false)
+        p1.contentManager.addContent(hiveContent)
     }
 
 }

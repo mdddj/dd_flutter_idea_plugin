@@ -3,13 +3,13 @@ package shop.itbug.fluttercheckversionx.form.sub
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONWriter
 import com.intellij.json.JsonLanguage
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.UIUtil
-import java.awt.BorderLayout
+import com.intellij.util.ui.components.BorderLayoutPanel
 import javax.swing.BorderFactory
-import javax.swing.JPanel
 
 /**
  * json viewer
@@ -19,7 +19,7 @@ import javax.swing.JPanel
  *
  */
 
-class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
+class JsonValueRender(var project: Project) : BorderLayoutPanel() {
 
 
     private var jsonView: LanguageTextField = LanguageTextField(JsonLanguage.INSTANCE, project, "", false)
@@ -32,8 +32,8 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
         jsonView.background = UIUtil.getPanelBackground()
         val s = JBScrollPane(jsonView)
         s.border = BorderFactory.createEmptyBorder()
-        add(s, BorderLayout.CENTER)
         background = UIUtil.getPanelBackground()
+        addToCenter(s)
     }
 
 
@@ -43,7 +43,9 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
     fun changeValue(json: Any?) {
         if (json != null && !project.isDisposed) {
             val changeJson = changeJson(json)
-            jsonView.text = changeJson
+            WriteCommandAction.runWriteCommandAction(project) {
+                jsonView.text = changeJson
+            }
         }
     }
 

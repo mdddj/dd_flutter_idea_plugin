@@ -85,7 +85,11 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
         val file = project.getPubspecYAMLFile()
         file?.containingFile?.let { DaemonCodeAnalyzer.getInstance(project).restart(it) }
         val component = JBPopupFactory.getInstance()
-            .createComponentPopupBuilder(AllPluginsCheckVersion(project), fileEditor.component).createPopup()
+            .createComponentPopupBuilder(AllPluginsCheckVersion(project) {
+                file?.containingFile?.let {
+                    DaemonCodeAnalyzer.getInstance(project).restart(it)
+                }
+            }, fileEditor.component).createPopup()
         component.show(RelativePoint(checkLabel.locationOnScreen))
 
     }

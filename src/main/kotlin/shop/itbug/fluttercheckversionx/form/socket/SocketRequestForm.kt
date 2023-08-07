@@ -144,6 +144,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     }
 
     override fun covertJsonError(e: Exception, aio: AioSession?) {
+        e.printStackTrace()
         project.toastWithError("$e")
     }
 

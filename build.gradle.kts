@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.5.1.as"
+version = "3.6.0.as"
 repositories {
     mavenCentral()
     google()
@@ -15,15 +15,35 @@ repositories {
 }
 
 
-
+/** as 最新版 2022.3.1.18
+ * listOf(
+ *             "yaml",
+ *             "Dart:223.8950",
+ *             "io.flutter:75.0.2",
+ *             "org.intellij.plugins.markdown",
+ *             "terminal"
+ *         )
+ *         sinceBuild.set("223")
+ *         untilBuild.set("223.*")
+ */
+/**
+ * eap
+ * listOf(
+ *             "yaml",
+ *             "Dart:232.8660.129",
+ *             "io.flutter:75.1.4",
+ *             "org.intellij.plugins.markdown",
+ *             "terminal"
+ *         )
+ */
 intellij {
-    version.set("2022.3.1.18")
-    type.set("AI")
+    version.set("LATEST-EAP-SNAPSHOT")
+    type.set("IC")
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8950",
-            "io.flutter:74.0.3",
+            "Dart:232.8660.129",
+            "io.flutter:75.1.4",
             "org.intellij.plugins.markdown",
             "terminal"
         )
@@ -76,10 +96,37 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223")
-        untilBuild.set("223.*")
+        sinceBuild.set("231")
+        untilBuild.set("232.*")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.6.0.as</h1>
+                    <ul>
+                        <li>Bug 修复</li>
+                        <li>添加shared_preferences查看工具</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>Bug fix</li>
+                        <li>Add `shared_Preferences` viewing tool</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>bug修復</li>
+                        <li>添加“shared_Preferences”查看工具</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>けっかん修复</li>
+                        <li>shared _ Preferences表示ツールの追加</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>결함修复</li>
+                        <li>shared_Preferences 보기 도구 추가</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.5.1.as (2023-07-27)</h1>
                     <ul>

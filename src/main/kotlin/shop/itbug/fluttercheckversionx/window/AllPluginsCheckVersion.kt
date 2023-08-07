@@ -19,7 +19,7 @@ import java.awt.Component
 import javax.swing.*
 
 ///检测版本小窗口
-class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
+class AllPluginsCheckVersion(val project: Project, val onDone: () -> Unit) : JPanel(BorderLayout()) {
 
     private var topTipLabel = JBLabel("check")
     private var bottomTipLabel = JBLabel("loading...")
@@ -70,6 +70,8 @@ class AllPluginsCheckVersion(val project: Project) : JPanel(BorderLayout()) {
                     }
                 }
                 bottomTipLabel.text = "Done"
+                onDone()
+
             }
         }
     }

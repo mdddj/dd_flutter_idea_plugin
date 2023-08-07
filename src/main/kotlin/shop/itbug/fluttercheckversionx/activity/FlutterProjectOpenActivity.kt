@@ -76,6 +76,8 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
         })
 
         cleanPubPluginsCache()
+
+        CacheUtil.clean()
     }
 
 

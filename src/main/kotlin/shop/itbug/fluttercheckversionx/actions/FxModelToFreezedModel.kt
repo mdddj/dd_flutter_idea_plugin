@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dialog.FreezedCovertDialog
@@ -23,5 +24,8 @@ class FxModelToFreezedModel : MyAction() {
         super.update(e)
     }
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 
 }

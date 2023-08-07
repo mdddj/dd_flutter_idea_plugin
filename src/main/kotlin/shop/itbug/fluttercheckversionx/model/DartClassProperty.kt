@@ -76,7 +76,7 @@ private fun String.dartNameStandard(): String {
  * 对命名进行驼峰格式化
  */
 private fun String.nomenclatureOfHumps(isEnable: Boolean): String {
-    return if (isEnable) CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this) else this
+    return if (isEnable.not()) CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this) else this
 }
 
 fun DartClassProperty.formatType(useDefaultValue: Boolean, isJson: Boolean = true): String {
