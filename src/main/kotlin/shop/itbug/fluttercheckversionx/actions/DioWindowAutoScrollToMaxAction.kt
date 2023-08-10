@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
@@ -20,6 +21,11 @@ class DioWindowAutoScrollToMaxAction : MyToggleAction(PluginBundle.getLazyMessag
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
         appService.setIsAutoScrollToMax(state)
+    }
+
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return  ActionUpdateThread.BGT
     }
 
 

@@ -114,8 +114,9 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
         )
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun createPop(): JBPopup {
-        return JBPopupFactory.getInstance().createPopupChooserBuilder(entries)
+        return JBPopupFactory.getInstance().createPopupChooserBuilder(PluginActions.entries.toList())
             .setItemChosenCallback { doActions(it) }
             .setRenderer { _, value, _, _, _ ->
                 return@setRenderer JBLabel(value.title).apply {

@@ -1,23 +1,23 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import com.alibaba.fastjson2.JSONObject
-import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.ui.LanguageTextField
 import com.intellij.ui.components.JBScrollPane
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
 import javax.swing.JComponent
 
 class JsonToFreezedInputDialog(val project: Project) : DialogWrapper(project) {
-    private val jsonEditView = LanguageTextField(
-        JsonLanguage.INSTANCE,
-        project,
-        "",
-        false
-    )
+//    private val jsonEditView = LanguageTextField(
+//        JsonLanguage.INSTANCE,
+//        project,
+//        "",
+//        false
+//    )
+private val jsonEditView = JsonEditorTextPanel(project)
 
     init {
         super.init()

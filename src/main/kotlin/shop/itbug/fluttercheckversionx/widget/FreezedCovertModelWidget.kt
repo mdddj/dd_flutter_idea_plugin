@@ -1,10 +1,8 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.LanguageTextField
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.bindSelected
@@ -20,7 +18,7 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
     JBPanel<FreezedCovertModelWidget>(BorderLayout()) {
 
 //    private val editView = SwingUtil.getDartEditor(project,"")
-        private val editView = LanguageTextField(PlainTextLanguage.INSTANCE,project,"",false)
+        private val editView = DartEditorTextPanel(project)
 
     init {
         add(JBScrollPane(editView.component), BorderLayout.CENTER)

@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.6.0.as"
+version = "3.6.0.eap"
 repositories {
     mavenCentral()
     google()
@@ -96,12 +96,12 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
+        sinceBuild.set("232")
         untilBuild.set("232.*")
         changeNotes.set(
             """
                 <div>
-                    <h1>3.6.0.as</h1>
+                    <h1>3.6.0</h1>
                     <ul>
                         <li>Bug 修复</li>
                         <li>添加shared_preferences查看工具</li>

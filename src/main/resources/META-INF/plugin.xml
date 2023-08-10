@@ -56,6 +56,8 @@
     <extensions defaultExtensionNs="com.intellij">
 
 
+        <fileDocumentSynchronizationVetoer implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer" />
+
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
@@ -155,11 +157,17 @@
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
 
 
+
+
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState" />
+
     </extensions>
 
 
-    <extensionPoints>
-    </extensionPoints>
+
+<!--    <extensionPoints>-->
+<!--        <extensionPoint interface="shop.itbug.fluttercheckversionx.save.DartFileSaveActionListen" name="dartFileSave" />-->
+<!--    </extensionPoints>-->
 
 
     <actions>

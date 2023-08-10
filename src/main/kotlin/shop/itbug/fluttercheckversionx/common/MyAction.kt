@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.common
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
@@ -16,6 +17,9 @@ abstract class MyAction : AnAction {
     constructor(name: Supplier<String>, icon: Icon) : super(name, icon)
     constructor(title: String, desc: String, icon: Icon) : super(title, desc, icon)
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 }
 
 abstract class MyDumbAwareAction : DumbAwareAction {
@@ -26,17 +30,22 @@ abstract class MyDumbAwareAction : DumbAwareAction {
 
     constructor(title: String, desc: String, icon: Icon) : super(title, desc, icon)
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 }
 
-abstract class MyToggleAction : ToggleAction {
+abstract class MyToggleAction(name: Supplier<String>) : ToggleAction(name) {
 
-    constructor()
-    constructor(name: Supplier<String>) : super(name)
 
-    constructor(name: String, desc: String, icon: Icon) : super(name, desc, icon)
-
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 }
 
 abstract class MyComboBoxAction : ComboBoxAction() {
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 }

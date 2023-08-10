@@ -12,7 +12,7 @@ import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider.Settings> {
 
 
-    companion object {
+    private companion object {
         private val KEY: SettingsKey<Settings> = SettingsKey("plug.hint.provider")
     }
 
