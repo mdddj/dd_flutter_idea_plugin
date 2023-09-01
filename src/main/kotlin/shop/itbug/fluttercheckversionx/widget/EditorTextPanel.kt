@@ -23,6 +23,8 @@ class JsonEditorTextPanel(project: Project):
         settings.isRightMarginShown=true
         return editor
     }
+
+
 }
 
 class DartEditorTextPanel(project: Project):

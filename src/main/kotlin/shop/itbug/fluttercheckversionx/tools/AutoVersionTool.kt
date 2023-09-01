@@ -21,12 +21,11 @@ class AutoVersionTool : LocalInspectionTool() {
 
     /// 访问了文件
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        MyPsiElementUtil.getPubSecpYamlFile(holder.project) ?: return PsiElementVisitor.EMPTY_VISITOR //检查一下是否为flutter项目和是否为依赖文件
         return YamlElementVisitor(holder)
     }
 
-    override fun runForWholeFile(): Boolean {
-        return false
-    }
+
 }
 
 
@@ -37,9 +36,13 @@ class YamlElementVisitor(
 
 
 
+
+
+
     private val plugins = MyPsiElementUtil.getAllFlutters(holder.project)
     private val pubFile = MyPsiElementUtil.getPubSecpYamlFile(holder.project)
 
+    private val manager = holder.manager
 
     override fun visitFile(file: PsiFile) {
         super.visitFile(file)
@@ -58,6 +61,7 @@ class YamlElementVisitor(
      * 问题注册器,并新增快速修复功能更
      */
     private fun regProblem(ele: FlutterPluginElementModel) {
+
 
         var cacheModel = CacheUtil.getCatch().getIfPresent(ele.name)
         if(cacheModel == null){

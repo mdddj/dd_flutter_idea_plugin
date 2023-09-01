@@ -16,6 +16,8 @@ import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import shop.itbug.fluttercheckversionx.common.MyAction
+import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
+import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.manager.DartClassManager
@@ -28,31 +30,30 @@ import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 
-data class FreezedInlaySetting(var show: Boolean)
 
-class FreezedInlay : InlayHintsProvider<FreezedInlaySetting> {
-    override val key: SettingsKey<FreezedInlaySetting>
+class FreezedInlay : InlayHintsProvider<DioxListeningSetting> {
+    override val key: SettingsKey<DioxListeningSetting>
         get() = SettingsKey("freezed inlay")
     override val name: String
         get() = "FreezedInlay"
     override val previewText: String
-        get() = "@freezed" +
+        get() = "@freezed\n" +
                 "class Test {}"
 
-    override fun createSettings(): FreezedInlaySetting {
-        return FreezedInlaySetting(true)
+    override fun createSettings(): DioxListeningSetting {
+        return DioxListingUiConfig.setting
     }
 
     override fun getCollectorFor(
         file: PsiFile,
         editor: Editor,
-        settings: FreezedInlaySetting,
+        settings: DioxListeningSetting,
         sink: InlayHintsSink
     ): InlayHintsCollector {
         return FreezedInlayCollector(editor)
     }
 
-    override fun createConfigurable(settings: FreezedInlaySetting): ImmediateConfigurable {
+    override fun createConfigurable(settings: DioxListeningSetting): ImmediateConfigurable {
         return FreezedInlayPanel()
     }
 

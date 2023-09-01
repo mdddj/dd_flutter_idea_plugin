@@ -26,15 +26,7 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
 
 
     private var editView = DartEditorTextPanel(project)
-
-//    private val editView = LanguageTextField(
-//        DartLanguage.INSTANCE,
-//        project,
-//        "",
-//        false
-//    ).apply {
-//        minimumSize = Dimension(400,400)
-//    }
+    
 
     init {
         super.init()

@@ -6,7 +6,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarAccessDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
@@ -67,6 +69,27 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                                     }
                                 sink.addInlineElement(
                                     comName.endOffset, false, ins, false
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if(element is DartSimpleFormalParameterImpl){
+                    if(element.type == null) {
+                        val result = DartAnalysisServerService.getInstance(file.project)
+                            .analysis_getHover(file.virtualFile, element.textOffset)
+                        if(result.isNotEmpty()){
+                            val staticType = result[0].staticType
+                            if(staticType != null){
+                                val ins =
+                                    hintsInlayPresentationFactory.simpleText("$staticType: ", staticType) { _, _ ->
+                                        val ss = StringSelection(staticType)
+                                        val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                                        clipboard.setContents(ss, null)
+                                    }
+                                sink.addInlineElement(
+                                    element.startOffset, false, ins, false
                                 )
                             }
                         }

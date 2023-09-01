@@ -13,6 +13,7 @@ import com.intellij.psi.util.parents
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.IncorrectOperationException
 import com.jetbrains.lang.dart.DartFileType
+import io.flutter.sdk.FlutterSdk
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.YAMLUtil
@@ -111,6 +112,10 @@ class MyPsiElementUtil {
          * 获取项目pubspec.yaml 文件
          */
         fun getPubSecpYamlFile(project: Project): PsiFile? {
+            val sdk = FlutterSdk.getFlutterSdk(project)?.version?.versionText
+            if(sdk.isNullOrBlank()){
+                return null
+            }
             val pubspecYamlFile =
                 LocalFileSystem.getInstance()
                     .findFileByIoFile(File("${project.stateStore.projectBasePath}/pubspec.yaml"))

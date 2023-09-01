@@ -2,13 +2,13 @@ package shop.itbug.fluttercheckversionx.form.sub
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONWriter
-import com.intellij.json.JsonLanguage
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
+import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
 import javax.swing.BorderFactory
 
 /**
@@ -22,7 +22,7 @@ import javax.swing.BorderFactory
 class JsonValueRender(var project: Project) : BorderLayoutPanel() {
 
 
-    private var jsonView: LanguageTextField = LanguageTextField(JsonLanguage.INSTANCE, project, "", false)
+    private var jsonView: LanguageTextField = JsonEditorTextPanel(project)
 
     val text: String get() = jsonView.text
 
