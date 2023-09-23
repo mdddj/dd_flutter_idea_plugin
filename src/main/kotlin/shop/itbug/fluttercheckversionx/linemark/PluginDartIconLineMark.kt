@@ -16,14 +16,15 @@ import note.jdbc.FlutterCollectService
 import note.jdbc.SqliteConnectManager
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
+import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
+import shop.itbug.fluttercheckversionx.util.restartAnalyzer
 import shop.itbug.fluttercheckversionx.util.toast
 import java.awt.event.MouseEvent
 import javax.swing.Icon
-
 
 
 class PluginDartIconLineMark : LineMarkerProvider {
@@ -35,7 +36,7 @@ class PluginDartIconLineMark : LineMarkerProvider {
                 element.firstChild, element.firstChild.textRange,
                 if(isExits)  MyIcons.collect else  MyIcons.dartPackageIcon, { element.text }, PluginDartIconLineMarkNavHandler(element),
                 GutterIconRenderer.Alignment.LEFT
-            ) { "111" }
+            ) { "" }
         }
         return null
     }
@@ -45,13 +46,13 @@ class PluginDartIconLineMark : LineMarkerProvider {
 class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavigationHandler<PsiElement> {
     override fun navigate(e: MouseEvent?, elt: PsiElement?) {
         if ((e != null) && (e.clickCount == 1)) {
-            JBPopupFactory.getInstance().createListPopup(PluginDartIconActioinMenuList(element = element))
-                .show(RelativePoint(e.locationOnScreen))
+            JBPopupFactory.getInstance().createListPopup(PluginDartIconActioinMenuList(element = element)).show(RelativePoint(e.locationOnScreen))
         }
     }
 }
 
 data class PluginDartIconActionMenuItem(val title: String, val type: String, val icon: Icon)
+
 class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
 
     private val isExites = FlutterCollectService.exits(element.getPluginName()) //是否已经收藏
@@ -67,7 +68,8 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
                 PluginBundle.get("plugin.collect"),
                 "collect",
                 if (isExites) MyIcons.collect else MyIcons.collectUn
-            )
+            ),
+            PluginDartIconActionMenuItem(PluginBundle.get("ig.version.check"),"ig-check", icon = AllIcons.General.Beta)
         )
 
     init {
@@ -87,6 +89,10 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
 
             menus[1].type -> {
                 addToCollect()
+            }
+            menus[2].type -> {
+                DartPluginIgnoreConfig.getInstance(element.project).add(element.getPluginName())
+                element.project.restartAnalyzer()
             }
         }
         return super.onChosen(selectedValue, finalChoice)

@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.util.messages.MessageBusConnection
 import io.flutter.sdk.FlutterSdk
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -30,7 +31,10 @@ import shop.itbug.fluttercheckversionx.util.RunUtil
  * 当项目打开的时候,会执行这个类的runActivity方法
  * 在这里启动一个子线程去检测项目中的pubspec.yaml文件.并执行检测新版本
  */
-class FlutterProjectOpenActivity : StartupActivity, Disposable {
+class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
+
+
+    private lateinit var connect: MessageBusConnection
 
     /**
      * 项目在idea中打开时执行函数
@@ -48,14 +52,14 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
     }
 
     override fun dispose() {
-
+        connect.disconnect()
     }
-
 
 
     fun run(project: Project) {
         ///监听assets资源目录更改事件
-        ApplicationManager.getApplication().messageBus.connect(this).subscribe(VirtualFileManager.VFS_CHANGES, object :
+        connect = ApplicationManager.getApplication().messageBus.connect(this)
+        connect.subscribe(VirtualFileManager.VFS_CHANGES, object :
             BulkFileListener {
             override fun after(events: MutableList<out VFileEvent>) {
                 val projectPath = project.basePath
@@ -87,9 +91,6 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
     }
 
 
-
-
-
     /**
      * 检测 flutter最新版本
      */
@@ -104,7 +105,7 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
                         release?.let { r ->
                             if (r.version != it.versionText) {
                                 println("has new version")
-                                showTip(r,project)
+                                showTip(r, project)
                             }
                         }
                     }
@@ -116,7 +117,7 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
     /**
      * 弹出通知
      */
-    fun showTip(release: Release,project: Project) {
+    fun showTip(release: Release, project: Project) {
         val createNotification =
             NotificationGroupManager.getInstance().getNotificationGroup("flutter_version_check").createNotification(
                 "The new Flutter version is ready",
@@ -130,7 +131,7 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
         createNotification.addAction(
             object : AnAction("Upgrade") {
                 override fun actionPerformed(p0: AnActionEvent) {
-                    RunUtil.runCommand(project,"flutter upgrade","flutter upgrade")
+                    RunUtil.runCommand(project, "flutter upgrade", "flutter upgrade")
                     createNotification.hideBalloon()
                 }
 
@@ -145,7 +146,7 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
 
             },
         )
-        createNotification.addAction(object : AnAction("Cancel"){
+        createNotification.addAction(object : AnAction("Cancel") {
             override fun actionPerformed(p0: AnActionEvent) {
                 createNotification.hideBalloon()
 
@@ -153,6 +154,8 @@ class FlutterProjectOpenActivity : StartupActivity, Disposable {
         })
         createNotification.notify(project)
     }
+
+
 
     override fun runActivity(project: Project) {
         run(project)

@@ -13,7 +13,6 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
-import shop.itbug.fluttercheckversionx.window.hive.HiveWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
 //是否开启找工作窗口
@@ -86,10 +85,10 @@ class SocketWindow : ToolWindowFactory {
         p1.contentManager.addContent(spContent)
 
 
-        // hive 工具
-        val hiveWindow = HiveWindow()
-        val hiveContent = instance.createContent(hiveWindow,"Hive Tool",false)
-        p1.contentManager.addContent(hiveContent)
+        // hive 工具 开发中
+//        val hiveWindow = HiveWindow()
+//        val hiveContent = instance.createContent(hiveWindow,"Hive Tool",false)
+//        p1.contentManager.addContent(hiveContent)
     }
 
 }

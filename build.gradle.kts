@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 group = "shop.itbug"
-version = "3.6.2.eap"
+version = "3.7.0"
 repositories {
     mavenCentral()
     google()
@@ -38,32 +38,32 @@ repositories {
  *                sinceBuild.set("232")
  *         untilBuild.set("232.*")
  */
-intellij {
-    version.set("LATEST-EAP-SNAPSHOT")
-    type.set("IC")
-    plugins.set(
-        listOf(
-            "yaml",
-            "Dart:232.9559.10",
-            "io.flutter:75.1.4",
-            "org.intellij.plugins.markdown",
-            "terminal"
-        )
-    )
-}
 //intellij {
-//    version.set("2022.3.1.18")
-//    type.set("AI")
+//    version.set("LATEST-EAP-SNAPSHOT")
+//    type.set("IC")
 //    plugins.set(
 //        listOf(
 //            "yaml",
-//            "Dart:223.8950",
-//            "io.flutter:75.1.2",
+//            "Dart:233.6745.297",
+//            "io.flutter:75.1.4",
 //            "org.intellij.plugins.markdown",
 //            "terminal"
 //        )
 //    )
 //}
+intellij {
+    version.set("2022.3.1.18")
+    type.set("AI")
+    plugins.set(
+        listOf(
+            "yaml",
+            "Dart:223.8950",
+            "io.flutter:75.1.2",
+            "org.intellij.plugins.markdown",
+            "terminal"
+        )
+    )
+}
 kotlin {
     sourceSets.all {
         languageSettings {
@@ -77,16 +77,12 @@ kotlin {
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
     implementation("cn.hutool:hutool-all:latest.release")
     implementation("org.smartboot.socket:aio-core:1.6.3")
     implementation("com.alibaba.fastjson2:fastjson2:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("com.google.code.gson:gson:latest.release")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("io.ktor:ktor-client-cio-jvm:2.2.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 }
 
@@ -107,12 +103,23 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("232")
-        untilBuild.set("232.*")
-//        sinceBuild.set("223")
-//        untilBuild.set("223.*")
+//        sinceBuild.set("232")
+//        untilBuild.set("232.*")
+        sinceBuild.set("223")
+        untilBuild.set("223.*")
         changeNotes.set(
             """
+                <div>
+                    <h1>3.7.0</h1>
+                    <ul>
+                        <li>Dependency version detection using <pre>ExternalAnnotator</pre> override</li>
+                        <li>Change the plugin name to: FlutterX</li>
+                        <li>Removed Hive tool window, functionality is currently under development</li>
+                        <li>Subsequent version update logs are only written in English</li>
+                        <li></li>
+                     </ul>
+                </div>
+                
                 <div>
                     <h1>3.6.1</h1>
                     <ul>

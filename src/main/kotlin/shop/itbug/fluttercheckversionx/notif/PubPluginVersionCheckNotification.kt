@@ -15,7 +15,6 @@ import io.flutter.sdk.FlutterSdkUtil
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.tools.ExtensionsUtil
 import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
@@ -82,10 +81,6 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
 //        myLinksPanel.add(reIndex)
 
 
-        myLinksPanel.add(createActionLabel("重新检查"){
-            val autoVersionToolInspection = ExtensionsUtil.getAutoVersionToolInspection()
-            println("===${autoVersionToolInspection}")
-        })
     }
 
     private fun checkNewVersions() {
