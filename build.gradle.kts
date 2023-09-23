@@ -116,7 +116,7 @@ tasks {
                         <li>Change the plugin name to: FlutterX</li>
                         <li>Removed Hive tool window, functionality is currently under development</li>
                         <li>Subsequent version update logs are only written in English</li>
-                        <li></li>
+                        <li>Add the 'Ignore Dependency Version Detection' feature</li>
                      </ul>
                 </div>
                 
