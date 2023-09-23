@@ -117,6 +117,7 @@ tasks {
                         <li>Removed Hive tool window, functionality is currently under development</li>
                         <li>Subsequent version update logs are only written in English</li>
                         <li>Add the 'Ignore Dependency Version Detection' feature</li>
+                        <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.7.0/images/WX20230923-155830@2x.png?raw=true' />
                      </ul>
                 </div>
                 
