@@ -11,16 +11,26 @@ import javax.swing.BorderFactory
 
 
 fun String.formatUrl(setting: DioxListeningSetting): String {
+    val url = URI(this)
+    val host = url.host
+    val scheme = url.scheme+"://"
+    val param = url.rawQuery
+    var string = this
     if(setting.showHost.not()){
-       return URI(this).path
+        string = string.replace(scheme,"").replace(host,"")
     }
-    return this
+    if(setting.showQueryParams.not()){
+        string = string.replace("?$param","")
+
+    }
+    return string
 }
 
 /**
  * 新版的请求UI
  */
 fun requestDetailLayout(request: Request, isSelected: Boolean,setting: DioxListeningSetting): DialogPanel {
+
 
     val color = UIUtil.getLabelDisabledForeground()
     val p = panel {

@@ -2,14 +2,16 @@ package shop.itbug.fluttercheckversionx.form.sub
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONWriter
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.ui.LanguageTextField
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.UIUtil
-import com.intellij.util.ui.components.BorderLayoutPanel
+import com.intellij.ui.ToolbarDecorator
+import shop.itbug.fluttercheckversionx.actions.JsonToFreezedModelAction
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
-import javax.swing.BorderFactory
+import shop.itbug.fluttercheckversionx.widget.MyActionButton
+import shop.itbug.fluttercheckversionx.widget.WidgetUtil
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 /**
  * json viewer
@@ -19,22 +21,9 @@ import javax.swing.BorderFactory
  *
  */
 
-class JsonValueRender(var project: Project) : BorderLayoutPanel() {
+class JsonValueRender(p:Project) : JsonEditorTextPanel(p) {
 
 
-    private var jsonView: LanguageTextField = JsonEditorTextPanel(project)
-
-    val text: String get() = jsonView.text
-
-    init {
-        border = BorderFactory.createEmptyBorder()
-        jsonView.border = BorderFactory.createEmptyBorder()
-        jsonView.background = UIUtil.getPanelBackground()
-        val s = JBScrollPane(jsonView)
-        s.border = BorderFactory.createEmptyBorder()
-        background = UIUtil.getPanelBackground()
-        addToCenter(s)
-    }
 
 
     /**
@@ -44,7 +33,7 @@ class JsonValueRender(var project: Project) : BorderLayoutPanel() {
         if (json != null && !project.isDisposed) {
             val changeJson = changeJson(json)
             WriteCommandAction.runWriteCommandAction(project) {
-                jsonView.text = changeJson
+                text = changeJson
             }
         }
     }
@@ -71,4 +60,24 @@ class JsonValueRender(var project: Project) : BorderLayoutPanel() {
     }
 
 }
+
+ fun <T : JComponent> T.getPanel(text: String) : JPanel {
+   return ToolbarDecorator.createDecorator(this)
+       .disableRemoveAction()
+       .disableUpDownActions()
+       .addExtraActions(*createAnActions(text))
+       .createPanel().apply {
+           border = null
+       }
+
+
+}
+private fun <T : JComponent> T.createAnActions(text: String) : Array<AnAction> {
+    return arrayOf(
+        MyActionButton(JsonToFreezedModelAction(text)).action,
+        WidgetUtil.getCopyAnAction(text),
+        WidgetUtil.getDiscordAction()
+    )
+}
+
 

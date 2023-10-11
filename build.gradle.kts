@@ -1,10 +1,20 @@
+
+val dartVersion: String by project
+val flutterVersion: String by project
+val sinceBuildVersion: String by project
+val untilBuildVersion: String by project
+val ideaVersion: String by project
+val ideaType: String by project
+val pluginVersion: String by project
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.0-RC"
-    id("org.jetbrains.intellij") version "1.15.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
+    id("org.jetbrains.intellij") version "1.16.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20-RC"
 }
 group = "shop.itbug"
-version = "3.7.0"
+version = pluginVersion
+
 repositories {
     mavenCentral()
     google()
@@ -15,52 +25,18 @@ repositories {
 }
 
 
-/** as 最新版 2022.3.1.18
- * listOf(
- *             "yaml",
- *             "Dart:223.8950",
- *             "io.flutter:75.1.2",
- *             "org.intellij.plugins.markdown",
- *             "terminal"
- *         )
- *         sinceBuild.set("223")
- *         untilBuild.set("223.*")
- */
-/**
- * eap
- * listOf(
- *             "yaml",
- *             "Dart:232.9559.10",
- *             "io.flutter:75.1.4",
- *             "org.intellij.plugins.markdown",
- *             "terminal"
- *         )
- *                sinceBuild.set("232")
- *         untilBuild.set("232.*")
- */
-//intellij {
-//    version.set("LATEST-EAP-SNAPSHOT")
-//    type.set("IC")
-//    plugins.set(
-//        listOf(
-//            "yaml",
-//            "Dart:233.6745.297",
-//            "io.flutter:75.1.4",
-//            "org.intellij.plugins.markdown",
-//            "terminal"
-//        )
-//    )
-//}
+
+
 intellij {
-    version.set("2022.3.1.18")
-    type.set("AI")
+    version.set(ideaVersion)
+    type.set(ideaType)
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8950",
-            "io.flutter:75.1.2",
+            "Dart:$dartVersion",
+            "io.flutter:$flutterVersion",
             "org.intellij.plugins.markdown",
-            "terminal"
+            "terminal",
         )
     )
 }
@@ -75,15 +51,15 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:latest.release")
+    implementation("com.squareup.retrofit2:converter-gson:latest.release")
     implementation("cn.hutool:hutool-all:latest.release")
-    implementation("org.smartboot.socket:aio-core:1.6.3")
+    implementation("org.smartboot.socket:aio-core:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2:latest.release")
-    implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
+    implementation("com.alibaba.fastjson2:fastjson2-kotlin:latest.release")
     implementation("com.google.code.gson:gson:latest.release")
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.xerial:sqlite-jdbc:latest.release")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
 }
 
 
@@ -103,10 +79,8 @@ tasks {
     }
 
     patchPluginXml {
-//        sinceBuild.set("232")
-//        untilBuild.set("232.*")
-        sinceBuild.set("223")
-        untilBuild.set("223.*")
+        sinceBuild.set(sinceBuildVersion)
+        untilBuild.set(untilBuildVersion)
         changeNotes.set(
             """
                 <div>
@@ -117,7 +91,7 @@ tasks {
                         <li>Removed Hive tool window, functionality is currently under development</li>
                         <li>Subsequent version update logs are only written in English</li>
                         <li>Add the 'Ignore Dependency Version Detection' feature</li>
-                        <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.7.0/images/WX20230923-155830@2x.png?raw=true' />
+                        <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.7.0/images/do_not_check.png?raw=true' />
                         <li>
                             New parameter inline display
                             <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.7.0/images/inlay_param_new.png?raw=true' />

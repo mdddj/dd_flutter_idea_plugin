@@ -65,7 +65,7 @@ class AppConfig : Configurable, Disposable {
     }
 
     override fun getDisplayName(): String {
-        return PluginBundle.get("setting")
+        return PluginBundle.get("setting.flutterx")
     }
 
     override fun reset() {

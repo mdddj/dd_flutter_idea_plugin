@@ -14,14 +14,15 @@ import shop.itbug.fluttercheckversionx.window.sp.SpManager
 object DioApiService {
 
     private fun AioSession.send(message: String) {
-        println("发送消息:$message")
         val writeBuffer: WriteBuffer = writeBuffer()
         val data = message.toByteArray()
         writeBuffer.write(data)
         writeBuffer.flush()
     }
 
-    private val sessions : MutableList<AioSession> = mutableListOf()
+    private val sessions = mutableSetOf<AioSession>()
+
+    fun getSessions() = sessions
 
     fun addSession(session: AioSession?){
         session?.let { sessions.add(it) }
@@ -73,7 +74,6 @@ class MyMessageProcessor(private val handle: DioApiService.HandleFlutterApiModel
 
     private fun jsonStringToModel(msg: String, session: AioSession?) {
         try {
-            println("接收到消息:$msg")
             val jsonObj = JSONObject.parse(msg)
             val type = jsonObj.getString("type")
             if(type == SpManager.KEYS || type == SpManager.VALUE_GET){

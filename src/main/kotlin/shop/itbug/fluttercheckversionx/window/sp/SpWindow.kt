@@ -27,7 +27,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 
 
     val content = OnePixelSplitter().apply {
-        firstComponent = JBScrollPane(left)
+        firstComponent = JBScrollPane(left).apply { border = null }
         secondComponent = right
         this.splitterProportionKey = "sp-window-key"
         border = BorderFactory.createEmptyBorder()
@@ -69,7 +69,7 @@ class SpRefreshAction : DumbAwareAction(AllIcons.Actions.Refresh) {
 
 ///数据展示区域
 class SpWindowRight(project: Project) : BorderLayoutPanel() {
-    private var jsonView: JsonValueRender = JsonValueRender(project = project)
+    private var jsonView: JsonValueRender = JsonValueRender(p = project)
 
     init {
         addToCenter(JBScrollPane(jsonView).apply {
@@ -78,7 +78,7 @@ class SpWindowRight(project: Project) : BorderLayoutPanel() {
         SpManagerListen.listen(null) {
             jsonView.changeValue(it?.value)
         }
-        border = BorderFactory.createEmptyBorder()
+        border = null
     }
 
 
@@ -94,6 +94,7 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
             }
         }, valueHandle = null)
         addListSelectionListener(this)
+        border = null
     }
 
 

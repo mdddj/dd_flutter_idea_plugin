@@ -64,7 +64,6 @@ object SqliteConnectManager {
             }
             Class.forName("org.sqlite.JDBC")
             connect = DriverManager.getConnection("jdbc:sqlite:$filePath")
-            println("连接数据库成功!")
         } catch (e: SQLException) {
             println("连接sql失败:$e")
         }

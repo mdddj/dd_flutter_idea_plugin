@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
@@ -28,6 +29,8 @@ import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.DefaultListModel
+import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -43,7 +46,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
         return JBPopupFactory.getInstance()
             .createActionGroupPopup(
-                PluginBundle.get("menu"),
+                null,
                 myActionGroup,
                 DataManager.getInstance().getDataContext(this),
                 true,
@@ -65,8 +68,12 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         addListSelectionListener(this)
         addListening()
         addRightPopupMenuClick()
+        border = null
         DioWindowApiSearchBus.listing { doSearch(it) }
         DioWindowCleanRequests.listening { listModel().clear() }
+
+
+
     }
 
 
@@ -231,6 +238,20 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         const val SELECT_KEY = "select-api"
     }
 
+
+
+
 }
 
+fun  JComponent.createDecorator(block: (dec: ToolbarDecorator) -> ToolbarDecorator) : JPanel {
+    var r = ToolbarDecorator.createDecorator(this)
+        .setPanelBorder(null)
+        .disableUpDownActions()
+        .disableRemoveAction()
+
+    r = block.invoke(r)
+    return r.createPanel().apply {
+        border = null
+    }
+}
 

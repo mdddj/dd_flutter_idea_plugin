@@ -7,40 +7,37 @@ import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
 
 
-class JsonEditorTextPanel(project: Project):
-    LanguageTextField(JsonLanguage.INSTANCE,project,"",false) {
+open class JsonEditorTextPanel(project: Project) :
+    LanguageTextField(JsonLanguage.INSTANCE, project, "", false) {
 
 
     override fun createEditor(): EditorEx {
-        val editor = super.createEditor()
-        editor.setVerticalScrollbarVisible(true)
-        editor.setHorizontalScrollbarVisible(true)
-        val settings = editor.settings
-        settings.isLineNumbersShown = true
-        settings.isAutoCodeFoldingEnabled = true
-        settings.isFoldingOutlineShown = true
-        settings.isAllowSingleLogicalLineFolding = true
-        settings.isRightMarginShown=true
-        return editor
+        return myCreateEditor(super.createEditor())
     }
 
 
 }
 
-class DartEditorTextPanel(project: Project):
-    LanguageTextField(DartLanguage.INSTANCE,project,"",false) {
-
+class DartEditorTextPanel(project: Project) :
+    LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
 
     override fun createEditor(): EditorEx {
-        val editor = super.createEditor()
-        editor.setVerticalScrollbarVisible(true)
-        editor.setHorizontalScrollbarVisible(true)
-        val settings = editor.settings
-        settings.isLineNumbersShown = true
-        settings.isAutoCodeFoldingEnabled = true
-        settings.isFoldingOutlineShown = true
-        settings.isAllowSingleLogicalLineFolding = true
-        settings.isRightMarginShown=true
-        return editor
+        return myCreateEditor(super.createEditor())
     }
+}
+
+
+
+///创建编辑器
+private fun myCreateEditor(ex: EditorEx): EditorEx {
+    ex.setVerticalScrollbarVisible(true)
+    ex.setHorizontalScrollbarVisible(true)
+    ex.setBorder(null)
+    val settings = ex.settings
+    settings.isLineNumbersShown = true
+    settings.isAutoCodeFoldingEnabled = true
+    settings.isFoldingOutlineShown = true
+    settings.isAllowSingleLogicalLineFolding = true
+    settings.isRightMarginShown = true
+    return ex
 }
