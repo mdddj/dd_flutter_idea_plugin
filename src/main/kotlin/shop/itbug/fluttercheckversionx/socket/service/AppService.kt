@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.StateMachineEnum
-import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,10 +28,6 @@ import javax.swing.SwingUtilities
 @Service
 class AppService : DioApiService.HandleFlutterApiModel {
 
-
-
-    // 全局的socket监听服务
-    private lateinit var server: AioQuickServer
 
     //用户信息
     var user: User? = null
@@ -60,11 +55,8 @@ class AppService : DioApiService.HandleFlutterApiModel {
 
     val dioServerStatus: StateMachineEnum? get() = socketServerState
 
-    //自动滚动到底部
-    var apiListAutoScrollerToMax = true
-
     //右键选中的项目
-    var currentSelectRequest : Request? = null
+    var currentSelectRequest: Request? = null
 
     private val messageBus get() = ApplicationManager.getApplication().messageBus
 
@@ -84,13 +76,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
         userRunStartManager.start()
         chatRoomLoadManager.start()
         note.jdbc.SqliteConnectManager
-    }
-
-    /**
-     * 如果监听到api接口请求,是否自动滚动到最底部
-     */
-    fun setIsAutoScrollToMax(value: Boolean) {
-        apiListAutoScrollerToMax = value
     }
 
 

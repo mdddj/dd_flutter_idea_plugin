@@ -5,13 +5,9 @@ import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.widget.MyComboActionNew
 
 ///切换dio请求ui样式
-class ChangeDioRequestItemUi: MyComboActionNew.EnumPolicySettingAction<DioRequestUIStyle>(DioRequestUIStyle.entries.toTypedArray()) {
+class ChangeDioRequestItemUi() :
+    MyComboActionNew.ToggleActionGroup<DioRequestUIStyle>(DioRequestUIStyle.entries.toTypedArray()) {
     var setting = DioxListingUiConfig.setting
-
-
-    override val storedValue: DioRequestUIStyle
-        get() = setting.uiStyle
-
 
     override var value: DioRequestUIStyle
         get() = setting.uiStyle
@@ -20,8 +16,8 @@ class ChangeDioRequestItemUi: MyComboActionNew.EnumPolicySettingAction<DioReques
             setting = DioxListingUiConfig.setting
         }
 
-    override fun getText(option: DioRequestUIStyle): String {
-        return option.string
+    override fun getText(value: DioRequestUIStyle): String {
+        return value.string
     }
 
 }

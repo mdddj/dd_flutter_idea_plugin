@@ -1,19 +1,19 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.ListSpeedSearch
 import com.intellij.ui.OnePixelSplitter
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
+import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
-import shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.form.components.createDecorator
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),
+class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter(),
     DioApiService.HandleFlutterApiModel {
 
 
@@ -34,45 +34,39 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     //项目筛选
     private val projectFilterBox = ProjectFilter()
 
-    //接口列表组件
-    private var apiList = ListSpeedSearch(ApiListPanel(project)) {
-        it.url
-    }.apply {
+    ///接口列表
+    private val apiPanel = ApiListPanel(project)
 
+    //一些 dio 的选项
+    private val viewOptions =
+        ActionManager.getInstance().getAction("Dio.Request.Item.Render.Option") as DefaultActionGroup
+
+
+    //创建工具栏
+//    private val toolbar = ActionManager.getInstance().createActionToolbar("Dio Toolbar",)
+
+    //接口列表组件
+    private var apiList = ListSpeedSearch(apiPanel) {
+        it.url
     }.component
         .createDecorator {
-        it
-            .addExtraAction(projectFilterBox)
-//            .addExtraAction(ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"))
-            .addExtraAction(ChangeDioRequestItemUi())
-            .addExtraAction(DelButton().action)
-            .addExtraAction(OpenSettingAnAction.getInstance())
-
-    }
-
-
-
-    private val apiListWrapper = JBScrollPane(apiList).apply {
-        border = null
-    }
-
+            it
+                .addExtraAction(projectFilterBox)
+                .addExtraAction(DelButton().action)
+                .addExtraAction(OpenSettingAnAction.getInstance())
+                .addExtraAction(viewOptions)
+        }
 
 
     //右侧面板
     private val rightFirstPanel = RightDetailPanel(project)
 
 
-    //主面板
-    private var mainPanel = OnePixelSplitter().apply {
-        firstComponent = apiListWrapper
+    init {
+        DioApiService.addHandle(this)
+        firstComponent = apiList
         secondComponent = rightFirstPanel
         splitterProportionKey = SPLIT_KEY
-    }
-
-    init {
-        SwingUtilities.invokeLater {
-            addToCenter(mainPanel)
-        }
         SocketMessageBus.listening {
             autoScrollToMax()
         }
@@ -84,12 +78,11 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
      * todo : 滚动底部
      */
     private fun autoScrollToMax() {
-        if (appService.apiListAutoScrollerToMax) {
+        val setting = DioxListingUiConfig.setting
+        if (setting.autoScroller) {
             SwingUtilities.invokeLater {
-                apiListWrapper.verticalScrollBar.apply {
-                    value = maximum + 20
-                }
-                ///滚动到地步
+                println("滚动....到最底部")
+                apiList.autoscrolls = setting.autoScroller
             }
         }
     }
@@ -97,11 +90,10 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     companion object {
         const val SPLIT_KEY = "Dio Panel Re Key"
-        const val TOP_KET = "Dio Top Toolbar Key"
-        const val LEFT_KEY = "Dio Left Toolbar Key"
     }
 
     override fun handleModel(model: SocketResponseModel) {
+        println("dio 模型进入: ${model.url}")
         val flutterProjects = appService.flutterProjects
         val reqs = flutterProjects[model.projectName] ?: emptyList()
         val reqsAdded = reqs.plus(model)
@@ -122,7 +114,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     }
 
     override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
-
+        println("状态变更:$stateMachineEnum")
     }
 
     override fun covertJsonError(e: Exception, aio: AioSession?) {

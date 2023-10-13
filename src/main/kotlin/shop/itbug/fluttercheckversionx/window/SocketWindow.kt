@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
+import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginStateService
@@ -40,7 +41,7 @@ class SocketWindow : ToolWindowFactory {
         if (AppService.getInstance().dioIsStart.not()) {
             p1.activate {
                 try {
-                    DioApiService.builder(port, socketRequestForm).start()
+                    DioApiService.builder(port).start()
                     p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
                 } catch (e: Exception) {
@@ -74,21 +75,21 @@ class SocketWindow : ToolWindowFactory {
 
         //flutter收藏窗口
         val dartPluginWindow = DartPluginsWindow(p1, p0)
-        val dartPluginContent = instance.createContent(dartPluginWindow, "Plugin Collects", false)
+        val dartPluginContent =
+            instance.createContent(dartPluginWindow, PluginBundle.get("plugin.collects.title"), false)
         p1.contentManager.addContent(dartPluginContent)
 
 
-
         // sp工具
-        val spWindow = SpWindow(p0,p1)
-        val spContent = instance.createContent(spWindow,"Shared Preferences Tool",false)
+        val spWindow = SpWindow(p0, p1)
+        val spContent = instance.createContent(spWindow, "Shared Preferences Tool", false)
         p1.contentManager.addContent(spContent)
 
 
-        // hive 工具 开发中
-//        val hiveWindow = HiveWindow()
-//        val hiveContent = instance.createContent(hiveWindow,"Hive Tool",false)
-//        p1.contentManager.addContent(hiveContent)
+        //hive 工具 开发中
+        val hiveWindow = HiveWidget(p0, p1)
+        val hiveContent = instance.createContent(hiveWindow, "Hive Tool", false)
+        p1.contentManager.addContent(hiveContent)
     }
 
 }

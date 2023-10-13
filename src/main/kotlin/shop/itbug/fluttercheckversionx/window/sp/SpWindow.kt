@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
+import com.alibaba.fastjson2.JSONObject
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
@@ -9,6 +10,7 @@ import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.components.BorderLayoutPanel
+import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import java.awt.Dimension
@@ -18,7 +20,8 @@ import javax.swing.JButton
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
-class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel() {
+class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),
+    DioApiService.NativeMessageProcessing {
 
 
     val button = JButton("获取所有Key")
@@ -50,6 +53,16 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
         }, true).apply {
             this.targetComponent = toolWindow.component
         }
+    }
+
+    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
+        if (jsonObject != null) {
+            val type = jsonObject.getString("type")
+            if (type == SpManager.KEYS || type == SpManager.VALUE_GET) {
+                SpManager(nativeMessage).handle()
+            }
+        }
+
     }
 
 }
@@ -106,7 +119,7 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
 
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(200,-1)
+        return Dimension(200, -1)
     }
 
     override fun getMinimumSize(): Dimension {

@@ -52,10 +52,13 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
     }
 
     override val reGetActions: Boolean
-        get() =  true
+        get() = true
+
 
     override val availableOptions: MutableList<String>
         get() = projectNames.toMutableList()
+
+
     override var value: String
         get() = appService.currentSelectName.get() ?: ""
         set(value) {
@@ -108,10 +111,6 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
 
     override fun getActionUpdateThread() = ActionUpdateThread.BGT
-
-
-
-
 
 
 }

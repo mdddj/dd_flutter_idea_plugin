@@ -88,11 +88,11 @@
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
 
         <!--    插件检测忽略配置     -->
-<!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
-<!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"-->
-<!--                                              isEnabledByDefault='true'-->
-<!--                                              language="yaml" nameKey="flutterX-Dart-Plugin-Ignore"-->
-<!--                                              providerId="flutterX-Dart-Plugin-Ignore"/>-->
+        <!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
+        <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"-->
+        <!--                                              isEnabledByDefault='true'-->
+        <!--                                              language="yaml" nameKey="flutterX-Dart-Plugin-Ignore"-->
+        <!--                                              providerId="flutterX-Dart-Plugin-Ignore"/>-->
 
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
                                    language="Dart"/>
@@ -182,7 +182,7 @@
                 class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
         <action id="Covert.To.actions.FlutterX"
                 class="shop.itbug.fluttercheckversionx.actions.context.CovertToActionsGroup"
-                text="Covert To By FlutterX" description="转换的一些操作" popup="true" >
+                text="Covert To By FlutterX" description="转换的一些操作" popup="true">
             <add-to-group group-id="ShowIntentionsGroup" anchor="first"/>
         </action>
         <action id="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
@@ -191,8 +191,18 @@
         <action id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
                 class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
                 text="DioRequestRenderStyle"/>
+
+
+        <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">
+            <separator key="ui.render"/>
+            <reference id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"/>
+            <separator key="dio.apis.option.title"/>
+            <group id="Dio.Request.UI" class="shop.itbug.fluttercheckversionx.form.components.DioUIShowActionGroup"/>
+        </group>
+        <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup"
+               class="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" text="Hive Actions"/>
     </actions>
 
-<!--Git.MainMenu.FileActions-->
+    <!--Git.MainMenu.FileActions-->
 </idea-plugin>
 

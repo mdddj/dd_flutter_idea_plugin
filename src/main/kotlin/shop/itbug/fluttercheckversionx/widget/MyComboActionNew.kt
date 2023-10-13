@@ -4,6 +4,7 @@ import com.intellij.ide.ActivityTracker
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.Nls
@@ -36,7 +37,7 @@ class MyComboActionNew {
 
         val actions: DefaultActionGroup
             get() {
-                if(reGetActions){
+                if (reGetActions) {
                     myActions = null
                 }
                 if (myActions == null) {
@@ -77,7 +78,7 @@ class MyComboActionNew {
     /**
      * 枚举类型的 action
      */
-    abstract class EnumPolicySettingAction<T : Enum<T>>(val policies: Array<T>) : ComboBoxSettingAction<T>() {
+    abstract class EnumPolicySettingAction<T : Enum<T>>(private val policies: Array<T>) : ComboBoxSettingAction<T>() {
 
 
         override fun update(e: AnActionEvent) {
@@ -93,7 +94,7 @@ class MyComboActionNew {
         override val availableOptions: MutableList<T>
             get() = ContainerUtil.sorted(listOf(*policies))
 
-        fun getValue(): T  {
+        fun getValue(): T {
             val value = storedValue
             if (ArrayUtil.contains(value, *policies)) return value
 
@@ -106,7 +107,6 @@ class MyComboActionNew {
         }
 
 
-
         protected abstract val storedValue: T
 
         protected fun getValueSubstitutes(value: T): List<T> {
@@ -115,5 +115,42 @@ class MyComboActionNew {
     }
 
 
+    ///开关样式的操作
+    abstract class ToggleActionGroup<T>(private val values: Array<T>) : ActionGroup(), DumbAware {
+
+
+        abstract fun getText(value: T): String
+
+        abstract var value: T
+
+
+        override fun getChildren(e: AnActionEvent?): Array<AnAction> {
+            val actions = ArrayList<MyAction>()
+            actions.addAll(values.map { MyAction(it) })
+            return actions.toTypedArray()
+        }
+
+
+        private inner class MyAction(val item: T) : DumbAwareToggleAction({ getText(item) }) {
+            override fun isSelected(e: AnActionEvent): Boolean {
+                return value == item
+            }
+
+            override fun setSelected(e: AnActionEvent, state: Boolean) {
+                value = item
+            }
+
+            override fun getActionUpdateThread() = ActionUpdateThread.EDT
+
+
+            override fun update(e: AnActionEvent) {
+                Toggleable.setSelected(e.presentation, isSelected(e))
+                super.update(e)
+            }
+
+        }
+
+        override fun getActionUpdateThread() = ActionUpdateThread.EDT
+    }
 
 }

@@ -1,14 +1,21 @@
 package shop.itbug.fluttercheckversionx.config
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import com.intellij.util.messages.Topic
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 
 ///ui 渲染样式
 enum class DioRequestUIStyle(val string: String) {
-    DefaultStyle("Default"), CompactStyle("Compact")
+    //默认样式 (宽松)
+    DefaultStyle(PluginBundle.get("relaxed.mode")),
+
+    //紧凑模式
+    CompactStyle(PluginBundle.get("compact.mode"))
 }
 
 data class DioxListeningSetting(
@@ -31,7 +38,13 @@ data class DioxListeningSetting(
     var uiRenderVersionCode: String = "2",
 
     //ui渲染样式
-    var uiStyle: DioRequestUIStyle = DioRequestUIStyle.DefaultStyle
+    var uiStyle: DioRequestUIStyle = DioRequestUIStyle.DefaultStyle,
+
+    ///是否自动滚动到地步
+    var autoScroller: Boolean = true,
+
+    ///显示项目名字
+    var showProjectName: Boolean = true
 
 )
 
@@ -47,7 +60,9 @@ class DioxListingUiConfig private constructor() : PersistentStateComponent<DioxL
     }
 
     override fun loadState(state: DioxListeningSetting) {
+        val old = config
         config = state
+        DioSettingChangeEvent.fire(old, state)
     }
 
     companion object {
@@ -58,7 +73,35 @@ class DioxListingUiConfig private constructor() : PersistentStateComponent<DioxL
         val setting: DioxListeningSetting get() = getInstance().state ?: DioxListeningSetting()
 
         ///更改设置
-        fun changeSetting(doChange: (old: DioxListeningSetting) -> DioxListeningSetting) = getInstance().loadState(doChange(setting))
+        fun changeSetting(doChange: (old: DioxListeningSetting) -> DioxListeningSetting) =
+            getInstance().loadState(doChange(setting))
     }
 
+}
+
+typealias DioSettingChangeEventChangeFun = (old: DioxListeningSetting, setting: DioxListeningSetting) -> Unit
+
+
+///当 dio 的一些设置变化后,会发送这个通知事件,可以做一些 UI 上面的更新
+interface DioSettingChangeEvent {
+
+    fun doChange(old: DioxListeningSetting, setting: DioxListeningSetting)
+
+    companion object {
+        private val TOPIC = Topic.create("DioSettingChangeEvent", DioSettingChangeEvent::class.java)
+
+        ///发送更改事件
+        fun fire(old: DioxListeningSetting, setting: DioxListeningSetting) {
+            ApplicationManager.getApplication().messageBus.syncPublisher(TOPIC).doChange(old, setting)
+        }
+
+        ///监听更改事件
+        fun listen(call: DioSettingChangeEventChangeFun) {
+            ApplicationManager.getApplication().messageBus.connect().subscribe(TOPIC, object : DioSettingChangeEvent {
+                override fun doChange(old: DioxListeningSetting, setting: DioxListeningSetting) {
+                    call.invoke(old, setting)
+                }
+            })
+        }
+    }
 }

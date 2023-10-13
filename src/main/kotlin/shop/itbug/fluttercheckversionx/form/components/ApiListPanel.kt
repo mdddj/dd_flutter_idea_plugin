@@ -18,6 +18,8 @@ import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
+import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
+import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
@@ -39,7 +41,7 @@ import javax.swing.event.ListSelectionListener
 /**
  * api列表
  */
-class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
+class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider {
 
 
     fun createPopupMenu(): ListPopup {
@@ -71,8 +73,11 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         border = null
         DioWindowApiSearchBus.listing { doSearch(it) }
         DioWindowCleanRequests.listening { listModel().clear() }
+        DioSettingChangeEvent.listen { _, opt ->
+            refreshUi()
+        }
 
-
+        autoscrolls = DioxListingUiConfig.setting.autoScroller
 
     }
 
@@ -87,6 +92,14 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         }
     }
 
+
+    ///重新构建一下 UI
+    private fun refreshUi() {
+        model = DefaultListModel<Request>().run {
+            addAll(listModel().elements().toList())
+            this
+        }
+    }
 
     /**
      * 右键菜单监听
@@ -236,14 +249,20 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     companion object {
         const val SELECT_KEY = "select-api"
+        const val PANEL = "panel"
     }
 
-
+    override fun getData(p0: String): Any? {
+        if (p0 == PANEL) {
+            return this
+        }
+        return null
+    }
 
 
 }
 
-fun  JComponent.createDecorator(block: (dec: ToolbarDecorator) -> ToolbarDecorator) : JPanel {
+fun JComponent.createDecorator(block: (dec: ToolbarDecorator) -> ToolbarDecorator): JPanel {
     var r = ToolbarDecorator.createDecorator(this)
         .setPanelBorder(null)
         .disableUpDownActions()
