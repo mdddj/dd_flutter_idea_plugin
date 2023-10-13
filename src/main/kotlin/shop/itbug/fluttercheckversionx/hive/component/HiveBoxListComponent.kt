@@ -128,4 +128,8 @@ class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioA
 
     }
 
+    fun clean() {
+        model = ItemModel(emptyList())
+    }
+
 }

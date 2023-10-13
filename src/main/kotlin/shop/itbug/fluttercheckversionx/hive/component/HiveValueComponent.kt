@@ -29,6 +29,7 @@ class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.
             val type = getString("type")
             if (type == "getValue" && get("data") != null) {
                 changeJsonValue(get("data"))
+
             }
         }
     }
