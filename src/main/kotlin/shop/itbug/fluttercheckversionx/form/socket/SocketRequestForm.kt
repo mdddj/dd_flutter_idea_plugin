@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.form.socket
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.ListSpeedSearch
@@ -15,7 +14,6 @@ import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.form.components.createDecorator
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
-import shop.itbug.fluttercheckversionx.socket.service.AppService
 import javax.swing.SwingUtilities
 
 typealias Request = SocketResponseModel
@@ -23,8 +21,6 @@ typealias Request = SocketResponseModel
 // 监听http请求的窗口
 class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter() {
 
-
-    private val appService = service<AppService>()
 
     //项目筛选
     private val projectFilterBox = ProjectFilter()

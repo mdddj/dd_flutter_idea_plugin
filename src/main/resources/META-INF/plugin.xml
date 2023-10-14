@@ -54,7 +54,7 @@
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-
+        
 
         <fileDocumentSynchronizationVetoer
                 implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
@@ -155,6 +155,7 @@
 
         <!--        忽略部分依赖的检测-->
         <projectService serviceImplementation="shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig"/>
+
 
     </extensions>
 

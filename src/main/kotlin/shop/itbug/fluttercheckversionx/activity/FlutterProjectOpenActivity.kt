@@ -6,7 +6,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -58,7 +57,7 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
 
     fun run(project: Project) {
         ///监听assets资源目录更改事件
-        connect = ApplicationManager.getApplication().messageBus.connect(this)
+        connect = project.messageBus.connect(this)
         connect.subscribe(VirtualFileManager.VFS_CHANGES, object :
             BulkFileListener {
             override fun after(events: MutableList<out VFileEvent>) {
@@ -154,7 +153,6 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
         })
         createNotification.notify(project)
     }
-
 
 
     override fun runActivity(project: Project) {

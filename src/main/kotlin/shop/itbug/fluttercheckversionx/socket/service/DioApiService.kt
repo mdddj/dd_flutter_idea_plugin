@@ -86,7 +86,9 @@ object DioApiService {
         override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
             try {
                 jsonObject?.to(ProjectSocketService.SocketResponseModel::class.java)?.let {
-                    handleModel(it)
+                    if (it.projectName.isNotBlank()) {
+                        handleModel(it)
+                    }
                 }
             } catch (e: Exception) {
                 covertJsonError(e, aio)
