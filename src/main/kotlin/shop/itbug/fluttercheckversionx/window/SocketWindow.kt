@@ -82,13 +82,13 @@ class SocketWindow : ToolWindowFactory {
 
         // sp工具
         val spWindow = SpWindow(p0, p1)
-        val spContent = instance.createContent(spWindow, "Shared Preferences Tool", false)
+        val spContent = instance.createContent(spWindow, "Shared Preferences ${PluginBundle.get("tool")}", false)
         p1.contentManager.addContent(spContent)
 
 
         //hive 工具 开发中
         val hiveWindow = HiveWidget(p0, p1)
-        val hiveContent = instance.createContent(hiveWindow, "Hive Tool", false)
+        val hiveContent = instance.createContent(hiveWindow, "Hive ${PluginBundle.get("tool")}", false)
         p1.contentManager.addContent(hiveContent)
     }
 

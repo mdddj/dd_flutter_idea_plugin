@@ -7,8 +7,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.ListSpeedSearch
 import com.intellij.ui.OnePixelSplitter
-import org.smartboot.socket.StateMachineEnum
-import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
@@ -18,15 +16,12 @@ import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.form.components.createDecorator
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.AppService
-import shop.itbug.fluttercheckversionx.socket.service.DioApiService
-import shop.itbug.fluttercheckversionx.util.toastWithError
 import javax.swing.SwingUtilities
 
 typealias Request = SocketResponseModel
 
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter(),
-    DioApiService.HandleFlutterApiModel {
+class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter() {
 
 
     private val appService = service<AppService>()
@@ -63,7 +58,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
 
     init {
-        DioApiService.addHandle(this)
         firstComponent = apiList
         secondComponent = rightFirstPanel
         splitterProportionKey = SPLIT_KEY
@@ -92,35 +86,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         const val SPLIT_KEY = "Dio Panel Re Key"
     }
 
-    override fun handleModel(model: SocketResponseModel) {
-        println("dio 模型进入: ${model.url}")
-        val flutterProjects = appService.flutterProjects
-        val reqs = flutterProjects[model.projectName] ?: emptyList()
-        val reqsAdded = reqs.plus(model)
-        model.projectName?.apply {
-            if (!flutterProjects.keys.contains(this)) {
-                val old = mutableListOf<String>()
-                flutterProjects.keys.forEach {
-                    old.add(it)
-                }
-                old.add(this)
-                appService.fireFlutterNamesChangeBus(old.toList())
-            }
-
-            flutterProjects[this] = reqsAdded
-        }
-        appService.projectNames = flutterProjects.keys.toList()
-        SocketMessageBus.fire(model)
-    }
-
-    override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
-        println("状态变更:$stateMachineEnum")
-    }
-
-    override fun covertJsonError(e: Exception, aio: AioSession?) {
-        e.printStackTrace()
-        project.toastWithError("$e")
-    }
 
 }
 

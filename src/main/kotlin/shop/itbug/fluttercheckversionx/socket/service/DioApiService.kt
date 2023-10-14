@@ -81,7 +81,7 @@ object DioApiService {
     interface HandleFlutterApiModel : NativeMessageProcessing {
         fun handleModel(model: ProjectSocketService.SocketResponseModel) {}
 
-        fun covertJsonError(e: Exception, aio: AioSession?)
+        fun covertJsonError(e: Exception, aio: AioSession?) {}
 
         override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
             try {

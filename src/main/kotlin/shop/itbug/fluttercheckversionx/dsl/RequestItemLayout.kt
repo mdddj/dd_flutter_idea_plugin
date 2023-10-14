@@ -50,13 +50,13 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
             ).visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showMethod).component.apply {
                 font = JBFont.small()
                 foreground = color
-                minimumSize = Dimension(40, minimumSize.height)
+                minimumSize = Dimension(30, minimumSize.height)
             }
             // (在紧凑模式下有效,状态码)
             label("${request.statusCode ?: -1}").visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showStatusCode).component.apply {
                 font = JBFont.smallOrNewUiMedium()
                 foreground =
-                    if (request.statusCode == 200) UIUtil.getLabelInfoForeground() else UIUtil.getErrorForeground()
+                    if (request.statusCode == 200) UIUtil.getLabelSuccessForeground() else UIUtil.getErrorForeground()
             }
 
             label(request.url!!.formatUrl(setting)).component.apply {

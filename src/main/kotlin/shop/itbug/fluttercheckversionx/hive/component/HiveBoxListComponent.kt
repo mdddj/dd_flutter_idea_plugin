@@ -7,6 +7,7 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import org.smartboot.socket.transport.AioSession
+import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.hive.model.HiveActionGetKeys
 import shop.itbug.fluttercheckversionx.hive.model.HiveActionGetValue
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -24,8 +25,12 @@ class HiveBoxListComponent(project: Project) : OnePixelSplitter() {
     private val keysList = HiveKeysList(hiveBoxList)
 
     init {
-        firstComponent = hiveBoxList
-        secondComponent = keysList
+        firstComponent = hiveBoxList.scroll().apply {
+            border = null
+        }
+        secondComponent = keysList.scroll().apply {
+            border = null
+        }
         splitterProportionKey = "hive-box-and-list"
     }
 }

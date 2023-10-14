@@ -19,14 +19,15 @@ import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
-import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
+import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.Util
-import shop.itbug.fluttercheckversionx.util.projectClosed
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -41,43 +42,37 @@ import javax.swing.event.ListSelectionListener
 /**
  * api列表
  */
-class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider {
+class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider,
+    DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent {
 
 
     fun createPopupMenu(): ListPopup {
 
-        return JBPopupFactory.getInstance()
-            .createActionGroupPopup(
-                null,
-                myActionGroup,
-                DataManager.getInstance().getDataContext(this),
-                true,
-                { dispose() },
-                10
-            )
+        return JBPopupFactory.getInstance().createActionGroupPopup(
+            null, myActionGroup, DataManager.getInstance().getDataContext(this), true, { }, 10
+        )
 
     }
 
 
     private val appService = service<AppService>()
-    private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
+    private fun listModel(): ItemModel = model as ItemModel
 
     init {
-        model = DefaultListModel()
+        register()
+        connectFlutterProjectChangeEvent()
+        model = ItemModel(mutableListOf())
         cellRenderer = MyCustomItemRender()
         setNewApiInChangeList()
         setApiListEmptyText()
         addListSelectionListener(this)
-        addListening()
         addRightPopupMenuClick()
         border = null
         DioWindowApiSearchBus.listing { doSearch(it) }
         DioWindowCleanRequests.listening { listModel().clear() }
-        DioSettingChangeEvent.listen { _, opt ->
+        DioSettingChangeEvent.listen { _, _ ->
             refreshUi()
         }
-
-        autoscrolls = DioxListingUiConfig.setting.autoScroller
 
     }
 
@@ -95,10 +90,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     ///重新构建一下 UI
     private fun refreshUi() {
-        model = DefaultListModel<Request>().run {
-            addAll(listModel().elements().toList())
-            this
-        }
+        model = ItemModel(listModel().list)
     }
 
     /**
@@ -126,14 +118,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     /**
-     * 菜单销毁回调
-     */
-    private fun dispose() {
-
-    }
-
-
-    /**
      * 搜索接口
      */
     private fun doSearch(keyword: String) {
@@ -152,37 +136,12 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         }
     }
 
-    /**
-     * 项目切换监听
-     */
-    private fun addListening() {
-        SwingUtilities.invokeLater {
-            val runnable = Runnable { projectChange() }
-            service<AppService>().addListening(runnable)
-            project.projectClosed { service<AppService>().removeListening(runnable) }
-        }
-    }
-
-    /**
-     * 项目被切换事件
-     */
-    private fun projectChange() {
-        val appService = service<AppService>()
-        val projectName = appService.currentSelectName.get()
-        projectName?.let {
-            val apis = appService.getRequestsWithProjectName(projectName)
-            changeApis(apis)
-        }
-    }
 
     /**
      * 更新api列表
      */
-    private fun changeApis(apis: List<Request>) {
-        listModel().apply {
-            clear()
-            addAll(apis)
-        }
+    private fun changeApisModel(apis: MutableList<Request>) {
+        model = ItemModel(apis)
     }
 
     /**
@@ -208,8 +167,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             appendLine("")
             appendLine(
                 PluginBundle.get("help"), SimpleTextAttributes(
-                    SimpleTextAttributes.STYLE_PLAIN,
-                    JBUI.CurrentTheme.Link.Foreground.ENABLED
+                    SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md")
@@ -228,13 +186,11 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
-            appendLine(
-                "IP:${
-                    Util.resolveLocalAddresses()
-                        .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
-                        .map { it.hostAddress }
-                }", SimpleTextAttributes.GRAYED_ATTRIBUTES
-            ) {}
+            appendLine("IP:${
+                Util.resolveLocalAddresses()
+                    .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
+                    .map { it.hostAddress }
+            }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
         }
     }
 
@@ -260,13 +216,30 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
 
+    override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+        ///当前显示的项目名
+        appService.addRequest(model)
+        changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
+        super.handleModel(model)
+    }
+
+
+    private inner class ItemModel(val list: MutableList<Request>) : DefaultListModel<Request>() {
+        init {
+            addAll(list)
+        }
+    }
+
+    //更新项目
+    override fun changeProject(projectName: String) {
+        changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
+    }
+
+
 }
 
 fun JComponent.createDecorator(block: (dec: ToolbarDecorator) -> ToolbarDecorator): JPanel {
-    var r = ToolbarDecorator.createDecorator(this)
-        .setPanelBorder(null)
-        .disableUpDownActions()
-        .disableRemoveAction()
+    var r = ToolbarDecorator.createDecorator(this).setPanelBorder(null).disableUpDownActions().disableRemoveAction()
 
     r = block.invoke(r)
     return r.createPanel().apply {
