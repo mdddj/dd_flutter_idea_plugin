@@ -13,14 +13,19 @@ import java.net.URI
 import javax.swing.BorderFactory
 
 
+//获取 URL 显示
 fun String.formatUrl(setting: DioxListeningSetting): String {
     val url = URI(this)
     val host = url.host
     val scheme = url.scheme + "://"
+
     val param = url.rawQuery
     var string = this
     if (setting.showHost.not()) {
         string = string.replace(scheme, "").replace(host, "")
+        if (string.startsWith(":${url.port}")) {
+            string = string.replace(":${url.port}", "")
+        }
     }
     if (setting.showQueryParams.not()) {
         string = string.replace("?$param", "")

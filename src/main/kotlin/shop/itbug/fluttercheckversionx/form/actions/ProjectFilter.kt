@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
-import com.intellij.ide.ActivityTracker
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
@@ -29,11 +28,11 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
         get() = appService.flutterProjects.keys.toMutableList()
 
 
+    ///
     override var value: String
         get() = appService.currentSelectName.get() ?: ""
         set(value) {
-            service<AppService>().changeCurrentSelectFlutterProjectName(value)
-            ActivityTracker.getInstance().inc()
+            value
         }
 
 
@@ -53,7 +52,9 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
     override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
-
+    override fun setNewValue(value: String, e: AnActionEvent) {
+        service<AppService>().changeCurrentSelectFlutterProjectName(value, e.project)
+    }
 }
 
 

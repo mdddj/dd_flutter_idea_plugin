@@ -9,13 +9,13 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 ///显示设置
 enum class DioUiSettingMenu(val title: String) {
-    Domain("${PluginBundle.get("display_domain_name")} (Host)"),
-    Params("${PluginBundle.get("display.query.parameters")} (Url params)"),
-    Method("${PluginBundle.get("show.request.method")} (Method)"),
-    Status("${PluginBundle.get("display.status.code")} (Status code)"),
-    Time("${PluginBundle.get("display.time")} (Time consuming)"),
-    RequestTime("${PluginBundle.get("time")} (Request time)"),
-    ProjectName("${PluginBundle.get("dio.setting.project.name.show.option")} (Project Name)")
+    Domain(PluginBundle.get("display_domain_name")),
+    Params(PluginBundle.get("display.query.parameters")),
+    Method(PluginBundle.get("show.request.method")),
+    Status(PluginBundle.get("display.status.code")),
+    Time(PluginBundle.get("display.time")),
+    RequestTime(PluginBundle.get("time")),
+    ProjectName(PluginBundle.get("dio.setting.project.name.show.option"))
 }
 
 

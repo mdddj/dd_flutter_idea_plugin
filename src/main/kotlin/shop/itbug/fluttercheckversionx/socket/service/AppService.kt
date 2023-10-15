@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.socket.service
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioSession
 import retrofit2.Call
@@ -58,12 +59,12 @@ class AppService : DioApiService.HandleFlutterApiModel {
 
 
     ///接口列表
-    var requestsList = mutableListOf<Request>()
+    private var requestsList = mutableListOf<Request>()
 
     ///添加一下接口
-    fun addRequest(item: Request) {
+    private fun addRequest(item: Request) {
         if (requestsList.isEmpty()) {
-            changeCurrentSelectFlutterProjectName(item.projectName)
+            changeCurrentSelectFlutterProjectName(item.projectName, null)
         }
         requestsList.add(item)
     }
@@ -85,6 +86,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
         userRunStartManager.start()
         chatRoomLoadManager.start()
         note.jdbc.SqliteConnectManager
+        register()
     }
 
 
@@ -102,11 +104,12 @@ class AppService : DioApiService.HandleFlutterApiModel {
 
 
     //更新当前选中的项目名称
-    fun changeCurrentSelectFlutterProjectName(appName: String) {
+    fun changeCurrentSelectFlutterProjectName(appName: String, project: Project?) {
         currentSelectName.updateAndGet { appName }
         ApplicationManager.getApplication().messageBus.syncPublisher(FlutterProjectChangeEvent.topic)
-            .changeProject(appName)
+            .changeProject(appName, project)
     }
+
 
     /**
      * 获取全部的请求,不区分项目
@@ -122,6 +125,13 @@ class AppService : DioApiService.HandleFlutterApiModel {
             return flutterProjects[it] ?: emptyList()
         }
         return emptyList()
+    }
+
+    ///刷新接口列表
+    fun refreshProjectRequest(project: Project) {
+        currentSelectName.get()?.let {
+            changeCurrentSelectFlutterProjectName(it, project)
+        }
     }
 
     /**
@@ -195,6 +205,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
     }
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+        addRequest(model)
     }
 
     override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {

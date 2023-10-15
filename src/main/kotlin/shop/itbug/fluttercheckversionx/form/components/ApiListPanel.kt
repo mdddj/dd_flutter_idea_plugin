@@ -45,6 +45,9 @@ import javax.swing.event.ListSelectionListener
 class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider,
     DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent {
 
+    private val appService = service<AppService>()
+    private fun listModel(): ItemModel = model as ItemModel
+
 
     fun createPopupMenu(): ListPopup {
 
@@ -54,9 +57,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     }
 
-
-    private val appService = service<AppService>()
-    private fun listModel(): ItemModel = model as ItemModel
 
     init {
         register()
@@ -73,7 +73,9 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         DioSettingChangeEvent.listen { _, _ ->
             refreshUi()
         }
-
+        SwingUtilities.invokeLater {
+            appService.refreshProjectRequest(project)
+        }
     }
 
 
@@ -217,8 +219,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
-        ///当前显示的项目名
-        appService.addRequest(model)
+
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
         super.handleModel(model)
     }
@@ -231,7 +232,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
     //更新项目
-    override fun changeProject(projectName: String) {
+    override fun changeProject(projectName: String, p: Project?) {
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
     }
 

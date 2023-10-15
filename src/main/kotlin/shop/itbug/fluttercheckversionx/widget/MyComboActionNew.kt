@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.widget
 
-import com.intellij.ide.ActivityTracker
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAware
@@ -53,6 +52,8 @@ class MyComboActionNew {
 
         protected abstract var value: T
 
+        open fun setNewValue(value: T, e: AnActionEvent) {}
+
         @Nls
         protected abstract fun getText(option: T): String
 
@@ -68,7 +69,7 @@ class MyComboActionNew {
 
             override fun actionPerformed(e: AnActionEvent) {
                 value = myOption
-                ActivityTracker.getInstance().inc()
+                setNewValue(myOption, e)
                 super.update(e)
             }
         }
