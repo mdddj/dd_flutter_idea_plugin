@@ -14,17 +14,17 @@ import javax.swing.BorderFactory
 
 
 //获取 URL 显示
-fun String.formatUrl(setting: DioxListeningSetting): String {
-    val url = URI(this)
-    val host = url.host
-    val scheme = url.scheme + "://"
+fun Request.formatUrl(setting: DioxListeningSetting): String {
+    val uri = URI(url ?: "")
+    val host = uri.host
+    val scheme = uri.scheme + "://"
 
-    val param = url.rawQuery
-    var string = this
+    val param = uri.rawQuery
+    var string = this.url ?: ""
     if (setting.showHost.not()) {
         string = string.replace(scheme, "").replace(host, "")
-        if (string.startsWith(":${url.port}")) {
-            string = string.replace(":${url.port}", "")
+        if (string.startsWith(":${uri.port}")) {
+            string = string.replace(":${uri.port}", "")
         }
     }
     if (setting.showQueryParams.not()) {
@@ -64,7 +64,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                     if (request.statusCode == 200) UIUtil.getLabelSuccessForeground() else UIUtil.getErrorForeground()
             }
 
-            label(request.url!!.formatUrl(setting)).component.apply {
+            label(request.formatUrl(setting)).component.apply {
                 foreground = if (isSelected) UIUtil.getListSelectionForeground(false) else UIUtil.getLabelForeground()
                 if (setting.urlBold) {
                     font = JBFont.medium().asBold()
@@ -81,7 +81,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                 foreground = color
             }
             label(
-                request.projectName ?: ""
+                request.projectName
             ).visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showProjectName).component.apply {
                 font = JBFont.small()
                 foreground = color
@@ -107,7 +107,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                 font = JBFont.small()
                 foreground = color
             }
-            label(request.projectName ?: "").visible(setting.showProjectName).component.apply {
+            label(request.projectName).visible(setting.showProjectName).component.apply {
                 font = JBFont.small()
                 foreground = color
             }

@@ -10,14 +10,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
-import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
 import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
@@ -32,8 +30,6 @@ import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.DefaultListModel
-import javax.swing.JComponent
-import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -63,7 +59,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         connectFlutterProjectChangeEvent()
         model = ItemModel(mutableListOf())
         cellRenderer = MyCustomItemRender()
-        setNewApiInChangeList()
         setApiListEmptyText()
         addListSelectionListener(this)
         addRightPopupMenuClick()
@@ -146,20 +141,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         model = ItemModel(apis)
     }
 
-    /**
-     * 监听到api进入,更新模型
-     */
-    private fun setNewApiInChangeList() {
-        val appService = service<AppService>()
-        SocketMessageBus.listening {
-            val currentProjectName = appService.currentSelectName.get()
-            //如果没有选中项目, 或者当前选中项目等于进入api的项目,才被加进列表中
-            if (currentProjectName == null || currentProjectName == it.projectName) {
-                listModel().addElement(it)
-            }
-        }
-    }
-
 
     ///添加帮助性文档
     private fun setApiListEmptyText() {
@@ -232,19 +213,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
     //更新项目
-    override fun changeProject(projectName: String, p: Project?) {
+    override fun changeProject(projectName: String, project: Project?) {
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
     }
-
-
 }
-
-fun JComponent.createDecorator(block: (dec: ToolbarDecorator) -> ToolbarDecorator): JPanel {
-    var r = ToolbarDecorator.createDecorator(this).setPanelBorder(null).disableUpDownActions().disableRemoveAction()
-
-    r = block.invoke(r)
-    return r.createPanel().apply {
-        border = null
-    }
-}
-

@@ -115,7 +115,6 @@ object MyMessageProcessor : MessageProcessor<String?> {
     }
 
     override fun process(session: AioSession?, msg: String?) {
-        println("接收到数据:$msg")
         if (msg != null) {
             jsonStringToModel(msg, session)
         }
@@ -124,7 +123,6 @@ object MyMessageProcessor : MessageProcessor<String?> {
     private fun jsonStringToModel(msg: String, session: AioSession?) {
         try {
             val json = JSONObject.parse(msg)
-            println("处理器数量:${handle.size} ${handle.map { it::class.java }}")
             handle.forEach {
                 it.handleFlutterAppMessage(msg, json, session)
             }

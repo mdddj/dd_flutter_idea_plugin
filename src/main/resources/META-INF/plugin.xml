@@ -54,7 +54,7 @@
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        
+
 
         <fileDocumentSynchronizationVetoer
                 implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
@@ -202,6 +202,30 @@
         </group>
         <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup"
                class="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" text="Hive Actions"/>
+
+
+        <!--        project 连接 项目列表-->
+        <action class="shop.itbug.fluttercheckversionx.form.actions.ProjectFilter" id="FlutterProjects"/>
+        <!--        dio 接口搜索-->
+        <action id="DioApiSearchAction" class="shop.itbug.fluttercheckversionx.form.actions.DioApiSearchAction"
+                text="Dio Apis Search"/>
+
+        <!--     dio 接口窗口顶部的操作区域   -->
+        <group id="FlutterX Window Top Actions">
+            <reference id="DioApiSearchAction"/>
+            <reference id="FlutterProjects"/>
+        </group>
+
+        <action id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
+                class="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction" text="DioRequestClean"/>
+
+        <!--        左侧操作菜单-->
+        <group id="FlutterX window Left Action">
+            <reference id="Dio.Request.Item.Render.Option"/>
+            <separator/>
+            <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
+            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+        </group>
     </actions>
 
     <!--Git.MainMenu.FileActions-->

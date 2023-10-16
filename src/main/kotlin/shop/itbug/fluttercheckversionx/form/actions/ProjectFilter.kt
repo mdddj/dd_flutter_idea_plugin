@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.actions
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
@@ -54,6 +55,12 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
     override fun setNewValue(value: String, e: AnActionEvent) {
         service<AppService>().changeCurrentSelectFlutterProjectName(value, e.project)
+    }
+
+    companion object {
+
+        ///获取实例
+        val instance: ProjectFilter = ActionManager.getInstance().getAction("FlutterProjects") as ProjectFilter
     }
 }
 

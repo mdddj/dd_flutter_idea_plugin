@@ -2,13 +2,17 @@ package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareToggleAction
+import com.intellij.ui.SearchTextField
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.Unmodifiable
 import javax.swing.JComponent
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 class MyComboActionNew {
 
@@ -152,6 +156,43 @@ class MyComboActionNew {
         }
 
         override fun getActionUpdateThread() = ActionUpdateThread.EDT
+    }
+
+
+    ///自定义搜索的 action
+    abstract class MySearchAnAction : AnAction(), CustomComponentAction, DocumentListener {
+        private val searchTextField = SearchTextField()
+
+
+        override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
+            searchTextField.addDocumentListener(this)
+            return searchTextField
+        }
+
+        override fun changedUpdate(e: DocumentEvent?) {
+            e?.let {
+                val text = e.document.getText(0, e.document.length)
+                changeText(text, e)
+            }
+        }
+
+        abstract fun changeText(text: String, e: DocumentEvent)
+
+        override fun insertUpdate(e: DocumentEvent?) {
+            changedUpdate(e)
+        }
+
+        override fun removeUpdate(e: DocumentEvent?) {
+            changedUpdate(e)
+        }
+
+        override fun actionPerformed(e: AnActionEvent) {
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread {
+            return ActionUpdateThread.EDT
+        }
+
     }
 
 }
