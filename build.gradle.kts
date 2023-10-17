@@ -86,7 +86,7 @@ tasks {
                     <h1>3.8.0</h1>
                     <ul>
                         <li>Add compact mode layout to the Dio url list</li>
-                        <li>Add Hive tool, document:<a src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/hive.md' alt='hive doc'>document</a> (Bete))</li>
+                        <li>Add Hive tool, document:<a href='https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/hive.md' alt='hive doc'>document</a> (Bete))</li>
                         <li>Optimize partial connection logic</li>
                      </ul>
                 </div>

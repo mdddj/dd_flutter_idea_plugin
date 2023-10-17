@@ -43,3 +43,26 @@ class DemoHiveBox implements DdPluginHiveBox<String> {
 
 ```
 
+# If you want to automatically display data, please rewrite the toString method
+
+```dart
+@freezed
+class Logger with _$Logger {
+  const factory Logger({
+    @JsonKey(name: 'log') @Default('') String log,
+  }) = _Logger;
+
+  factory Logger.fromJson(Map<String, dynamic> json) => _$LoggerFromJson(json);
+
+
+  ///It will appear in the content display text box
+  @override
+  String toString() {
+    return jsonEncode({
+      "my-log": log
+    });
+  }
+}
+
+
+```
