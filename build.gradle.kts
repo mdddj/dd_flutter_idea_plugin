@@ -1,4 +1,3 @@
-
 val dartVersion: String by project
 val flutterVersion: String by project
 val sinceBuildVersion: String by project
@@ -83,6 +82,14 @@ tasks {
         untilBuild.set(untilBuildVersion)
         changeNotes.set(
             """
+                <div>
+                    <h1>3.8.0</h1>
+                    <ul>
+                        <li>Add compact mode layout to the Dio url list</li>
+                        <li>Add Hive tool, document:<a src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/hive.md' alt='hive doc'>document</a> (Bete))</li>
+                        <li>Optimize partial connection logic</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.7.0</h1>
                     <ul>
