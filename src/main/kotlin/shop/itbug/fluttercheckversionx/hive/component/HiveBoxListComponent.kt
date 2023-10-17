@@ -4,14 +4,21 @@ import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColoredListCellRenderer
+import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
+import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.hive.model.HiveActionGetKeys
 import shop.itbug.fluttercheckversionx.hive.model.HiveActionGetValue
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
+import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
 import javax.swing.JList
 import javax.swing.event.ListSelectionEvent
@@ -25,11 +32,27 @@ class HiveBoxListComponent(project: Project) : OnePixelSplitter() {
     private val keysList = HiveKeysList(hiveBoxList)
 
     init {
-        firstComponent = hiveBoxList.scroll().apply {
-            border = null
+        firstComponent = BorderLayoutPanel().apply {
+            addToTop(JBLabel("Box list").apply {
+                border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
+                font = JBFont.label()
+                foreground = UIUtil.getLabelDisabledForeground()
+            })
+            addToCenter(hiveBoxList.scroll().apply {
+                border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
+            })
+            border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
         }
-        secondComponent = keysList.scroll().apply {
-            border = null
+        secondComponent = BorderLayoutPanel().apply {
+            addToTop(JBLabel("Key list").apply {
+                border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
+                font = JBFont.label()
+                foreground = UIUtil.getLabelDisabledForeground()
+            })
+            addToCenter(keysList.scroll().apply {
+                border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
+            })
+            border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
         }
         splitterProportionKey = "hive-box-and-list"
     }

@@ -2,16 +2,9 @@ package shop.itbug.fluttercheckversionx.form.sub
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONWriter
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.ui.ToolbarDecorator
-import shop.itbug.fluttercheckversionx.actions.JsonToFreezedModelAction
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
-import shop.itbug.fluttercheckversionx.widget.MyActionButton
-import shop.itbug.fluttercheckversionx.widget.WidgetUtil
-import javax.swing.JComponent
-import javax.swing.JPanel
 
 /**
  * json viewer
@@ -21,9 +14,7 @@ import javax.swing.JPanel
  *
  */
 
-class JsonValueRender(p:Project) : JsonEditorTextPanel(p) {
-
-
+class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
 
 
     /**
@@ -35,6 +26,7 @@ class JsonValueRender(p:Project) : JsonEditorTextPanel(p) {
             WriteCommandAction.runWriteCommandAction(project) {
                 text = changeJson
             }
+            super.scrollToTop()
         }
     }
 
@@ -61,23 +53,12 @@ class JsonValueRender(p:Project) : JsonEditorTextPanel(p) {
 
 }
 
- fun <T : JComponent> T.getPanel(text: String) : JPanel {
-   return ToolbarDecorator.createDecorator(this)
-       .disableRemoveAction()
-       .disableUpDownActions()
-       .addExtraActions(*createAnActions(text))
-       .createPanel().apply {
-           border = null
-       }
-
-
-}
-private fun <T : JComponent> T.createAnActions(text: String) : Array<AnAction> {
-    return arrayOf(
-        MyActionButton(JsonToFreezedModelAction(text)).action,
-        WidgetUtil.getCopyAnAction(text),
-        WidgetUtil.getDiscordAction()
-    )
-}
+//private fun <T : JComponent> T.createAnActions(text: String): Array<AnAction> {
+//    return arrayOf(
+//        MyActionButton(JsonToFreezedModelAction(text)).action,
+//        WidgetUtil.getCopyAnAction(text),
+//        WidgetUtil.getDiscordAction()
+//    )
+//}
 
 

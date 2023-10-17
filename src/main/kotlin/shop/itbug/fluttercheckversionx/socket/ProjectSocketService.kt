@@ -39,7 +39,10 @@ class ProjectSocketService {
         var projectName: String = "",
 
         ///生成成功
-        var createDate: String = DateUtil.now()
+        var createDate: String = DateUtil.now(),
+
+        ///扩展label列表
+        var extendNotes: List<String> = listOf()
     )
 
 }

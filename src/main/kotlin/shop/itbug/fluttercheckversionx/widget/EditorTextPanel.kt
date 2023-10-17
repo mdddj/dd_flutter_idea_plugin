@@ -7,8 +7,7 @@ import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
 
 
-open class JsonEditorTextPanel(project: Project) :
-    LanguageTextField(JsonLanguage.INSTANCE, project, "", false) {
+open class JsonEditorTextPanel(project: Project) : LanguageTextField(JsonLanguage.INSTANCE, project, "", false) {
 
 
     override fun createEditor(): EditorEx {
@@ -16,16 +15,21 @@ open class JsonEditorTextPanel(project: Project) :
     }
 
 
+    fun scrollToTop() {
+        editor?.scrollingModel?.scrollVertically(0)
+    }
 }
 
-class DartEditorTextPanel(project: Project) :
-    LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
+class DartEditorTextPanel(project: Project) : LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
+
+    init {
+        border = null
+    }
 
     override fun createEditor(): EditorEx {
         return myCreateEditor(super.createEditor())
     }
 }
-
 
 
 ///创建编辑器

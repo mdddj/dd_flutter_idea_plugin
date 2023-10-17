@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.window
 
 import com.intellij.execution.ui.RunContentManagerImpl
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -89,6 +90,7 @@ class SocketWindow : ToolWindowFactory {
         //hive 工具 开发中
         val hiveWindow = HiveWidget(p0, p1)
         val hiveContent = instance.createContent(hiveWindow, "Hive ${PluginBundle.get("tool")}", false)
+        hiveContent.icon = AllIcons.General.Beta
         p1.contentManager.addContent(hiveContent)
     }
 

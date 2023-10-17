@@ -46,7 +46,6 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
 
     val p = panel {
 
-
         row {
 
             // (在紧凑模式下有效,请求方式)
@@ -68,6 +67,14 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                 foreground = if (isSelected) UIUtil.getListSelectionForeground(false) else UIUtil.getLabelForeground()
                 if (setting.urlBold) {
                     font = JBFont.medium().asBold()
+                }
+            }
+
+            ///扩展备注
+            request.extendNotes.map {
+                label(it).component.apply {
+                    font = JBFont.small()
+                    foreground = color
                 }
             }
 

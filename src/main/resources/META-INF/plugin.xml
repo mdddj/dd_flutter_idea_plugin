@@ -200,8 +200,6 @@
             <separator key="dio.apis.option.title"/>
             <group id="Dio.Request.UI" class="shop.itbug.fluttercheckversionx.form.components.DioUIShowActionGroup"/>
         </group>
-        <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup"
-               class="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" text="Hive Actions"/>
 
 
         <!--        project 连接 项目列表-->
@@ -210,14 +208,23 @@
         <action id="DioApiSearchAction" class="shop.itbug.fluttercheckversionx.form.actions.DioApiSearchAction"
                 text="Dio Apis Search"/>
 
+        <!--        清理接口-->
+        <action id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
+                class="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
+                text="Clean Dio Request List"/>
+        <action id="DioRequestBodyToFreezedAction"
+                class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
+                icon="/icons/freezed.svg"/>
         <!--     dio 接口窗口顶部的操作区域   -->
         <group id="FlutterX Window Top Actions">
-            <reference id="DioApiSearchAction"/>
+            <!--            <reference id="DioApiSearchAction"/>-->
+            <reference id="DioRequestBodyToFreezedAction"/>
+            <reference id="Dio.Request.Item.Render.Option"/>
+            <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
+            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
             <reference id="FlutterProjects"/>
         </group>
 
-        <action id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
-                class="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction" text="DioRequestClean"/>
 
         <!--        左侧操作菜单-->
         <group id="FlutterX window Left Action">
@@ -226,6 +233,24 @@
             <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
             <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
+
+
+        <!--        获取 hive盒子列表操作-->
+        <action class="shop.itbug.fluttercheckversionx.hive.action.HiveGetBoxListAction" id="GetHiveBoxList"
+                icon="AllIcons.Actions.Refresh"/>
+        <!--        hive 的使用说明-->
+        <action id="HiveTutorialHelp" class="shop.itbug.fluttercheckversionx.hive.action.HiveTutorialHelp"
+                icon="AllIcons.Actions.Help" description="Hive help" text="Help"/>
+
+        <!--        hive 的操作工具栏-->
+        <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup">
+            <reference id="FlutterProjects"/>
+            <reference id="GetHiveBoxList"/>
+            <separator/>
+            <reference id="HiveTutorialHelp"/>
+        </group>
+
+
     </actions>
 
     <!--Git.MainMenu.FileActions-->

@@ -16,12 +16,13 @@ import java.awt.BorderLayout
 
 class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Project) :
     JBPanel<FreezedCovertModelWidget>(BorderLayout()) {
-
-//    private val editView = SwingUtil.getDartEditor(project,"")
-        private val editView = DartEditorTextPanel(project)
+    private val editView = DartEditorTextPanel(project)
 
     init {
-        add(JBScrollPane(editView.component), BorderLayout.CENTER)
+        border = null
+        add(JBScrollPane(editView.component).apply {
+            border = null
+        }, BorderLayout.CENTER)
         generateFreezedModel()
         add(getSettingPanel(), BorderLayout.SOUTH)
 
@@ -32,12 +33,18 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
      */
     private fun generateFreezedModel() {
         val genFreezedClass =
-            MyDartPsiElementUtil.genFreezedClass(project, model.className, model.getPropertiesString(),model.addConstructorFun,model.addFromJson)
+            MyDartPsiElementUtil.genFreezedClass(
+                project,
+                model.className,
+                model.getPropertiesString(),
+                model.addConstructorFun,
+                model.addFromJson
+            )
         changeText(genFreezedClass.text)
     }
 
 
-    private fun changeText(value:String){
+    private fun changeText(value: String) {
         runWriteAction {
             editView.text = value
         }
@@ -45,7 +52,13 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
 
     private fun changeModel(newModel: FreezedCovertModel) {
         val genFreezedClass =
-            MyDartPsiElementUtil.genFreezedClass(project, newModel.className, newModel.getPropertiesString(),model.addConstructorFun,model.addFromJson)
+            MyDartPsiElementUtil.genFreezedClass(
+                project,
+                newModel.className,
+                newModel.getPropertiesString(),
+                model.addConstructorFun,
+                model.addFromJson
+            )
         changeText(genFreezedClass.text)
     }
 
@@ -78,11 +91,11 @@ fun freezedCovertModelSetting(
             checkBox(PluginBundle.get("default.value.tip")).bindSelected(model::useDefaultValueIfNull)
         }
 
-        row (PluginBundle.get("addConstructorFun")) {
+        row(PluginBundle.get("addConstructorFun")) {
             checkBox(PluginBundle.get("addConstructorFun")).bindSelected(model::addConstructorFun)
         }
 
-        row (PluginBundle.get("addFromJson")){
+        row(PluginBundle.get("addFromJson")) {
             checkBox(PluginBundle.get("addFromJson")).bindSelected(model::addFromJson)
         }
 
@@ -93,5 +106,7 @@ fun freezedCovertModelSetting(
             }
         }
     }
-    return p
+    return p.apply {
+        border = null
+    }
 }

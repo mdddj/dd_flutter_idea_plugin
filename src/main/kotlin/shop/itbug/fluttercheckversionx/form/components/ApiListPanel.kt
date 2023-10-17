@@ -46,7 +46,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     fun createPopupMenu(): ListPopup {
-
         return JBPopupFactory.getInstance().createActionGroupPopup(
             null, myActionGroup, DataManager.getInstance().getDataContext(this), true, { }, 10
         )
@@ -181,6 +180,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         if (e != null && !project.isDisposed) {
             if (!e.valueIsAdjusting && selectedValue != null) {
                 FlutterApiClickBus.fire(selectedValue)
+                appService.currentSelectRequest = selectedValue
             }
         }
     }

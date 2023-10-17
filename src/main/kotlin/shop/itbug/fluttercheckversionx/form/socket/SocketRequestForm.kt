@@ -1,14 +1,19 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
+import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
@@ -16,6 +21,41 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 
 
 typealias Request = SocketResponseModel
+
+///是否可以转换到 json 对象
+fun SocketResponseModel.isParseToJson(): Boolean {
+    data?.let {
+        println(it::class.java)
+        when (it) {
+            is String -> {
+                return JSON.isValid(it)
+            }
+
+            is Map<*, *> -> {
+                return true
+            }
+
+            is List<*> -> {
+                return true
+            }
+
+            else -> false
+        }
+    }
+    return false
+}
+
+fun SocketResponseModel.getDataString(): String {
+    data?.let {
+        return when (it) {
+            is String -> it
+            is Map<*, *> -> JSONObject.toJSONString(it)
+            is List<*> -> JSONObject.toJSONString(it)
+            else -> "$it"
+        }
+    }
+    return ""
+}
 
 // 监听http请求的窗口
 class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter(),
@@ -45,30 +85,29 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         private val topActions =
             ActionManager.getInstance().getAction("FlutterX Window Top Actions") as DefaultActionGroup
 
-        private val leftActions =
-            ActionManager.getInstance().getAction("FlutterX window Left Action") as DefaultActionGroup
 
         //创建工具栏
-        private val topToolbar = ActionManager.getInstance().createActionToolbar("Dio Toolbar", topActions, true)
+        private val topToolbar =
+            ActionManager.getInstance().createActionToolbar("Dio Toolbar", topActions, true)
 
-        private val leftToolbar = ActionManager.getInstance().createActionToolbar("Dio Left Action", leftActions, false)
 
         private val apiList = apiPanel.scroll().apply {
-            border = null
+            border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
         }
 
         init {
             topToolbar.targetComponent = toolWindow.component
-            leftToolbar.targetComponent = toolWindow.component
-            addToTop(topToolbar.component)
+            addToTop(BorderLayoutPanel().apply {
+                addToCenter(DioRequestSearch())
+                addToRight(topToolbar.component)
+            })
             addToCenter(apiList)
-            addToLeft(leftToolbar.component)
+
         }
 
 
         ///滚动到底部.
         fun scrollToBottom() {
-            println("滚动到底部.")
             val verticalScrollBar = apiList.verticalScrollBar
             verticalScrollBar.value = verticalScrollBar.maximum
         }
@@ -76,7 +115,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     /**
      * 自动滚动到最底部
-     * todo : 滚动底部
      */
     private fun autoScrollToMax() {
         val setting = DioxListingUiConfig.setting
