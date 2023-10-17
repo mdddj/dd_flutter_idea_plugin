@@ -89,6 +89,10 @@ class GeneraAssetsSettingPanel(
                 super.update(e)
             }
 
+            override fun getActionUpdateThread(): ActionUpdateThread {
+                return ActionUpdateThread.BGT
+            }
+
         },
         WidgetUtil.getHelpAnAction { it ->
             it.inputEvent?.let {
@@ -175,6 +179,9 @@ fun getGeneraAssetsPanel(
 
     return p
 }
+
+
+
 
 
 /**

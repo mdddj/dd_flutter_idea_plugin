@@ -2,10 +2,9 @@ package shop.itbug.fluttercheckversionx.actions
 
 import com.alibaba.fastjson2.JSON
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataKey
-import com.intellij.openapi.project.Project
-import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
+import com.intellij.openapi.components.service
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 
 fun Request.getDataJson() : Any {
@@ -18,10 +17,7 @@ fun Request.getDataJson() : Any {
     return data ?: ""
 }
 
+///获取当前选中的项目
 fun AnActionEvent.api(): Request? {
-    return getData(DataKey.create(ApiListPanel.SELECT_KEY))
-}
-
- fun AnActionEvent.apiListProject() : Project? {
-    return getData(DataKey.create(ApiListPanel.PROJECT_KEY))
+    return service<AppService>().currentSelectRequest
 }

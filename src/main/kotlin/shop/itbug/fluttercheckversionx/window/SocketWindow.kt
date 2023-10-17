@@ -1,11 +1,13 @@
 package shop.itbug.fluttercheckversionx.window
 
 import com.intellij.execution.ui.RunContentManagerImpl
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
+import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginStateService
@@ -13,6 +15,7 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
+import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
 //是否开启找工作窗口
 const val ENABLE_FIND_JOBS_WINDOW = false
@@ -39,7 +42,7 @@ class SocketWindow : ToolWindowFactory {
         if (AppService.getInstance().dioIsStart.not()) {
             p1.activate {
                 try {
-                    DioApiService.builder(port, socketRequestForm).start()
+                    DioApiService.builder(port).start()
                     p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
                 } catch (e: Exception) {
@@ -73,16 +76,22 @@ class SocketWindow : ToolWindowFactory {
 
         //flutter收藏窗口
         val dartPluginWindow = DartPluginsWindow(p1, p0)
-        val dartPluginContent = instance.createContent(dartPluginWindow, "Plugin Collects", false)
+        val dartPluginContent =
+            instance.createContent(dartPluginWindow, PluginBundle.get("plugin.collects.title"), false)
         p1.contentManager.addContent(dartPluginContent)
 
 
+        // sp工具
+        val spWindow = SpWindow(p0, p1)
+        val spContent = instance.createContent(spWindow, "Shared Preferences ${PluginBundle.get("tool")}", false)
+        p1.contentManager.addContent(spContent)
 
-        //简单的一个处理请求的函数
-//        val requestPanel = RequestPanelUi(p1,p0)
-//        val requestPanelContent = instance.createContent(requestPanel,"Simple Request",false)
-//        p1.contentManager.addContent(requestPanelContent)
 
+        //hive 工具 开发中
+        val hiveWindow = HiveWidget(p0, p1)
+        val hiveContent = instance.createContent(hiveWindow, "Hive ${PluginBundle.get("tool")}", false)
+        hiveContent.icon = AllIcons.General.Beta
+        p1.contentManager.addContent(hiveContent)
     }
 
 }

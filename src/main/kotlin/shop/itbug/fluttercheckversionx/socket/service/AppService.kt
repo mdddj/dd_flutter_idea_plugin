@@ -1,18 +1,17 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
-import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import org.smartboot.socket.StateMachineEnum
-import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
-import shop.itbug.fluttercheckversionx.bus.ProjectListChangeBus
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
@@ -24,15 +23,10 @@ import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
 import java.util.concurrent.atomic.AtomicReference
-import javax.swing.SwingUtilities
 
 @Service
 class AppService : DioApiService.HandleFlutterApiModel {
 
-
-
-    // 全局的socket监听服务
-    private lateinit var server: AioQuickServer
 
     //用户信息
     var user: User? = null
@@ -52,25 +46,36 @@ class AppService : DioApiService.HandleFlutterApiModel {
     //项目名称列表
     var projectNames: List<String> = emptyList()
 
-    //监听列表
-    private var listenings = AtomicReference<ImmutableSet<Runnable>>(ImmutableSet.of())
 
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
 
     val dioServerStatus: StateMachineEnum? get() = socketServerState
 
-    //自动滚动到底部
-    var apiListAutoScrollerToMax = true
+    //右键选中的项目
+    var currentSelectRequest: Request? = null
 
     private val messageBus get() = ApplicationManager.getApplication().messageBus
+
+
+    ///接口列表
+    private var requestsList = mutableListOf<Request>()
+
+    ///添加一下接口
+    private fun addRequest(item: Request) {
+        if (requestsList.isEmpty()) {
+            changeCurrentSelectFlutterProjectName(item.projectName, null)
+        }
+        requestsList.add(item)
+    }
+
 
     /**
      * 存储了flutter项目
      * 键是项目名称
      * 值是请求列表
      */
-    var flutterProjects = mutableMapOf<String, List<ProjectSocketService.SocketResponseModel>>()
+    val flutterProjects get() = requestsList.groupBy { it.projectName }
 
 
     private val userRunStartManager = Thread(UserRunStartService())
@@ -81,13 +86,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
         userRunStartManager.start()
         chatRoomLoadManager.start()
         note.jdbc.SqliteConnectManager
-    }
-
-    /**
-     * 如果监听到api接口请求,是否自动滚动到最底部
-     */
-    fun setIsAutoScrollToMax(value: Boolean) {
-        apiListAutoScrollerToMax = value
+        register()
     }
 
 
@@ -103,74 +102,36 @@ class AppService : DioApiService.HandleFlutterApiModel {
      */
     val dioIsStart get() = socketIsInit
 
-    //添加监听
-    fun addListening(runnable: Runnable) {
-        listenings.updateAndGet { old ->
-            val toMutableList = old.toMutableList()
-            toMutableList.add(runnable)
-            ImmutableSet.copyOf(toMutableList)
-        }
-    }
-
-    //移除监听
-    fun removeListening(runnable: Runnable) {
-        listenings.updateAndGet { old ->
-            val toMutableList = old.toMutableList()
-            toMutableList.remove(runnable)
-            ImmutableSet.copyOf(toMutableList)
-        }
-    }
-
-    //通知更新
-    private fun fireChangeToListening() {
-        SwingUtilities.invokeLater {
-            for (runnable in listenings.get()) {
-                try {
-                    runnable.run()
-                } catch (e: Exception) {
-                    println("警告: 更新失败:$e")
-                }
-            }
-        }
-    }
-
 
     //更新当前选中的项目名称
-    fun changeCurrentSelectFlutterProjectName(appName: String) {
+    fun changeCurrentSelectFlutterProjectName(appName: String, project: Project?) {
         currentSelectName.updateAndGet { appName }
-        fireChangeToListening()
+        ApplicationManager.getApplication().messageBus.syncPublisher(FlutterProjectChangeEvent.topic)
+            .changeProject(appName, project)
     }
 
-
-    fun fireFlutterNamesChangeBus(list: List<String>) {
-        ProjectListChangeBus.fire(list)
-    }
-
-    fun getRequestsWithProjectName(projectName: String): List<Request> {
-        val d = flutterProjects.filter { it.key == projectName }
-        if (d.isNotEmpty()) {
-            return d.getValue(projectName)
-        }
-        return emptyList()
-    }
 
     /**
      * 获取全部的请求,不区分项目
      */
     fun getAllRequest(): List<Request> {
-        val all = mutableListOf<Request>()
-        flutterProjects.values.forEach {
-            all.addAll(it)
-        }
-        return all
+        return requestsList
     }
 
 
+    ///获取当前选中项目的接口列表
     fun getCurrentProjectAllRequest(): List<Request> {
-        if (currentSelectName.get() != null) {
-            return flutterProjects[currentSelectName.get()!!]?.toList() ?: emptyList()
+        currentSelectName.get()?.let {
+            return flutterProjects[it] ?: emptyList()
         }
         return emptyList()
+    }
+
+    ///刷新接口列表
+    fun refreshProjectRequest(project: Project) {
+        currentSelectName.get()?.let {
+            changeCurrentSelectFlutterProjectName(it, project)
+        }
     }
 
     /**
@@ -179,8 +140,12 @@ class AppService : DioApiService.HandleFlutterApiModel {
      */
     fun cleanAllRequest() {
         currentSelectName.get()?.apply {
-            flutterProjects[this] = emptyList()
-            DioWindowCleanRequests.fire()
+            val result = requestsList.removeAll { it.projectName == this }
+            if (result) {
+                DioWindowCleanRequests.fire()
+            } else {
+                println("删除失败")
+            }
         }
     }
 
@@ -217,8 +182,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
         val call = SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type)
         call.enqueue(object : Callback<JSONResult<List<ResourceCategory>>> {
             override fun onResponse(
-                call: Call<JSONResult<List<ResourceCategory>>>,
-                response: Response<JSONResult<List<ResourceCategory>>>
+                call: Call<JSONResult<List<ResourceCategory>>>, response: Response<JSONResult<List<ResourceCategory>>>
             ) {
                 response.body()?.apply {
                     if (state == 200) {
@@ -241,6 +205,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
     }
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+        addRequest(model)
     }
 
     override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {

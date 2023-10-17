@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>shop.itbug.FlutterCheckVersionX</id>
-    <name>FlutterCheckVersionX</name>
+    <name>FlutterX</name>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
     <description><![CDATA[
@@ -42,12 +42,12 @@
         ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.java</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
     <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
     <depends>io.flutter</depends>
+    <depends>Git4Idea</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
@@ -56,26 +56,12 @@
     <extensions defaultExtensionNs="com.intellij">
 
 
+        <fileDocumentSynchronizationVetoer
+                implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
+
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
-
-
-        <!--    plugin版本自动检测,并自动修复    -->
-        <localInspection language="yaml" displayName="Auto version show" groupPath="Yaml"
-                         groupBundle="messages.InspectionsBundle"
-                         bundle="messages.pluginBundle"
-                         groupKey="group.names.probable.bugs" enabledByDefault="true" level="ERROR"
-                         implementationClass="shop.itbug.fluttercheckversionx.tools.AutoVersionTool"/>
-
-        <!--    dart文件里面的_命名自动修复功能, hints    -->
-        <localInspection language="Dart" displayName="Dart public api fix" groupPath="Dart" enabledByDefault="true"
-                         implementationClass="shop.itbug.fluttercheckversionx.tools.DartPublicFunctionFix"
-                         groupName="Dart public api fix"/>
-
-        <!--     yaml折叠   -->
-        <!--        <lang.foldingBuilder implementationClass="shop.itbug.fluttercheckversionx.fold.PubYamlPathAndGithubFold"-->
-        <!--                             language="yaml"/>-->
 
 
         <!--    plugin版本自动联想功能    -->
@@ -101,10 +87,12 @@
         <!--flutter新版本通知-->
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
 
-        <!--    检查插件是否在项目中已经使用过     -->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"
-                                   language="yaml"
-        />
+        <!--    插件检测忽略配置     -->
+        <!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
+        <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"-->
+        <!--                                              isEnabledByDefault='true'-->
+        <!--                                              language="yaml" nameKey="flutterX-Dart-Plugin-Ignore"-->
+        <!--                                              providerId="flutterX-Dart-Plugin-Ignore"/>-->
 
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
                                    language="Dart"/>
@@ -144,22 +132,32 @@
                     icon="/icons/flutter.svg"/>
 
         <!--   底部状态栏展示小部件     -->
-        <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"/>
+        <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"
+                                id="myUserBarFactory"/>
 
         <diff.DiffExtension implementation="shop.itbug.fluttercheckversionx.diff.PubYamlGithubAndPathDiff"/>
 
         <!--        系统设置-->
-        <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"/>
+        <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
+                                 displayName="Setting"/>
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
 
 
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState"/>
+
+
+        <!--        插件新版本检测-->
+        <externalAnnotator implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"
+                           language="yaml"/>
+
+
+        <!--        忽略部分依赖的检测-->
+        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig"/>
+
+
     </extensions>
-
-
-    <extensionPoints>
-    </extensionPoints>
 
 
     <actions>
@@ -181,7 +179,80 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
+        <action id="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
+        <action id="Covert.To.actions.FlutterX"
+                class="shop.itbug.fluttercheckversionx.actions.context.CovertToActionsGroup"
+                text="Covert To By FlutterX" description="转换的一些操作" popup="true">
+            <add-to-group group-id="ShowIntentionsGroup" anchor="first"/>
+        </action>
+        <action id="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
+                class="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
+                text="SocketConnectComboxAction" description="socket 连接列表" popup="true"/>
+        <action id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+                class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+                text="DioRequestRenderStyle"/>
+
+
+        <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">
+            <separator key="ui.render"/>
+            <reference id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"/>
+            <separator key="dio.apis.option.title"/>
+            <group id="Dio.Request.UI" class="shop.itbug.fluttercheckversionx.form.components.DioUIShowActionGroup"/>
+        </group>
+
+
+        <!--        project 连接 项目列表-->
+        <action class="shop.itbug.fluttercheckversionx.form.actions.ProjectFilter" id="FlutterProjects"/>
+        <!--        dio 接口搜索-->
+        <action id="DioApiSearchAction" class="shop.itbug.fluttercheckversionx.form.actions.DioApiSearchAction"
+                text="Dio Apis Search"/>
+
+        <!--        清理接口-->
+        <action id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
+                class="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
+                text="Clean Dio Request List"/>
+        <action id="DioRequestBodyToFreezedAction"
+                class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
+                icon="/icons/freezed.svg"/>
+        <!--     dio 接口窗口顶部的操作区域   -->
+        <group id="FlutterX Window Top Actions">
+            <!--            <reference id="DioApiSearchAction"/>-->
+            <reference id="DioRequestBodyToFreezedAction"/>
+            <reference id="Dio.Request.Item.Render.Option"/>
+            <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
+            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference id="FlutterProjects"/>
+        </group>
+
+
+        <!--        左侧操作菜单-->
+        <group id="FlutterX window Left Action">
+            <reference id="Dio.Request.Item.Render.Option"/>
+            <separator/>
+            <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
+            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+        </group>
+
+
+        <!--        获取 hive盒子列表操作-->
+        <action class="shop.itbug.fluttercheckversionx.hive.action.HiveGetBoxListAction" id="GetHiveBoxList"
+                icon="AllIcons.Actions.Refresh"/>
+        <!--        hive 的使用说明-->
+        <action id="HiveTutorialHelp" class="shop.itbug.fluttercheckversionx.hive.action.HiveTutorialHelp"
+                icon="AllIcons.Actions.Help" description="Hive help" text="Help"/>
+
+        <!--        hive 的操作工具栏-->
+        <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup">
+            <reference id="FlutterProjects"/>
+            <reference id="GetHiveBoxList"/>
+            <separator/>
+            <reference id="HiveTutorialHelp"/>
+        </group>
+
+
     </actions>
 
-
+    <!--Git.MainMenu.FileActions-->
 </idea-plugin>
+

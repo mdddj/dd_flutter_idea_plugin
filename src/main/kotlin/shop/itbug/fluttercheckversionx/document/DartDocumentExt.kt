@@ -27,7 +27,6 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             element.containingFile.virtualFile,
             element.textOffset
         )
-        println("文档result是否为空:${result.isEmpty()}")
         if (result.isEmpty()) return ""
         val docInfo = result.first()
         val dartFormalParameterList =

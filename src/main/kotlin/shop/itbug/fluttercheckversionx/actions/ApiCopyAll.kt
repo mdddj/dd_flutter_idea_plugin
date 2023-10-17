@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.actions
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONWriter
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
@@ -42,5 +43,9 @@ class ApiCopyAll:MyAction({"Copy All"}) {
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.api()!=null
         super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 }

@@ -1,9 +1,10 @@
 package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.impl.AsyncDataContext
+import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -15,14 +16,16 @@ import com.intellij.util.ui.JBUI
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
-import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
+import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
+import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.Util
-import shop.itbug.fluttercheckversionx.util.projectClosed
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -31,41 +34,59 @@ import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
+
 /**
  * api列表
  */
-class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener {
+class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider,
+    DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent {
+
+    private val appService = service<AppService>()
+    private fun listModel(): ItemModel = model as ItemModel
+
 
     fun createPopupMenu(): ListPopup {
-        return JBPopupFactory.getInstance()
-            .createActionGroupPopup(PluginBundle.get("menu"), myActionGroup, myDataContext, true, { dispose() }, 10)
+        return JBPopupFactory.getInstance().createActionGroupPopup(
+            null, myActionGroup, DataManager.getInstance().getDataContext(this), true, { }, 10
+        )
 
     }
-    private val myDataContext: AsyncDataContext = object : AsyncDataContext {
-        override fun getData(dataId: String): Any? {
-            if (dataId == "select-api") {
-                return this@ApiListPanel.selectedValue
-            } else if (dataId == PROJECT_KEY) {
-                return project
-            }
-            return null
+
+
+    init {
+        register()
+        connectFlutterProjectChangeEvent()
+        model = ItemModel(mutableListOf())
+        cellRenderer = MyCustomItemRender()
+        setApiListEmptyText()
+        addListSelectionListener(this)
+        addRightPopupMenuClick()
+        border = null
+        DioWindowApiSearchBus.listing { doSearch(it) }
+        DioWindowCleanRequests.listening { listModel().clear() }
+        DioSettingChangeEvent.listen { _, _ ->
+            refreshUi()
+        }
+        SwingUtilities.invokeLater {
+            appService.refreshProjectRequest(project)
         }
     }
 
 
-    private val appService = service<AppService>()
-    private fun listModel(): DefaultListModel<Request> = model as DefaultListModel
+    override fun setDataProvider(provider: DataProvider) {
+        super.setDataProvider { s ->
+            {
+                if (s == SELECT_KEY) {
+                    this.selectedValue
+                }
+            }
+        }
+    }
 
-    init {
-        model = DefaultListModel()
-        cellRenderer = MyCustomItemRender()
-        setNewApiInChangeList()
-        setApiListEmptyText()
-        addListSelectionListener(this)
-        addListening()
-        addRightPopupMenuClick()
-        DioWindowApiSearchBus.listing { doSearch(it) }
-        DioWindowCleanRequests.listening { listModel().clear() }
+
+    ///重新构建一下 UI
+    private fun refreshUi() {
+        model = ItemModel(listModel().list)
     }
 
     /**
@@ -78,6 +99,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
                 if (e != null && SwingUtilities.isRightMouseButton(e)) {
                     val index = this@ApiListPanel.locationToIndex(e.point)
                     selectedIndex = index
+                    appService.currentSelectRequest = selectedValue
                     SwingUtilities.invokeLater {
                         createPopupMenu().show(RelativePoint(Point(e.locationOnScreen)))
                     }
@@ -89,14 +111,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     private val myActionGroup: ActionGroup
         get() = ActionManager.getInstance().getAction("dio-window-view-params") as ActionGroup
-
-
-    /**
-     * 菜单销毁回调
-     */
-    private fun dispose() {
-
-    }
 
 
     /**
@@ -118,51 +132,12 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         }
     }
 
-    /**
-     * 项目切换监听
-     */
-    private fun addListening() {
-        SwingUtilities.invokeLater {
-            val runnable = Runnable { projectChange() }
-            service<AppService>().addListening(runnable)
-            project.projectClosed { service<AppService>().removeListening(runnable) }
-        }
-    }
-
-    /**
-     * 项目被切换事件
-     */
-    private fun projectChange() {
-        val appService = service<AppService>()
-        val projectName = appService.currentSelectName.get()
-        projectName?.let {
-            val apis = appService.getRequestsWithProjectName(projectName)
-            changeApis(apis)
-        }
-    }
 
     /**
      * 更新api列表
      */
-    private fun changeApis(apis: List<Request>) {
-        listModel().apply {
-            clear()
-            addAll(apis)
-        }
-    }
-
-    /**
-     * 监听到api进入,更新模型
-     */
-    private fun setNewApiInChangeList() {
-        val appService = service<AppService>()
-        SocketMessageBus.listening {
-            val currentProjectName = appService.currentSelectName.get()
-            //如果没有选中项目, 或者当前选中项目等于进入api的项目,才被加进列表中
-            if (currentProjectName == null || currentProjectName == it.projectName) {
-                listModel().addElement(it)
-            }
-        }
+    private fun changeApisModel(apis: MutableList<Request>) {
+        model = ItemModel(apis)
     }
 
 
@@ -174,8 +149,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             appendLine("")
             appendLine(
                 PluginBundle.get("help"), SimpleTextAttributes(
-                    SimpleTextAttributes.STYLE_PLAIN,
-                    JBUI.CurrentTheme.Link.Foreground.ENABLED
+                    SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.Foreground.ENABLED
                 )
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md")
@@ -194,13 +168,11 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
-            appendLine(
-                "IP:${
-                    Util.resolveLocalAddresses()
-                        .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
-                        .map { it.hostAddress }
-                }", SimpleTextAttributes.GRAYED_ATTRIBUTES
-            ) {}
+            appendLine("IP:${
+                Util.resolveLocalAddresses()
+                    .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
+                    .map { it.hostAddress }
+            }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
         }
     }
 
@@ -208,6 +180,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         if (e != null && !project.isDisposed) {
             if (!e.valueIsAdjusting && selectedValue != null) {
                 FlutterApiClickBus.fire(selectedValue)
+                appService.currentSelectRequest = selectedValue
             }
         }
     }
@@ -215,9 +188,32 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     companion object {
         const val SELECT_KEY = "select-api"
-        const val PROJECT_KEY = "project-"
+        const val PANEL = "panel"
     }
 
+    override fun getData(p0: String): Any? {
+        if (p0 == PANEL) {
+            return this
+        }
+        return null
+    }
+
+
+    override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+
+        changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
+        super.handleModel(model)
+    }
+
+
+    private inner class ItemModel(val list: MutableList<Request>) : DefaultListModel<Request>() {
+        init {
+            addAll(list)
+        }
+    }
+
+    //更新项目
+    override fun changeProject(projectName: String, project: Project?) {
+        changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
+    }
 }
-
-

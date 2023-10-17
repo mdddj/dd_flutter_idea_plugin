@@ -2,14 +2,9 @@ package shop.itbug.fluttercheckversionx.form.sub
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONWriter
-import com.intellij.json.JsonLanguage
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.ui.LanguageTextField
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.UIUtil
-import java.awt.BorderLayout
-import javax.swing.BorderFactory
-import javax.swing.JPanel
+import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
 
 /**
  * json viewer
@@ -19,22 +14,7 @@ import javax.swing.JPanel
  *
  */
 
-class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
-
-
-    private var jsonView: LanguageTextField = LanguageTextField(JsonLanguage.INSTANCE, project, "", false)
-
-    val text: String get() = jsonView.text
-
-    init {
-        border = BorderFactory.createEmptyBorder()
-        jsonView.border = BorderFactory.createEmptyBorder()
-        jsonView.background = UIUtil.getPanelBackground()
-        val s = JBScrollPane(jsonView)
-        s.border = BorderFactory.createEmptyBorder()
-        add(s, BorderLayout.CENTER)
-        background = UIUtil.getPanelBackground()
-    }
+class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
 
 
     /**
@@ -43,7 +23,10 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
     fun changeValue(json: Any?) {
         if (json != null && !project.isDisposed) {
             val changeJson = changeJson(json)
-            jsonView.text = changeJson
+            WriteCommandAction.runWriteCommandAction(project) {
+                text = changeJson
+            }
+            super.scrollToTop()
         }
     }
 
@@ -69,4 +52,13 @@ class JsonValueRender(var project: Project) : JPanel(BorderLayout()) {
     }
 
 }
+
+//private fun <T : JComponent> T.createAnActions(text: String): Array<AnAction> {
+//    return arrayOf(
+//        MyActionButton(JsonToFreezedModelAction(text)).action,
+//        WidgetUtil.getCopyAnAction(text),
+//        WidgetUtil.getDiscordAction()
+//    )
+//}
+
 

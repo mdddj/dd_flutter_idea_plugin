@@ -4,70 +4,54 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
-import shop.itbug.fluttercheckversionx.inlay.json.DefaulImmediateConfigurable
-import shop.itbug.fluttercheckversionx.util.isDartPluginElement
+import com.intellij.ui.components.JBLabel
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import javax.swing.JComponent
 
-class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider.Settings> {
+class PluginInlayHintsProvider : InlayHintsProvider<PluginInlayHintsProvider> {
 
 
-    companion object {
-        private val KEY: SettingsKey<Settings> = SettingsKey("plug.hint.provider")
-    }
-
-    data class Settings(
-        val show: Boolean = true
-    )
-
-    override val key: SettingsKey<Settings>
-        get() = KEY
+    override val key: SettingsKey<PluginInlayHintsProvider>
+        get() = SettingsKey(PluginBundle.get("flutterX-Dart-Plugin-Ignore"))
     override val name: String
-        get() = "settings.inlay.menus"
+        get() = PluginBundle.get("flutterX-Dart-Plugin-Ignore")
     override val previewText: String
-        get() = """
-dependencies:
-  extended_image: ^6.0.2+1
-  flutter_easyrefresh: ^2.2.1
-        """.trimIndent()
+        get() = PluginBundle.get("flutterX-Dart-Plugin-Ignore")
 
-    /**
-     * Creates configurable, that immediately applies changes from UI to [settings]
-     */
-    override fun createConfigurable(settings: Settings): ImmediateConfigurable {
-        return DefaulImmediateConfigurable()
-    }
-
-    override fun createSettings(): Settings {
-        return Settings()
+    override fun createSettings(): PluginInlayHintsProvider {
+        TODO("Not yet implemented")
     }
 
     override fun getCollectorFor(
         file: PsiFile,
         editor: Editor,
-        settings: Settings,
+        settings: PluginInlayHintsProvider,
         sink: InlayHintsSink
     ): InlayHintsCollector {
-        return object : FactoryInlayHintsCollector(editor) {
+        return object : InlayHintsCollector {
+
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                if (element.isDartPluginElement()) {
-                    PsiTreeUtil.findChildOfAnyType(element, YAMLKeyValueImpl::class.java)
-//                    pathElement?.let {
-//                        if (pathElement.keyText == "path" || pathElement.keyText == "github") {
-//                            editor.foldingModel.runBatchFoldingOperation {
-//                                editor.foldingModel.addFoldRegion(
-//                                    element.startOffset,
-//                                    element.endOffset,
-//                                    "引入本地插件"
-//                                )
-//                            }
-//                        }
+//                val ex = YamlExtends(element)
+//                val config = DartPluginIgnoreConfig.getInstance(file.project)
+//                if (ex.isDartPluginElement() && config.isIg(ex.getDartPluginNameAndVersion()?.name ?: "") ) {
+//                    sink.addPresentation(InlineInlayPosition(element.endOffset, true, 0), emptyList(), "", true) {
+//                        this.text(PluginBundle.get("flutterX-Dart-Plugin-Ignore")) //提示忽略检测
 //                    }
-                }
+//                    sink.addInlineElement(element.endOffset)
+//                }
                 return true
             }
+
         }
     }
 
+    override fun createConfigurable(settings: PluginInlayHintsProvider): ImmediateConfigurable {
+        return object : ImmediateConfigurable {
+            override fun createComponent(listener: ChangeListener): JComponent {
+                return JBLabel("none")
+            }
+
+        }
+    }
 
 }

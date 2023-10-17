@@ -26,7 +26,7 @@
                     text="Model to Freezed">
             </action>
             <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
-                    text="Function Params To Freezed"  />
+                    text="Function Params To Freezed"/>
             <action id="dart-document-generate-action"
                     class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
             <action class="shop.itbug.fluttercheckversionx.actions.MoveClassToOtherFile" id="MoveClassToOtherFile"/>
@@ -59,6 +59,8 @@
             <action id="DioWindowViewPostParamsAction"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
 
+            <separator/>
+            <reference id="DioRequestBodyToFreezedAction"/>
 
         </group>
     </actions>

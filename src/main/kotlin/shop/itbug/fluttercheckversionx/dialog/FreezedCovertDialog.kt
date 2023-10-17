@@ -2,14 +2,12 @@ package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.LanguageTextField
 import com.intellij.ui.components.JBScrollPane
-import com.jetbrains.lang.dart.DartLanguage
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.model.getPropertiesString
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
+import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
 import java.awt.BorderLayout
-import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -26,14 +24,9 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
         className = model.className
     }
 
-    private val editView = LanguageTextField(
-        DartLanguage.INSTANCE,
-        project,
-        "",
-        false
-    ).apply {
-        minimumSize = Dimension(400,400)
-    }
+
+    private var editView = DartEditorTextPanel(project)
+    
 
     init {
         super.init()

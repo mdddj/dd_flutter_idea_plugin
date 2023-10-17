@@ -4,9 +4,11 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
-import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
+import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarAccessDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
@@ -19,7 +21,6 @@ import java.awt.datatransfer.StringSelection
 
 
 class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigModel> {
-
 
 
     override val key: SettingsKey<GenerateAssetsClassConfigModel>
@@ -36,6 +37,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
     override fun createSettings(): GenerateAssetsClassConfigModel {
         return GenerateAssetsClassConfig.getGenerateAssetsSetting()
     }
+
     override fun getCollectorFor(
         file: PsiFile,
         editor: Editor,
@@ -46,57 +48,53 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 val hintsInlayPresentationFactory = HintsInlayPresentationFactory(factory)
                 if (element is DartVarDeclarationListImpl) {
-                    val nameComm = element.children.filterIsInstance<DartVarAccessDeclarationImpl>()
-                    if (nameComm.isNotEmpty()) {
-                        val filterIsInstanceWithName = nameComm[0]
-                        val filterIsInstance =
-                            filterIsInstanceWithName.children.filterIsInstance<DartComponentNameImpl>()[0]
-                        filterIsInstance.parent.nextSibling ?: return true
-
-                        val analysisGethover = DartAnalysisServerService.getInstance(file.project)
-                            .analysis_getHover(file.virtualFile, filterIsInstance.textOffset)
-                        if (analysisGethover.isNotEmpty()) {
-                            val staticType = analysisGethover[0].staticType
-                            analysisGethover[0].dartdoc
+                    val dartVar = PsiTreeUtil.findChildOfType(element, DartVarAccessDeclarationImpl::class.java)
+                    if (dartVar != null) {
+                        val comName = dartVar.componentName
+                        val type = dartVar.type
+                        if(type!=null){
+                            return true //如果有类型就不显示了
+                        }
+                        val result = DartAnalysisServerService.getInstance(file.project)
+                            .analysis_getHover(file.virtualFile, comName.textOffset)
+                        if (result.isNotEmpty()) {
+                            val staticType = result[0].staticType
+                            result[0].dartdoc
                             if (staticType != null) {
                                 val ins =
-                                    hintsInlayPresentationFactory.simpleText(staticType, "类型:$staticType") { _, _ ->
+                                    hintsInlayPresentationFactory.simpleText(" :$staticType", staticType) { _, _ ->
                                         val ss = StringSelection(staticType)
                                         val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
                                         clipboard.setContents(ss, null)
                                     }
                                 sink.addInlineElement(
-                                    filterIsInstanceWithName.endOffset, false, ins, false
+                                    comName.endOffset, false, ins, false
                                 )
                             }
                         }
                     }
                 }
 
-
-                //资产图片的展示
-//                if (element.lastChild is DartReferenceExpressionImpl && settings.showImageIconInEditor) {
-//                    element.reference?.let {
-//                        val referenceValElement = it.resolve()?.parent?.parent
-//                        if (referenceValElement is DartVarDeclarationListImpl && referenceValElement.lastChild is DartVarInitImpl) {
-//                            val varInitElement = referenceValElement.lastChild
-//                            if (varInitElement.lastChild is DartStringLiteralExpressionImpl) {
-//                                val path = varInitElement.lastChild.text.replace("'", "").replace("\"", "")
-//                                hintsInlayPresentationFactory.getImageWithPath(file.project.basePath + File.separator + path,path)
-//                                    ?.let { it1 -> sink.addInlineElement(element.endOffset, false, it1, false) }
-//                            }
-//                        }
-//                    }
-//
-//                }
-
-
-//                if(element is DartStringLiteralExpressionImpl) {
-//                    val path = element.text.replace("'", "").replace("\"", "")
-//                    hintsInlayPresentationFactory.getImageWithPath(file.project.basePath + File.separator + path,path)
-//                        ?.let { it1 -> sink.addInlineElement(element.endOffset, false, it1, false) }
-//                }
-
+                if(element is DartSimpleFormalParameterImpl){
+                    if(element.type == null) {
+                        val result = DartAnalysisServerService.getInstance(file.project)
+                            .analysis_getHover(file.virtualFile, element.textOffset)
+                        if(result.isNotEmpty()){
+                            val staticType = result[0].staticType
+                            if(staticType != null){
+                                val ins =
+                                    hintsInlayPresentationFactory.simpleText("$staticType: ", staticType) { _, _ ->
+                                        val ss = StringSelection(staticType)
+                                        val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                                        clipboard.setContents(ss, null)
+                                    }
+                                sink.addInlineElement(
+                                    element.startOffset, false, ins, false
+                                )
+                            }
+                        }
+                    }
+                }
                 return true
             }
 

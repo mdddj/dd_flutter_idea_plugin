@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
@@ -32,13 +33,13 @@ import javax.swing.JPanel
 
 
 class FreezedClassesGenerateDialog(
-    override val project: Project,
-    private val freezedClasses: MutableList<FreezedCovertModel>
-) :
-    MyDialogWrapper(project) {
+    override val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>
+) : MyDialogWrapper(project) {
     private val settingInstance = JsonToFreezedSettingModelConfig.getInstance(project)
     private val setting = settingInstance.state
-    private val tabView = JBTabbedPane()
+    private val tabView = JBTabbedPane().apply {
+        border = null
+    }
     private var fileName: String = DEFAULT_CLASS_NAME
     private var filePath: String = setting.generateToPath
     private val widgets: MutableList<FreezedCovertModelWidget> = mutableListOf()
@@ -83,30 +84,29 @@ class FreezedClassesGenerateDialog(
                 row(PluginBundle.get("save.to.directory")) {
                     textFieldWithBrowseButton(
                         fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                            .withRoots(ProjectRootManager.getInstance(project).contentRoots.first()),
-                        project = project
+                            .withRoots(ProjectRootManager.getInstance(project).contentRoots.first()), project = project
                     ).bindText({
                         filePath
                     }, {
                         filePath = it
                         filePathLabel.text = it
-                    })
+                    }).align(Align.FILL)
                 }
                 row(PluginBundle.get("file.name")) {
                     textField().bindText({ fileName }, {
                         fileName = it
-                    })
+                    }).align(Align.FILL)
                 }
                 row {
                     checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
                         { setting.autoRunDartBuilder },
                         { v ->
                             settingInstance.changeState { it.copy(autoRunDartBuilder = v) }
-                        })
+                        }).align(Align.FILL)
                 }
             }
         }
-        return settingPanel
+        return settingPanel.apply { border = null }
     }
 
 
@@ -116,9 +116,8 @@ class FreezedClassesGenerateDialog(
         ///保存此路径
         settingInstance.changeState { it.copy(generateToPath = filePath) }
 
-        val psiFile =
-            PsiFileFactory.getInstance(project)
-                .createFileFromText("$fileName.dart", DartLanguage.INSTANCE, generateFileText())
+        val psiFile = PsiFileFactory.getInstance(project)
+            .createFileFromText("$fileName.dart", DartLanguage.INSTANCE, generateFileText())
         val virtualFile = filePath.getVirtualFile()
         if (virtualFile == null) {
             project.toastWithError(PluginBundle.get("unable.to.find.directory"))
@@ -133,8 +132,7 @@ class FreezedClassesGenerateDialog(
                 }
                 project.toast(PluginBundle.get("build.succeeded"))
                 if (setting.autoRunDartBuilder) {
-                    TerminalView.getInstance(project)
-                        .createLocalShellWidget(project.basePath, "freezed gen")
+                    TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "freezed gen")
                         .executeCommand("flutter pub run build_runner build")
                 }
                 FileBasedIndex.getInstance().requestReindex(virtualFile)

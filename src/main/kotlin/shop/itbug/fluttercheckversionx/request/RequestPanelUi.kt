@@ -17,7 +17,7 @@ import javax.swing.JToolBar
 import javax.swing.SwingConstants
 
 
-class RequestPanelUi(private val toolWindow: ToolWindow,private val project: Project): BorderLayoutPanel() {
+class RequestPanelUi(private val toolWindow: ToolWindow, private val project: Project) : BorderLayoutPanel() {
 
     private val apiInput = JBTextField()
     private val generateButton = JButton("Send")
@@ -39,22 +39,21 @@ class RequestPanelUi(private val toolWindow: ToolWindow,private val project: Pro
         return toolbar
     }
 
-    private fun getApiJson()   {
+    private fun getApiJson() {
         val api = apiInput.text
-        if(validUrl(api)){
-            try{
-               val response = HttpUtil.get(api)
-                println(response)
-            }catch (e:Exception){
+        if (validUrl(api)) {
+            try {
+                val response = HttpUtil.get(api)
+            } catch (e: Exception) {
                 project.toast(e.localizedMessage)
             }
-        }else {
+        } else {
             project.toastWithError("Unable to access URL")
         }
     }
 
 
-    private fun validUrl(urlString: String) : Boolean {
+    private fun validUrl(urlString: String): Boolean {
         try {
             val url = URL(urlString)
             val connection: HttpURLConnection = url.openConnection() as HttpURLConnection

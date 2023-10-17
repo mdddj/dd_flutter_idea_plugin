@@ -67,7 +67,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     }
 
 
-    fun iconRoundClick(icon: Icon,clicked: InlayPresentationClickHandle? = null): InlayPresentation {
+    fun iconRoundClick(icon: Icon, clicked: InlayPresentationClickHandle? = null): InlayPresentation {
         return factory.smallScaledIcon(icon).addRoundBg().clickHandle(clicked)
     }
 
@@ -168,7 +168,6 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
             val imageIcon: Icon = ImageIcon(i)
             return factory.icon(imageIcon).addTip(basePath)
         } catch (e: Exception) {
-            println("$path 读取图片失败:$e")
             null
         }
     }

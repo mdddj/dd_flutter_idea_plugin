@@ -20,7 +20,7 @@ fun Any.toJsonFormart(): String {
 /**
  * 设置为滚动面板
  */
-fun JComponent.scroll(): JComponent {
+fun JComponent.scroll(): JBScrollPane {
     return JBScrollPane(this)
 }
 

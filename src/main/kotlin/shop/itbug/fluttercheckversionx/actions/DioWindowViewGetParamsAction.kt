@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
@@ -14,13 +15,13 @@ open class DioWindowViewGetParamsAction : MyDumbAwareAction(PluginBundle.getLazy
 
     override fun actionPerformed(e: AnActionEvent) {
         val api = e.api()!!
-         api.queryParams?.let { SimpleJsonViewDialog.show(it, e.apiListProject()!!) }
+         api.queryParams?.let { SimpleJsonViewDialog.show(it, e.project!!) }
 
     }
 
     override fun update(e: AnActionEvent) {
         super.update(e)
-        e.presentation.isEnabled = e.api()?.queryParams?.isNotEmpty() == true && e.apiListProject() !=null
+        e.presentation.isEnabled = e.api()?.queryParams?.isNotEmpty() == true && e.project !=null
     }
 
 
@@ -29,4 +30,7 @@ open class DioWindowViewGetParamsAction : MyDumbAwareAction(PluginBundle.getLazy
         val instance: AnAction = ActionManager.getInstance().getAction("dio-window-view-GET")
     }
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
 }

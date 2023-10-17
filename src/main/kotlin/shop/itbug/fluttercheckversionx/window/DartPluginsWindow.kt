@@ -73,7 +73,7 @@ class DartPluginsWindow(private val toolwindow: ToolWindow, val project: Project
     }
 
     init {
-        addToCenter(JBScrollPane(list))
+        addToCenter(JBScrollPane(list).apply { border = null })
         addToTop(toolbar.component)
     }
 
@@ -95,6 +95,7 @@ class DartPluginList(val project: Project) : JBList<Entity>() {
                 FlutterPluginCollectEventType.remove -> refresh()
             }
         }
+        border = null
     }
 
 

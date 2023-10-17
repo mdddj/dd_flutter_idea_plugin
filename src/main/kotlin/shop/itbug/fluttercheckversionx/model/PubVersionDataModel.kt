@@ -1,22 +1,23 @@
 package shop.itbug.fluttercheckversionx.model
 
-import kotlin.text.toCharArray
-
 data class PubVersionDataModel(
     val name: String,
     val latest: Latest,
     val versions: List<Version>
 ) {
-    private val lastVersion get() = '^' + latest.version
+     val lastVersion get() = '^' + latest.version
 
     /**
      * 判断版本是否为最新版本.将传入的[version]和[latest.version]进行比如,如果不是最新版则执行[apply]函数
      * [apply] 函数回调一个最新版本
+     * @return true 已经是最新版本 false 不是最新版本
      */
-    fun judge(version: String, apply: (lastVersionString: String) -> Unit) {
+    fun judge(version: String, apply: (lastVersionString: String) -> Unit) : Boolean {
         if (lastVersion != version) {
             apply.invoke(lastVersion)
+            return false
         }
+        return true
     }
 
 

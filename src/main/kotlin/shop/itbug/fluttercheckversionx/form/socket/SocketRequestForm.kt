@@ -1,151 +1,139 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
+import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONObject
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.components.service
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
-import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
-import org.smartboot.socket.StateMachineEnum
-import org.smartboot.socket.transport.AioSession
-import shop.itbug.fluttercheckversionx.bus.SocketMessageBus
+import shop.itbug.fluttercheckversionx.common.scroll
+import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
-import shop.itbug.fluttercheckversionx.form.actions.ProjectFilter
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
-import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
-import shop.itbug.fluttercheckversionx.util.toastWithError
-import java.awt.CardLayout
-import javax.swing.JPanel
-import javax.swing.SwingUtilities
+
 
 typealias Request = SocketResponseModel
 
+///是否可以转换到 json 对象
+fun SocketResponseModel.isParseToJson(): Boolean {
+    data?.let {
+        println(it::class.java)
+        when (it) {
+            is String -> {
+                return JSON.isValid(it)
+            }
+
+            is Map<*, *> -> {
+                return true
+            }
+
+            is List<*> -> {
+                return true
+            }
+
+            else -> false
+        }
+    }
+    return false
+}
+
+fun SocketResponseModel.getDataString(): String {
+    data?.let {
+        return when (it) {
+            is String -> it
+            is Map<*, *> -> JSONObject.toJSONString(it)
+            is List<*> -> JSONObject.toJSONString(it)
+            else -> "$it"
+        }
+    }
+    return ""
+}
+
 // 监听http请求的窗口
-class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),
+class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter(),
     DioApiService.HandleFlutterApiModel {
 
 
-    private val appService = service<AppService>()
+    ///接口列表
+    private val apiPanel = ApiListPanel(project)
 
-    //项目筛选
-    private val projectFilterBox = ProjectFilter()
 
-    //搜索输入框
-    private var searchTextField = DioRequestSearch()
+    private val leftPanel = LeftPanel()
 
-    //接口列表组件
-    private var apiList = ApiListPanel(project)
-
-    private val apiListWrapper = JBScrollPane(apiList)
 
     //右侧面板
     private val rightFirstPanel = RightDetailPanel(project)
-    private val myRightComponent = JPanel(CardLayout()).apply {
-        add(rightFirstPanel, "response_body_panel")
-    }
 
-    //左侧工具栏
-    private var leftToolBarCore = LeftActionTools(project)
-
-
-    //顶部组件
-    private val createTopToolbarGroup: DefaultActionGroup = object : DefaultActionGroup() {
-        init {
-            this.add(projectFilterBox)
-        }
-    }
-
-    //左侧大面板 - 顶部工具栏
-    private val apiTopToolbar =
-        createTopToolbarGroup.createWithToolbar(TOP_KET)
-            .apply { targetComponent = toolWindow.component }.component.apply {
-                this.add(searchTextField)
-            }
-
-
-    //左侧大面板 - 左边工具栏
-    private val apiToolLeftToolbar =
-        leftToolBarCore.createWithToolbar(LEFT_KEY, false).apply { targetComponent = toolWindow.component }.component
-
-
-    //左侧大面板
-    private val myFirstComponent = BorderLayoutPanel().apply {
-        addToLeft(apiToolLeftToolbar)
-        addToCenter(apiListWrapper)
-        addToTop(BorderLayoutPanel().apply {
-            addToRight(apiTopToolbar)
-            addToCenter(searchTextField)
-        })
-    }
-
-    //主面板
-    private var mainPanel = OnePixelSplitter().apply {
-        firstComponent = myFirstComponent
-        secondComponent = myRightComponent
-        splitterProportionKey = SPLIT_KEY
-    }
 
     init {
-        SwingUtilities.invokeLater {
-            addToCenter(mainPanel)
-        }
-        SocketMessageBus.listening {
-            autoScrollToMax()
-        }
+        firstComponent = leftPanel
+        secondComponent = rightFirstPanel
+        splitterProportionKey = SPLIT_KEY
+        register()
     }
 
+
+    private inner class LeftPanel : BorderLayoutPanel() {
+        private val topActions =
+            ActionManager.getInstance().getAction("FlutterX Window Top Actions") as DefaultActionGroup
+
+
+        //创建工具栏
+        private val topToolbar =
+            ActionManager.getInstance().createActionToolbar("Dio Toolbar", topActions, true)
+
+
+        private val apiList = apiPanel.scroll().apply {
+            border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
+        }
+
+        init {
+            topToolbar.targetComponent = toolWindow.component
+            addToTop(BorderLayoutPanel().apply {
+                addToCenter(DioRequestSearch())
+                addToRight(topToolbar.component)
+            })
+            addToCenter(apiList)
+
+        }
+
+
+        ///滚动到底部.
+        fun scrollToBottom() {
+            val verticalScrollBar = apiList.verticalScrollBar
+            verticalScrollBar.value = verticalScrollBar.maximum
+        }
+    }
 
     /**
      * 自动滚动到最底部
      */
     private fun autoScrollToMax() {
-        if (appService.apiListAutoScrollerToMax) {
-            SwingUtilities.invokeLater {
-                apiListWrapper.verticalScrollBar.apply {
-                    value = maximum
-                }
+        val setting = DioxListingUiConfig.setting
+        if (setting.autoScroller) {
+            ApplicationManager.getApplication().invokeLater {
+                leftPanel.scrollToBottom()
             }
         }
     }
 
+
+    override fun handleModel(model: SocketResponseModel) {
+        autoScrollToMax()
+    }
 
     companion object {
         const val SPLIT_KEY = "Dio Panel Re Key"
-        const val TOP_KET = "Dio Top Toolbar Key"
-        const val LEFT_KEY = "Dio Left Toolbar Key"
     }
 
-    override fun handleModel(model: SocketResponseModel) {
-        val flutterProjects = appService.flutterProjects
-        val reqs = flutterProjects[model.projectName] ?: emptyList()
-        val reqsAdded = reqs.plus(model)
-        model.projectName?.apply {
-            if (!flutterProjects.keys.contains(this)) {
-                val old = mutableListOf<String>()
-                flutterProjects.keys.forEach {
-                    old.add(it)
-                }
-                old.add(this)
-                appService.fireFlutterNamesChangeBus(old.toList())
-            }
-
-            flutterProjects[this] = reqsAdded
-        }
-        appService.projectNames = flutterProjects.keys.toList()
-        SocketMessageBus.fire(model)
-    }
-
-    override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
-
-    }
-
-    override fun covertJsonError(e: Exception, aio: AioSession?) {
-        project.toastWithError("$e")
-    }
 
 }
 

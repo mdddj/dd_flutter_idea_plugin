@@ -1,10 +1,20 @@
+
+val dartVersion: String by project
+val flutterVersion: String by project
+val sinceBuildVersion: String by project
+val untilBuildVersion: String by project
+val ideaVersion: String by project
+val ideaType: String by project
+val pluginVersion: String by project
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.0-RC"
-    id("org.jetbrains.intellij") version "1.15.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
+    id("org.jetbrains.intellij") version "1.16.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20-RC"
 }
 group = "shop.itbug"
-version = "3.5.1.as"
+version = pluginVersion
+
 repositories {
     mavenCentral()
     google()
@@ -16,20 +26,20 @@ repositories {
 
 
 
+
 intellij {
-    version.set("2022.3.1.18")
-    type.set("AI")
+    version.set(ideaVersion)
+    type.set(ideaType)
     plugins.set(
         listOf(
             "yaml",
-            "Dart:223.8950",
-            "io.flutter:74.0.3",
+            "Dart:$dartVersion",
+            "io.flutter:$flutterVersion",
             "org.intellij.plugins.markdown",
-            "terminal"
+            "terminal",
         )
     )
 }
-
 kotlin {
     sourceSets.all {
         languageSettings {
@@ -41,23 +51,16 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
-    implementation("cn.hutool:hutool-all:5.8.15")
-    implementation("org.smartboot.socket:aio-core:1.6.3")
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.25")
-    implementation("com.alibaba.fastjson2:fastjson2-kotlin:2.0.25")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("io.ktor:ktor-client-cio-jvm:2.2.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("com.squareup.retrofit2:retrofit:latest.release")
+    implementation("com.squareup.retrofit2:converter-gson:latest.release")
+    implementation("cn.hutool:hutool-all:latest.release")
+    implementation("org.smartboot.socket:aio-core:latest.release")
+    implementation("com.alibaba.fastjson2:fastjson2:latest.release")
+    implementation("com.alibaba.fastjson2:fastjson2-kotlin:latest.release")
+    implementation("com.google.code.gson:gson:latest.release")
+    implementation("org.xerial:sqlite-jdbc:latest.release")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
 }
-
-
-
 
 
 var javaVersion = "17"
@@ -76,10 +79,77 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223")
-        untilBuild.set("223.*")
+        sinceBuild.set(sinceBuildVersion)
+        untilBuild.set(untilBuildVersion)
         changeNotes.set(
             """
+                <div>
+                    <h1>3.7.0</h1>
+                    <ul>
+                        <li>Dependency version detection using <pre>ExternalAnnotator</pre> override</li>
+                        <li>Change the plugin name to: FlutterX</li>
+                        <li>Removed Hive tool window, functionality is currently under development</li>
+                        <li>Subsequent version update logs are only written in English</li>
+                        <li>Add the 'Ignore Dependency Version Detection' feature</li>
+                        <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.7.0/images/do_not_check.png?raw=true' />
+                        <li>
+                            New parameter inline display
+                            <img src='https://github.com/mdddj/dd_flutter_idea_plugin/blob/3.7.0/images/inlay_param_new.png?raw=true' />
+                        </li>
+                        
+                     </ul>
+                </div>
+                
+                <div>
+                    <h1>3.6.1</h1>
+                    <ul>
+                        <li>Bug 修复</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>Bug fix</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>bug修復</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>けっかん修复</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>결함修复</li>
+                     </ul>
+                </div>
+                
+                <div>
+                    <h1>3.6.0</h1>
+                    <ul>
+                        <li>Bug 修复</li>
+                        <li>添加shared_preferences查看工具</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>Bug fix</li>
+                        <li>Add `shared_Preferences` viewing tool</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>bug修復</li>
+                        <li>添加“shared_Preferences”查看工具</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>けっかん修复</li>
+                        <li>shared _ Preferences表示ツールの追加</li>
+                     </ul>
+                     <hr/>
+                     <ul>
+                        <li>결함修复</li>
+                        <li>shared_Preferences 보기 도구 추가</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.5.1.as (2023-07-27)</h1>
                     <ul>

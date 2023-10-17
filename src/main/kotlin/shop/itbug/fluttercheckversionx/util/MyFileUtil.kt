@@ -1,9 +1,32 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import javax.swing.SwingUtilities
 
+
+///重新启用分析
+fun Project.restartAnalyzer() {
+    SwingUtilities.invokeLater {
+        runReadAction {
+            DaemonCodeAnalyzer.getInstance(this).restart()
+        }
+    }
+}
+
+///重新分析依赖文件
+fun Project.restartPubFileAnalyzer() {
+    SwingUtilities.invokeLater {
+        runReadAction {
+            MyPsiElementUtil.getPubSecpYamlFile(this)?.let {
+                DaemonCodeAnalyzer.getInstance(this).restart(it)
+            }
+        }
+    }
+}
 
 typealias HandleVirtualFile = (virtualFile: VirtualFile) -> Unit
 fun VirtualFile.fileNameWith(folderName: String) : String {
