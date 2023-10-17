@@ -15,7 +15,6 @@ import io.flutter.sdk.FlutterSdkUtil
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
 import java.util.function.Function
@@ -37,7 +36,7 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (filename != "pubspec.yaml") {
                 return@Function null
             }
-            if(!FlutterSdkUtil.hasFlutterModules(project)){
+            if (!FlutterSdkUtil.hasFlutterModules(project)) {
                 return@Function null
             }
             YamlFileNotificationPanel(it, project)
@@ -62,13 +61,6 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
             search()
         }
         myLinksPanel.add(searchPluginLabel)
-
-
-        //清理缓存
-        val cleanCacheBtn = createActionLabel(PluginBundle.get("clean.cache")) {
-            CacheUtil.clean()
-        }
-        myLinksPanel.add(cleanCacheBtn)
 
 
         //重新索引

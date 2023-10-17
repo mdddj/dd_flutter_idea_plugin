@@ -21,7 +21,6 @@ import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.FlutterService
 import shop.itbug.fluttercheckversionx.services.Release
-import shop.itbug.fluttercheckversionx.util.CacheUtil
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 
@@ -57,6 +56,9 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
 
     fun run(project: Project) {
         ///监听assets资源目录更改事件
+        if (project.isDisposed) {
+            return
+        }
         connect = project.messageBus.connect(this)
         connect.subscribe(VirtualFileManager.VFS_CHANGES, object :
             BulkFileListener {
@@ -78,15 +80,6 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
             }
         })
 
-        cleanPubPluginsCache()
-
-        CacheUtil.clean()
-    }
-
-
-    ///清理插件的数据缓存
-    private fun cleanPubPluginsCache() {
-        CacheUtil.clean()
     }
 
 
