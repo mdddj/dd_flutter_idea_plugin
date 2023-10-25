@@ -57,7 +57,6 @@ dependencies {
     implementation("com.alibaba.fastjson2:fastjson2:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:latest.release")
     implementation("com.google.code.gson:gson:latest.release")
-    implementation("org.xerial:sqlite-jdbc:latest.release")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
 }
 
@@ -82,6 +81,14 @@ tasks {
         untilBuild.set(untilBuildVersion)
         changeNotes.set(
             """
+                <div>
+                     <h1>3.8.3</h1>
+                     <ul>
+                        <li>Removed the context menu: "Covert to By Flutterx", which didn't help much</li>
+                        <li>Removed the "Favorite Plugins" tool window and its related functions.</li>
+                        <li>Fix the problem that "SP" can not be displayed</li>
+                     </ul>
+                </div>
                 <div>
                     <h1>3.8.0</h1>
                     <ul>

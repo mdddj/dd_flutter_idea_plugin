@@ -47,7 +47,6 @@
     <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
     <depends>io.flutter</depends>
-    <depends>Git4Idea</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
@@ -153,10 +152,6 @@
                            language="yaml"/>
 
 
-        <!--        忽略部分依赖的检测-->
-        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig"/>
-
-
     </extensions>
 
 
@@ -181,14 +176,9 @@
         </action>
         <action id="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"
                 class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
-        <action id="Covert.To.actions.FlutterX"
-                class="shop.itbug.fluttercheckversionx.actions.context.CovertToActionsGroup"
-                text="Covert To By FlutterX" description="转换的一些操作" popup="true">
-            <add-to-group group-id="ShowIntentionsGroup" anchor="first"/>
-        </action>
         <action id="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
                 class="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
-                text="SocketConnectComboxAction" description="socket 连接列表" popup="true"/>
+                text="SocketConnectComboxAction" description="Socket connect list" popup="true"/>
         <action id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
                 class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
                 text="DioRequestRenderStyle"/>

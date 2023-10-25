@@ -1,16 +1,18 @@
 package shop.itbug.fluttercheckversionx.cache
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(name = "DartPluginIgnoreConfig", storages = [Storage("DartPluginIgnoreConfig.xml")])
-class DartPluginIgnoreConfig private constructor() : PersistentStateComponent<DartPluginIgnoreConfig>{
+@Service(Service.Level.PROJECT)
+class DartPluginIgnoreConfig private constructor() : PersistentStateComponent<DartPluginIgnoreConfig> {
 
 
-     var names = mutableListOf<String>() //忽略的插件名字
+    var names = mutableListOf<String>() //忽略的插件名字
 
     override fun getState(): DartPluginIgnoreConfig {
         return this
@@ -22,10 +24,10 @@ class DartPluginIgnoreConfig private constructor() : PersistentStateComponent<Da
 
     ///忽略检测插件名
     fun add(pluginName: String) {
-        if(names.contains(pluginName).not()){
+        if (names.contains(pluginName).not()) {
             names.add(pluginName)
             loadState(this)
-        }else{
+        } else {
             remove(pluginName)
         }
     }
@@ -33,7 +35,7 @@ class DartPluginIgnoreConfig private constructor() : PersistentStateComponent<Da
 
     ///移除忽略检测插件名
     fun remove(pluginName: String) {
-        if(names.contains(pluginName)){
+        if (names.contains(pluginName)) {
             names.remove(pluginName)
             loadState(this)
         }
@@ -48,7 +50,7 @@ class DartPluginIgnoreConfig private constructor() : PersistentStateComponent<Da
     companion object {
 
         ///获取实例
-        fun getInstance(project: Project) : DartPluginIgnoreConfig {
+        fun getInstance(project: Project): DartPluginIgnoreConfig {
             return project.getService(DartPluginIgnoreConfig::class.java).state
         }
 
