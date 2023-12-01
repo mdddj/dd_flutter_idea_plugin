@@ -7,14 +7,16 @@ val ideaType: String by project
 val pluginVersion: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.0-RC"
+    id("org.jetbrains.kotlin.jvm") version "1.9.20"
     id("org.jetbrains.intellij") version "1.16.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20-RC"
+    idea
 }
 group = "shop.itbug"
 version = pluginVersion
 
 repositories {
+    mavenLocal()
     mavenCentral()
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
@@ -81,6 +83,12 @@ tasks {
         untilBuild.set(untilBuildVersion)
         changeNotes.set(
             """
+                <div>
+                     <h1>3.8.4.Iguana</h1>
+                     <ul>
+                        <li>Add the ability to set default values (freezed)</li>
+                     </ul>
+                </div>
                 <div>
                      <h1>3.8.3</h1>
                      <ul>

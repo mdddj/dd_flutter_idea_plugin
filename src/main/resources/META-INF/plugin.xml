@@ -111,6 +111,10 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
+        <!--   part 自动导入-->
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
+                                   language="Dart"/>
+
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
@@ -148,8 +152,10 @@
 
 
         <!--        插件新版本检测-->
-        <externalAnnotator implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"
-                           language="yaml"/>
+
+        <externalAnnotator
+                implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"
+                language="yaml"/>
 
 
     </extensions>
@@ -241,6 +247,12 @@
         </group>
 
 
+        <action id="FreezedFactoryAddDefaultValue"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedFactoryAddDefaultValue"
+                text="Add Default Value"/>
+        <action id="FreezedClassToSimpleClass"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedClassToSimpleClass"
+                text="freezed to simple class"/>
     </actions>
 
     <!--Git.MainMenu.FileActions-->

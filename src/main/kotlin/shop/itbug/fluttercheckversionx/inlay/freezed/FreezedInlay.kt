@@ -30,7 +30,6 @@ import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 
-
 class FreezedInlay : InlayHintsProvider<DioxListeningSetting> {
     override val key: SettingsKey<DioxListeningSetting>
         get() = SettingsKey("freezed inlay")
@@ -174,7 +173,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
             })
             add(object : MyAction({ "Run build runner" }) {
                 override fun actionPerformed(e: AnActionEvent) {
-                    RunUtil.runCommand(psiElement.project,"FlutterCheckVersionX","flutter pub run build_runner build")
+                    RunUtil.runCommand(psiElement.project, "FlutterX", "flutter pub run build_runner build")
                 }
             })
 
