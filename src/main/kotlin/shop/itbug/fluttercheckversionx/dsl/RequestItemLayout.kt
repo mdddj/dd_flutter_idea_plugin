@@ -58,7 +58,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
             }
             // (在紧凑模式下有效,状态码)
             label("${request.statusCode ?: -1}").visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showStatusCode).component.apply {
-                font = JBFont.smallOrNewUiMedium()
+                font = JBFont.medium()
                 foreground =
                     if (request.statusCode == 200) UIUtil.getLabelSuccessForeground() else UIUtil.getErrorForeground()
             }

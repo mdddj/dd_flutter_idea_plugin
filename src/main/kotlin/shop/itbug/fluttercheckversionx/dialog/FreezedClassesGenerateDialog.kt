@@ -4,7 +4,7 @@ import cn.hutool.core.swing.ScreenUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
@@ -84,7 +84,7 @@ class FreezedClassesGenerateDialog(
                 row(PluginBundle.get("save.to.directory")) {
                     textFieldWithBrowseButton(
                         fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                            .withRoots(ProjectRootManager.getInstance(project).contentRoots.first()), project = project
+                            .withRoots(project.guessProjectDir()), project = project
                     ).bindText({
                         filePath
                     }, {

@@ -31,13 +31,13 @@ fun Color.toHexString(): String {
     return Util.toHexFromColor(this)
 }
 
-fun String.formatDartName() : String {
+fun String.formatDartName(): String {
     return Util.removeSpecialCharacters(this)
 }
 
 
-fun String.firstChatToUpper() : String {
-    return  CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, this)
+fun String.firstChatToUpper(): String {
+    return CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, this)
 }
 
 /**
@@ -51,18 +51,18 @@ fun PsiElement.reformatText() {
 
 
 fun PsiElement.runWriteCommandAction(runnable: Runnable) {
-    WriteCommandAction.runWriteCommandAction(project,runnable)
+    WriteCommandAction.runWriteCommandAction(project, runnable)
 }
 
 /**
  * 根据文本查找psi节点
  * @param findText 要查找的文本
  */
-fun PsiFile.findPsiElementByText(findText: String) : PsiElement? {
-    val c  = MyPsiElementUtil.findAllMatchingElements(this){ text: String, _: PsiElement ->
+fun PsiFile.findPsiElementByText(findText: String): PsiElement? {
+    val c = MyPsiElementUtil.findAllMatchingElements(this) { text: String, _: PsiElement ->
         return@findAllMatchingElements findText == text
     }
-    return if(c.isNotEmpty()) c.first() else null
+    return if (c.isNotEmpty()) c.first() else null
 }
 
 fun PsiElement.getRelativePoint(editor: Editor): RelativePoint {
@@ -76,7 +76,7 @@ fun PsiElement.getRelativePoint(editor: Editor): RelativePoint {
 /**
  * 根据psi节点获取文件名
  */
-fun PsiElement.getFileName() : String {
+fun PsiElement.getFileName(): String {
     return FileUtilRt.getNameWithoutExtension(this.containingFile.name)
 }
 
@@ -84,16 +84,12 @@ fun PsiElement.getFileName() : String {
 fun DartFactoryConstructorDeclarationImpl.manager() = DartFactoryConstructorDeclarationImplManager(this)
 
 
-
 class Util {
     companion object {
 
-        val userHomePath: String get() = System.getProperty("user.home")
-
-         fun toHexFromColor(color: Color): String {
+        fun toHexFromColor(color: Color): String {
             return UIUtil.colorToHex(color)
         }
-
 
 
         fun removeSpecialCharacters(string: String): String {
@@ -133,7 +129,7 @@ class Util {
             if (ip.contains(":")) return true
             if (ip.startsWith("127.")) return true
             if (ip.startsWith("169.254.")) return true
-            if(ip.split(".").size == 4 && ip.split(".")[2].toString() === "0") return false
+            if (ip.split(".").size == 4 && ip.split(".")[2].toString() === "0") return false
             return ip == "255.255.255.255"
         }
 
@@ -223,8 +219,7 @@ class Util {
         }
 
 
-
-        fun addStringToLineStart(text:String, value:String) : String {
+        fun addStringToLineStart(text: String, value: String): String {
             val bufferedReader = BufferedReader(InputStreamReader(ByteArrayInputStream(text.toByteArray())))
             val sb = StringBuilder()
             bufferedReader.forEachLine {

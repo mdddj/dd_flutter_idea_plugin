@@ -6,9 +6,11 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
@@ -37,6 +39,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
     }
 
     init {
+        register()
         getAllKeys()
         addToTop(createToolbar().component)
         addToCenter(content)
@@ -91,7 +94,7 @@ class SpWindowRight(project: Project) : BorderLayoutPanel() {
         SpManagerListen.listen(null) {
             jsonView.changeValue(it?.value)
         }
-        border = null
+        border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
     }
 
 
@@ -107,7 +110,7 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
             }
         }, valueHandle = null)
         addListSelectionListener(this)
-        border = null
+        border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
     }
 
 

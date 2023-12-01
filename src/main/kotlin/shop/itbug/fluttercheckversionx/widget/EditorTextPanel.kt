@@ -3,8 +3,10 @@ package shop.itbug.fluttercheckversionx.widget
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
+import shop.itbug.fluttercheckversionx.util.reformatText
 
 
 open class JsonEditorTextPanel(project: Project) : LanguageTextField(JsonLanguage.INSTANCE, project, "", false) {
@@ -28,6 +30,16 @@ class DartEditorTextPanel(project: Project) : LanguageTextField(DartLanguage.INS
 
     override fun createEditor(): EditorEx {
         return myCreateEditor(super.createEditor())
+    }
+
+    fun reformat() {
+        val instance = PsiDocumentManager.getInstance(project)
+        val psiFile = instance.getPsiFile(document)
+        psiFile?.let {
+            it.reformatText()
+        }
+
+
     }
 }
 

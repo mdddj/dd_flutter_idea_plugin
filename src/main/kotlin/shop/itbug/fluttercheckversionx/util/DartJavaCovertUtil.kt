@@ -5,11 +5,11 @@ import com.alibaba.fastjson2.JSONObject
 import java.math.BigDecimal
 
 
-fun JSONArray.findPropertiesMaxLenObject() : JSONObject {
-    var obj = first() as JSONObject
-    forEach {
-        if(it is JSONObject) {
-            if(it.keys.size > obj.keys.size) {
+fun JSONArray.findPropertiesMaxLenObject(): JSONObject {
+    var obj = JSONObject()
+    for (it in this) {
+        if (it is JSONObject) {
+            if (it.keys.size > obj.keys.size) {
                 obj = it
             }
         }
@@ -17,40 +17,47 @@ fun JSONArray.findPropertiesMaxLenObject() : JSONObject {
     return obj
 }
 
+
 object DartJavaCovertUtil {
-    fun getDartType(obj: Any,key: String) : String {
-        if(obj is Boolean) {
+    fun getDartType(obj: Any, key: String): String {
+        if (obj is Boolean) {
             return "bool"
         }
-        return when(obj::class.java){
+        return when (obj::class.java) {
             Integer::class.java -> {
                 "int"
             }
+
             String::class.java -> {
                 "String"
             }
+
             BigDecimal::class.java -> {
                 "double"
             }
+
             Boolean::class.java -> {
                 "bool"
             }
+
             JSONObject::class.java -> {
                 key.formatDartName()
             }
+
             JSONArray::class.java -> {
 
                 val arr = obj as JSONArray
 
-                if(arr.isNotEmpty()) {
-                    if(arr.first() is JSONObject){
+                if (arr.isNotEmpty()) {
+                    if (arr.first() is JSONObject) {
                         "List<${key.formatDartName()}>"
                     }
 
                 }
-                "List<${ if(arr.isEmpty()) "dynamic" else  getDartType(arr.first(),key)}>"
+                "List<${if (arr.isEmpty()) "dynamic" else getDartType(arr.first(), key)}>"
 
             }
+
             else -> {
                 "dynamic"
             }

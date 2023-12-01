@@ -40,7 +40,7 @@ class MyUserBarFactory : StatusBarWidgetFactory {
     }
 
     override fun getDisplayName(): String {
-        return "FlutterCheckVersionX"
+        return "FlutterX"
     }
 
     override fun isAvailable(project: Project): Boolean {
@@ -137,6 +137,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
             SearchPlugin -> {
                 SearchDialog(project).show()
             }
+
             RunBuilder -> runCommand("flutter pub run build_runner build")
             FlutterClan -> runCommand("flutter clean")
             FlutterPushPlugin -> runCommand(" dart pub publish")
@@ -155,7 +156,7 @@ class MyUserAccountBar(var project: Project) : CustomStatusBarWidget {
     }
 
     private fun runCommand(code: String) {
-        RunUtil.runCommand(project,"FlutterCheckVersionX",code)
+        RunUtil.runCommand(project, "FlutterX", code)
     }
 
 }

@@ -47,7 +47,6 @@
     <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
     <depends>Dart</depends>
     <depends>io.flutter</depends>
-    <depends>Git4Idea</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
@@ -112,6 +111,10 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
+        <!--   part 自动导入-->
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
+                                   language="Dart"/>
+
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
@@ -149,12 +152,10 @@
 
 
         <!--        插件新版本检测-->
-        <externalAnnotator implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"
-                           language="yaml"/>
 
-
-        <!--        忽略部分依赖的检测-->
-        <projectService serviceImplementation="shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig"/>
+        <externalAnnotator
+                implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"
+                language="yaml"/>
 
 
     </extensions>
@@ -181,14 +182,9 @@
         </action>
         <action id="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"
                 class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
-        <action id="Covert.To.actions.FlutterX"
-                class="shop.itbug.fluttercheckversionx.actions.context.CovertToActionsGroup"
-                text="Covert To By FlutterX" description="转换的一些操作" popup="true">
-            <add-to-group group-id="ShowIntentionsGroup" anchor="first"/>
-        </action>
         <action id="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
                 class="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
-                text="SocketConnectComboxAction" description="socket 连接列表" popup="true"/>
+                text="SocketConnectComboxAction" description="Socket connect list" popup="true"/>
         <action id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
                 class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
                 text="DioRequestRenderStyle"/>
@@ -251,6 +247,12 @@
         </group>
 
 
+        <action id="FreezedFactoryAddDefaultValue"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedFactoryAddDefaultValue"
+                text="Add Default Value"/>
+        <action id="FreezedClassToSimpleClass"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedClassToSimpleClass"
+                text="freezed to simple class"/>
     </actions>
 
     <!--Git.MainMenu.FileActions-->

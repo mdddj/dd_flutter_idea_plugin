@@ -17,7 +17,7 @@
         </group>
     </actions>
     <actions>
-        <group id="dart-file-actions" text="FlutterVersionCheckX Tools" popup="true" icon="/icons/flutter.svg">
+        <group id="dart-file-actions" text="FlutterX Tools" popup="true" icon="/icons/flutter.svg">
             <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
                     text="Add Comments to Functions">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
@@ -27,13 +27,21 @@
             </action>
             <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
                     text="Function Params To Freezed"/>
-            <action id="dart-document-generate-action"
-                    class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>
-            <action class="shop.itbug.fluttercheckversionx.actions.MoveClassToOtherFile" id="MoveClassToOtherFile"/>
-            <action id="GenerateClassSingletonModel"
-                    class="shop.itbug.fluttercheckversionx.actions.GenerateClassSingletonModel"
-                    text="Create a Singleton Class" description="Convert to singleton object">
-            </action>
+
+            <!--         dart markdown 文档生成器   -->
+            <!--            <action id="dart-document-generate-action"-->
+            <!--                    class="shop.itbug.fluttercheckversionx.actions.DartDocumentGenerateAction"/>-->
+
+            <!--            将类转移到其他文件-->
+            <!--            <action class="shop.itbug.fluttercheckversionx.actions.MoveClassToOtherFile" id="MoveClassToOtherFile"/>-->
+
+            <!--            创建一个单例类-->
+            <!--            <action id="GenerateClassSingletonModel"-->
+            <!--                    class="shop.itbug.fluttercheckversionx.actions.GenerateClassSingletonModel"-->
+            <!--                    text="Create a Singleton Class" description="Convert to singleton object">-->
+            <!--            </action>-->
+            <reference ref="FreezedFactoryAddDefaultValue"/>
+            <reference ref="FreezedClassToSimpleClass"/>
             <add-to-group group-id="EditorPopupMenu"/>
         </group>
     </actions>
@@ -61,6 +69,7 @@
 
             <separator/>
             <reference id="DioRequestBodyToFreezedAction"/>
+
 
         </group>
     </actions>

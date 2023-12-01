@@ -6,6 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.dialog.FreezedCovertDialog
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.util.firstChatToUpper
@@ -69,6 +70,7 @@ class FunctionParamsToFreezed : MyAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.selectTextIsDartMethodElement()
+        e.presentation.text = PluginBundle.get("editor.freezed.fun.param.to.class")
         super.update(e)
     }
 

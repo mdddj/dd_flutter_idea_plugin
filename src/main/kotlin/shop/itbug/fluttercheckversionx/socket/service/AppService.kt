@@ -18,7 +18,6 @@ import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.services.ItbugService
 import shop.itbug.fluttercheckversionx.services.JSONResult
 import shop.itbug.fluttercheckversionx.services.SERVICE
-import shop.itbug.fluttercheckversionx.services.cache.UserRunStartService
 import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.util.CredentialUtil
@@ -78,14 +77,9 @@ class AppService : DioApiService.HandleFlutterApiModel {
     val flutterProjects get() = requestsList.groupBy { it.projectName }
 
 
-    private val userRunStartManager = Thread(UserRunStartService())
-    private val chatRoomLoadManager = Thread(ChatRoomsLoadThread())
     lateinit var dioThread: Thread
 
     init {
-        userRunStartManager.start()
-        chatRoomLoadManager.start()
-        note.jdbc.SqliteConnectManager
         register()
     }
 
