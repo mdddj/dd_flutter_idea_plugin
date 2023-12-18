@@ -12,14 +12,14 @@ import shop.itbug.fluttercheckversionx.widget.MyExpandableComboAction
 /**
  * socket 链接列表
  */
-class SocketConnectComboxAction: MyExpandableComboAction() {
+class SocketConnectComboxAction : MyExpandableComboAction() {
 
     var selectSessionId = ""
 
     private fun createGroup() = object : DefaultActionGroup() {
         init {
-            addAll(DioApiService.getSessions().map {
-                object : MyAction({it.sessionID}){
+            addAll(DioApiService.INSTANCESupplier.get().getSessions().map {
+                object : MyAction({ it.sessionID }) {
                     override fun actionPerformed(e: AnActionEvent) {
                         println("勾选。。。")
                         selectSessionId = it.sessionID
@@ -30,10 +30,9 @@ class SocketConnectComboxAction: MyExpandableComboAction() {
     }
 
 
-
     override fun update(e: AnActionEvent) {
-         val sessions = DioApiService.getSessions()
-        if(sessions.isEmpty()){
+        val sessions = DioApiService.INSTANCESupplier.get().getSessions()
+        if (sessions.isEmpty()) {
             e.presentation.description = "Empty"
             e.presentation.text = PluginBundle.get("empty")
         }
@@ -42,9 +41,14 @@ class SocketConnectComboxAction: MyExpandableComboAction() {
     }
 
 
-
     override fun createPopup(event: AnActionEvent): JBPopup? {
-        val pop = JBPopupFactory.getInstance().createActionGroupPopup(null,createGroup(),event.dataContext,JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,true)
+        val pop = JBPopupFactory.getInstance().createActionGroupPopup(
+            null,
+            createGroup(),
+            event.dataContext,
+            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+            true
+        )
         return pop
     }
 }

@@ -4,26 +4,24 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.endOffset
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.FormBuilder
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
-import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
 import shop.itbug.fluttercheckversionx.util.Util
-import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 import javax.swing.JComponent
 
 const val pluginInfoSettingKey = "dart plugin infos show"
 const val pluginInfoName = "dart plugin info name"
-class DartPluginTimeDateHintsProvider:InlayHintsProvider<TimeDateHintSetting> {
+
+class DartPluginTimeDateHintsProvider : InlayHintsProvider<TimeDateHintSetting> {
 
     override val key: SettingsKey<TimeDateHintSetting> get() = SettingsKey(pluginInfoSettingKey)
 
     override val name: String get() = pluginInfoName
 
-    override val previewText: String get() = """
+    override val previewText: String
+        get() = """
         dependencies:
             dio: ^3.0.6
     """.trimIndent()
@@ -37,11 +35,11 @@ class DartPluginTimeDateHintsProvider:InlayHintsProvider<TimeDateHintSetting> {
         editor: Editor,
         settings: TimeDateHintSetting,
         sink: InlayHintsSink
-    ): InlayHintsCollector? {
+    ): InlayHintsCollector {
 
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                if(element.isDartPluginElement()){
+                if (element.isDartPluginElement()) {
 //                    val callRespose = ServiceCreate.create(PubService::class.java).callPluginDetails(element.getPluginName())
 //                    val body = callRespose.execute().body()
 //                    if(body!=null){
@@ -59,11 +57,11 @@ class DartPluginTimeDateHintsProvider:InlayHintsProvider<TimeDateHintSetting> {
         }
     }
 
-    fun formatText(model: PubVersionDataModel) : String{
+    fun formatText(model: PubVersionDataModel): String {
         val sb = StringBuilder()
         val timer = model.latest.published
-       val v =  Util.Companion.RelativeDateFormat.format(timer)
-                sb.append("最后更新时间:$v")
+        val v = Util.Companion.RelativeDateFormat.format(timer)
+        sb.append("最后更新时间:$v")
         return sb.toString()
     }
 
@@ -76,13 +74,13 @@ class DartPluginTimeDateHintsProvider:InlayHintsProvider<TimeDateHintSetting> {
 /**
  * 配置面板
  */
-class PluginInfosShowSettingPanel :ImmediateConfigurable{
+class PluginInfosShowSettingPanel : ImmediateConfigurable {
 
     private val timeShowCheckBox = JBCheckBox()
     private val adsShowCheckBox = JBCheckBox()
     override fun createComponent(listener: ChangeListener): JComponent {
         return FormBuilder.createFormBuilder().addLabeledComponent("展示插件最后更新时间", timeShowCheckBox)
-              .addLabeledComponent("展示广告", adsShowCheckBox).panel
+            .addLabeledComponent("展示广告", adsShowCheckBox).panel
     }
 
 
@@ -93,4 +91,4 @@ class PluginInfosShowSettingPanel :ImmediateConfigurable{
  * 设置
  * @param showLastUpdateTime 是否展示插件最后更新的时间
  */
-data class TimeDateHintSetting(val showLastUpdateTime:Boolean,val adsShow: Boolean)
+data class TimeDateHintSetting(val showLastUpdateTime: Boolean, val adsShow: Boolean)

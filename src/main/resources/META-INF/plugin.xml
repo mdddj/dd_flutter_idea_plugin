@@ -103,6 +103,9 @@
                                    language="JSON"/>
 
 
+        <!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"-->
+        <!--                                   language="Dart"/>-->
+
         <!--    插件更新更新时间内联提示     -->
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.DartPluginTimeDateHintsProvider"
@@ -153,6 +156,7 @@
 
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState"/>
 
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.PluginConfig"/>
 
         <!--        插件新版本检测-->
 
