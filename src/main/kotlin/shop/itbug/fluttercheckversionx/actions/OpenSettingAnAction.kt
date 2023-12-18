@@ -5,15 +5,16 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
-import shop.itbug.fluttercheckversionx.common.MyAction
+import com.intellij.openapi.project.DumbAwareAction
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.setting.AppConfig
 
 /**
  * 打开设置
  */
-class OpenSettingAnAction : MyAction(AllIcons.General.Settings) {
+class OpenSettingAnAction : DumbAwareAction({ PluginBundle.get("setting.flutterx") }, AllIcons.General.Settings) {
     override fun actionPerformed(e: AnActionEvent) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(e.project, AppConfig::class.java)
+        e.project?.let { ShowSettingsUtil.getInstance().showSettingsDialog(it, AppConfig::class.java) }
     }
 
 

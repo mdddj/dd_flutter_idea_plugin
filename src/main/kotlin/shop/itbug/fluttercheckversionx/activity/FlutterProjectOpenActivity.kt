@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -23,6 +24,7 @@ import shop.itbug.fluttercheckversionx.services.FlutterService
 import shop.itbug.fluttercheckversionx.services.Release
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
+import shop.itbug.fluttercheckversionx.util.projectClosed
 
 /**
  * 梁典典
@@ -33,6 +35,53 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
 
 
     private lateinit var connect: MessageBusConnection
+    private lateinit var checkFlutterVersionTask: Task
+    private val newDispose = Disposer.newDisposable()
+
+
+    override fun dispose() {
+        connect.disconnect()
+        checkFlutterVersionTask.onCancel()
+        println("启动资源被释放")
+    }
+
+
+    private fun onProjectClose(project: Project) {
+        project.projectClosed {
+            newDispose.dispose()
+            dispose()
+        }
+    }
+
+    fun run(project: Project) {
+        ///监听assets资源目录更改事件
+        connect = project.messageBus.connect(this)
+        connect.subscribe(VirtualFileManager.VFS_CHANGES, object :
+            BulkFileListener {
+            override fun after(events: MutableList<out VFileEvent>) {
+                super.after(events)
+                if (project.isDisposed) {
+                    return
+                }
+                val projectPath = project.basePath
+                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+                if (!setting.autoListenFileChange) {
+                    return
+                }
+                if (projectPath != null) {
+                    events.forEach {
+                        it.file?.apply {
+                            checkAndAutoGenFile(projectPath, this, project)
+                        }
+                    }
+                }
+
+
+            }
+
+        })
+
+    }
 
     /**
      * 项目在idea中打开时执行函数
@@ -49,45 +98,17 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
         }
     }
 
-    override fun dispose() {
-        connect.disconnect()
-    }
-
-
-    fun run(project: Project) {
-        ///监听assets资源目录更改事件
-        if (project.isDisposed) {
-            return
-        }
-        connect = project.messageBus.connect(this)
-        connect.subscribe(VirtualFileManager.VFS_CHANGES, object :
-            BulkFileListener {
-            override fun after(events: MutableList<out VFileEvent>) {
-                val projectPath = project.basePath
-                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
-                if (!setting.autoListenFileChange) {
-                    return
-                }
-                if (projectPath != null) {
-                    events.forEach {
-                        it.file?.apply {
-                            checkAndAutoGenFile(projectPath, this, project)
-                        }
-                    }
-                }
-
-                super.after(events)
-            }
-        })
-
-    }
-
 
     /**
      * 检测 flutter最新版本
      */
-    private fun checkFlutterLastVersion(project: Project) {
-        ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Detecting Flutter version...") {
+    private fun checkFlutterLastVersion() {
+        ProgressManager.getInstance().run(checkFlutterVersionTask)
+
+    }
+
+    private fun createTask(project: Project): Task {
+        return object : Task.Backgroundable(project, "Detecting Flutter version...") {
             override fun run(p0: ProgressIndicator) {
                 val currentFlutterVersion = FlutterSdk.getFlutterSdk(project)?.version
                 currentFlutterVersion?.let {
@@ -103,7 +124,7 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
                     }
                 }
             }
-        })
+        }
     }
 
     /**
@@ -147,9 +168,16 @@ class FlutterProjectOpenActivity : StartupActivity.Background, Disposable {
         createNotification.notify(project)
     }
 
+    init {
+        Disposer.register(newDispose, this)
+    }
+
 
     override fun runActivity(project: Project) {
+
         run(project)
-        checkFlutterLastVersion(project)
+        checkFlutterVersionTask = createTask(project)
+        checkFlutterLastVersion()
+        onProjectClose(project)
     }
 }

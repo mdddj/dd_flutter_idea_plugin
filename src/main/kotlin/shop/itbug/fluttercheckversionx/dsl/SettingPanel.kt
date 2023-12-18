@@ -1,16 +1,12 @@
 package shop.itbug.fluttercheckversionx.dsl
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
-import com.intellij.ui.dsl.builder.bindIntText
-import com.intellij.ui.dsl.builder.bindSelected
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import com.intellij.util.Alarm
-import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
+import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
@@ -21,12 +17,13 @@ import javax.swing.SwingUtilities
  */
 fun settingPanel(
     model: AppStateModel,
-    dioxSetting: DioxListeningSetting,
+    dioxSetting: DoxListeningSetting,
     parentDisposable: Disposable,
     onChange: (state: AppStateModel) -> Unit
 ): DialogPanel {
 
     val alarm = Alarm(parentDisposable)
+    val languageList = listOf("System", "中文", "繁體", "English", "한국어", "日本語")
 
     val myPanel: DialogPanel = panel {
 
@@ -37,31 +34,41 @@ fun settingPanel(
             }
         }
 
-        group(PluginBundle.get("basic")) {
-
-
+//
+        buttonsGroup(PluginBundle.get("basic")) {
             row(PluginBundle.get("setting.language")) {
-                segmentedButton(listOf("System", "中文", "繁體", "English","한국어","日本語")) { it }.bind(object :
-                    ObservableMutableProperty<String> {
-                    override fun set(value: String) {
-                        model.lang = value
-                    }
+                for (lan in languageList)
+                    radioButton(lan, value = lan)
+            }.comment(PluginBundle.get("setting.reset.tip"))
+        }.bind({ model.lang }, { model.lang = it })
 
-                    override fun afterChange(listener: (String) -> Unit) {
-                    }
-
-                    override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
-                    }
-
-                    override fun get(): String {
-                        return model.lang
-                    }
-
-                })
-            }
-            .comment(PluginBundle.get("setting.reset.tip"))
-
-        }
+//        group(PluginBundle.get("basic")) {
+//
+//
+//            row(PluginBundle.get("setting.language")) {
+//
+//
+//                segmentedButton(listOf("System", "中文", "繁體", "English", "한국어", "日本語")) { it }.bind(object :
+//                    ObservableMutableProperty<String> {
+//                    override fun set(value: String) {
+//                        model.lang = value
+//                    }
+//
+//                    override fun afterChange(listener: (String) -> Unit) {
+//                    }
+//
+//                    override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
+//                    }
+//
+//                    override fun get(): String {
+//                        return model.lang
+//                    }
+//
+//                })
+//            }
+//                .comment(PluginBundle.get("setting.reset.tip"))
+//
+//        }
 
         group("Dio") {
             row("Dio ${PluginBundle.get("setting.listening.port")}") {

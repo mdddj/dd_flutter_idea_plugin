@@ -43,8 +43,8 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
-    <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
-    <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
+    <depends optional="true" config-file="actions.xml">Dart</depends>
+    <depends optional="true" config-file="jobs_actions.xml">Dart</depends>
     <depends>Dart</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
@@ -70,6 +70,8 @@
 
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
+        <completion.contributor language="Dart"
+                                implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPartAutoCompletion"/>
 
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
@@ -116,7 +118,7 @@
                                    language="Dart"/>
 
         <!--   插件socket服务     -->
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -142,7 +144,8 @@
 
         <!--        系统设置-->
         <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
-                                 displayName="Setting"/>
+                                 id="setting.flutterx"
+                                 displayName="FlutterX"/>
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
@@ -171,6 +174,8 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
+
+        <!--        打开设置-->
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>

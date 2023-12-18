@@ -59,10 +59,7 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
                                 val lastPart = parts.last() ///最后一个 part
                                 val p1 = lastPart.containingFile.virtualFile.path
                                 val p2 = element.containingFile.virtualFile.path
-                                println("目标:${p1}")
-                                println("当前:${p2}")
                                 val rl = getRelativeOrFileName(p1, p2)
-                                println("输出:$rl")
                                 val createPartOf = createPartOf("$rl", project = element.project)
 
                                 ///如果存在了就不要显示了

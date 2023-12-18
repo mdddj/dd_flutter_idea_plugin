@@ -3,7 +3,7 @@ package shop.itbug.fluttercheckversionx.form.components
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareToggleAction
-import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 
@@ -31,7 +31,7 @@ internal class DioUIShowActionGroup : DumbAware, ActionGroup() {
 private class DioUiRenderOption(val menu: DioUiSettingMenu) : DumbAwareToggleAction() {
 
     override fun isSelected(e: AnActionEvent): Boolean {
-        val setting = DioxListingUiConfig.setting
+        val setting = DioListingUiConfig.setting
         return when (menu) {
             DioUiSettingMenu.Domain -> setting.showHost
             DioUiSettingMenu.Params -> setting.showQueryParams
@@ -45,13 +45,13 @@ private class DioUiRenderOption(val menu: DioUiSettingMenu) : DumbAwareToggleAct
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
         when (menu) {
-            DioUiSettingMenu.Domain -> DioxListingUiConfig.changeSetting { it.copy(showHost = state) }
-            DioUiSettingMenu.Params -> DioxListingUiConfig.changeSetting { it.copy(showQueryParams = state) }
-            DioUiSettingMenu.Method -> DioxListingUiConfig.changeSetting { it.copy(showMethod = state) }
-            DioUiSettingMenu.Status -> DioxListingUiConfig.changeSetting { it.copy(showStatusCode = state) }
-            DioUiSettingMenu.Time -> DioxListingUiConfig.changeSetting { it.copy(showTimestamp = state) }
-            DioUiSettingMenu.RequestTime -> DioxListingUiConfig.changeSetting { it.copy(showDate = state) }
-            DioUiSettingMenu.ProjectName -> DioxListingUiConfig.changeSetting { it.copy(showProjectName = state) }
+            DioUiSettingMenu.Domain -> DioListingUiConfig.changeSetting { it.copy(showHost = state) }
+            DioUiSettingMenu.Params -> DioListingUiConfig.changeSetting { it.copy(showQueryParams = state) }
+            DioUiSettingMenu.Method -> DioListingUiConfig.changeSetting { it.copy(showMethod = state) }
+            DioUiSettingMenu.Status -> DioListingUiConfig.changeSetting { it.copy(showStatusCode = state) }
+            DioUiSettingMenu.Time -> DioListingUiConfig.changeSetting { it.copy(showTimestamp = state) }
+            DioUiSettingMenu.RequestTime -> DioListingUiConfig.changeSetting { it.copy(showDate = state) }
+            DioUiSettingMenu.ProjectName -> DioListingUiConfig.changeSetting { it.copy(showProjectName = state) }
         }
     }
 

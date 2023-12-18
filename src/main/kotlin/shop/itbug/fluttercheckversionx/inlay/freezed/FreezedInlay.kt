@@ -16,8 +16,8 @@ import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import shop.itbug.fluttercheckversionx.common.MyAction
-import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
-import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.manager.DartClassManager
@@ -30,8 +30,8 @@ import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 
-class FreezedInlay : InlayHintsProvider<DioxListeningSetting> {
-    override val key: SettingsKey<DioxListeningSetting>
+class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
+    override val key: SettingsKey<DoxListeningSetting>
         get() = SettingsKey("freezed inlay")
     override val name: String
         get() = "FreezedInlay"
@@ -39,20 +39,20 @@ class FreezedInlay : InlayHintsProvider<DioxListeningSetting> {
         get() = "@freezed\n" +
                 "class Test {}"
 
-    override fun createSettings(): DioxListeningSetting {
-        return DioxListingUiConfig.setting
+    override fun createSettings(): DoxListeningSetting {
+        return DioListingUiConfig.setting
     }
 
     override fun getCollectorFor(
         file: PsiFile,
         editor: Editor,
-        settings: DioxListeningSetting,
+        settings: DoxListeningSetting,
         sink: InlayHintsSink
     ): InlayHintsCollector {
         return FreezedInlayCollector(editor)
     }
 
-    override fun createConfigurable(settings: DioxListeningSetting): ImmediateConfigurable {
+    override fun createConfigurable(settings: DoxListeningSetting): ImmediateConfigurable {
         return FreezedInlayPanel()
     }
 
