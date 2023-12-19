@@ -78,7 +78,7 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
         <!--   项目被打开回调事件     -->
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>
+        <!--        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>-->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
@@ -115,6 +115,7 @@
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
+
 
         <!--   part 自动导入-->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
@@ -165,8 +166,14 @@
                 language="yaml"/>
 
 
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
+
     </extensions>
 
+    <projectListeners>
+        <listener class="shop.itbug.fluttercheckversionx.services.MyProjectListening"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </projectListeners>
 
     <actions>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
@@ -256,12 +263,30 @@
         </group>
 
 
+        <action id="StatelessToConsumer"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.StatelessToConsumer"
+                text="StatelessWidget to ConsumerWidget">
+            <add-to-group group-id="Internal.Editor"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="meta alt M"/>
+        </action>
+        <action id="StatefulToConsumer"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.StatefulToConsumerAction"
+                text="StatefulWidget to ConsumerStatefulWidget"/>
+
+
         <action id="FreezedFactoryAddDefaultValue"
                 class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedFactoryAddDefaultValue"
                 text="Add Default Value"/>
         <action id="FreezedClassToSimpleClass"
                 class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedClassToSimpleClass"
                 text="freezed to simple class"/>
+
+
+        ////
+        <group id="WidgetToRiverpod">
+            <reference id="StatelessToConsumer"/>
+            <reference id="StatefulToConsumer"/>
+        </group>
     </actions>
 
     <!--Git.MainMenu.FileActions-->
