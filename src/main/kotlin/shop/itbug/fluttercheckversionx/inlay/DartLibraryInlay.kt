@@ -2,12 +2,13 @@ package shop.itbug.fluttercheckversionx.inlay
 
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.startOffset
+import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.inlay.base.MyBaseInlay
 import shop.itbug.fluttercheckversionx.inlay.base.MyBaseInlayModel
 import shop.itbug.fluttercheckversionx.tools.LibTools
 
 class DartLibraryInlay : MyBaseInlay("Dart Library Tips") {
-    override fun needHandle(element: PsiElement): Boolean {
+    override fun needHandle(element: PsiElement, setting: PluginSetting): Boolean {
         return element.text.trim().contains("part of")
     }
 

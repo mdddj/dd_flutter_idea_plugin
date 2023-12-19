@@ -38,7 +38,7 @@ abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<P
         return object : FactoryInlayHintsCollector(editor) {
             private val myFactory = HintsInlayPresentationFactory(factory)
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                if (needHandle(element)) {
+                if (needHandle(element, settings)) {
                     handle(
                         element, myFactory, MyBaseInlayModel(
                             file,
@@ -61,7 +61,7 @@ abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<P
         }
     }
 
-    abstract fun needHandle(element: PsiElement): Boolean
+    abstract fun needHandle(element: PsiElement, setting: PluginSetting): Boolean
 
     abstract fun handle(element: PsiElement, myFactory: HintsInlayPresentationFactory, model: MyBaseInlayModel)
 

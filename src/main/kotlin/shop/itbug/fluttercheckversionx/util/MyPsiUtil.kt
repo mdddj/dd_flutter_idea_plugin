@@ -113,7 +113,7 @@ class MyPsiElementUtil {
          */
         fun getPubSecpYamlFile(project: Project): PsiFile? {
             val sdk = FlutterSdk.getFlutterSdk(project)?.version?.versionText
-            if(sdk.isNullOrBlank()){
+            if (sdk.isNullOrBlank()) {
                 return null
             }
             val pubspecYamlFile =
@@ -186,17 +186,22 @@ class MyPsiElementUtil {
                     // 获取要修改的文本范围
                     val startOffset = psiElement.textRange.startOffset
                     val endOffset = psiElement.textRange.endOffset
+                    PsiDocumentManager.getInstance(psiElement.project).doPostponedOperationsAndUnblockDocument(document)
                     // 替换文本内容
                     document.replaceString(startOffset, endOffset, newText)
                     // 提交更改并更新Psi文件
-                    PsiDocumentManager.getInstance(psiElement.project).commitDocument(document)
+                    PsiDocumentManager.getInstance(psiElement.project).doPostponedOperationsAndUnblockDocument(document)
+//                    PsiDocumentManager.getInstance(psiElement.project).commitDocument(document)
                 }
             }
         }
 
-        fun findAllMatchingElements(psiElement: PsiElement, matchText: (text: String,psiElement: PsiElement) -> Boolean): List<PsiElement> {
+        fun findAllMatchingElements(
+            psiElement: PsiElement,
+            matchText: (text: String, psiElement: PsiElement) -> Boolean
+        ): List<PsiElement> {
             val matchingElements: MutableList<PsiElement> = ArrayList()
-            if (matchText(psiElement.text,psiElement)) {
+            if (matchText(psiElement.text, psiElement)) {
                 matchingElements.add(psiElement)
             }
             val children = psiElement.children
@@ -219,7 +224,7 @@ fun PsiElement.exByModifyPsiElementText(newText: String) {
 }
 
 fun PsiElement.exByModifyAllPsiElementText(newText: String, oldText: String) {
-    val children = MyPsiElementUtil.findAllMatchingElements(this) { text,_ ->
+    val children = MyPsiElementUtil.findAllMatchingElements(this) { text, _ ->
         return@findAllMatchingElements text == oldText
     }
     children.forEach {

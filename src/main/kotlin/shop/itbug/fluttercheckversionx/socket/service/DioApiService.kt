@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
-import com.intellij.openapi.application.CachedSingletonsRegistry
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.MessageProcessor
@@ -12,14 +11,16 @@ import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
-import java.util.function.Supplier
 
 @Service
 class DioApiService {
 
     companion object {
-        val INSTANCESupplier: Supplier<DioApiService> = CachedSingletonsRegistry.lazy { service<DioApiService>() }
+        //        val INSTANCESupplier: Supplier<DioApiService> = CachedSingletonsRegistry.lazy { service<DioApiService>() }
+        val INSTANCESupplier = service<DioApiService>()
     }
+
+    fun get() = INSTANCESupplier
 
 
     private fun AioSession.send(message: String) {

@@ -91,10 +91,10 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>3.9.2</h1>
+                     <h1>3.9.5</h1>
                      <ul>
-                        <li>Fixed the bug that the settings panel could not be opened in 2023.3</li>
-                        <li>Adapt to Idea 2023.3.</li>
+                        <li>Fix a bug in FlutterProjectOpenActivity class that may cause memory leakage</li>
+                        <li>Fix the bug where the idea will pop up an error message after the dio socket session is closed</li>
                      </ul>
                 </div>
             """.trimIndent()

@@ -74,6 +74,7 @@ object DartPsiElementUtil {
         return list.map { it.covertDartClassPropertyModel() }
     }
 
+
     /**
      * 给class添加注解
      */

@@ -1,11 +1,9 @@
 package shop.itbug.fluttercheckversionx.config
 
-import com.intellij.openapi.application.CachedSingletonsRegistry
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import java.util.function.Supplier
 
 data class PluginSetting(
     val showTool: Boolean = false
@@ -24,7 +22,10 @@ class PluginConfig : PersistentStateComponent<PluginSetting> {
 
 
     companion object {
-        val INSTANCESupplier: Supplier<PluginSetting> = CachedSingletonsRegistry.lazy { service<PluginConfig>().state }
+        //        val INSTANCESupplier: Supplier<PluginSetting> = CachedSingletonsRegistry.lazy { service<PluginConfig>().state }
+        val INSTANCESupplier = service<PluginConfig>()
     }
+
+    fun get() = INSTANCESupplier.setting
 
 }

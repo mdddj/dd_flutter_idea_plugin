@@ -275,6 +275,17 @@ class MyDartPsiElementUtil {
             return PsiTreeUtil.findChildOfType(createDummyFile, PsiWhiteSpaceImpl::class.java)!!
         }
 
+
+        fun getWidgetRefParam(project: Project): DartFormalParameterListImpl {
+            val createFile = DartElementGenerator.createDummyFile(
+                project, """
+                void test(BuildContext context,WidgetRef ref){}
+            """.trimIndent()
+            )
+            return PsiTreeUtil.findChildOfType(createFile, DartFormalParameterListImpl::class.java)!!
+        }
+
+
         fun generateMixins(project: Project, name: String): DartMixinsImpl {
             val createDummyFile = DartElementGenerator.createDummyFile(project, "class A with $name")
             return PsiTreeUtil.findChildOfType(createDummyFile, DartMixinsImpl::class.java)!!
@@ -348,14 +359,15 @@ class MyDartPsiElementUtil {
         }
 
 
-        fun createDartPart(text: String,project: Project) : DartPartStatementImpl? {
+        fun createDartPart(text: String, project: Project): DartPartStatementImpl? {
             val createDummyFile = DartElementGenerator.createDummyFile(project, text)
-            return PsiTreeUtil.getChildOfType(createDummyFile,DartPartStatementImpl::class.java)
+            return PsiTreeUtil.getChildOfType(createDummyFile, DartPartStatementImpl::class.java)
         }
-
 
 
     }
 
 
 }
+
+
