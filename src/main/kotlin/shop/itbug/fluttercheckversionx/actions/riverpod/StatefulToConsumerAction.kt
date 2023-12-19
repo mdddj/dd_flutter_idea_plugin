@@ -13,16 +13,21 @@ import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import com.jetbrains.lang.dart.psi.impl.DartReturnTypeImpl
 import com.jetbrains.lang.dart.psi.impl.DartSuperclassImpl
 import com.jetbrains.lang.dart.util.DartElementGenerator
+import shop.itbug.fluttercheckversionx.constance.MyKeys
 
+
+private fun AnActionEvent.getEditClassPsi(): DartClassDefinitionImpl? {
+    return getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
+}
 
 ///是否开启
 private fun AnActionEvent.isEnableAction(): Boolean {
     val psi = getData(CommonDataKeys.PSI_ELEMENT)
-    println("psi $psi")
     if (project == null) {
         return false
     }
-    if (psi is DartClassDefinitionImpl && psi.superclass?.type?.text == "StatefulWidget") {
+    val editPsi = getEditClassPsi()
+    if (editPsi != null && editPsi.superclass?.type?.text == "StatefulWidget") {
         return true
     }
     return psi is DartComponentNameImpl && psi.parent is DartClassDefinitionImpl
@@ -57,13 +62,14 @@ class StatefulToConsumerAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
 
 
-        val psi = e.getData(CommonDataKeys.PSI_ELEMENT)
+        val psi = e.getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
         val isClass = psi is DartClassDefinitionImpl
 
         val dartClassName =
             if (isClass) (psi as DartClassDefinitionImpl).componentName else e.getData(CommonDataKeys.PSI_ELEMENT) as DartComponentNameImpl
         val classDefinition =
             if (isClass) psi as DartClassDefinitionImpl else dartClassName.parent as DartClassDefinitionImpl
+
         val psiFile = e.getData(CommonDataKeys.PSI_FILE)
         e.project?.let { project ->
             val className = dartClassName.name

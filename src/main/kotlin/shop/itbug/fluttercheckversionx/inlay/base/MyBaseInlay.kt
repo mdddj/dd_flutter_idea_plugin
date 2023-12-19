@@ -14,7 +14,7 @@ data class MyBaseInlayModel(
     val psiFile: PsiFile,
     val editor: Editor,
     val settings: PluginSetting,
-    val sink: InlayHintsSink
+    val sink: InlayHintsSink,
 )
 
 abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<PluginSetting> {
@@ -26,7 +26,7 @@ abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<P
         get() = getMyPreviewText()
 
     override fun createSettings(): PluginSetting {
-        return PluginConfig.INSTANCESupplier.get()
+        return PluginConfig.getState()
     }
 
     override fun getCollectorFor(
@@ -35,16 +35,19 @@ abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<P
         settings: PluginSetting,
         sink: InlayHintsSink
     ): InlayHintsCollector? {
+
+
         return object : FactoryInlayHintsCollector(editor) {
             private val myFactory = HintsInlayPresentationFactory(factory)
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+
                 if (needHandle(element, settings)) {
                     handle(
                         element, myFactory, MyBaseInlayModel(
                             file,
                             editor,
                             settings,
-                            sink
+                            sink,
                         )
                     )
                 }
@@ -64,7 +67,6 @@ abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<P
     abstract fun needHandle(element: PsiElement, setting: PluginSetting): Boolean
 
     abstract fun handle(element: PsiElement, myFactory: HintsInlayPresentationFactory, model: MyBaseInlayModel)
-
 
     protected fun getMyPreviewText(): String {
         return ""

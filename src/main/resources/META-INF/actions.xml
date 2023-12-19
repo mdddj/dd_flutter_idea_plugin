@@ -48,6 +48,7 @@
             <reference id="StatelessToConsumer"/>
             <reference id="StatefulToConsumer"/>
             <add-to-group group-id="EditorPopupMenu"/>
+            <reference id="RiverpodActionsSetting"/>
         </group>
     </actions>
 

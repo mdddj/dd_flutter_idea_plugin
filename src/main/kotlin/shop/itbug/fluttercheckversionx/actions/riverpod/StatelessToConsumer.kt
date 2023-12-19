@@ -7,20 +7,45 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.WriteCommandAction
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
+import shop.itbug.fluttercheckversionx.constance.MyKeys
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.exByModifyPsiElementText
+
+
+private fun AnActionEvent.getEditorClass(): DartClassDefinitionImpl? {
+    return getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
+}
+
+private fun AnActionEvent.isEnable(): Boolean {
+    if (project == null) {
+        return false
+    }
+    val psi = getData(CommonDataKeys.PSI_ELEMENT)
+    val editPsi = getEditorClass()
+    if (editPsi != null && editPsi.superclass?.type?.text == "StatelessWidget") {
+        return true
+    }
+    if (psi is DartComponentNameImpl && psi.parent is DartClassDefinitionImpl
+        && (psi.parent as DartClassDefinitionImpl).superclass?.type?.text == "StatelessWidget"
+    ) {
+        return true
+    }
+    return false
+}
 
 
 ///将组件转换成
 class StatelessToConsumer : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val psi = e.getData(CommonDataKeys.PSI_ELEMENT)
+        val classElement = e.getEditorClass()
+        val namePsi = classElement?.componentName ?: e.getData(CommonDataKeys.PSI_ELEMENT)
+
         val project = e.project
-        if (psi is DartComponentNameImpl && psi.parent is DartClassDefinitionImpl
-            && (psi.parent as DartClassDefinitionImpl).superclass?.type?.text == "StatelessWidget"
+        if (namePsi is DartComponentNameImpl && namePsi.parent is DartClassDefinitionImpl
+            && (namePsi.parent as DartClassDefinitionImpl).superclass?.type?.text == "StatelessWidget"
             && project != null
         ) {
-            val parent = psi.parent as DartClassDefinitionImpl
+            val parent = namePsi.parent as DartClassDefinitionImpl
             parent.classBody?.classMembers?.let { members ->
                 val methods = members.methodDeclarationList
                 methods.forEach { method ->
@@ -57,11 +82,7 @@ class StatelessToConsumer : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        val psi = e.getData(CommonDataKeys.PSI_ELEMENT)
-        val project = e.project
-        e.presentation.isEnabled = psi is DartComponentNameImpl && psi.parent is DartClassDefinitionImpl
-                && (psi.parent as DartClassDefinitionImpl).superclass?.type?.text == "StatelessWidget"
-                && project != null
+        e.presentation.isEnabled = e.isEnable()
         super.update(e)
     }
 

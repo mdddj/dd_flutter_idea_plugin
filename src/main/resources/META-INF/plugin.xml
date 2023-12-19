@@ -102,6 +102,10 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
                                    language="JSON"/>
 
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.actions.riverpod.PsiElementEditorPopupMenuInlay"
+                language="Dart"/>
+
 
         <!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"-->
         <!--                                   language="Dart"/>-->
@@ -263,6 +267,7 @@
         </group>
 
 
+        <!--  riverpod 操作 -->
         <action id="StatelessToConsumer"
                 class="shop.itbug.fluttercheckversionx.actions.riverpod.StatelessToConsumer"
                 text="StatelessWidget to ConsumerWidget">
@@ -272,6 +277,9 @@
         <action id="StatefulToConsumer"
                 class="shop.itbug.fluttercheckversionx.actions.riverpod.StatefulToConsumerAction"
                 text="StatefulWidget to ConsumerStatefulWidget"/>
+        <action id="RiverpodActionsSetting"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.RiverpodActionsSetting"
+                text="Enable Riverpod Tool"/>
 
 
         <action id="FreezedFactoryAddDefaultValue"
@@ -286,7 +294,10 @@
         <group id="WidgetToRiverpod">
             <reference id="StatelessToConsumer"/>
             <reference id="StatefulToConsumer"/>
+            <separator/>
+            <reference id="RiverpodActionsSetting"/>
         </group>
+
     </actions>
 
     <!--Git.MainMenu.FileActions-->

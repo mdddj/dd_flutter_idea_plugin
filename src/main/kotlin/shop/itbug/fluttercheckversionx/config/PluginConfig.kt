@@ -1,12 +1,15 @@
 package shop.itbug.fluttercheckversionx.config
 
+import com.alibaba.fastjson2.toJSONString
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 
 data class PluginSetting(
-    val showTool: Boolean = false
+
+    ///是否显示操作工具
+    val showRiverpodInlay: Boolean = true
 )
 
 @State(name = "FlutterxConfig", storages = [Storage("FlutterxConfig.xml")])
@@ -18,14 +21,17 @@ class PluginConfig : PersistentStateComponent<PluginSetting> {
 
     override fun loadState(state: PluginSetting) {
         setting = state
+        println("更新${setting.toJSONString()}")
     }
 
 
     companion object {
-        //        val INSTANCESupplier: Supplier<PluginSetting> = CachedSingletonsRegistry.lazy { service<PluginConfig>().state }
-        val INSTANCESupplier = service<PluginConfig>()
+        fun getInstance(): PluginConfig {
+            return service<PluginConfig>()
+        }
+
+        fun getState() = getInstance().state
     }
 
-    fun get() = INSTANCESupplier.setting
 
 }
