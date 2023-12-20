@@ -130,6 +130,10 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = javaVersion
     }
+
+    verifyPluginConfiguration {
+
+    }
 }
 
 
