@@ -177,6 +177,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
                 }
             })
 
+
         }
     }
 }

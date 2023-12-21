@@ -91,10 +91,10 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>3.9.5</h1>
+                     <h1>4.0.0</h1>
                      <ul>
-                        <li>Fix a bug in FlutterProjectOpenActivity class that may cause memory leakage</li>
-                        <li>Fix the bug where the idea will pop up an error message after the dio socket session is closed</li>
+                        <li>Implementation method for adjusting the automatic listening asset generation function</li>
+                        <li>New feature: Add riverpod_hook Widget Conversion Tool</li>
                      </ul>
                 </div>
             """.trimIndent()

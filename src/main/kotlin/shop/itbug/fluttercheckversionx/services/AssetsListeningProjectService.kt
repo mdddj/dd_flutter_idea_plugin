@@ -1,14 +1,15 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
@@ -143,9 +144,9 @@ public final class AssetsListeningProjectService(val project: Project) {
             createNotification.setIcon(MyIcons.flutter)
 
 
-
+            ///执行命令
             createNotification.addAction(
-                object : AnAction("Upgrade") {
+                object : DumbAwareAction("Upgrade") {
                     override fun actionPerformed(p0: AnActionEvent) {
                         RunUtil.runCommand(project, "flutter upgrade", "flutter upgrade")
                         createNotification.hideBalloon()
@@ -162,10 +163,26 @@ public final class AssetsListeningProjectService(val project: Project) {
 
                 },
             )
-            createNotification.addAction(object : AnAction("Cancel") {
+
+            ///查看更新日志
+            createNotification.addAction(object : DumbAwareAction("What's New") {
+                override fun actionPerformed(e: AnActionEvent) {
+                    BrowserUtil.browse("https://github.com/flutter/flutter/wiki/Hotfixes-to-the-Stable-Channel")
+                }
+
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+            })
+
+            ///关闭
+            createNotification.addAction(object : DumbAwareAction("Cancel") {
                 override fun actionPerformed(p0: AnActionEvent) {
                     createNotification.hideBalloon()
+                }
 
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
                 }
             })
             createNotification.notify(project)
