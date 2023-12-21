@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.messages.MessageBusConnection
 import io.flutter.sdk.FlutterSdk
+import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
@@ -146,7 +147,7 @@ public final class AssetsListeningProjectService(val project: Project) {
 
             ///执行命令
             createNotification.addAction(
-                object : DumbAwareAction("Upgrade") {
+                object : MyButtonAnAction("Flutter Upgrade") {
                     override fun actionPerformed(p0: AnActionEvent) {
                         RunUtil.runCommand(project, "flutter upgrade", "flutter upgrade")
                         createNotification.hideBalloon()
@@ -157,12 +158,9 @@ public final class AssetsListeningProjectService(val project: Project) {
                         super.update(e)
                     }
 
-                    override fun getActionUpdateThread(): ActionUpdateThread {
-                        return ActionUpdateThread.BGT
-                    }
-
                 },
             )
+
 
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
@@ -185,6 +183,7 @@ public final class AssetsListeningProjectService(val project: Project) {
                     return ActionUpdateThread.BGT
                 }
             })
+            createNotification.setSuggestionType(true)
             createNotification.notify(project)
         }
     }
