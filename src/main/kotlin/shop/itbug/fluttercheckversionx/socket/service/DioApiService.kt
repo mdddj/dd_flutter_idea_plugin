@@ -2,6 +2,8 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioQuickServer
@@ -10,15 +12,26 @@ import org.smartboot.socket.transport.WriteBuffer
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 
+@Service
+class DioApiService {
 
-object DioApiService {
+    companion object {
+        //        val INSTANCESupplier: Supplier<DioApiService> = CachedSingletonsRegistry.lazy { service<DioApiService>() }
+        val INSTANCESupplier = service<DioApiService>()
+    }
+
+    fun get() = INSTANCESupplier
 
 
     private fun AioSession.send(message: String) {
-        val writeBuffer: WriteBuffer = writeBuffer()
-        val data = message.toByteArray()
-        writeBuffer.write(data)
-        writeBuffer.flush()
+        try {
+            val writeBuffer: WriteBuffer = writeBuffer()
+            val data = message.toByteArray()
+            writeBuffer.write(data)
+            writeBuffer.flush()
+        } catch (e: Exception) {
+            println("发送socket失败：$e")
+        }
     }
 
     private val sessions = mutableSetOf<AioSession>()
@@ -60,7 +73,7 @@ object DioApiService {
 
 
         fun register() {
-            addHandle(this)
+            INSTANCESupplier.get().addHandle(this)
         }
 
         /**
@@ -145,14 +158,14 @@ object MyMessageProcessor : MessageProcessor<String?> {
     private fun defaultEventHandle(session: AioSession?, stateMachineEnum: StateMachineEnum?) {
         when (stateMachineEnum) {
             StateMachineEnum.NEW_SESSION -> {
-                DioApiService.addSession(session)
+                DioApiService.INSTANCESupplier.get().addSession(session)
             }
 
-            StateMachineEnum.INPUT_SHUTDOWN -> DioApiService.removeSession(session)
-            StateMachineEnum.SESSION_CLOSING -> DioApiService.removeSession(session)
-            StateMachineEnum.SESSION_CLOSED -> DioApiService.removeSession(session)
-            StateMachineEnum.REJECT_ACCEPT -> DioApiService.removeSession(session)
-            StateMachineEnum.ACCEPT_EXCEPTION -> DioApiService.removeSession(session)
+            StateMachineEnum.INPUT_SHUTDOWN -> DioApiService.INSTANCESupplier.get().removeSession(session)
+            StateMachineEnum.SESSION_CLOSING -> DioApiService.INSTANCESupplier.get().removeSession(session)
+            StateMachineEnum.SESSION_CLOSED -> DioApiService.INSTANCESupplier.get().removeSession(session)
+            StateMachineEnum.REJECT_ACCEPT -> DioApiService.INSTANCESupplier.get().removeSession(session)
+            StateMachineEnum.ACCEPT_EXCEPTION -> DioApiService.INSTANCESupplier.get().removeSession(session)
             else -> {}
         }
     }

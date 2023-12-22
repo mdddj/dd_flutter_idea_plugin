@@ -27,46 +27,40 @@ const val ENABLE_CHAT_ROOM_WINDOW = false
  */
 class SocketWindow : ToolWindowFactory {
 
-    override fun createToolWindowContent(p0: Project, p1: ToolWindow) {
-        //dio 监听窗口
-        val socketRequestForm = SocketRequestForm(p0, p1)
+    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        val socketRequestForm = SocketRequestForm(project, toolWindow)
         val instance = ContentFactory.getInstance()
-        val createContent =
-            instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
-
-        p1.contentManager.addContent(createContent)
-
+        val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
+        toolWindow.contentManager.addContent(createContent)
         val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
-
-
         if (AppService.getInstance().dioIsStart.not()) {
-            p1.activate {
+            toolWindow.activate {
                 try {
-                    DioApiService.builder(port).start()
-                    p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
+                    DioApiService.INSTANCESupplier.get().builder(port).start()
+                    toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
                 } catch (e: Exception) {
-                    p0.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
+                    project.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
                 }
             }
         } else {
-            p1.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
+            toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
         }
 
         //在线聊天窗口
         if (ENABLE_CHAT_ROOM_WINDOW) {
-            val flutterChatWindow = FlutterChatMessageWindow(p0, p1)
+            val flutterChatWindow = FlutterChatMessageWindow(project, toolWindow)
             val flutterChatWindowContent =
                 instance.createContent(flutterChatWindow, PluginBundle.get("window.idea.chat.title"), false)
-            p1.contentManager.addContent(flutterChatWindowContent)
+            toolWindow.contentManager.addContent(flutterChatWindowContent)
         }
 
 
         //找工作窗口
         if (ENABLE_FIND_JOBS_WINDOW) {
-            val jobsWindow = JobsWindow(p0, p1)
+            val jobsWindow = JobsWindow(project, toolWindow)
             val jobsContent = instance.createContent(jobsWindow, "找工作", false)
-            p1.contentManager.addContent(jobsContent)
+            toolWindow.contentManager.addContent(jobsContent)
         }
 
         //api索引窗口
@@ -76,16 +70,16 @@ class SocketWindow : ToolWindowFactory {
 
 
         // sp工具
-        val spWindow = SpWindow(p0, p1)
+        val spWindow = SpWindow(project, toolWindow)
         val spContent = instance.createContent(spWindow, "Shared Preferences ${PluginBundle.get("tool")}", false)
-        p1.contentManager.addContent(spContent)
+        toolWindow.contentManager.addContent(spContent)
 
 
         //hive 工具 开发中
-        val hiveWindow = HiveWidget(p0, p1)
+        val hiveWindow = HiveWidget(project, toolWindow)
         val hiveContent = instance.createContent(hiveWindow, "Hive ${PluginBundle.get("tool")}", false)
         hiveContent.icon = AllIcons.General.Beta
-        p1.contentManager.addContent(hiveContent)
+        toolWindow.contentManager.addContent(hiveContent)
     }
 
 }

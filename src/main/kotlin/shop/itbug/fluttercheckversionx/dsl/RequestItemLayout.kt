@@ -5,8 +5,8 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.config.DioRequestUIStyle
-import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
-import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import java.awt.Dimension
 import java.net.URI
@@ -14,7 +14,7 @@ import javax.swing.BorderFactory
 
 
 //获取 URL 显示
-fun Request.formatUrl(setting: DioxListeningSetting): String {
+fun Request.formatUrl(setting: DoxListeningSetting): String {
     val uri = URI(url ?: "")
     val host = uri.host
     val scheme = uri.scheme + "://"
@@ -39,7 +39,7 @@ fun Request.formatUrl(setting: DioxListeningSetting): String {
  */
 fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
 
-    val setting = DioxListingUiConfig.setting
+    val setting = DioListingUiConfig.setting
 
     val color = UIUtil.getLabelDisabledForeground()
 

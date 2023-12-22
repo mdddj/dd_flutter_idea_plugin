@@ -43,8 +43,8 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
-    <depends optional="true" config-file="actions.xml">com.intellij.modules.lang</depends>
-    <depends optional="true" config-file="jobs_actions.xml">com.intellij.modules.lang</depends>
+    <depends optional="true" config-file="actions.xml">Dart</depends>
+    <depends optional="true" config-file="jobs_actions.xml">Dart</depends>
     <depends>Dart</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
@@ -70,13 +70,15 @@
 
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
+        <completion.contributor language="Dart"
+                                implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPartAutoCompletion"/>
 
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
         <!--   项目被打开回调事件     -->
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>
+        <!--        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>-->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
@@ -100,6 +102,13 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
                                    language="JSON"/>
 
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.actions.riverpod.PsiElementEditorPopupMenuInlay"
+                language="Dart"/>
+
+
+        <!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"-->
+        <!--                                   language="Dart"/>-->
 
         <!--    插件更新更新时间内联提示     -->
         <codeInsight.inlayProvider
@@ -111,12 +120,13 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
                 language="Dart"/>
 
+
         <!--   part 自动导入-->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
                                    language="Dart"/>
 
         <!--   插件socket服务     -->
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioxListingUiConfig"/>
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -142,7 +152,8 @@
 
         <!--        系统设置-->
         <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
-                                 displayName="Setting"/>
+                                 id="setting.flutterx"
+                                 displayName="FlutterX"/>
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
@@ -150,6 +161,7 @@
 
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState"/>
 
+        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.PluginConfig"/>
 
         <!--        插件新版本检测-->
 
@@ -158,8 +170,14 @@
                 language="yaml"/>
 
 
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
+
     </extensions>
 
+    <projectListeners>
+        <listener class="shop.itbug.fluttercheckversionx.services.MyProjectListening"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </projectListeners>
 
     <actions>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
@@ -171,6 +189,8 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
+
+        <!--        打开设置-->
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 text="Setting" icon="/icons/setting.svg"/>
@@ -247,12 +267,37 @@
         </group>
 
 
+        <!--  riverpod 操作 -->
+        <action id="StatelessToConsumer"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.StatelessToConsumer"
+                text="StatelessWidget to ConsumerWidget">
+            <add-to-group group-id="Internal.Editor"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="meta alt M"/>
+        </action>
+        <action id="StatefulToConsumer"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.StatefulToConsumerAction"
+                text="StatefulWidget to ConsumerStatefulWidget"/>
+        <action id="RiverpodActionsSetting"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.RiverpodActionsSetting"
+                text="Enable Riverpod Tool"/>
+
+
         <action id="FreezedFactoryAddDefaultValue"
                 class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedFactoryAddDefaultValue"
                 text="Add Default Value"/>
         <action id="FreezedClassToSimpleClass"
                 class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedClassToSimpleClass"
                 text="freezed to simple class"/>
+
+
+        ////
+        <group id="WidgetToRiverpod">
+            <reference id="StatelessToConsumer"/>
+            <reference id="StatefulToConsumer"/>
+            <separator/>
+            <reference id="RiverpodActionsSetting"/>
+        </group>
+
     </actions>
 
     <!--Git.MainMenu.FileActions-->

@@ -2,10 +2,11 @@ package shop.itbug.fluttercheckversionx.setting
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.components.JBTabbedPane
-import shop.itbug.fluttercheckversionx.config.DioxListeningSetting
-import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -15,11 +16,11 @@ import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import javax.swing.JComponent
 
-class AppConfig : Configurable, Disposable {
+class AppConfig : Configurable, Disposable, SearchableConfigurable {
 
     var model = PluginStateService.getInstance().state ?: AppStateModel()
 
-    private var dioSetting = DioxListingUiConfig.getInstance().state ?: DioxListeningSetting()
+    private var dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
 
     private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
     private val dartSaveSettingState = DartFileSaveSettingState.getInstance().state
@@ -32,7 +33,7 @@ class AppConfig : Configurable, Disposable {
             generaAssetsSettingPanelModelIs = it
         }
 
-    private var dog = dartFileSaveSettingPanel(this,dartSaveSettingState){
+    private var dog = dartFileSaveSettingPanel(this, dartSaveSettingState) {
         dartFileSaveSettingPanelModelIs = it
     }
 
@@ -40,7 +41,7 @@ class AppConfig : Configurable, Disposable {
         return JBTabbedPane().apply {
             add(PluginBundle.get("basic"), panel)
             add(PluginBundle.get("assets.gen"), generateSettingPanel)
-            add("保存后执行", dog )
+            add("保存后执行", dog)
         }
     }
 
@@ -59,7 +60,7 @@ class AppConfig : Configurable, Disposable {
         generateSettingPanel.doApply()
         dog.apply()
         PluginStateService.getInstance().loadState(model)
-        DioxListingUiConfig.getInstance().loadState(dioSetting)
+        DioListingUiConfig.getInstance().loadState(dioSetting)
         GenerateAssetsClassConfig.getInstance().loadState(generaAssetsSettingPanel)
         DartFileSaveSettingState.getInstance().loadState(dartSaveSettingState)
     }
@@ -68,10 +69,14 @@ class AppConfig : Configurable, Disposable {
         return PluginBundle.get("setting.flutterx")
     }
 
+    override fun getId(): String {
+        return "flutterx"
+    }
+
     override fun reset() {
         dialog.reset()
         dog.reset()
-        super.reset()
+        super<Configurable>.reset()
     }
 
     override fun dispose() {

@@ -1,10 +1,7 @@
 package shop.itbug.fluttercheckversionx.save
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.*
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.bindSelected
@@ -23,6 +20,7 @@ data class DartFileSaveSettingModel(
     var title: String = ""
 )
 
+@Service
 @State(name = "DartFileSaveSettingState", storages = [Storage("DartFileSaveSettingState.xml")])
 class DartFileSaveSettingState private constructor() : PersistentStateComponent<DartFileSaveSettingModel> {
     private var setting = DartFileSaveSettingModel()

@@ -1,6 +1,8 @@
 <idea-plugin>
 
+
     <actions>
+
         <!--    dio 请求里面的清空按钮    -->
         <group id="DioTool.CleanService">
             <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService"
@@ -42,7 +44,11 @@
             <!--            </action>-->
             <reference ref="FreezedFactoryAddDefaultValue"/>
             <reference ref="FreezedClassToSimpleClass"/>
+            <separator/>
+            <reference id="StatelessToConsumer"/>
+            <reference id="StatefulToConsumer"/>
             <add-to-group group-id="EditorPopupMenu"/>
+            <reference id="RiverpodActionsSetting"/>
         </group>
     </actions>
 

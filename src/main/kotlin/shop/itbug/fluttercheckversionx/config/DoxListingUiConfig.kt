@@ -18,7 +18,7 @@ enum class DioRequestUIStyle(val string: String) {
     CompactStyle(PluginBundle.get("compact.mode"))
 }
 
-data class DioxListeningSetting(
+data class DoxListeningSetting(
     //是否展示前缀host
     var showHost: Boolean = true,
     //是否展示get后缀查询参数
@@ -53,52 +53,52 @@ data class DioxListeningSetting(
  * dio的功能设置
  */
 @State(name = "DoxListingUiConfig", storages = [Storage("DoxListingUiConfig.xml")])
-class DioxListingUiConfig private constructor() : PersistentStateComponent<DioxListeningSetting> {
-    private var config = DioxListeningSetting()
-    override fun getState(): DioxListeningSetting {
+class DioListingUiConfig private constructor() : PersistentStateComponent<DoxListeningSetting> {
+    private var config = DoxListeningSetting()
+    override fun getState(): DoxListeningSetting {
         return config
     }
 
-    override fun loadState(state: DioxListeningSetting) {
+    override fun loadState(state: DoxListeningSetting) {
         val old = config
         config = state
         DioSettingChangeEvent.fire(old, state)
     }
 
     companion object {
-        fun getInstance(): PersistentStateComponent<DioxListeningSetting> {
-            return service<DioxListingUiConfig>()
+        fun getInstance(): PersistentStateComponent<DoxListeningSetting> {
+            return service<DioListingUiConfig>()
         }
 
-        val setting: DioxListeningSetting get() = getInstance().state ?: DioxListeningSetting()
+        val setting: DoxListeningSetting get() = getInstance().state ?: DoxListeningSetting()
 
         ///更改设置
-        fun changeSetting(doChange: (old: DioxListeningSetting) -> DioxListeningSetting) =
+        fun changeSetting(doChange: (old: DoxListeningSetting) -> DoxListeningSetting) =
             getInstance().loadState(doChange(setting))
     }
 
 }
 
-typealias DioSettingChangeEventChangeFun = (old: DioxListeningSetting, setting: DioxListeningSetting) -> Unit
+typealias DioSettingChangeEventChangeFun = (old: DoxListeningSetting, setting: DoxListeningSetting) -> Unit
 
 
 ///当 dio 的一些设置变化后,会发送这个通知事件,可以做一些 UI 上面的更新
 interface DioSettingChangeEvent {
 
-    fun doChange(old: DioxListeningSetting, setting: DioxListeningSetting)
+    fun doChange(old: DoxListeningSetting, setting: DoxListeningSetting)
 
     companion object {
         private val TOPIC = Topic.create("DioSettingChangeEvent", DioSettingChangeEvent::class.java)
 
         ///发送更改事件
-        fun fire(old: DioxListeningSetting, setting: DioxListeningSetting) {
+        fun fire(old: DoxListeningSetting, setting: DoxListeningSetting) {
             ApplicationManager.getApplication().messageBus.syncPublisher(TOPIC).doChange(old, setting)
         }
 
         ///监听更改事件
         fun listen(call: DioSettingChangeEventChangeFun) {
             ApplicationManager.getApplication().messageBus.connect().subscribe(TOPIC, object : DioSettingChangeEvent {
-                override fun doChange(old: DioxListeningSetting, setting: DioxListeningSetting) {
+                override fun doChange(old: DoxListeningSetting, setting: DoxListeningSetting) {
                     call.invoke(old, setting)
                 }
             })

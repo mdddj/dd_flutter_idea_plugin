@@ -12,7 +12,7 @@ import com.intellij.ui.OnePixelSplitter
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.common.scroll
-import shop.itbug.fluttercheckversionx.config.DioxListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
@@ -116,7 +116,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
      * 自动滚动到最底部
      */
     private fun autoScrollToMax() {
-        val setting = DioxListingUiConfig.setting
+        val setting = DioListingUiConfig.setting
         if (setting.autoScroller) {
             ApplicationManager.getApplication().invokeLater {
                 leftPanel.scrollToBottom()
