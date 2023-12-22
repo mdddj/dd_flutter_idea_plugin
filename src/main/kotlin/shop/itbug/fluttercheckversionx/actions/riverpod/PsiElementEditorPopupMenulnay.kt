@@ -22,9 +22,8 @@ class PsiElementEditorPopupMenuInlay : MyBaseInlay("WidgetCovertToRiverpod") {
 
 
     override fun needHandle(element: PsiElement, setting: PluginSetting): Boolean {
-        println("setting设置: $setting")
-        return element is DartClassDefinitionImpl && MyPsiElementUtil.getAllPlugins(element.project)
-            .contains("hooks_riverpod") && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget") && setting.showRiverpodInlay
+        return setting.showRiverpodInlay && element is DartClassDefinitionImpl && MyPsiElementUtil.getAllPlugins(element.project)
+            .contains("hooks_riverpod") && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
     }
 
     override fun handle(element: PsiElement, myFactory: HintsInlayPresentationFactory, model: MyBaseInlayModel) {
@@ -47,7 +46,7 @@ class PsiElementEditorPopupMenuInlay : MyBaseInlay("WidgetCovertToRiverpod") {
     }
 
 
-    ///弹出显示 popup
+    ///create popup
     private fun showPopup(mouseEvent: MouseEvent, model: MyBaseInlayModel, element: PsiElement) {
         val group = ActionManager.getInstance().getAction("WidgetToRiverpod") as DefaultActionGroup
         model.editor.putUserData(MyKeys.DartClassKey, element as DartClassDefinitionImpl)
