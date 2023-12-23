@@ -22,6 +22,10 @@ import java.net.NetworkInterface
 import java.net.SocketException
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -89,6 +93,31 @@ class Util {
 
         fun toHexFromColor(color: Color): String {
             return UIUtil.colorToHex(color)
+        }
+
+
+        ///格式化 dart 版本时间
+        fun getDateFormat(dateString: String): String {
+
+            // 解析日期时间字符串
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ")
+            val dateTime = LocalDateTime.parse(dateString, formatter)
+
+            // 获取当前时间
+            val now = LocalDateTime.now(ZoneOffset.UTC)
+
+            // 计算时间差
+            val duration = Duration.between(dateTime, now)
+
+            // 转换成“几天前”、“几小时前”的格式
+            val days = duration.toDays()
+            val hours = duration.toHours() % 24
+
+            return when {
+                days > 0 -> "$days 天前"
+                hours > 0 -> "$hours 小时前"
+                else -> dateString
+            }
         }
 
 

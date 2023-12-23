@@ -1,14 +1,15 @@
-# Fluttercheckversionx
+<div style="text-align: center;">
+<h1>FlutterX</h1>
+</div>
 
+<div style="text-align: center;">
+    <a href="https://flutterx.itbug.shop">📄Document</a>
+    <span>·</span>
+    <a href="https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx">🔗Download</a>
+</div>
 
-
-
-Flutter development assistant, Dio monitoring, variable type display, generation of asset file dictionary, beautification of Dart documents and other tools, documents are under preparation
-
-Download Url : [Fluttercheckversionx](https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx)
-
-
- dio tool window tutorial [See More>](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md)
+Flutter development assistant, Dio monitoring, variable type display, generation of asset file dictionary,
+beautification of Dart documents and other tools, documents are under preparation
 
 - [x] Dart document beautification
 - [x] Flutter plug-in version detection update
@@ -21,10 +22,7 @@ Download Url : [Fluttercheckversionx](https://plugins.jetbrains.com/plugin/18986
 
 More tools in development...
 
-
 # Screenshot
-
-
 
 <img width="705" alt="image" src="https://user-images.githubusercontent.com/29020213/169470371-182f38a0-33b1-49c3-8414-c80b232c6865.png">
 <img width="774" alt="image" src="https://user-images.githubusercontent.com/29020213/169472140-c0f76ae3-960f-4b02-838c-1365d23dbb59.png">
@@ -37,4 +35,5 @@ More tools in development...
 <img width="571" alt="image" src="https://user-images.githubusercontent.com/29020213/169472033-689819e6-ac05-46bd-a72b-e048c6c7b589.png">
 
 ### 打赏
+
 ![IMG_1839](https://user-images.githubusercontent.com/29020213/169472413-8dad4bf8-a2bb-4eda-bfda-c05b95877b78.JPG)

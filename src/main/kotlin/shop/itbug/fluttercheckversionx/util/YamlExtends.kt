@@ -7,17 +7,27 @@ import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 
 
-data class DartPluginVersionName(val name: String,val version: String)
+///插件版本是不是 dev
+fun DartPluginVersionName.isDev(): Boolean {
+    return version.contains("dev")
+}
+
+data class DartPluginVersionName(val name: String, val version: String)
+
 /**
  * yaml工具类
  */
 class YamlExtends(val element: PsiElement) {
 
     ///判断是不是dart plugin 节点
-     fun isDartPluginElement(): Boolean {
-        if (element is YAMLKeyValueImpl && element.parent is YAMLBlockMappingImpl && element.parent.parent is YAMLKeyValueImpl && PsiTreeUtil.findChildOfType(element,YAMLBlockMappingImpl::class.java)==null) {
+    fun isDartPluginElement(): Boolean {
+        if (element is YAMLKeyValueImpl && element.parent is YAMLBlockMappingImpl && element.parent.parent is YAMLKeyValueImpl && PsiTreeUtil.findChildOfType(
+                element,
+                YAMLBlockMappingImpl::class.java
+            ) == null
+        ) {
             val root = element.parent.parent as YAMLKeyValueImpl
-            if (root.firstChild is LeafPsiElement ) {
+            if (root.firstChild is LeafPsiElement) {
                 val temp = root.firstChild.text
                 if (temp == "dependencies" || temp == "dependency_overrides" || temp == "dev_dependencies") {
                     return true
