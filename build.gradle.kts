@@ -42,8 +42,6 @@ if (ideaType == "IU" && ideaVersion == "2023.3") {
 
 
 intellij {
-
-
     version.set(ideaVersion)
     type.set(ideaType)
     plugins.set(pluginList)

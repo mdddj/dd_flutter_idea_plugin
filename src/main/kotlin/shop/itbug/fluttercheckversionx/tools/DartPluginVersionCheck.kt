@@ -5,7 +5,6 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -24,8 +23,7 @@ import shop.itbug.fluttercheckversionx.util.*
 /**
  * 插件新版本检测
  */
-class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, List<DartPluginVersionCheck.Problem>>(),
-    DumbAware {
+class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, List<DartPluginVersionCheck.Problem>>() {
 
     data class Input(val file: PsiFile, val element: List<PackageInfo>)
     data class PackageInfo(val element: PsiElement, val packageInfo: DartPluginVersionName)

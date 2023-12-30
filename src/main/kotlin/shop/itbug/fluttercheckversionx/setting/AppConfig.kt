@@ -4,6 +4,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
@@ -81,5 +82,11 @@ class AppConfig : Configurable, Disposable, SearchableConfigurable {
 
     override fun dispose() {
 
+    }
+
+
+    override fun disposeUIResources() {
+        Disposer.dispose(this)
+        super<Configurable>.disposeUIResources()
     }
 }
