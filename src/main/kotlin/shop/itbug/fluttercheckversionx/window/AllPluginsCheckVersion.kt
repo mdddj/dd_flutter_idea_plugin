@@ -1,114 +1,108 @@
 package shop.itbug.fluttercheckversionx.window
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
-import shop.itbug.fluttercheckversionx.model.FlutterPluginType
-import shop.itbug.fluttercheckversionx.model.getElementVersion
-import shop.itbug.fluttercheckversionx.model.isLastVersion
-import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
+import com.intellij.util.ui.components.BorderLayoutPanel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
+import shop.itbug.fluttercheckversionx.model.*
+import shop.itbug.fluttercheckversionx.util.ApiService
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
-import java.awt.BorderLayout
-import java.awt.Component
-import javax.swing.*
+import javax.swing.DefaultListModel
+import javax.swing.JList
+
+
+private typealias MyListPairModel = Pair<FlutterPluginElementModel, PubVersionDataModel>
 
 ///检测版本小窗口
-class AllPluginsCheckVersion(val project: Project, val onDone: () -> Unit) : JPanel(BorderLayout()) {
+class AllPluginsCheckVersion(val project: Project) : BorderLayoutPanel() {
 
-    private var topTipLabel = JBLabel("check")
-    private var bottomTipLabel = JBLabel("loading...")
+
+    private val log = LoggerFactory.getLogger(AllPluginsCheckVersion::class.java)
 
     //插件列表
     private var plugins: MutableMap<FlutterPluginType, List<FlutterPluginElementModel>> =
         MyPsiElementUtil.getAllFlutters(project)
 
     //展示列表组件
-    private val listView = JBList<FlutterPluginElementModel>()
+    private val listView = JBList<MyListPairModel>()
 
 
     init {
-        add(topTipLabel, BorderLayout.NORTH)
-        add(JBScrollPane(listView), BorderLayout.CENTER)
-        add(bottomTipLabel, BorderLayout.SOUTH)
-        listView.model = PluginListModel(emptyList())
+        addToCenter(JBScrollPane(listView))
         listView.cellRenderer = PluginListCellRender()
-        initRequest()
+        ApplicationManager.getApplication().invokeLater {
+            initRequest()
+        }
     }
 
     /**
      * 开始检测插件新版本
      * 需要访问网络
      */
-    @OptIn(DelicateCoroutinesApi::class)
     private fun initRequest() {
-        topTipLabel.text = "loading..."
-        GlobalScope.launch {
-            for (item in plugins.values) {
-                bottomTipLabel.text = "all size:${item.size}"
-                item.forEach { model ->
-                    bottomTipLabel.text = "checking: ${model.name}"
-                    val r = ServiceCreate.create<PubService>().callPluginDetails(model.name).execute()
-                    if (r.isSuccessful) {
 
-                        val rModel = r.body()
-                        if (rModel != null) {
-                            model.pubData = rModel
-                            if (!model.isLastVersion()) {
-                                val oldList = (listView.model as PluginListModel).list
-                                val l = oldList.toMutableList()
-                                l.add(model)
-                                listView.model = PluginListModel(l)
-                            }
+        log.info("开始检测插件版本")
+        ///全部的版本列表
+        val result: List<PubVersionDataModel?> = runBlocking(Dispatchers.IO) {
+            val checkTasks = plugins.values.flatten()
+                .map { plugin -> return@map async { return@async ApiService.getPluginDetail(plugin.name) } }
+            return@runBlocking checkTasks.awaitAll()
+        }
 
-                        }
-                    }
+
+        log.info("全部检测插件完成:${result.size}")
+        val hasNewVersionPlugins = mutableListOf<Pair<FlutterPluginElementModel, PubVersionDataModel>>()
+        plugins.values.flatten().forEach { plugin ->
+            val findVersionInfoModel = result.find { it?.name == plugin.name }
+            findVersionInfoModel?.let { info: PubVersionDataModel ->
+                if (info.hasNewVersion(plugin.dartPluginModel)) {
+                    hasNewVersionPlugins.add(Pair(plugin, info))
                 }
-                bottomTipLabel.text = "Done"
-                onDone()
-
             }
         }
+
+
+
+        ApplicationManager.getApplication().invokeLater {
+            if (hasNewVersionPlugins.isNotEmpty()) {
+                listView.model = PluginListModel().apply {
+                    clear()
+                    addAll(hasNewVersionPlugins)
+                }
+            }
+        }
+
+
     }
 
 
 }
 
 
-class PluginListModel(val list: List<FlutterPluginElementModel>) : AbstractListModel<FlutterPluginElementModel>() {
-    override fun getSize(): Int {
-        return list.size
-    }
+private class PluginListModel : DefaultListModel<MyListPairModel>()
 
-    override fun getElementAt(index: Int): FlutterPluginElementModel {
-        return list[index]
-    }
-}
-
-class PluginListCellRender : ListCellRenderer<FlutterPluginElementModel> {
-    override fun getListCellRendererComponent(
-        list: JList<out FlutterPluginElementModel>?,
-        value: FlutterPluginElementModel?,
+private class PluginListCellRender : ColoredListCellRenderer<MyListPairModel>() {
+    override fun customizeCellRenderer(
+        list: JList<out MyListPairModel>,
+        value: MyListPairModel?,
         index: Int,
-        isSelected: Boolean,
-        cellHasFocus: Boolean
-    ): Component {
+        selected: Boolean,
+        hasFocus: Boolean
+    ) {
 
-        val box = Box.createVerticalBox()
-        val nameLabel = JBLabel(value!!.name)
-        box.add(nameLabel)
+        if (value != null) {
+            append(value.second.name)
+            value.second.getLastVersionText(value.first.dartPluginModel)?.let { append(":$it") }
+        }
 
-
-        val titleLabel = JBLabel("有新版本:${value.pubData?.latest?.version}(${value.getElementVersion()})")
-        box.add(titleLabel)
-
-
-        return box
     }
+
 
 }

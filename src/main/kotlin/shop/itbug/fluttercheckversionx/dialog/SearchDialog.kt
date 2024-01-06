@@ -164,7 +164,7 @@ typealias DoSelectChange = (model: Package) -> Unit
 class SearchListResultShow(val doSelect: DoSelectChange) : JBList<Package>(), ListSelectionListener {
 
     init {
-        cellRenderer = ReultItemRender()
+        cellRenderer = ResultItemRender()
         setEmptyText(PluginBundle.get("empty"))
         addListSelectionListener(this)
     }
@@ -194,7 +194,7 @@ class ResultModel(private val packages: List<Package>) : DefaultListModel<Packag
     }
 }
 
-class ReultItemRender : ListCellRenderer<Package> {
+class ResultItemRender : ListCellRenderer<Package> {
     override fun getListCellRendererComponent(
         list: JList<out Package>?,
         value: Package?,
@@ -234,7 +234,7 @@ class VersionSelectModel(val versions: List<String>) : DefaultComboBoxModel<Stri
         return versions.size
     }
 
-    override fun getElementAt(index: Int) = versions.get(index)
+    override fun getElementAt(index: Int) = versions[index]
 
     override fun getIndexOf(anObject: Any?) = versions.indexOf(anObject as String)
 

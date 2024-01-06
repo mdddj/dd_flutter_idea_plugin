@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.tools
 
+import com.intellij.openapi.diagnostic.Logger
 import kotlinx.coroutines.*
 
 
@@ -13,8 +14,8 @@ import kotlinx.coroutines.*
  */
 @OptIn(DelicateCoroutinesApi::class)
 fun <T> launchIOToMain(
-    block:  suspend CoroutineScope.() -> T,
-    callback:(T) -> Unit,
+    block: suspend CoroutineScope.() -> T,
+    callback: (T) -> Unit,
     error: ((Exception) -> Unit) = {}
 ): Job {
     return GlobalScope.launch {
@@ -32,3 +33,6 @@ fun <T> launchIOToMain(
         }
     }
 }
+
+
+val <T : Any> T.log get() = Logger.getInstance(this::class.java)

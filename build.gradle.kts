@@ -90,10 +90,10 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>4.0.0</h1>
+                     <h1>4.0.1</h1>
                      <ul>
-                        <li>Implementation method for adjusting the automatic listening asset generation function</li>
-                        <li>New feature: Add riverpod_hook Widget Conversion Tool</li>
+                        <li>Optimize version detection logic, add dev and beta version detection <a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues/37'> #37</a></li>
+                        <li>New documentation website <a href='https://flutterx.itbug.shop'>Document</a></li>
                      </ul>
                 </div>
             """.trimIndent()

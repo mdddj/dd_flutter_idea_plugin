@@ -19,7 +19,7 @@ import javax.swing.JComponent
 class MyNotificationUtil {
 
     companion object {
-        private const val toolWindowId = "Dio Request"
+        const val toolWindowId = "FlutterX"
 
         //socket 相关通知
         fun socketNotify(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {
@@ -27,7 +27,7 @@ class MyNotificationUtil {
                 .createNotification(message, type).apply {
                     icon = MyIcons.flutter
                 }
-                .addAction(object : MyDumbAwareAction({"bug-feedback".i18n()}){
+                .addAction(object : MyDumbAwareAction({ "bug-feedback".i18n() }) {
                     override fun actionPerformed(e: AnActionEvent) {
                         message.copyTextToClipboard()
                         BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")

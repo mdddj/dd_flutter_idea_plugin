@@ -44,6 +44,8 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
     }
 }
 
+
+///检测新版本弹窗面板
 class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
@@ -62,28 +64,15 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
         }
         myLinksPanel.add(searchPluginLabel)
 
-
-        //重新索引
-//        val reIndex = createActionLabel("扫描未使用的包") {
-//            ApplicationManager.getApplication().run {
-//                ScanPackageUtil.doScan(project)
-//            }
-//
-//        }
-//        myLinksPanel.add(reIndex)
-
-
     }
 
+
+    ///弹出检测版本的窗口
     private fun checkNewVersions() {
         val file = project.getPubspecYAMLFile()
         file?.containingFile?.let { DaemonCodeAnalyzer.getInstance(project).restart(it) }
         val component = JBPopupFactory.getInstance()
-            .createComponentPopupBuilder(AllPluginsCheckVersion(project) {
-                file?.containingFile?.let {
-                    DaemonCodeAnalyzer.getInstance(project).restart(it)
-                }
-            }, fileEditor.component).createPopup()
+            .createComponentPopupBuilder(AllPluginsCheckVersion(project), fileEditor.component).createPopup()
         component.show(RelativePoint(checkLabel.locationOnScreen))
 
     }

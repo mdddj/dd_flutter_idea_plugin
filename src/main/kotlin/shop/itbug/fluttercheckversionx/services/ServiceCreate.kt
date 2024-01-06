@@ -31,15 +31,7 @@ open class ApiServiceCreate(var host: String) {
         .create()
 
     ///添加请求头
-    private val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            var request = chain.request()
-//            CredentialUtil.token?.apply {
-//                request = request.newBuilder().addHeader("Authorization", this).build()
-//            }
-            chain.proceed(request)
-        }
-        .build()
+    private val client = OkHttpClient.Builder().build()
     private val retrofit =
         Retrofit.Builder()
             .baseUrl(host)

@@ -4,8 +4,11 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -14,11 +17,17 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.yaml.YAMLElementGenerator
+import org.jetbrains.yaml.psi.YAMLKeyValue
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
-import shop.itbug.fluttercheckversionx.util.*
+import shop.itbug.fluttercheckversionx.util.ApiService
+import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
+import shop.itbug.fluttercheckversionx.util.YamlExtends
+import javax.swing.Icon
 
 
 /**
@@ -92,37 +101,56 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
 
             holder.newAnnotation(
                 HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${it.lastVersion}"
-            ).newFix(object : IntentionAction {
-                val fixText = PluginBundle.get("version.tip.3") + it.lastVersion
-                var available = true
-                override fun startInWriteAction(): Boolean {
-                    return true
-                }
-
-                override fun getFamilyName(): String {
-                    return fixText
-                }
-
-                override fun getText(): String {
-                    return fixText
-                }
-
-                override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-                    return available
-                }
-
-                override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-                    MyPsiElementUtil.modifyPsiElementText(it.element.lastChild, it.lastVersion)
-                    available = false
-                    project.restartPubFileAnalyzer();
-                }
-
-
-            }).registerFix().range(it.element.lastChild).needsUpdateOnTyping().create()
+            ).newFix(MyFix(it)).registerFix().range(it.element.lastChild).create()
 
         }
 
     }
 
 
+    ///更新到最新版本
+    private inner class MyFix(val problem: Problem) : IntentionAction, DumbAware, Iconable {
+        val fixText = PluginBundle.get("version.tip.3") + problem.lastVersion
+        override fun startInWriteAction(): Boolean {
+            return false
+        }
+
+        override fun getFamilyName(): String {
+            return fixText
+        }
+
+        override fun getText(): String {
+            return fixText
+        }
+
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
+            return true
+        }
+
+        override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+            val newPsiElement = createDartPluginYamlPsiElement(
+                project,
+                DartPluginVersionName(problem.model.name, problem.lastVersion)
+            )
+            WriteCommandAction.runWriteCommandAction(project) {
+                problem.element.replace(newPsiElement)
+            }
+
+
+        }
+
+        override fun getIcon(flags: Int): Icon {
+            return MyIcons.flutter
+        }
+
+    }
+
 }
+
+
+///创建包节点
+private fun createDartPluginYamlPsiElement(project: Project, pluginInfo: DartPluginVersionName): YAMLKeyValue {
+    return YAMLElementGenerator.getInstance(project).createYamlKeyValue(pluginInfo.name, pluginInfo.version)
+}
+
+

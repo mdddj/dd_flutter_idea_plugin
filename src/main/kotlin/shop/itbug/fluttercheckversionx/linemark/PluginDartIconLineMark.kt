@@ -45,7 +45,7 @@ class PluginDartIconLineMark : LineMarkerProvider {
 class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavigationHandler<PsiElement> {
     override fun navigate(e: MouseEvent?, elt: PsiElement?) {
         if ((e != null) && (e.clickCount == 1)) {
-            JBPopupFactory.getInstance().createListPopup(PluginDartIconActioinMenuList(element = element))
+            JBPopupFactory.getInstance().createListPopup(PluginDartIconActionMenuList(element = element))
                 .show(RelativePoint(e.locationOnScreen))
         }
     }
@@ -53,7 +53,7 @@ class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavi
 
 data class PluginDartIconActionMenuItem(val title: String, val type: String, val icon: Icon)
 
-class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
+class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
 
 
     private val menus
@@ -81,7 +81,7 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
                 BrowserUtil.browse("$PUB_URL${element.getPluginName()}")
             }
 
-            menus[2].type -> {
+            menus[1].type -> {
                 DartPluginIgnoreConfig.getInstance(element.project).add(element.getPluginName())
                 element.project.restartAnalyzer()
             }

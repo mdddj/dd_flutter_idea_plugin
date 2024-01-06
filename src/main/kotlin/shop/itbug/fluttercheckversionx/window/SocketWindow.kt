@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.window
 
 import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -25,7 +26,7 @@ const val ENABLE_CHAT_ROOM_WINDOW = false
  * dio 的请求监听窗口, 在这个窗口中,会将手机里面的一系列请求在这个窗口中显示,并可以查看详细信息
  * 梁典典: 2022年04月29日11:12:51
  */
-class SocketWindow : ToolWindowFactory {
+class SocketWindow : ToolWindowFactory, DumbAware {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val socketRequestForm = SocketRequestForm(project, toolWindow)
@@ -63,12 +64,6 @@ class SocketWindow : ToolWindowFactory {
             toolWindow.contentManager.addContent(jobsContent)
         }
 
-        //api索引窗口
-//        val apiIndexWindow = BaseApiIndexWindow(p0,p1)
-//        val apiIndexContent = instance.createContent(apiIndexWindow,"接口管理",false)
-//        p1.contentManager.addContent(apiIndexContent)
-
-
         // sp工具
         val spWindow = SpWindow(project, toolWindow)
         val spContent = instance.createContent(spWindow, "Shared Preferences ${PluginBundle.get("tool")}", false)
@@ -82,6 +77,5 @@ class SocketWindow : ToolWindowFactory {
         toolWindow.contentManager.addContent(hiveContent)
     }
 
-}
 
-//
+}

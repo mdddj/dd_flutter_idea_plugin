@@ -41,33 +41,14 @@ fun PubVersionDataModel.getLastVersionText(model: DartPluginVersionName): String
 
 data class PubVersionDataModel(
     val name: String, val latest: Latest, val versions: List<Version>
-) {
-
-    /**
-     * 获取最新版本的最后更新时间
-     *
-     */
-    private fun getLastUpdateTime(): String {
-        var timeString = latest.published
-        val toCharArray = timeString.toCharArray()
-        val tChat = toCharArray[10]
-        if (tChat == 'T') {
-            timeString = timeString.replace("T", " ")
-        }
-        val dotIndex = timeString.lastIndexOf(".")
-        timeString = timeString.substring(0, dotIndex)
-        return timeString
-    }
-
-    val lastVersionUpdateTimeString get() = getLastUpdateTime()
-}
+)
 
 data class Latest(
-    val version: String, val pubspec: Pubspec, val archiveURL: String, val published: String
+    val version: String, val pubspec: Pubspec, val published: String
 )
 
 data class Pubspec(
-    val name: String, val version: String, val homepage: String, val description: String
+    val name: String, val version: String, val homepage: String = "", val description: String = ""
 )
 
 val Pubspec.dartPluginModel get() = DartPluginVersionName(name, version)
