@@ -1,10 +1,11 @@
 # Use of dio window
 
+[中文文档(使用谷歌浏览器打开)](https://flutterx.itbug.shop/starter.html)
+
 You can listen to the API requests of the Flutter plug-in dio in this window. There is no need to use the print function
 to print the logs related to dio
 
 ![image](https://user-images.githubusercontent.com/29020213/216746543-fb9ea063-3250-4d53-b3ef-0aeba89fc871.png)
-
 
 ## 1.Installation dependency
 
@@ -34,11 +35,10 @@ void main() {
 }
 ```
 
-> 
+>
 > InitHost can automatically recognize your local IP address
-> 
+>
 > ![image](https://user-images.githubusercontent.com/29020213/216746356-58ca9a3b-0df0-41c3-b319-d38945694727.png)
-
 
 | Attribute                  | Introduce                                          |
 |----------------------------|----------------------------------------------------|
