@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
+import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -27,7 +28,12 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
 
     data class Input(val file: PsiFile, val element: List<PackageInfo>)
     data class PackageInfo(val element: PsiElement, val packageInfo: DartPluginVersionName)
-    data class Problem(val textRange: TextRange, val model: PubVersionDataModel, val element: PsiElement)
+    data class Problem(
+        val textRange: TextRange,
+        val model: PubVersionDataModel,
+        val element: PsiElement,
+        val lastVersion: String
+    )
 
     override fun collectInformation(file: PsiFile): Input {
         val elements = mutableListOf<PackageInfo>()
@@ -66,8 +72,10 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                 val find: PubVersionDataModel? = infos.find { detail -> detail?.name == packageName }
                 find?.let { model ->
                     run {
-                        if (model.judge(info.packageInfo.version) {}.not()) {
-                            arr.add(Problem(info.element.lastChild.textRange, model, info.element))  //有新版本
+
+                        val versionText = model.getLastVersionText(info.packageInfo)
+                        if (versionText != null) {
+                            arr.add(Problem(info.element.lastChild.textRange, model, info.element, versionText))  //有新版本
                         }
                     }
                 }
@@ -83,9 +91,9 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
         annotationResult?.forEach {
 
             holder.newAnnotation(
-                HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${it.model.lastVersion}"
+                HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${it.lastVersion}"
             ).newFix(object : IntentionAction {
-                val fixText = PluginBundle.get("version.tip.3") + it.model.lastVersion
+                val fixText = PluginBundle.get("version.tip.3") + it.lastVersion
                 var available = true
                 override fun startInWriteAction(): Boolean {
                     return true
@@ -104,7 +112,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                 }
 
                 override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-                    MyPsiElementUtil.modifyPsiElementText(it.element.lastChild, it.model.lastVersion)
+                    MyPsiElementUtil.modifyPsiElementText(it.element.lastChild, it.lastVersion)
                     available = false
                     project.restartPubFileAnalyzer();
                 }

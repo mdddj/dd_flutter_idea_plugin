@@ -7,7 +7,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import shop.itbug.fluttercheckversionx.services.Env.Dev
 import shop.itbug.fluttercheckversionx.services.Env.Pro
-import shop.itbug.fluttercheckversionx.util.CredentialUtil
 
 //当前环境
 val currentEnv = Dev
@@ -35,9 +34,9 @@ open class ApiServiceCreate(var host: String) {
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
             var request = chain.request()
-            CredentialUtil.token?.apply {
-                request = request.newBuilder().addHeader("Authorization", this).build()
-            }
+//            CredentialUtil.token?.apply {
+//                request = request.newBuilder().addHeader("Authorization", this).build()
+//            }
             chain.proceed(request)
         }
         .build()

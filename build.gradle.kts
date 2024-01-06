@@ -65,6 +65,7 @@ dependencies {
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:latest.release")
     implementation("com.google.code.gson:gson:latest.release")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+    testImplementation(kotlin("test"))
 }
 
 
@@ -131,6 +132,10 @@ tasks {
 
     verifyPluginConfiguration {
 
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 
