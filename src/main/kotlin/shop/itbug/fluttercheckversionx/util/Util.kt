@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiElement
@@ -30,6 +31,8 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+
+val <T : Any> T.jbLog get() = Logger.getInstance(this::class.java)
 
 fun Color.toHexString(): String {
     return Util.toHexFromColor(this)
