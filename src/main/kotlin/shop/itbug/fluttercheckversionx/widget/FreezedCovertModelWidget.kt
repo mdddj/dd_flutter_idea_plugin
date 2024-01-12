@@ -1,46 +1,46 @@
 package shop.itbug.fluttercheckversionx.widget
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.Alarm
+import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.model.getPropertiesString
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
-import java.awt.BorderLayout
+import javax.swing.BorderFactory
+import javax.swing.SwingUtilities
 
-class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Project) :
-    JBPanel<FreezedCovertModelWidget>(BorderLayout()) {
-    private val editView = DartEditorTextPanel(project)
+
+///freezed编辑区域
+class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Project, val disposable: Disposable) :
+    BorderLayoutPanel() {
+    private val editView = DartEditorTextPanel(project, generateFreezedModel())
+
+    private val editor = JBScrollPane(editView.component).apply {
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+    }
 
     init {
-        border = null
-        add(JBScrollPane(editView.component).apply {
-            border = null
-        }, BorderLayout.CENTER)
-        generateFreezedModel()
-        add(getSettingPanel(), BorderLayout.SOUTH)
-
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+        addToCenter(editor)
+        addToBottom(getSettingPanel())
     }
 
     /**
      * 生成freezed类
      */
-    private fun generateFreezedModel() {
-        val genFreezedClass =
-            MyDartPsiElementUtil.genFreezedClass(
-                project,
-                model.className,
-                model.getPropertiesString(),
-                model.addConstructorFun,
-                model.addFromJson
-            )
-        changeText(genFreezedClass.text)
+    private fun generateFreezedModel(): String {
+        val genFreezedClass = MyDartPsiElementUtil.genFreezedClass(
+            project, model.className, model.getPropertiesString(), model.addConstructorFun, model.addFromJson
+        )
+        return genFreezedClass.text ?: ""
     }
 
 
@@ -51,20 +51,15 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
     }
 
     private fun changeModel(newModel: FreezedCovertModel) {
-        val genFreezedClass =
-            MyDartPsiElementUtil.genFreezedClass(
-                project,
-                newModel.className,
-                newModel.getPropertiesString(),
-                model.addConstructorFun,
-                model.addFromJson
-            )
+        val genFreezedClass = MyDartPsiElementUtil.genFreezedClass(
+            project, newModel.className, newModel.getPropertiesString(), model.addConstructorFun, model.addFromJson
+        )
         changeText(genFreezedClass.text)
     }
 
 
     private fun getSettingPanel(): DialogPanel {
-        return freezedCovertModelSetting(model) { changeModel(model) }
+        return freezedCovertModelSetting(model, disposable) { changeModel(model) }
     }
 
 
@@ -72,11 +67,29 @@ class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Proje
 
 }
 
+
+///设置面板
 fun freezedCovertModelSetting(
     model: FreezedCovertModel,
-    submit: () -> Unit
+    parentDispose: Disposable,
+    onChanged: () -> Unit
 ): DialogPanel {
     lateinit var p: DialogPanel
+
+    val alarm = Alarm(parentDispose)
+
+    fun listenDataChanged() {
+        alarm.addRequest({
+            val modified = p.isModified()
+            if (modified) {
+                p.apply()
+                onChanged()
+            }
+            listenDataChanged()
+        }, 500)
+
+    }
+
     p = panel {
 
         row(PluginBundle.get("rename")) {
@@ -98,14 +111,14 @@ fun freezedCovertModelSetting(
         row(PluginBundle.get("addFromJson")) {
             checkBox(PluginBundle.get("addFromJson")).bindSelected(model::addFromJson)
         }
-
-        row {
-            button(PluginBundle.get("save.and.refresh")) {
-                p.apply()
-                submit.invoke()
-            }
-        }
     }
+
+
+    SwingUtilities.invokeLater {
+        listenDataChanged()
+    }
+
+
     return p.apply {
         border = null
     }
