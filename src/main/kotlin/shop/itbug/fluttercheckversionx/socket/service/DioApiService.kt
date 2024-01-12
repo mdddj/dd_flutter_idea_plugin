@@ -6,14 +6,15 @@ import com.intellij.openapi.application.CachedSingletonsRegistry
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.StateMachineEnum
-import org.smartboot.socket.extension.plugins.HeartPlugin
 import org.smartboot.socket.extension.processor.AbstractMessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
+import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
-import shop.itbug.fluttercheckversionx.util.jbLog
+import shop.itbug.fluttercheckversionx.window.logger.LogKeys
+import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import java.util.concurrent.TimeUnit
 import java.util.function.Supplier
 
@@ -150,13 +151,15 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
         handle.forEach {
             it.stateEvent(session, stateMachineEnum, throwable)
         }
+        throwable?.let {
+            throwable.printStackTrace()
+        }
         defaultEventHandle(session, stateMachineEnum)
-        super.stateEvent(session, stateMachineEnum, throwable)
     }
 
 
     private fun defaultEventHandle(session: AioSession?, stateMachineEnum: StateMachineEnum?) {
-        jbLog.info("监听状态发现变化:$session $stateMachineEnum")
+        println("==$session $stateMachineEnum")
         when (stateMachineEnum) {
             StateMachineEnum.NEW_SESSION -> {
                 DioApiService.INSTANCESupplierSupplier.get().get().addSession(session)
@@ -180,15 +183,22 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
 
 
 ///连接心跳插件.
-private class MyHeartCommon : HeartPlugin<String>(15, TimeUnit.SECONDS) {
+private class MyHeartCommon : MyHeartPlugin<String>(15, TimeUnit.SECONDS) {
     override fun sendHeartRequest(session: AioSession?) {
         session?.send("ping")
     }
 
+
     override fun isHeartMessage(session: AioSession?, msg: String?): Boolean {
-        val isHeartMessage = msg != null && msg == "ping"
-        jbLog.info("是否为心跳消息:$isHeartMessage")
-        return isHeartMessage
+        msg?.let {
+            val json = JSONObject.parse(msg)
+            if (json.getString("type") == "ping") {
+                MyLoggerEvent.fire(MyLogInfo(message = "$msg", key = LogKeys.ping))
+                println("收到心跳消息")
+                return true
+            }
+        }
+        return false
     }
 
 }
@@ -201,6 +211,6 @@ private fun AioSession.send(message: String) {
         writeBuffer.write(data)
         writeBuffer.flush()
     } catch (e: Exception) {
-        jbLog.warn("发送消息失败:$e")
+        println("发送消息失败:$e")
     }
 }

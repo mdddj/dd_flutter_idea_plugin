@@ -15,22 +15,6 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.reformat
 
 
-///在编辑器当前光标下插入一个新的psi element
-fun AnActionEvent.insetNewPsiElementWithCurrentOffset(newPsiElement: PsiElement) {
-    val editor = this.getData(CommonDataKeys.EDITOR)!!
-    val document: Document = editor.document
-    val offset = editor.caretModel.offset
-    val element = PsiDocumentManager.getInstance(project!!).getPsiFile(document)!!
-        .findElementAt(offset)?.prevSibling
-    element?.apply {
-        WriteCommandAction.runWriteCommandAction(project) {
-            this.addAfter(newPsiElement, this.nextSibling)
-            project.reformat(getData(CommonDataKeys.PSI_ELEMENT)!!)
-        }
-    }
-}
-
-
 ///创建单例类
 class GenerateClassSingletonModel : MyAction() {
 

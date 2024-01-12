@@ -60,9 +60,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:latest.release")
     implementation("com.squareup.retrofit2:converter-gson:latest.release")
     implementation("cn.hutool:hutool-all:latest.release")
-    implementation("org.smartboot.socket:aio-pro:latest.release") {
-        exclude(group = "org.slf4j", module = "slf4j-api")
-    }
+    implementation("org.smartboot.socket:aio-pro:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2-kotlin:latest.release")
     implementation("com.google.code.gson:gson:latest.release")
@@ -92,10 +90,12 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>4.0.0.Hedgehog</h1>
+                     <h1>4.0.1.Hedgehog</h1>
                      <ul>
                         <li>Implementation method for adjusting the automatic listening asset generation function</li>
                         <li>New feature: Add riverpod_hook Widget Conversion Tool</li>
+                        <li>Add log window</li>
+                        <li>Add heartbeat detection to dio monitoring to improve stability. You need to upgrade <code>dd_check_plugin</code> to version 3.1.4+</li>
                      </ul>
                 </div>
             """.trimIndent()
@@ -139,6 +139,11 @@ tasks {
     test {
         useJUnitPlatform()
     }
+
+    configurations.all {
+
+    }
+
 }
 
 
