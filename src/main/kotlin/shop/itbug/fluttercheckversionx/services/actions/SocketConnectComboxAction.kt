@@ -18,7 +18,7 @@ class SocketConnectComboxAction : MyExpandableComboAction() {
 
     private fun createGroup() = object : DefaultActionGroup() {
         init {
-            addAll(DioApiService.INSTANCESupplier.get().getSessions().map {
+            addAll(DioApiService.INSTANCESupplierSupplier.get().get().getSessions().map {
                 object : MyAction({ it.sessionID }) {
                     override fun actionPerformed(e: AnActionEvent) {
                         println("勾选。。。")
@@ -31,7 +31,7 @@ class SocketConnectComboxAction : MyExpandableComboAction() {
 
 
     override fun update(e: AnActionEvent) {
-        val sessions = DioApiService.INSTANCESupplier.get().getSessions()
+        val sessions = DioApiService.INSTANCESupplierSupplier.get().get().getSessions()
         if (sessions.isEmpty()) {
             e.presentation.description = "Empty"
             e.presentation.text = PluginBundle.get("empty")

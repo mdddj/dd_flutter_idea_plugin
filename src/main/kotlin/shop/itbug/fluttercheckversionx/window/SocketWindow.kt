@@ -15,6 +15,7 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
+import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
 //是否开启找工作窗口
@@ -36,7 +37,7 @@ class SocketWindow : ToolWindowFactory {
         if (AppService.getInstance().dioIsStart.not()) {
             toolWindow.activate {
                 try {
-                    DioApiService.INSTANCESupplier.get().builder(port).start()
+                    DioApiService.INSTANCESupplierSupplier.get().get().builder(port).start()
                     toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
                 } catch (e: Exception) {
@@ -80,6 +81,14 @@ class SocketWindow : ToolWindowFactory {
         val hiveContent = instance.createContent(hiveWindow, "Hive ${PluginBundle.get("tool")}", false)
         hiveContent.icon = AllIcons.General.Beta
         toolWindow.contentManager.addContent(hiveContent)
+
+
+        //logo 窗口
+        val logWindow = LoggerWindow(project)
+
+        val logContent = instance.createContent(logWindow, "Log", false)
+        toolWindow.contentManager.addContent(logContent)
+
     }
 
 }

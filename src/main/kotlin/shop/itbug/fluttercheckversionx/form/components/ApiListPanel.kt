@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.components
 
+import com.alibaba.fastjson2.JSONObject
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
@@ -22,10 +23,13 @@ import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
+import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.Util
+import shop.itbug.fluttercheckversionx.window.logger.LogKeys
+import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -200,7 +204,10 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
-
+        try {
+            MyLoggerEvent.fire(MyLogInfo(message = JSONObject.toJSONString(model), key = LogKeys.dioLog))
+        } catch (_: Exception) {
+        }
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
         super.handleModel(model)
     }

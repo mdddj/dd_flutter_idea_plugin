@@ -62,7 +62,7 @@ class HiveBoxListComponent(project: Project) : OnePixelSplitter() {
 class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, ListSelectionListener {
 
     init {
-        DioApiService.INSTANCESupplier.get().addHandle(this)
+        DioApiService.INSTANCESupplierSupplier.get().get().addHandle(this)
         cellRenderer = ItemRender()
         addListSelectionListener(this)
     }
@@ -97,7 +97,7 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
     override fun valueChanged(e: ListSelectionEvent?) {
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {
             val projectName = service<AppService>().currentSelectName.get() ?: ""
-            DioApiService.INSTANCESupplier.get()
+            DioApiService.INSTANCESupplierSupplier.get().get()
                 .sendByAnyObject(HiveActionGetKeys(projectName = projectName, boxName = selectedValue))
         }
     }
@@ -130,7 +130,7 @@ class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioA
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {
             val projectName = service<AppService>().currentSelectName.get() ?: ""
             val boxName = boxList.selectedValue
-            DioApiService.INSTANCESupplier.get().sendByAnyObject(
+            DioApiService.INSTANCESupplierSupplier.get().get().sendByAnyObject(
                 HiveActionGetValue(
                     projectName = projectName, boxName = boxName, key = selectedValue
                 )

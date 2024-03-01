@@ -7,6 +7,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
 import shop.itbug.fluttercheckversionx.util.reformatText
+import javax.swing.BorderFactory
 
 
 open class JsonEditorTextPanel(project: Project) : LanguageTextField(JsonLanguage.INSTANCE, project, "", false) {
@@ -22,10 +23,14 @@ open class JsonEditorTextPanel(project: Project) : LanguageTextField(JsonLanguag
     }
 }
 
-class DartEditorTextPanel(project: Project) : LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
+class DartEditorTextPanel(project: Project, text: String = "") :
+    LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
+
+
 
     init {
-        border = null
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+        this.text = text
     }
 
     override fun createEditor(): EditorEx {
@@ -35,11 +40,7 @@ class DartEditorTextPanel(project: Project) : LanguageTextField(DartLanguage.INS
     fun reformat() {
         val instance = PsiDocumentManager.getInstance(project)
         val psiFile = instance.getPsiFile(document)
-        psiFile?.let {
-            it.reformatText()
-        }
-
-
+        psiFile?.reformatText()
     }
 }
 

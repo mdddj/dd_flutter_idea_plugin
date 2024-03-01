@@ -15,8 +15,9 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.DartLanguage
-import org.jetbrains.plugins.terminal.TerminalView
+import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig
@@ -26,19 +27,19 @@ import shop.itbug.fluttercheckversionx.services.DEFAULT_CLASS_NAME
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
-import java.awt.BorderLayout
 import java.awt.Dimension
+import javax.swing.BorderFactory
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 
+///json转freezed弹窗
 class FreezedClassesGenerateDialog(
     override val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>
 ) : MyDialogWrapper(project) {
     private val settingInstance = JsonToFreezedSettingModelConfig.getInstance(project)
     private val setting = settingInstance.state
     private val tabView = JBTabbedPane().apply {
-        border = null
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
     }
     private var fileName: String = DEFAULT_CLASS_NAME
     private var filePath: String = setting.generateToPath
@@ -52,23 +53,23 @@ class FreezedClassesGenerateDialog(
         title = PluginBundle.get("freezed.title")
         setOKButtonText(PluginBundle.get("freezed.btn.ok"))
         setCancelButtonText(PluginBundle.get("cancel"))
+
     }
 
 
     private fun initTabView() {
         freezedClasses.forEach {
-            val widget = FreezedCovertModelWidget(it, project)
+            val widget = FreezedCovertModelWidget(it, project, disposable)
             widgets.add(widget)
             tabView.add(it.className, widget)
         }
     }
 
     override fun createCenterPanel(): JComponent {
-        return object : JPanel(BorderLayout()) {
-
+        return object : BorderLayoutPanel() {
             init {
-                add(tabView, BorderLayout.CENTER)
-                add(getGlobalSettingPanel(), BorderLayout.SOUTH)
+                addToCenter(tabView)
+                addToBottom(getGlobalSettingPanel())
             }
         }
     }
@@ -132,7 +133,8 @@ class FreezedClassesGenerateDialog(
                 }
                 project.toast(PluginBundle.get("build.succeeded"))
                 if (setting.autoRunDartBuilder) {
-                    TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "freezed gen")
+                    TerminalToolWindowManager.getInstance(project)
+                        .createLocalShellWidget(project.basePath, "freezed gen")
                         .executeCommand("flutter pub run build_runner build")
                 }
                 FileBasedIndex.getInstance().requestReindex(virtualFile)

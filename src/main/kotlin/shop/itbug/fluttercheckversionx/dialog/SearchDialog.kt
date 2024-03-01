@@ -10,11 +10,10 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
-import java.awt.BorderLayout
-import java.awt.Button
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
@@ -99,14 +98,14 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
     }
 
     override fun createCenterPanel(): JComponent {
-        val corePanel = JPanel(BorderLayout())
+        val corePanel = BorderLayoutPanel()
         corePanel.preferredSize = Dimension(500, 300)
-        corePanel.add(MySearchField {
+        corePanel.addToTop(MySearchField {
             resultList.model = ResultModel(it.packages)
-        }, BorderLayout.NORTH)
-        corePanel.add(JBScrollPane(resultList), BorderLayout.CENTER)
+        })
+        corePanel.addToCenter(JBScrollPane(resultList))
         bottomPanel.add(selectLabel)
-        corePanel.add(bottomPanel, BorderLayout.PAGE_END)
+        corePanel.addToBottom(bottomPanel)
         return corePanel
     }
 
@@ -122,7 +121,7 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
 
     private val searchTextField = JBTextField()
 
-    private val searchButton = Button(PluginBundle.get("search"))
+    private val searchButton = JButton(PluginBundle.get("search"))
 
     init {
         layout = BoxLayout(this, BoxLayout.X_AXIS)

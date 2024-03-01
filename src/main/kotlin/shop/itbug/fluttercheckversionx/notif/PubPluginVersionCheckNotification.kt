@@ -61,18 +61,6 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
             search()
         }
         myLinksPanel.add(searchPluginLabel)
-
-
-        //重新索引
-//        val reIndex = createActionLabel("扫描未使用的包") {
-//            ApplicationManager.getApplication().run {
-//                ScanPackageUtil.doScan(project)
-//            }
-//
-//        }
-//        myLinksPanel.add(reIndex)
-
-
     }
 
     private fun checkNewVersions() {

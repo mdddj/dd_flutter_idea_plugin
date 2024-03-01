@@ -14,7 +14,7 @@ class HiveGetBoxListAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = service<AppService>().currentSelectName.get() ?: ""
-        DioApiService.INSTANCESupplier.get().sendByAnyObject(HiveActionGetBox(projectName = project))
+        DioApiService.INSTANCESupplierSupplier.get().get().sendByAnyObject(HiveActionGetBox(projectName = project))
     }
 
     override fun update(e: AnActionEvent) {
