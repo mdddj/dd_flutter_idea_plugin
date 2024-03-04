@@ -4,9 +4,9 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DioRequestUIStyle
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
-import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import java.awt.Dimension
 import java.net.URI
@@ -34,6 +34,16 @@ fun Request.formatUrl(setting: DoxListeningSetting): String {
     return string
 }
 
+//fun Request.getMethodColor(): Color? {
+//    return when (method?.uppercase(Locale.getDefault())) {
+//        "POST" -> JBColor.BLUE
+//        "GET" -> JBColor.GREEN
+//        "PUT" -> JBColor.CYAN
+//        "DELETE" -> JBColor.RED
+//        else -> null
+//    }
+//}
+
 /**
  * 新版的请求UI
  */
@@ -55,6 +65,8 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                 font = JBFont.small()
                 foreground = color
                 minimumSize = Dimension(30, minimumSize.height)
+//                background = request.getMethodColor()
+//                isOpaque = true
             }
             // (在紧凑模式下有效,状态码)
             label("${request.statusCode ?: -1}").visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showStatusCode).component.apply {

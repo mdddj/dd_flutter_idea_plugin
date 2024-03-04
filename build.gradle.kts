@@ -1,5 +1,4 @@
 val dartVersion: String by project
-val flutterVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val ideaVersion: String by project
@@ -29,7 +28,6 @@ repositories {
 val pluginList = mutableListOf(
     "yaml",
     "Dart:$dartVersion",
-    "io.flutter:$flutterVersion",
     "org.intellij.plugins.markdown",
     "terminal",
 )
@@ -43,7 +41,9 @@ if (ideaType == "IU" && ideaVersion == "2023.3") {
 
 intellij {
     version.set(ideaVersion)
-    type.set(ideaType)
+    if (ideaType.trim().isNotBlank()) {
+        type.set(ideaType)
+    }
     plugins.set(pluginList)
 }
 kotlin {
@@ -52,8 +52,6 @@ kotlin {
             languageVersion = "2.0"
         }
     }
-
-
 }
 
 dependencies {
@@ -90,13 +88,8 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>4.0.1.Hedgehog</h1>
-                     <ul>
-                        <li>Implementation method for adjusting the automatic listening asset generation function</li>
-                        <li>New feature: Add riverpod_hook Widget Conversion Tool</li>
-                        <li>Add log window</li>
-                        <li>Add heartbeat detection to dio monitoring to improve stability. You need to upgrade <code>dd_check_plugin</code> to version 3.1.4+</li>
-                     </ul>
+                     <h1>4.0.6</h1>
+                     <p>1. Optimize document rendering</p>
                 </div>
             """.trimIndent()
         )

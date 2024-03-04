@@ -46,7 +46,6 @@
     <depends optional="true" config-file="actions.xml">Dart</depends>
     <depends optional="true" config-file="jobs_actions.xml">Dart</depends>
     <depends>Dart</depends>
-    <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
@@ -263,8 +262,7 @@
         <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup">
             <reference id="FlutterProjects"/>
             <reference id="GetHiveBoxList"/>
-            <separator/>
-            <reference id="HiveTutorialHelp"/>
+            <!--            <reference id="HiveTutorialHelp"/>-->
         </group>
 
 
@@ -272,7 +270,6 @@
         <action id="StatelessToConsumer"
                 class="shop.itbug.fluttercheckversionx.actions.riverpod.StatelessToConsumer"
                 text="StatelessWidget to ConsumerWidget">
-            <add-to-group group-id="Internal.Editor"/>
             <keyboard-shortcut keymap="$default" first-keystroke="meta alt M"/>
         </action>
         <action id="StatefulToConsumer"

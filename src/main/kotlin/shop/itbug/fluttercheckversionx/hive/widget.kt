@@ -8,6 +8,8 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
+import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
+import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.hive.component.HiveBoxListComponent
 import shop.itbug.fluttercheckversionx.hive.component.HiveValueComponent
 
@@ -31,8 +33,10 @@ class HiveWidget(project: Project, toolWindow: ToolWindow) : BorderLayoutPanel()
     //操作栏
     private val toolbar = ActionManager.getInstance().createActionToolbar(
         "Hive Tool Bar",
-        ActionManager.getInstance()
-            .getAction("shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup") as DefaultActionGroup,
+        (ActionManager.getInstance()
+            .getAction("shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup") as DefaultActionGroup).apply {
+            add(HelpContextAction(SiteDocument.Hive))
+        },
         true
     ).apply {
         targetComponent = toolWindow.component

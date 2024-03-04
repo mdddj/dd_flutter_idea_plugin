@@ -3,16 +3,20 @@ package shop.itbug.fluttercheckversionx.window.logger
 import cn.hutool.core.date.DateTime
 import cn.hutool.core.date.DateUtil
 import com.intellij.openapi.project.Project
-import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
+import java.awt.Component
+import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
 import javax.swing.JList
+import javax.swing.ListCellRenderer
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
@@ -116,20 +120,42 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
 
 }
 
+private const val borderSize = 12
 
-class LogRenderUI : ColoredListCellRenderer<MyLogInfo>() {
-    override fun customizeCellRenderer(p0: JList<out MyLogInfo>, p1: MyLogInfo?, p2: Int, p3: Boolean, p4: Boolean) {
-        p1?.let {
-            append(it.message)
+class LogRenderUI : ListCellRenderer<MyLogInfo> {
+
+    override fun getListCellRendererComponent(
+        list: JList<out MyLogInfo>?,
+        value: MyLogInfo?,
+        index: Int,
+        isSelected: Boolean,
+        cellHasFocus: Boolean
+    ): Component {
+        return panel {
+            row {
+                label(value?.message ?: "")
+            }
+        }.withBorder(BorderFactory.createEmptyBorder(borderSize / 2, borderSize, borderSize / 2, borderSize)).apply {
+            background = if (isSelected) UIUtil.getListBackground(true, false) else UIUtil.getPanelBackground()
         }
     }
 }
 
-class MyLogKeysRenderUi : ColoredListCellRenderer<MyLogKey>() {
-    override fun customizeCellRenderer(p0: JList<out MyLogKey>, p1: MyLogKey?, p2: Int, p3: Boolean, p4: Boolean) {
-        p1?.let {
-            append(it.key)
+class MyLogKeysRenderUi : ListCellRenderer<MyLogKey> {
 
+    override fun getListCellRendererComponent(
+        list: JList<out MyLogKey>?,
+        value: MyLogKey?,
+        index: Int,
+        isSelected: Boolean,
+        cellHasFocus: Boolean
+    ): Component {
+        return panel {
+            row {
+                label(value?.key ?: "")
+            }
+        }.withBorder(BorderFactory.createEmptyBorder(borderSize / 2, borderSize, borderSize / 2, borderSize)).apply {
+            background = if (isSelected) UIUtil.getListBackground(true, false) else UIUtil.getPanelBackground()
         }
     }
 }

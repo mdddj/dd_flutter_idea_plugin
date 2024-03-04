@@ -14,6 +14,7 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
+import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
@@ -172,11 +173,20 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
+            appendText(PluginBundle.get("split.symbol"))
+            appendText(
+                PluginBundle.get("document"), SimpleTextAttributes(
+                    SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.Foreground.ENABLED
+                )
+            ) {
+                BrowserUtil.open(SiteDocument.Dio.url)
+            }
             appendLine("IP:${
                 Util.resolveLocalAddresses()
                     .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
                     .map { it.hostAddress }
             }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
+
         }
     }
 

@@ -18,10 +18,10 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.messages.MessageBusConnection
-import io.flutter.sdk.FlutterSdk
 import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.projectClosed
@@ -117,13 +117,13 @@ public final class AssetsListeningProjectService(val project: Project) {
     ///检测flutter新版本弹出
     private inner class CheckFlutterVersionTask : Task.Backgroundable(project, "Detecting Flutter version...") {
         override fun run(indicator: ProgressIndicator) {
-            val currentFlutterVersion = FlutterSdk.getFlutterSdk(project)?.version
+            val currentFlutterVersion = FlutterVersionTool.readVersionFromSdkHome(project)
             currentFlutterVersion?.let {
                 val version = FlutterService.getVersion()
                 version?.apply {
                     val release = releases.find { o -> o.hash == currentRelease.stable }
                     release?.let { r ->
-                        if (r.version != it.versionText) {
+                        if (r.version != it.version) {
                             println("has new version")
                             showTip(r, project)
                         }
