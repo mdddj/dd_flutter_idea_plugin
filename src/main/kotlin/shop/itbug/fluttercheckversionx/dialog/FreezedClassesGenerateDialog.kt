@@ -3,48 +3,50 @@ package shop.itbug.fluttercheckversionx.dialog
 import cn.hutool.core.swing.ScreenUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.dsl.builder.Align
-import com.intellij.ui.dsl.builder.bindSelected
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.*
+import com.intellij.util.Alarm
 import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.DartLanguage
-import org.jetbrains.plugins.terminal.TerminalView
-import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.getVirtualFile
 import shop.itbug.fluttercheckversionx.config.JsonToFreezedSettingModelConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.services.DEFAULT_CLASS_NAME
+import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
-import java.awt.BorderLayout
 import java.awt.Dimension
+import javax.swing.BorderFactory
 import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 
+///json转freezed弹窗
 class FreezedClassesGenerateDialog(
-    override val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>
-) : MyDialogWrapper(project) {
+    val project: Project, private val freezedClasses: MutableList<FreezedCovertModel>
+) : DialogWrapper(project) {
     private val settingInstance = JsonToFreezedSettingModelConfig.getInstance(project)
     private val setting = settingInstance.state
     private val tabView = JBTabbedPane().apply {
-        border = null
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
     }
     private var fileName: String = DEFAULT_CLASS_NAME
     private var filePath: String = setting.generateToPath
     private val widgets: MutableList<FreezedCovertModelWidget> = mutableListOf()
     private lateinit var settingPanel: DialogPanel
-    private val filePathLabel = JBLabel(filePath)
+    private lateinit var nameLabel: Cell<JBTextField>
 
     init {
         super.init()
@@ -57,18 +59,17 @@ class FreezedClassesGenerateDialog(
 
     private fun initTabView() {
         freezedClasses.forEach {
-            val widget = FreezedCovertModelWidget(it, project)
+            val widget = FreezedCovertModelWidget(it, project, disposable)
             widgets.add(widget)
             tabView.add(it.className, widget)
         }
     }
 
     override fun createCenterPanel(): JComponent {
-        return object : JPanel(BorderLayout()) {
-
+        return object : BorderLayoutPanel() {
             init {
-                add(tabView, BorderLayout.CENTER)
-                add(getGlobalSettingPanel(), BorderLayout.SOUTH)
+                addToCenter(tabView)
+                addToBottom(getGlobalSettingPanel())
             }
         }
     }
@@ -79,23 +80,34 @@ class FreezedClassesGenerateDialog(
      */
     fun getGlobalSettingPanel(): DialogPanel {
 
+        val alarm = Alarm(disposable)
+
+        fun doValid() {
+            alarm.addRequest({
+                settingPanel.apply()
+                settingPanel.validate()
+                doValid()
+            }, 1000)
+        }
+
         settingPanel = panel {
             group(PluginBundle.get("global.settings")) {
                 row(PluginBundle.get("save.to.directory")) {
                     textFieldWithBrowseButton(
                         fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
                             .withRoots(project.guessProjectDir()), project = project
-                    ).bindText({
-                        filePath
-                    }, {
-                        filePath = it
-                        filePathLabel.text = it
-                    }).align(Align.FILL)
+                    ).bindText({ filePath }, { filePath = it }).align(Align.FILL)
                 }
                 row(PluginBundle.get("file.name")) {
-                    textField().bindText({ fileName }, {
+                    nameLabel = textField().bindText({ fileName }, {
                         fileName = it
                     }).align(Align.FILL)
+                        .cellValidation {
+//                            val file = File(filePath + File.separator + it.text)
+//                            val msg = PluginBundle.get("file.already.exist")
+//                            println(file)
+//                            addInputRule(msg, Level.ERROR) { file.exists() }
+                        }
                 }
                 row {
                     checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
@@ -106,18 +118,32 @@ class FreezedClassesGenerateDialog(
                 }
             }
         }
+
+
+        //如果路径为空,设置为项目目录
+        SwingUtilities.invokeLater {
+            settingPanel.registerValidators(disposable)
+            doValid()
+            if (filePath.isBlank()) {
+                filePath = project.guessProjectDir()?.path ?: ""
+                settingPanel.apply()
+            }
+        }
         return settingPanel.apply { border = null }
     }
 
 
-    override fun doOKAction() {
+    private fun getPsiFile(): PsiFile {
         settingPanel.apply()
-
-        ///保存此路径
         settingInstance.changeState { it.copy(generateToPath = filePath) }
-
         val psiFile = PsiFileFactory.getInstance(project)
             .createFileFromText("$fileName.dart", DartLanguage.INSTANCE, generateFileText())
+        println(psiFile.virtualFile.exists())
+        return psiFile
+    }
+
+    override fun doOKAction() {
+        val psiFile = getPsiFile()
         val virtualFile = filePath.getVirtualFile()
         if (virtualFile == null) {
             project.toastWithError(PluginBundle.get("unable.to.find.directory"))
@@ -126,19 +152,29 @@ class FreezedClassesGenerateDialog(
             if (findDirectory == null) {
                 project.toastWithError(PluginBundle.get("unable.to.find.directory"))
             }
+
+            var isSuccess = true
             findDirectory?.let { pd ->
                 runWriteAction {
-                    pd.add(psiFile)
+                    try {
+                        pd.add(psiFile)
+                    } catch (e: Exception) {
+                        isSuccess = false
+                        project.toastWithError("error:$e")
+                    }
                 }
-                project.toast(PluginBundle.get("build.succeeded"))
-                if (setting.autoRunDartBuilder) {
-                    TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "freezed gen")
-                        .executeCommand("flutter pub run build_runner build")
+                if (isSuccess) {
+                    FileEditorManager.getInstance(project).openFile(psiFile.virtualFile)
+                    project.toast(PluginBundle.get("build.succeeded"))
+                    if (setting.autoRunDartBuilder) {
+                        RunUtil.runCommand(project, "freezed gen", "flutter pub run build_runner build")
+                    }
+                    FileBasedIndex.getInstance().requestReindex(virtualFile)
+                    super.doOKAction()
                 }
-                FileBasedIndex.getInstance().requestReindex(virtualFile)
-                super.doOKAction()
             }
         }
+
     }
 
     override fun doCancelAction() {
@@ -167,4 +203,8 @@ class FreezedClassesGenerateDialog(
     override fun getPreferredSize(): Dimension {
         return ScreenUtil.dimension
     }
+}
+
+private fun containsDigit(s: String?): Boolean {
+    return s?.contains(Regex("\\d")) == true
 }

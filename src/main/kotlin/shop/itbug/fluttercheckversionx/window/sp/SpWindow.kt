@@ -13,6 +13,8 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
+import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
+import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import java.awt.Dimension
@@ -32,10 +34,10 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 
 
     val content = OnePixelSplitter().apply {
-        firstComponent = JBScrollPane(left).apply { border = null }
+        firstComponent = JBScrollPane(left)
         secondComponent = right
         this.splitterProportionKey = "sp-window-key"
-        border = BorderFactory.createEmptyBorder()
+        border = BorderFactory.createEmptyBorder(1, 0, 1, 0)
     }
 
     init {
@@ -46,13 +48,15 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
     }
 
     private fun getAllKeys() {
-        DioApiService.INSTANCESupplier.get().sendByMap(mutableMapOf("action" to "SP_KEY"))
+        DioApiService.INSTANCESupplierSupplier.get().get().sendByMap(mutableMapOf("action" to "SP_KEY"))
     }
 
 
     private fun createToolbar(): ActionToolbar {
         return ActionManager.getInstance().createActionToolbar("sp tool bar", DefaultActionGroup().apply {
+            add(ActionManager.getInstance().getAction("FlutterProjects"))
             this.add(ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"))
+            this.add(HelpContextAction(SiteDocument.Sp))
         }, true).apply {
             this.targetComponent = toolWindow.component
         }
@@ -74,7 +78,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 ///刷新sp keys操作
 class SpRefreshAction : DumbAwareAction(AllIcons.Actions.Refresh) {
     override fun actionPerformed(e: AnActionEvent) {
-        DioApiService.INSTANCESupplier.get().sendByMap(mutableMapOf("action" to "SP_KEY"))
+        DioApiService.INSTANCESupplierSupplier.get().get().sendByMap(mutableMapOf("action" to "SP_KEY"))
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
@@ -116,7 +120,7 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
 
     override fun valueChanged(e: ListSelectionEvent?) {
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {
-            DioApiService.INSTANCESupplier.get()
+            DioApiService.INSTANCESupplierSupplier.get().get()
                 .sendByMap(mutableMapOf("action" to "SP_GET_VALUE", "data" to selectedValue))
         }
     }

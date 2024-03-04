@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.ExternalDocumentationProvider
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
@@ -21,13 +22,12 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String {
 
 
-
         val reference = element.parent?.parent?.reference?.resolve()
         val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
             element.containingFile.virtualFile,
             element.textOffset
         )
-        if (result.isEmpty()) return ""
+        if (result.isEmpty()) return "Document not found"
         val docInfo = result.first()
         val dartFormalParameterList =
             reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
@@ -117,7 +117,13 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             return ""
         }
         val sb = StringBuilder()
-        Helper.addMarkdownTableHeader(PluginBundle.get("type"), PluginBundle.get("name"), PluginBundle.get("required"), PluginBundle.get("location"), sb = sb)
+        Helper.addMarkdownTableHeader(
+            PluginBundle.get("type"),
+            PluginBundle.get("name"),
+            PluginBundle.get("required"),
+            PluginBundle.get("location"),
+            sb = sb
+        )
         paramsArr.forEachIndexed { index, it ->
             sb.append("| ${it.key} | ${it.value} | ${it.isRequired} | ${if (it.optional) "{}" else "(必填参数${index + 1})"} |")
             sb.append("\n")
@@ -134,11 +140,22 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
     ): String {
         val sb = StringBuilder()
 
-        if(element.parent.text.isNotEmpty()){
-            val simpleText = "```dart\n" +
-                    (element.parent.text ?: element.text) + "\n ```\n"
-            Helper.addKeyValueHeader(sb)
-            sb.appendTag(MyMarkdownDocRenderObject(text = simpleText,project=project),PluginBundle.get("element"))
+        if (element.parent.text.isNotEmpty()) {
+            val documentParseTool = DocumentParseTool(element.parent, element)
+            var eleText: String? = null
+            runReadAction {
+                val params = documentParseTool.getParams()
+                eleText = params
+            }
+            if (eleText != null) {
+                val simpleText = "```dart\n" +
+                        (eleText) + "\n ```\n"
+                Helper.addKeyValueHeader(sb)
+                sb.appendTag(
+                    MyMarkdownDocRenderObject(text = simpleText, project = project),
+                    PluginBundle.get("element")
+                )
+            }
             Helper.addKeyValueFoot(sb)
         }
 

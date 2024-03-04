@@ -12,6 +12,8 @@ import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.manager.DartDefaultFormalNamedParameterActionManager
 import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclarationImplManager
+import shop.itbug.fluttercheckversionx.manager.constr_type_string
+import shop.itbug.fluttercheckversionx.manager.type_string
 import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -45,23 +47,23 @@ class FreezedClassToSimpleClass : AnAction() {
 
 ///生成对于的 class类
 fun List<DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper>.generateClassString(className: String): String {
-    return """
-    class $className {
-        	 ${
+    val str = """
+    class $className {${
         joinToString(
-            separator = ";\n\t", postfix = ";"
-        ) { "final ${it.typeString}${if (it.isRequired) "" else "?"} ${it.name}" }
+            separator = ";", postfix = ";"
+        ) { "final ${it.type_string} ${it.name}".prependIndent("\n\t\t") }
+    }$className({${joinToString(separator = ",", postfix = "".prependIndent("\n\t\t")) { it.constr_type_string }}});
     }
-        	 Test({${joinToString(separator = ",") { if (it.isRequired) "required this.${it.name}" else "this.${it.name}" }}});
-        }
     """.trimIndent()
+    println(str)
+    return str
 }
 
 ///转换的弹窗
 private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: DartFactoryConstructorDeclarationImpl) :
     MyDialogWrapper(project) {
 
-    private val editor = DartEditorTextPanel(project)
+
     private val manager: DartFactoryConstructorDeclarationImplManager
         get() = DartFactoryConstructorDeclarationImplManager(psiElement)
 
@@ -70,15 +72,12 @@ private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: 
     private val setting = SettingModel(
         className = manager.getClassName ?: "", generateClass = args.generateClassString(manager.getClassName ?: "Root")
     )
-
+    private val editor = DartEditorTextPanel(project, setting.generateClass)
 
     init {
 
         super.init()
         super.setTitle("freezed to simple class")
-        println("参数:$args")
-        editor.text = setting.generateClass
-        editor.reformat()
     }
 
     override fun createCenterPanel(): JComponent {
@@ -97,9 +96,11 @@ private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: 
 
 
         init {
-            addToCenter(editor.scroll())
+            addToCenter(editor.scroll().apply {
+                this.maximumSize = Dimension(500, -1)
+            })
             addToLeft(panel {
-                row {
+                row("class name") {
                     textField().bindText(setting::className)
                 }
             })

@@ -46,7 +46,6 @@
     <depends optional="true" config-file="actions.xml">Dart</depends>
     <depends optional="true" config-file="jobs_actions.xml">Dart</depends>
     <depends>Dart</depends>
-    <depends>io.flutter</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
@@ -54,6 +53,11 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
+
+        <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
+        <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
+        <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
+        <notificationGroup displayType="BALLOON" id="json_to_freezed_tooltip"/>
 
         <fileDocumentSynchronizationVetoer
                 implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
@@ -82,11 +86,7 @@
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
-        <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
-        <!--   dio socket 相关通知    -->
-        <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
-        <!--flutter新版本通知-->
-        <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
+
 
         <!--    插件检测忽略配置     -->
         <!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
@@ -262,8 +262,7 @@
         <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup">
             <reference id="FlutterProjects"/>
             <reference id="GetHiveBoxList"/>
-            <separator/>
-            <reference id="HiveTutorialHelp"/>
+            <!--            <reference id="HiveTutorialHelp"/>-->
         </group>
 
 
@@ -271,7 +270,6 @@
         <action id="StatelessToConsumer"
                 class="shop.itbug.fluttercheckversionx.actions.riverpod.StatelessToConsumer"
                 text="StatelessWidget to ConsumerWidget">
-            <add-to-group group-id="Internal.Editor"/>
             <keyboard-shortcut keymap="$default" first-keystroke="meta alt M"/>
         </action>
         <action id="StatefulToConsumer"

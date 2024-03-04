@@ -13,7 +13,6 @@ import com.intellij.psi.util.parents
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.IncorrectOperationException
 import com.jetbrains.lang.dart.DartFileType
-import io.flutter.sdk.FlutterSdk
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.YAMLUtil
@@ -24,6 +23,7 @@ import org.jetbrains.yaml.psi.impl.YAMLMappingImpl
 import shop.itbug.fluttercheckversionx.constance.igFlutterPlugin
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
+import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import java.io.File
 
 
@@ -112,10 +112,7 @@ class MyPsiElementUtil {
          * 获取项目pubspec.yaml 文件
          */
         fun getPubSecpYamlFile(project: Project): PsiFile? {
-            val sdk = FlutterSdk.getFlutterSdk(project)?.version?.versionText
-            if (sdk.isNullOrBlank()) {
-                return null
-            }
+            FlutterVersionTool.readVersionFromSdkHome(project) ?: return null
             val pubspecYamlFile =
                 LocalFileSystem.getInstance()
                     .findFileByIoFile(File("${project.stateStore.projectBasePath}/pubspec.yaml"))
@@ -151,7 +148,7 @@ class MyPsiElementUtil {
                 val coreElement = yaml.firstChild.firstChild
                 val coreElementChildrens = coreElement.childrenOfType<YAMLKeyValueImpl>()
                 if (coreElementChildrens.isNotEmpty()) {
-                    FlutterPluginType.values().forEach { type ->
+                    FlutterPluginType.entries.forEach { type ->
                         val l = coreElementChildrens.filter { it.keyText == type.type }.toList()
                         if (l.isNotEmpty()) {
                             val pluginDevs = l.first()

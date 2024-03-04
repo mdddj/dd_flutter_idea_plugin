@@ -82,7 +82,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     private inner class LeftPanel : BorderLayoutPanel() {
         private val topActions =
-            ActionManager.getInstance().getAction("FlutterX Window Top Actions") as DefaultActionGroup
+            (ActionManager.getInstance().getAction("FlutterX Window Top Actions") as DefaultActionGroup)
 
 
         //创建工具栏

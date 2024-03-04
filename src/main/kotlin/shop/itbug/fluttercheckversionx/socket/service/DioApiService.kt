@@ -2,37 +2,34 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
+import com.intellij.openapi.application.CachedSingletonsRegistry
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import org.smartboot.socket.MessageProcessor
 import org.smartboot.socket.StateMachineEnum
+import org.smartboot.socket.extension.processor.AbstractMessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
+import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
+import shop.itbug.fluttercheckversionx.window.logger.LogKeys
+import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
+import java.util.concurrent.TimeUnit
+import java.util.function.Supplier
 
-@Service
+@Service(Service.Level.APP)
 class DioApiService {
 
     companion object {
         //        val INSTANCESupplier: Supplier<DioApiService> = CachedSingletonsRegistry.lazy { service<DioApiService>() }
-        val INSTANCESupplier = service<DioApiService>()
+        val INSTANCESupplierSupplier: Supplier<DioApiService> =
+            CachedSingletonsRegistry.lazy { service<DioApiService>() }
+
     }
 
-    fun get() = INSTANCESupplier
+    fun get() = INSTANCESupplierSupplier.get()
 
-
-    private fun AioSession.send(message: String) {
-        try {
-            val writeBuffer: WriteBuffer = writeBuffer()
-            val data = message.toByteArray()
-            writeBuffer.write(data)
-            writeBuffer.flush()
-        } catch (e: Exception) {
-            println("发送socket失败：$e")
-        }
-    }
 
     private val sessions = mutableSetOf<AioSession>()
     private val messageProcessor = MyMessageProcessor
@@ -58,7 +55,6 @@ class DioApiService {
         }
     }
 
-
     fun sendByMap(map: MutableMap<String, Any>) {
         sendMessage(JSONObject.toJSONString(map))
     }
@@ -73,7 +69,7 @@ class DioApiService {
 
 
         fun register() {
-            INSTANCESupplier.get().addHandle(this)
+            INSTANCESupplierSupplier.get().get().addHandle(this)
         }
 
         /**
@@ -112,26 +108,25 @@ class DioApiService {
     fun builder(port: Int): AioQuickServer {
         val server = AioQuickServer(port, StringProtocol(), messageProcessor)
         server.setBannerEnabled(false)
-        server.setReadBufferSize(10485760 * 2) // 20m
+        server.setReadBufferSize(10485760 * 2)
         return server
     }
 
 
 }
 
-object MyMessageProcessor : MessageProcessor<String?> {
+object MyMessageProcessor : AbstractMessageProcessor<String>() {
 
     private var handle = setOf<DioApiService.NativeMessageProcessing>()
+
+    init {
+        addPlugin(MyHeartCommon())
+    }
 
     fun addHandle(processor: DioApiService.NativeMessageProcessing) {
         handle = handle.plus(processor)
     }
 
-    override fun process(session: AioSession?, msg: String?) {
-        if (msg != null) {
-            jsonStringToModel(msg, session)
-        }
-    }
 
     private fun jsonStringToModel(msg: String, session: AioSession?) {
         try {
@@ -146,28 +141,76 @@ object MyMessageProcessor : MessageProcessor<String?> {
         }
     }
 
-    override fun stateEvent(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
+    override fun process0(session: AioSession?, msg: String?) {
+        if (msg != null) {
+            jsonStringToModel(msg, session)
+        }
+    }
+
+    override fun stateEvent0(session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?) {
         handle.forEach {
             it.stateEvent(session, stateMachineEnum, throwable)
         }
+        throwable?.let {
+            throwable.printStackTrace()
+        }
         defaultEventHandle(session, stateMachineEnum)
-        super.stateEvent(session, stateMachineEnum, throwable)
     }
 
 
     private fun defaultEventHandle(session: AioSession?, stateMachineEnum: StateMachineEnum?) {
+        println("==$session $stateMachineEnum")
         when (stateMachineEnum) {
             StateMachineEnum.NEW_SESSION -> {
-                DioApiService.INSTANCESupplier.get().addSession(session)
+                DioApiService.INSTANCESupplierSupplier.get().get().addSession(session)
             }
 
-            StateMachineEnum.INPUT_SHUTDOWN -> DioApiService.INSTANCESupplier.get().removeSession(session)
-            StateMachineEnum.SESSION_CLOSING -> DioApiService.INSTANCESupplier.get().removeSession(session)
-            StateMachineEnum.SESSION_CLOSED -> DioApiService.INSTANCESupplier.get().removeSession(session)
-            StateMachineEnum.REJECT_ACCEPT -> DioApiService.INSTANCESupplier.get().removeSession(session)
-            StateMachineEnum.ACCEPT_EXCEPTION -> DioApiService.INSTANCESupplier.get().removeSession(session)
+            StateMachineEnum.INPUT_SHUTDOWN -> DioApiService.INSTANCESupplierSupplier.get().get().removeSession(session)
+            StateMachineEnum.SESSION_CLOSING -> DioApiService.INSTANCESupplierSupplier.get().get()
+                .removeSession(session)
+
+            StateMachineEnum.SESSION_CLOSED -> DioApiService.INSTANCESupplierSupplier.get().get().removeSession(session)
+            StateMachineEnum.REJECT_ACCEPT -> DioApiService.INSTANCESupplierSupplier.get().get().removeSession(session)
+            StateMachineEnum.ACCEPT_EXCEPTION -> DioApiService.INSTANCESupplierSupplier.get().get()
+                .removeSession(session)
+
             else -> {}
         }
     }
 
+
+}
+
+
+///连接心跳插件.
+private class MyHeartCommon : MyHeartPlugin<String>(15, TimeUnit.SECONDS) {
+    override fun sendHeartRequest(session: AioSession?) {
+        session?.send("ping")
+    }
+
+
+    override fun isHeartMessage(session: AioSession?, msg: String?): Boolean {
+        msg?.let {
+            val json = JSONObject.parse(msg)
+            if (json.getString("type") == "ping") {
+                MyLoggerEvent.fire(MyLogInfo(message = "$msg", key = LogKeys.ping))
+                println("收到心跳消息")
+                return true
+            }
+        }
+        return false
+    }
+
+}
+
+
+private fun AioSession.send(message: String) {
+    try {
+        val writeBuffer: WriteBuffer = writeBuffer()
+        val data = message.toByteArray()
+        writeBuffer.write(data)
+        writeBuffer.flush()
+    } catch (e: Exception) {
+        println("发送消息失败:$e")
+    }
 }

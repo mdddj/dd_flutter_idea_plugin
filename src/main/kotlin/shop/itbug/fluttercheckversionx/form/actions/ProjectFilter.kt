@@ -18,7 +18,7 @@ import shop.itbug.fluttercheckversionx.widget.MyComboActionNew
 class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
 
-    private val appService = service<AppService>()
+    private val appService = AppService.getInstance()
 
 
     override val reGetActions: Boolean

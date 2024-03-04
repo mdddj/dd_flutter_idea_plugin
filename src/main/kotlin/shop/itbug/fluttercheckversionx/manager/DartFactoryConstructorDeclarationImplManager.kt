@@ -5,11 +5,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.childrenOfType
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.*
-import com.jetbrains.lang.dart.psi.impl.DartArgumentsImpl
-import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
-import com.jetbrains.lang.dart.psi.impl.DartMetadataImpl
-import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
+import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 
@@ -136,7 +134,7 @@ class DartFactoryConstructorDeclarationImplManager(private val psiElement: DartF
     fun setAllPropertiesToDefaultValue() {
         replaceOptionParameterTo {
             val manager = DartDefaultFormalNamedParameterActionManager(it)
-            if ((manager.isOption || manager.firstIsRequiredTag) && !manager.hasMetadata("Default")) {
+            if ((!manager.getPropertiesWrapper.isRequired || manager.firstIsRequiredTag) && !manager.hasMetadata("Default")) {
 
 
                 manager.handleTypeElement { typePsiElement ->
@@ -166,12 +164,15 @@ class DartFactoryConstructorDeclarationImplManager(private val psiElement: DartF
 
 }
 
+val DartDefaultFormalNamedParameter.myManager get() = DartDefaultFormalNamedParameterActionManager(this)
 
 ///对属性的操作
 class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultFormalNamedParameter) {
 
 
     private val finalElement: DartSimpleFormalParameter? = element.normalFormalParameter.simpleFormalParameter
+
+    private val thisParameterElement = element.normalFormalParameter.fieldFormalParameter
 
 
     ///参数是否标记有 required 标识
@@ -180,18 +181,16 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
     ///参数的类型
     val type = finalElement?.type?.simpleType
 
-    ///是否为可选参数
-    val isOption = type?.lastChild?.text == "?"
 
     ///类型管理
     val typeManager = TypeManager(type)
 
     ///字段名字
-    private val filedName = finalElement?.componentName?.name ?: ""
+    private val filedName = finalElement?.componentName?.name ?: (thisParameterElement?.lastChild?.text ?: "")
 
 
     ///注解列表
-    val getMetadataList: MutableCollection<DartMetadataImpl>
+    private val getMetadataList: MutableCollection<DartMetadataImpl>
         get() = PsiTreeUtil.findChildrenOfType(
             finalElement,
             DartMetadataImpl::class.java
@@ -200,9 +199,9 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
     val getPropertiesWrapper
         get() = MyPropertiesWrapper(
             name = filedName,
-            isRequired = !isOption,
             typeString = finalElement?.type?.simpleType?.text ?: "",
-            jsonKeyName = getJsonKeyName ?: ""
+            jsonKeyName = getJsonKeyName ?: "",
+            element = element
         )
 
 
@@ -244,10 +243,10 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
                 it.name == "JsonKey"
             }) {
                 val psiElementByNameKey = it.getPsiElementByNameKey("name")
-                if (psiElementByNameKey?.isString == true) {
-                    name = psiElementByNameKey.stringValue
+                name = if (psiElementByNameKey?.isString == true) {
+                    psiElementByNameKey.stringValue
                 } else {
-                    name = filedName
+                    filedName
                 }
             }
             return name
@@ -310,16 +309,69 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
     data class MyPropertiesWrapper(
 //        字段姓名
         var name: String = "",
-        //是否必须的
-        var isRequired: Boolean = false,
         // json字段属性
         var jsonKeyName: String = "",
         //类型
-        var typeString: String = ""
+        var typeString: String = "",
+        //节点
+        val element: DartDefaultFormalNamedParameter
     )
 
 }
 
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.isRequired get() = !final_type_string.endsWith("?")
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.type_string get() = "${typeString}${if (isRequired) "" else ""}"
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.constr_type_string get() = if (isRequired) "required this.${name}" else "this.${name}"
+
+///是否有默认初始值,true -> 有
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.hasInitValue: Boolean
+    get() {
+        val cs = PsiTreeUtil.findChildrenOfAnyType(element, LeafPsiElement::class.java)
+        val t = cs.find {
+            return@find it.text == "="
+        }
+        return t != null
+    }
+
+///获取初始值的文本
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.get_init_text: String
+    get() {
+        return element.lastChild.text
+    }
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.final_type_string: String
+    get() {
+
+        val f = element.firstChild?.firstChild
+        val cs = PsiTreeUtil.findChildrenOfAnyType(f, LeafPsiElement::class.java)
+
+        val t = cs.find {
+            return@find it.text == "this" || it.text == "super"
+        }
+        if (t != null) {
+            //处理this
+            element.firstChild?.firstChild?.children?.find { it is DartReferenceExpressionImpl }?.let { ref ->
+                run {
+                    val d = DartAnalysisServerService.getInstance(ref.project)
+                        .analysis_getHover(ref.containingFile.virtualFile, ref.textOffset)
+                    if (d.isNotEmpty()) {
+                        val type = d.first().staticType
+                        return type
+                    }
+                }
+            }
+        }
+        return typeString
+    }
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.document_type_string: String
+    get() {
+        val s = hasInitValue
+        var t =
+            if (isRequired) "${if (s) "" else "required "}$final_type_string $name" else "$final_type_string $name"
+        if (s) {
+            t = "$t = $get_init_text"
+        }
+        return t
+    }
 
 ///几种常见的类型
 enum class MyDartType(val dartType: String, val defaultValueString: String) {

@@ -34,15 +34,12 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
  * 资产文件自动补全
  */
 class AssetsFilePathAutoCompleteProvider : CompletionProvider<CompletionParameters>() {
-
-
     private var setting = PluginStateService.getInstance().state ?: AppStateModel()
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-
         val file = parameters.originalFile
         file.findElementAt(parameters.offset)?.apply {
             if (prevSibling.elementType == DartTokenTypes.REGULAR_STRING_PART) {

@@ -11,22 +11,21 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartFileType
-import io.flutter.sdk.FlutterSdkUtil
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
 import java.util.function.Function
 import javax.swing.JComponent
 
-///pubyaml 窗口工具
 class PubPluginVersionCheckNotification : EditorNotificationProvider {
 
     override fun collectNotificationData(
         project: Project,
         file: VirtualFile
-    ): Function<in FileEditor, out JComponent?> {
+    ): Function<in FileEditor, out JComponent?>? {
         return Function<FileEditor, JComponent?> {
             project.getPubspecYAMLFile() ?: return@Function null
             if (file.fileType is DartFileType) {
@@ -36,9 +35,7 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (filename != "pubspec.yaml") {
                 return@Function null
             }
-            if (!FlutterSdkUtil.hasFlutterModules(project)) {
-                return@Function null
-            }
+            FlutterVersionTool.readVersionFromSdkHome(project) ?: return@Function null
             YamlFileNotificationPanel(it, project)
         }
     }
@@ -61,18 +58,6 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
             search()
         }
         myLinksPanel.add(searchPluginLabel)
-
-
-        //重新索引
-//        val reIndex = createActionLabel("扫描未使用的包") {
-//            ApplicationManager.getApplication().run {
-//                ScanPackageUtil.doScan(project)
-//            }
-//
-//        }
-//        myLinksPanel.add(reIndex)
-
-
     }
 
     private fun checkNewVersions() {

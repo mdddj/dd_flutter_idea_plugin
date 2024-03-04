@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.tools
 
+import cn.hutool.core.date.DateUtil
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
@@ -16,9 +17,12 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.util.*
+import shop.itbug.fluttercheckversionx.window.logger.LogKeys
+import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 
 
 /**
@@ -57,6 +61,12 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
     override fun doAnnotate(collectedInfo: Input?): List<Problem> {
         val arr = mutableListOf<Problem>()
         collectedInfo?.let {
+            MyLoggerEvent.fire(
+                MyLogInfo(
+                    message = "${DateUtil.now()} Start detecting new version of package",
+                    key = LogKeys.checkPlugin
+                )
+            )
             val infos: List<PubVersionDataModel?> = runBlocking {
                 val tasks = it.element.map { info ->
                     val pluginName = info.packageInfo.name
@@ -67,6 +77,12 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                 }
                 return@runBlocking tasks.awaitAll()
             }
+            MyLoggerEvent.fire(
+                MyLogInfo(
+                    message = "${DateUtil.now()} The new version of the detection package has ended, with a total of ${it.element.size} packages",
+                    key = LogKeys.checkPlugin
+                )
+            )
             it.element.forEach { info ->
                 val packageName = info.packageInfo.name
                 val find: PubVersionDataModel? = infos.find { detail -> detail?.name == packageName }
@@ -75,6 +91,15 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
 
                         val versionText = model.getLastVersionText(info.packageInfo)
                         if (versionText != null) {
+                            MyLoggerEvent.fire(
+                                MyLogInfo(
+                                    message = "${model.name}: old version is :${info.packageInfo.version}, new version is :${
+                                        model.getLastVersionText(
+                                            info.packageInfo
+                                        )
+                                    }, push date : ${model.lastVersionUpdateTimeString}", key = LogKeys.checkPlugin
+                                )
+                            )
                             arr.add(Problem(info.element.lastChild.textRange, model, info.element, versionText))  //有新版本
                         }
                     }

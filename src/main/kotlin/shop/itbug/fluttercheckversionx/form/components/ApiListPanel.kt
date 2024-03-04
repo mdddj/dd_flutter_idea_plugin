@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.components
 
+import com.alibaba.fastjson2.JSONObject
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
@@ -13,6 +14,7 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
+import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
@@ -22,10 +24,13 @@ import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
+import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.Util
+import shop.itbug.fluttercheckversionx.window.logger.LogKeys
+import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -168,11 +173,20 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
             }
+            appendText(PluginBundle.get("split.symbol"))
+            appendText(
+                PluginBundle.get("document"), SimpleTextAttributes(
+                    SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.Foreground.ENABLED
+                )
+            ) {
+                BrowserUtil.open(SiteDocument.Dio.url)
+            }
             appendLine("IP:${
                 Util.resolveLocalAddresses()
                     .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
                     .map { it.hostAddress }
             }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
+
         }
     }
 
@@ -200,7 +214,10 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
-
+        try {
+            MyLoggerEvent.fire(MyLogInfo(message = JSONObject.toJSONString(model), key = LogKeys.dioLog))
+        } catch (_: Exception) {
+        }
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
         super.handleModel(model)
     }
