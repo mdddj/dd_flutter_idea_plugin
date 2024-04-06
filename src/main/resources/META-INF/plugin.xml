@@ -10,6 +10,7 @@
 
         <p>
             Github:<a href="https://github.com/mdddj/dd_flutter_idea_plugin">GITHUB</a>
+            Document:<a href="https://flutterx.itbug.shop/starter.html">Document Web Site</a>
         </p>
 
 
@@ -44,7 +45,6 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="actions.xml">Dart</depends>
-    <depends optional="true" config-file="jobs_actions.xml">Dart</depends>
     <depends>Dart</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
@@ -172,6 +172,9 @@
 
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
 
+        <!--        错误处理-->
+        <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
+
     </extensions>
 
     <projectListeners>
@@ -296,6 +299,36 @@
             <reference id="RiverpodActionsSetting"/>
         </group>
 
+
+        <!--    status bar widgets    -->
+        <action id="SearchPubPluginAction" class="shop.itbug.fluttercheckversionx.actions.bar.SearchPubPluginAction"
+        />
+        <action id="FlutterRunBuilderCommandAction"
+                class="shop.itbug.fluttercheckversionx.actions.bar.FlutterRunBuilderCommandAction"
+        />
+        <action id="StatusBarJsonToFreezedClass"
+                class="shop.itbug.fluttercheckversionx.actions.bar.JsonToFreezedClass"
+        />
+        <action id="StatusBarOpenSettingAction"
+                class="shop.itbug.fluttercheckversionx.actions.bar.OpenSettingAction" icon="/icons/setting.svg"
+        />
+        <action id="GoToDiscordAction"
+                class="shop.itbug.fluttercheckversionx.actions.bar.GoToDiscordAction"
+        />
+        <action id="GoToDocumentAction"
+                class="shop.itbug.fluttercheckversionx.actions.bar.GoToDocumentAction"
+        />
+        <group id="status_bar_actions">
+            <reference id="SearchPubPluginAction"/>
+            <reference id="FlutterRunBuilderCommandAction"/>
+            <reference id="StatusBarJsonToFreezedClass"/>
+            <separator/>
+            <reference id="GoToDiscordAction"/>
+            <reference id="GoToDocumentAction"/>
+            <separator/>
+            <reference id="StatusBarOpenSettingAction"/>
+        </group>
+        <!--    status bar widgets  end   -->
     </actions>
 
     <!--Git.MainMenu.FileActions-->

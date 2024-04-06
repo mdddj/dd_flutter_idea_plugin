@@ -12,7 +12,6 @@ import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.model.getElementVersion
 import shop.itbug.fluttercheckversionx.model.isLastVersion
 import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.BorderLayout
 import java.awt.Component
@@ -53,20 +52,16 @@ class AllPluginsCheckVersion(val project: Project, val onDone: () -> Unit) : JPa
                 bottomTipLabel.text = "all size:${item.size}"
                 item.forEach { model ->
                     bottomTipLabel.text = "checking: ${model.name}"
-                    val r = ServiceCreate.create<PubService>().callPluginDetails(model.name).execute()
-                    if (r.isSuccessful) {
-
-                        val rModel = r.body()
-                        if (rModel != null) {
-                            model.pubData = rModel
-                            if (!model.isLastVersion()) {
-                                val oldList = (listView.model as PluginListModel).list
-                                val l = oldList.toMutableList()
-                                l.add(model)
-                                listView.model = PluginListModel(l)
-                            }
-
+                    val r = PubService.callPluginDetails(model.name)
+                    if (r != null) {
+                        model.pubData = r
+                        if (!model.isLastVersion()) {
+                            val oldList = (listView.model as PluginListModel).list
+                            val l = oldList.toMutableList()
+                            l.add(model)
+                            listView.model = PluginListModel(l)
                         }
+
                     }
                 }
                 bottomTipLabel.text = "Done"

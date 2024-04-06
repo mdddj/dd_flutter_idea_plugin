@@ -2,7 +2,10 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.suggested.startOffset
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
+import org.dartlang.analysis.server.protocol.HoverInformation
 import shop.itbug.fluttercheckversionx.manager.document_type_string
 import shop.itbug.fluttercheckversionx.manager.myManager
 import shop.itbug.fluttercheckversionx.util.manager
@@ -36,6 +39,20 @@ class DocumentParseTool(val element: PsiElement, val originalPsiElement: PsiElem
             is DartFactoryConstructorDeclarationImpl -> {
                 val manager = MyDartConstructorManager(element)
                 return manager.generateDocument()
+            }
+
+            is DartVarAccessDeclarationImpl -> {
+                val type = element.getDartElementType()
+                val txt = element.text
+                if (type != null && txt.contains(type)) {
+                    return txt
+                }
+                return "${type ?: ""} ${element.text}"
+            }
+
+            is DartIdImpl -> {
+                val type = element.getDartElementType()
+                return "${type ?: ""} ${element.text}"
             }
 
             else -> {
@@ -145,4 +162,24 @@ val DartMethodDeclarationImpl.getDocumentText: String
     }
 
 
+///获取dart类型
+fun PsiElement.getDartElementType(): String? {
+    return getDartInfo()?.staticType
+}
+
+/// 获取文档
+fun PsiElement.getDartDocument(): String? {
+    return getDartInfo()?.dartdoc
+}
+
+
+///获取dart的信息(来自分析服务器)
+fun PsiElement.getDartInfo(): HoverInformation? {
+    val r =
+        DartAnalysisServerService.getInstance(project).analysis_getHover(containingFile.virtualFile, this.startOffset)
+    if (r.isEmpty()) {
+        return null
+    }
+    return r.first()
+}
 

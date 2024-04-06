@@ -1,8 +1,11 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -90,6 +93,40 @@ fun DartFactoryConstructorDeclarationImpl.manager() = DartFactoryConstructorDecl
 
 class Util {
     companion object {
+
+
+        /**
+         * 获取flutter当前版本通道
+         */
+        fun getFlutterChannel(project: Project): String? {
+            fun findChannelNameWithStar(lines: List<String>): Pair<Int, String>? {
+                lines.forEachIndexed { index, line ->
+                    if (line.contains("*")) {
+                        // 去掉行尾的括号内容，只保留星号前面的部分
+                        val cleanedLine = line.substringBeforeLast(" (")
+                        // 再次检查是否包含星号，避免误判（如果括号内也有星号）
+                        if (cleanedLine.contains("*")) {
+                            // 获取星号前的文字，即通道名称
+                            val channelName = cleanedLine.substringAfterLast(" ", "").substringBefore("*").trim()
+                            return Pair(index + 1, channelName) // 返回行号（索引+1，因为索引是从0开始的）和通道名称
+                        }
+                    }
+                }
+                return null // 如果没找到星号，则返回null
+            }
+
+            val cmd = GeneralCommandLine("flutter", "channel")
+            val output = ExecUtil.execAndGetOutput(cmd)
+            if (output.exitCode == 0) {
+                val stderrLines = output.stdoutLines
+                val result = findChannelNameWithStar(stderrLines)
+                if (result != null) {
+                    val version = result.second
+                    return version
+                }
+            }
+            return null
+        }
 
         fun toHexFromColor(color: Color): String {
             return UIUtil.colorToHex(color)

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.model
 
+import com.alibaba.fastjson2.annotation.JSONField
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -63,11 +64,14 @@ data class PubVersionDataModel(
 }
 
 data class Latest(
-    val version: String, val pubspec: Pubspec, val archiveURL: String, val published: String
+    val version: String,
+    val pubspec: Pubspec,
+    @JSONField(name = "archive_url") val archiveURL: String,
+    val published: String
 )
 
 data class Pubspec(
-    val name: String, val version: String, val homepage: String, val description: String
+    val name: String, val version: String, val homepage: String?, val description: String
 )
 
 val Pubspec.dartPluginModel get() = DartPluginVersionName(name, version)

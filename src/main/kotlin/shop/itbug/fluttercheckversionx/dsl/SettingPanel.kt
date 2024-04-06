@@ -27,14 +27,6 @@ fun settingPanel(
 
     val myPanel: DialogPanel = panel {
 
-        row {
-            button(PluginBundle.get("window.chat.loginDialog.text")) {
-                val project = ProjectManager.getInstance().defaultProject
-                MyNotificationUtil.showLoginDialog(project)
-            }
-        }
-
-//
         buttonsGroup(PluginBundle.get("basic")) {
             row(PluginBundle.get("setting.language")) {
                 for (lan in languageList)
@@ -42,33 +34,12 @@ fun settingPanel(
             }.comment(PluginBundle.get("setting.reset.tip"))
         }.bind({ model.lang }, { model.lang = it })
 
-//        group(PluginBundle.get("basic")) {
-//
-//
-//            row(PluginBundle.get("setting.language")) {
-//
-//
-//                segmentedButton(listOf("System", "中文", "繁體", "English", "한국어", "日本語")) { it }.bind(object :
-//                    ObservableMutableProperty<String> {
-//                    override fun set(value: String) {
-//                        model.lang = value
-//                    }
-//
-//                    override fun afterChange(listener: (String) -> Unit) {
-//                    }
-//
-//                    override fun afterChange(listener: (String) -> Unit, parentDisposable: Disposable) {
-//                    }
-//
-//                    override fun get(): String {
-//                        return model.lang
-//                    }
-//
-//                })
-//            }
-//                .comment(PluginBundle.get("setting.reset.tip"))
-//
-//        }
+        group(PluginBundle.get("check_flutter_version_title")) {
+            row {
+                checkBox(PluginBundle.get("open")).bindSelected(dioxSetting::checkFlutterVersion)
+            }.comment(PluginBundle.get("check_flutter_version_comment"))
+        }
+
 
         group("Dio") {
             row("Dio ${PluginBundle.get("setting.listening.port")}") {
@@ -80,7 +51,6 @@ fun settingPanel(
             row(PluginBundle.get("setting.new.tips")) {
                 checkBox(PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
             }
-            //.comment(PluginBundle.get("comment.api.new.tips"))
 
 
             indent {

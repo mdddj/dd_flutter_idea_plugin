@@ -11,7 +11,6 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
 
@@ -29,19 +28,14 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
 
                 var pluginName = ""
 
-                if(element is YAMLKeyValueImpl && element.isDartPluginElement()){
+                if (element is YAMLKeyValueImpl && element.isDartPluginElement()) {
                     pluginName = element.keyText
                 }
-                if(element is LeafPsiElement && element.parent is YAMLKeyValueImpl){
+                if (element is LeafPsiElement && element.parent is YAMLKeyValueImpl) {
                     pluginName = element.text
                 }
                 if (pluginName.isNotEmpty()) {
-                    var detail: PubVersionDataModel? = null
-                    val service = ServiceCreate.create(PubService::class.java)
-                    try {
-                        detail = service.callPluginDetails(pluginName).execute().body()
-                    } catch (_: Exception) {
-                    }
+                    var detail: PubVersionDataModel? = PubService.callPluginDetails(pluginName)
                     if (detail != null) {
                         return renderFullDoc(
                             pluginName = detail.name,
@@ -55,7 +49,7 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
                 }
             }
         }
-        return  super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "无法识别插件")
+        return super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "无法识别插件")
     }
 
     /**
@@ -68,8 +62,8 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
 
-        if(contextElement!=null && contextElement.isDartPluginElement()){
-            return  contextElement
+        if (contextElement != null && contextElement.isDartPluginElement()) {
+            return contextElement
         }
         return null
     }
@@ -108,7 +102,7 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         return sb.toString()
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated in Java", ReplaceWith("false"))
     override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
         return false
     }
