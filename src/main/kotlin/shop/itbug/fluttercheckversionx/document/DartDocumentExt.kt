@@ -141,7 +141,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         val sb = StringBuilder()
 
         if (element.parent.text.isNotEmpty()) {
-            val documentParseTool = DocumentParseTool(element.parent, element)
+            val documentParseTool = DocumentParseTool(element.parent)
             var eleText: String? = null
             runReadAction {
                 val params = documentParseTool.getParams()

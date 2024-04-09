@@ -35,7 +35,7 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
                     pluginName = element.text
                 }
                 if (pluginName.isNotEmpty()) {
-                    var detail: PubVersionDataModel? = PubService.callPluginDetails(pluginName)
+                    val detail: PubVersionDataModel? = PubService.callPluginDetails(pluginName)
                     if (detail != null) {
                         return renderFullDoc(
                             pluginName = detail.name,

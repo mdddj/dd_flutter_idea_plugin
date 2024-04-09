@@ -8,6 +8,7 @@ import com.intellij.psi.util.childrenOfType
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.*
 import com.jetbrains.lang.dart.psi.impl.*
+import shop.itbug.fluttercheckversionx.document.generateClassByNames
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 
@@ -31,10 +32,25 @@ data class ReplaceElementDoAction(val newElement: PsiElement) : ReplaceElementAc
 
 typealias ReplaceElementAction = (oldElement: DartDefaultFormalNamedParameter) -> ReplaceElementActionResult
 
+fun DartFactoryConstructorDeclarationInterface.generateDocString(): String {
+    return generateClassByNames(this.getClassName, this.componentNameList, this.getRequiredFields, this.getNamedFields)
+}
+
+interface DartFactoryConstructorDeclarationInterface {
+    val componentNameList: List<String>
+    val getRequiredFields: List<MyDartFieldModel>
+    val getNamedFields: List<MyDartFieldModel>
+    val getClassName: String
+}
+
+//扩展
+val DartFactoryConstructorDeclarationImpl.myManager get() = DartFactoryConstructorDeclarationImplManager(this)
+
 /**
  * 构造函数的相关操作
  */
-class DartFactoryConstructorDeclarationImplManager(private val psiElement: DartFactoryConstructorDeclarationImpl) {
+class DartFactoryConstructorDeclarationImplManager(private val psiElement: DartFactoryConstructorDeclarationImpl) :
+    DartFactoryConstructorDeclarationInterface {
 
 
     /**
@@ -45,10 +61,24 @@ class DartFactoryConstructorDeclarationImplManager(private val psiElement: DartF
     }
 
 
+    ///名称列表
+    override val componentNameList: List<String>
+        get() {
+            return psiElement.componentNameList.filter { it.name != null }.map { it.name ?: "" }
+        }
+
     /**
      * 获取类名
+     * 例子:
+     * ```dart
+     * factory Content.fromJson(Map<String, dynamic> json) => _$ContentFromJson(json);
+     * ```
+     * 返回:
+     * ```bash
+     * Content
+     * ```
      */
-    val getClassName get() : String? = psiElement.componentName?.text
+    override val getClassName get() : String = psiElement.componentName?.text ?: ""
 
 
     /**
@@ -73,6 +103,39 @@ class DartFactoryConstructorDeclarationImplManager(private val psiElement: DartF
      */
     fun hasHiveMate() = psiElement.getMetadataByName("HiveType") != null
 
+
+    /**
+     * 获取固定位置的参数列表
+     * 例子:
+     * ```dart
+     *  factory Content.fromJson(Map<String, dynamic> json) => _$ContentFromJson(json);
+     * ```
+     * 返回:
+     * ```
+     * Map<String, dynamic> json
+     * ```
+     */
+    override val getRequiredFields: List<MyDartFieldModel>
+        get() {
+            val formalParameterList = psiElement.formalParameterList
+            if (formalParameterList != null) {
+                return formalParameterList.normalFormalParameterList.map { it.myManager.myModel }
+            }
+            return emptyList()
+        }
+
+    /**
+     * 获取{}中的参数
+     */
+    override val getNamedFields: List<MyDartFieldModel>
+        get() {
+            val formalNamedParameter = psiElement.formalParameterList
+            formalNamedParameter?.let {
+                return formalNamedParameter.optionalFormalParameters?.defaultFormalNamedParameterList?.map { it.myManagerByNamed.myModel }
+                    ?: emptyList()
+            }
+            return emptyList()
+        }
 
     /**
      * 封装为自己的
@@ -192,8 +255,7 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
     ///注解列表
     private val getMetadataList: MutableCollection<DartMetadataImpl>
         get() = PsiTreeUtil.findChildrenOfType(
-            finalElement,
-            DartMetadataImpl::class.java
+            finalElement, DartMetadataImpl::class.java
         )
 
     val getPropertiesWrapper
@@ -254,8 +316,7 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
 
     ///循环处理注解列表
     private fun processMetadata(
-        filter: (manager: MyMetadataManger) -> Boolean,
-        action: (manager: MyMetadataManger) -> Unit
+        filter: (manager: MyMetadataManger) -> Boolean, action: (manager: MyMetadataManger) -> Unit
     ) {
         getMetadataList.forEach {
             val mg = MyMetadataManger(it)
@@ -365,8 +426,7 @@ val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.final_type_
 val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.document_type_string: String
     get() {
         val s = hasInitValue
-        var t =
-            if (isRequired) "${if (s) "" else "required "}$final_type_string $name" else "$final_type_string $name"
+        var t = if (isRequired) "${if (s) "" else "required "}$final_type_string $name" else "$final_type_string $name"
         if (s) {
             t = "$t = $get_init_text"
         }
@@ -376,12 +436,10 @@ val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.document_ty
 ///几种常见的类型
 enum class MyDartType(val dartType: String, val defaultValueString: String) {
     NumType("num", "0"), DoubleType("double", "0"), IntType("int", "0"), StringType("String", "''"), MapType(
-        "Map",
-        "{}"
+        "Map", "{}"
     ),
     MapType2(
-        "Map<String,dynamic>",
-        "{}"
+        "Map<String,dynamic>", "{}"
     ),
     ListType("List", "[]"), BoolType("bool", "false"), SetType("Set", "[]"), IListType("IList", "const IListConst([])"),
 

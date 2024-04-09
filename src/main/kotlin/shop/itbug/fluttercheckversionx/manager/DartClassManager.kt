@@ -25,7 +25,6 @@ typealias IfExistsFun = (element: PsiElement) -> Unit
  */
 class DartClassManager(val className: String, private val psiElement: DartClassDefinitionImpl) {
 
-
     constructor(psiElement: DartClassDefinitionImpl) : this(
         className = psiElement.componentName.name ?: "",
         psiElement = psiElement

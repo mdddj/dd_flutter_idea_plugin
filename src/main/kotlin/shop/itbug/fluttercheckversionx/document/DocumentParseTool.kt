@@ -6,8 +6,7 @@ import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
-import shop.itbug.fluttercheckversionx.manager.document_type_string
-import shop.itbug.fluttercheckversionx.manager.myManager
+import shop.itbug.fluttercheckversionx.manager.*
 import shop.itbug.fluttercheckversionx.util.manager
 
 
@@ -16,7 +15,7 @@ interface GenerateDocumentTextImpl {
 }
 
 ///对文档的类型显示进行了优化.
-class DocumentParseTool(val element: PsiElement, val originalPsiElement: PsiElement) {
+class DocumentParseTool(val element: PsiElement) {
 
 
     ///获取参数.
@@ -29,7 +28,7 @@ class DocumentParseTool(val element: PsiElement, val originalPsiElement: PsiElem
             }
 
             is DartMethodDeclarationImpl -> {
-                return element.getDocumentText
+                return element.myManager.generateDocString()
             }
 
             is DartClassDefinitionImpl -> {
@@ -38,6 +37,12 @@ class DocumentParseTool(val element: PsiElement, val originalPsiElement: PsiElem
 
             is DartFactoryConstructorDeclarationImpl -> {
                 val manager = MyDartConstructorManager(element)
+                val fields = element.myManager.getRequiredFields
+                println("--field-")
+                println(fields)
+                println("--field-")
+                println(element.myManager.getNamedFields)
+                println("---")
                 return manager.generateDocument()
             }
 
@@ -62,6 +67,68 @@ class DocumentParseTool(val element: PsiElement, val originalPsiElement: PsiElem
     }
 }
 
+fun generateClassByNames(
+    className: String,
+    componentNames: List<String>,
+    requiredParams: List<MyDartFieldModel>,
+    optionalParams: List<MyDartFieldModel>
+): String {
+    val sb = StringBuilder()
+    println("className: $className")
+    sb.append(className)
+    sb.append(" ")
+    if (componentNames.size == 2) {
+        sb.append("${componentNames[0]}.${componentNames[1]}")
+    } else {
+        if (componentNames.isNotEmpty()) {
+            sb.append(componentNames.last())
+        } else {
+            sb.append(className)
+        }
+
+    }
+    sb.append("(")
+
+
+    //必填属性
+    if (requiredParams.isNotEmpty()) {
+        requiredParams.forEach {
+            val fs = it.fieldString
+            if (requiredParams.lastOrNull() == it) {
+                sb.append(fs)
+            } else {
+                sb.append("$fs,")
+            }
+        }
+    }
+    if (optionalParams.isNotEmpty()) {
+        if (requiredParams.isNotEmpty()) {
+            sb.append(",")
+        }
+
+        if (optionalParams.isNotEmpty()) {
+            sb.append("{")
+        }
+
+        optionalParams.forEach {
+            val fs = it.fieldString
+            if (optionalParams.lastOrNull() == it) {
+                sb.append(fs)
+            } else {
+                sb.append("$fs,")
+            }
+        }
+        if (optionalParams.isNotEmpty()) {
+            sb.append("}")
+        }
+
+    }
+
+    //可选属性
+    sb.append(")")
+    return sb.toString()
+}
+
 
 private fun generateClassText(
     className: String, requiredParams: List<String>? = emptyList(), optionParams: List<String>? = emptyList()
@@ -84,7 +151,12 @@ ${
 
 ///组成一个类
 val DartNamedConstructorDeclarationImpl.getClassText
-    get() = generateClassText(getNames, getRequiredParams, getOptionParams)
+    get() = generateClassByNames(
+        this.myManager.getClassName,
+        this.myManager.componentNameList,
+        this.myManager.getRequiredFields,
+        this.myManager.getNamedFields
+    )
 
 ///必填参数
 val DartNamedConstructorDeclarationImpl.getRequiredParams
@@ -110,36 +182,23 @@ val DartNamedConstructorDeclarationImpl.getNames
 class MyDartConstructorManager(private val dartConstructorPsiElement: DartFactoryConstructorDeclarationImpl) :
     GenerateDocumentTextImpl {
 
-    private val manager = dartConstructorPsiElement.manager()
+    private val manager: DartFactoryConstructorDeclarationImplManager = dartConstructorPsiElement.manager()
 
     private val className: String?
         get() {
-            val dartClassPsi =
-                PsiTreeUtil.findFirstParent(dartConstructorPsiElement) { it is DartClassDefinitionImpl }
+            val dartClassPsi = PsiTreeUtil.findFirstParent(dartConstructorPsiElement) { it is DartClassDefinitionImpl }
             val name = dartClassPsi?.let { cs -> (cs as DartClassDefinitionImpl).componentName.name }
             return name
         }
 
-    private val name get() = dartConstructorPsiElement.componentName?.name
+    private val name get() = manager.getClassName
 
-    val getFinalName = if (className == name) className else "$className.$name"
+
     override fun generateDocument(): String {
-
-        val prop = manager.getPropertiesWrapper
-
-
-        val sb = StringBuilder()
-        prop.forEach {
-            sb.appendLine(it.document_type_string.prependIndent("\t"))
-        }
-
-
-        return """
-class $getFinalName(
-{
-$sb
-})
-""".trimIndent()
+        val rf = manager.getRequiredFields
+        val of = manager.getNamedFields
+        val names = manager.componentNameList
+        return generateClassByNames(className ?: name ?: "", names, rf, of)
     }
 
 
