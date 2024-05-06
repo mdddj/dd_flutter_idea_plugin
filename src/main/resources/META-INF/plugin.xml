@@ -329,6 +329,9 @@
             <reference id="StatusBarOpenSettingAction"/>
         </group>
         <!--    status bar widgets  end   -->
+        <action id="SimpleClassToFreezedAction"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.SimpleClassToFreezedAction">
+        </action>
     </actions>
 
     <!--Git.MainMenu.FileActions-->

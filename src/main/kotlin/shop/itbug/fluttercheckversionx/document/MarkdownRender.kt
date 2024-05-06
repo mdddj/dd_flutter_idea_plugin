@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.document
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.DocumentationSettings
-import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -45,7 +44,15 @@ class MarkdownRender {
         fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, title: String) {
             if (tag != null) {
                 appendSection(title) {
-                    append(markdownToHtml(tag))
+                    val m = markdownToHtml(tag)
+                    println(
+                        """
+
+$m
+
+                    """.trimIndent()
+                    )
+                    append(m)
                 }
             }
         }
@@ -134,6 +141,7 @@ fun MarkdownNode.toHtml(): String {
         if (nodeText.contains("{@end-tool}")) {
             nodeText = nodeText.replace("{@end-tool}", "</p>")
         }
+        println("nodeText: $nodeText  nodeType: $nodeType")
 
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
@@ -158,9 +166,15 @@ fun MarkdownNode.toHtml(): String {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append("<code style='display:block;background-color: #${
-                        UIUtil.getEditorPaneBackground().toHexString()
-                    };border: 1px solid blue;padding:4px;font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>")
+                    sb.append(
+                        "<code style='display:block;background-color: #${
+                            UIUtil.getEditorPaneBackground().toHexString()
+                        };border: 1px solid blue;padding:4px;font-size:${
+                            DocumentationSettings.getMonospaceFontSizeCorrection(
+                                true
+                            )
+                        }%;'>"
+                    )
                     sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
                         DocumentationSettings.getInlineCodeHighlightingMode(),
                         comment.project,
@@ -169,21 +183,23 @@ fun MarkdownNode.toHtml(): String {
                     )
                     sb.append("</code>")
                 } else {
-                    sb.append("<code style='display:block;background-color: #${
-                        UIUtil.getEditorPaneBackground().toHexString()
-                    };border: 1px solid blue;padding:4px;' >$nodeText</code>")
+                    sb.append(
+                        "<code style='display:block;background-color: #${
+                            UIUtil.getEditorPaneBackground().toHexString()
+                        };border: 1px solid blue;padding:4px;' >$nodeText</code>"
+                    )
                 }
             }
 
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
+                val color = UIUtil.getEditorPaneBackground().toHexString()
+                println("color: $color")
                 sb.append(
-                    "<div style='background-color:#${
-                        UIUtil.getEditorPaneBackground().toHexString()
-                    };padding: 12px;border-radius: 25px;margin: 12px 0px;'><pre style='display:block;'><code style='display:block;font-size:${DocumentationSettings.getMonospaceFontSizeCorrection(true)}%;'>"
+                    "<div style='background-color:#$color;'>"
                 )
                 processChildren()
-                sb.append("</code></pre></div>")
+                sb.append("</div>")
             }
 
             MarkdownTokenTypes.FENCE_LANG -> {
@@ -235,15 +251,25 @@ fun MarkdownNode.toHtml(): String {
                 sb.append(nodeText)
             }
 
+            MarkdownTokenTypes.CODE_FENCE_START -> {
+                sb.append("<pre style='padding-bottom:0px'>")
+            }
+
+            MarkdownTokenTypes.CODE_FENCE_END -> {
+                sb.append("</pre>")
+            }
+
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
+                val en = DocumentationSettings.isHighlightingOfCodeBlocksEnabled()
+                val lang = guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE
                 sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                    when (DocumentationSettings.isHighlightingOfCodeBlocksEnabled()) {
+                    when (en) {
                         true -> DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING
                         false -> DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING
                     },
                     comment.project,
-                    guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE,
+                    lang,
                     nodeText
                 )
             }
@@ -366,7 +392,8 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
     if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
         // 将代码文本颜色设置为编辑器默认代码颜色，而不是文档组件文本颜色
         val codeAttributes =
-            EditorColorsManager.getInstance().globalScheme.getAttributes(HighlighterColors.TEXT).clone()
+            EditorColorsManager.getInstance().globalScheme.getAttributes(TextAttributesKey.createTextAttributesKey("DART"))
+                .clone()
         codeAttributes.backgroundColor = null
         appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
     } else {

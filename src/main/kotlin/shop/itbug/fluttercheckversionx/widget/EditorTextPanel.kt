@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.json.JsonLanguage
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -8,6 +10,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
+import java.awt.Font
 import javax.swing.BorderFactory
 
 
@@ -22,11 +25,14 @@ open class JsonEditorTextPanel(project: Project) : LanguageTextField(JsonLanguag
     fun scrollToTop() {
         editor?.scrollingModel?.scrollVertically(0)
     }
+
+    override fun getFont(): Font {
+        return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
+    }
 }
 
 class DartEditorTextPanel(project: Project, text: String = "") :
     LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
-
 
 
     init {
@@ -44,6 +50,9 @@ class DartEditorTextPanel(project: Project, text: String = "") :
         formatCode()
     }
 
+    override fun getFont(): Font {
+        return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
+    }
 
     private fun formatCode() {
 

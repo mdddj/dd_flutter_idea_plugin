@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
-import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -16,7 +15,7 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
  * dart 文件的文档注释扩展
  */
 
-class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationProvider {
+class DartDocumentExt : AbstractDocumentationProvider() {
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String {
@@ -149,8 +148,9 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
             }
             if (eleText != null) {
                 val simpleText = "```dart\n" +
-                        (eleText) + "\n ```\n"
+                        (eleText) + "\n```\n"
                 Helper.addKeyValueHeader(sb)
+                println(simpleText)
                 sb.appendTag(
                     MyMarkdownDocRenderObject(text = simpleText, project = project),
                     PluginBundle.get("element")
@@ -182,15 +182,4 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationPr
         return sb.toString()
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("true"))
-    override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
-        return true
-    }
-
-    override fun canPromptToConfigureDocumentation(element: PsiElement?): Boolean {
-        return false
-    }
-
-    override fun promptToConfigureDocumentation(element: PsiElement?) {
-    }
 }

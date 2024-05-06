@@ -15,6 +15,7 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
+import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
 
@@ -63,8 +64,15 @@ class SocketWindow : ToolWindowFactory {
         val logContent = instance.createContent(logWindow, "Log", false)
         toolWindow.contentManager.addContent(logContent)
 
+
+        //隐私扫描工具窗口
+        val privacyPanel = PrivacyScanWindow(project)
+        val privacyContent = instance.createContent(
+            privacyPanel,
+            "IOS${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}",
+            false
+        )
+        toolWindow.contentManager.addContent(privacyContent)
     }
 
 }
-
-//

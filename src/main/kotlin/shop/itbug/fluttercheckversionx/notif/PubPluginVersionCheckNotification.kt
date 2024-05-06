@@ -1,10 +1,12 @@
 package shop.itbug.fluttercheckversionx.notif
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.HyperlinkLabel
@@ -15,6 +17,8 @@ import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
+import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
+import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.window.AllPluginsCheckVersion
 import java.util.function.Function
@@ -25,7 +29,7 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
     override fun collectNotificationData(
         project: Project,
         file: VirtualFile
-    ): Function<in FileEditor, out JComponent?>? {
+    ): Function<in FileEditor, out JComponent?> {
         return Function<FileEditor, JComponent?> {
             project.getPubspecYAMLFile() ?: return@Function null
             if (file.fileType is DartFileType) {
@@ -58,6 +62,47 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
             search()
         }
         myLinksPanel.add(searchPluginLabel)
+
+
+        ///重新索引
+        val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
+            doReIndex()
+        }
+        myLinksPanel.add(reIndexLabel)
+
+
+        ///打开隐私扫描窗口
+        val openPrivacyWindowLabel =
+            createActionLabel(PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")) {
+                doOpenPrivacyWindow()
+            }
+
+        myLinksPanel.add(openPrivacyWindowLabel)
+
+    }
+
+    ///打开隐私扫描工具窗口
+    private fun doOpenPrivacyWindow() {
+        val myToolWindow = MyToolWindowTools.getMyToolWindow(project)
+        myToolWindow?.let {
+            it.activate {
+                val content = it.contentManager.getContent(4)
+                if (content != null) {
+                    it.contentManager.setSelectedContent(content)
+                }
+            }
+        }
+    }
+
+    ///重新索引
+    private fun doReIndex() {
+        MyPsiElementUtil.getPubSecpYamlFile(project)?.let { _ ->
+            run {
+                WriteCommandAction.runWriteCommandAction(project) {
+                    VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
+                }
+            }
+        }
     }
 
     private fun checkNewVersions() {

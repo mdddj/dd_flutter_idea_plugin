@@ -158,25 +158,6 @@ val DartNamedConstructorDeclarationImpl.getClassText
         this.myManager.getNamedFields
     )
 
-///必填参数
-val DartNamedConstructorDeclarationImpl.getRequiredParams
-    get() : List<String> {
-        return formalParameterList.normalFormalParameterList.map { it.text }
-    }
-
-///可选参数
-val DartNamedConstructorDeclarationImpl.getOptionParams
-    get() : List<String> {
-        return formalParameterList.optionalFormalParameters?.defaultFormalNamedParameterList?.map { it.myManager.getPropertiesWrapper.document_type_string }
-            ?: emptyList()
-    }
-
-///函数名
-val DartNamedConstructorDeclarationImpl.getNames
-    get() : String {
-        return componentNameList.joinToString(separator = ".") { it.text }
-    }
-
 
 ///处理构造函数的模型
 class MyDartConstructorManager(private val dartConstructorPsiElement: DartFactoryConstructorDeclarationImpl) :
@@ -227,7 +208,7 @@ fun PsiElement.getDartElementType(): String? {
 }
 
 /// 获取文档
-fun PsiElement.getDartDocument(): String? {
+fun PsiElement.getDartElementDocument(): String? {
     return getDartInfo()?.dartdoc
 }
 

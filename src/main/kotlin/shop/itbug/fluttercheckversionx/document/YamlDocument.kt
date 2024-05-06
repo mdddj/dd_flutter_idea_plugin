@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
-import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -17,7 +16,7 @@ import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 /**
  * pub包自动提示的文档
  */
-class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
+class YamlDocument : DocumentationProvider {
 
     /**
      * 生成插件版本的提示
@@ -102,16 +101,5 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         return sb.toString()
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("false"))
-    override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
-        return false
-    }
-
-    override fun canPromptToConfigureDocumentation(element: PsiElement?): Boolean {
-        return true
-    }
-
-    override fun promptToConfigureDocumentation(element: PsiElement?) {
-    }
 
 }

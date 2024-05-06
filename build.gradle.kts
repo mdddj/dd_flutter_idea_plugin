@@ -63,7 +63,7 @@ var javaVersion = "17"
 
 
 val currentTime: LocalDateTime = LocalDateTime.now()
-val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 val formattedNow: String = currentTime.format(formatter)
 
 tasks {
@@ -86,8 +86,13 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>4.1.1 (${formattedNow})</h1>
-                     <p>1. Fix invalid freezed renaming</p>
+                     <h1>4.1.5 (${formattedNow})</h1>
+                     <p>1. Added third-party dependency package privacy file scanning tool(IOS)</p>
+                     <p>2. Added reindex shortcut button (pubspec.yaml)</p>
+                     <div />
+                     <h1>4.1.3</h1>
+                     <p>1. Improved floating panel documentation</p>
+                     <p>2. Added constructor to convert into <code>freezed</code> object</p>
                 </div>
             """.trimIndent()
         )

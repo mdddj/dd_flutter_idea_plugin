@@ -32,15 +32,56 @@ data class ReplaceElementDoAction(val newElement: PsiElement) : ReplaceElementAc
 
 typealias ReplaceElementAction = (oldElement: DartDefaultFormalNamedParameter) -> ReplaceElementActionResult
 
-fun DartFactoryConstructorDeclarationInterface.generateDocString(): String {
-    return generateClassByNames(this.getClassName, this.componentNameList, this.getRequiredFields, this.getNamedFields)
-}
 
+///带有属性的基本封装类
 interface DartFactoryConstructorDeclarationInterface {
     val componentNameList: List<String>
     val getRequiredFields: List<MyDartFieldModel>
     val getNamedFields: List<MyDartFieldModel>
     val getClassName: String
+}
+
+///生成doc
+fun DartFactoryConstructorDeclarationInterface.generateDocString(): String {
+    return generateClassByNames(this.getClassName, this.componentNameList, this.getRequiredFields, this.getNamedFields)
+}
+
+///全部的属性
+val DartFactoryConstructorDeclarationInterface.allFieldList get() = getRequiredFields + getNamedFields
+
+
+///生成freezed对象
+/**
+ * @freezed
+ * class AppVersionInfo with _$AppVersionInfo {
+ *   const factory AppVersionInfo({
+ *       @JsonKey(name: 'id') @Default(0)  int id,
+ *       @JsonKey(name: 'newVersion') @Default('')  String newversion,
+ *       @JsonKey(name: 'apkUrl') @Default('')  String apkurl,
+ *       @JsonKey(name: 'updateDescription') @Default('')  String updatedescription,
+ *       @JsonKey(name: 'forceUpdate') @Default(0)  int forceupdate,
+ *       @JsonKey(name: 'apkSize') @Default('')  String apksize,
+ *       @JsonKey(name: 'uploadDate') @Default(0)  int uploaddate,
+ *   }) = _AppVersionInfo;
+ *
+ *   factory AppVersionInfo.fromJson(Map<String, dynamic> json) => _$AppVersionInfoFromJson(json);
+ * }
+ *
+ */
+fun DartFactoryConstructorDeclarationInterface.generateFreezedClass(config: FieldToFreezedConfig = FieldToFreezedConfig()): String {
+    val sb = StringBuilder()
+    sb.appendLine("@freezed")
+    sb.appendLine("class $getClassName with _\$$getClassName {")
+    sb.appendLine("\tconst factory $getClassName({")
+    val all = allFieldList
+    for (field in all) {
+        val end = if (field == all.lastOrNull()) "" else ","
+        sb.appendLine("\t\t${field.generateFreezedFieldCode(config)}$end")
+    }
+    sb.appendLine("\t}) = _$getClassName;")
+    sb.appendLine("factory $getClassName.fromJson(Map<String, dynamic> json) => _\$${getClassName}FromJson(json);")
+    sb.appendLine("}")
+    return "$sb"
 }
 
 //扩展
