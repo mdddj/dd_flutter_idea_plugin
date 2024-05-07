@@ -148,7 +148,6 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
         try {
             val response = HttpRequest.get("https://pub.dartlang.org/api/search?q=${keyWorlds}").execute()
             val result = Gson().fromJson(response.body(), PubSearchResult::class.java)
-
             handle(result)
         } catch (_: Exception) {
         }

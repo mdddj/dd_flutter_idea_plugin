@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.config
 
-import com.alibaba.fastjson2.toJSONString
 import com.intellij.openapi.components.*
 
 data class PluginSetting(
@@ -19,7 +18,6 @@ class PluginConfig private constructor() : PersistentStateComponent<PluginSettin
 
     override fun loadState(state: PluginSetting) {
         setting = state
-        println("更新${setting.toJSONString()}")
     }
 
 

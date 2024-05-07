@@ -19,11 +19,14 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.messages.MessageBusConnection
 import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
+import shop.itbug.fluttercheckversionx.tools.MyFlutterVersion
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
+import shop.itbug.fluttercheckversionx.util.Util
 import shop.itbug.fluttercheckversionx.util.projectClosed
 
 
@@ -61,16 +64,19 @@ public final class AssetsListeningProjectService(val project: Project) {
     ///销毁
     fun dispose() {
         project.projectClosed {
-            checkFlutterVersionTask.onCancel()
+            if (DioListingUiConfig.setting.checkFlutterVersion) {
+                checkFlutterVersionTask.onCancel()
+            }
             connect.dispose()
-            println("监听资源被释放")
         }
     }
 
     ///初始化
     fun initListening() {
-        println("进来了.")
-        ProgressManager.getInstance().run(checkFlutterVersionTask)
+        if (DioListingUiConfig.setting.checkFlutterVersion) {
+            ProgressManager.getInstance().run(checkFlutterVersionTask)
+        }
+
         checkAssetsChange()
     }
 
@@ -117,15 +123,25 @@ public final class AssetsListeningProjectService(val project: Project) {
     ///检测flutter新版本弹出
     private inner class CheckFlutterVersionTask : Task.Backgroundable(project, "Detecting Flutter version...") {
         override fun run(indicator: ProgressIndicator) {
+            val flutterChannel = Util.getFlutterChannel(project)
+
             val currentFlutterVersion = FlutterVersionTool.readVersionFromSdkHome(project)
-            currentFlutterVersion?.let {
+            println("flutter channel :$flutterChannel    version:$currentFlutterVersion")
+            if (flutterChannel == null) {
+                return
+            }
+
+
+            currentFlutterVersion?.let { c ->
                 val version = FlutterService.getVersion()
-                version?.apply {
-                    val release = releases.find { o -> o.hash == currentRelease.stable }
+                version.apply {
+                    val hash = version.getCurrentReleaseByChannel(flutterChannel)
+                    val release = releases.find { o -> o.hash == hash }
+                    println("找到的版本:$release  hash=$hash")
                     release?.let { r ->
-                        if (r.version != it.version) {
+                        if (r.version != c.version) {
                             println("has new version")
-                            showTip(r, project)
+                            showTip(r, project, currentFlutterVersion, flutterChannel)
                         }
                     }
                 }
@@ -135,11 +151,17 @@ public final class AssetsListeningProjectService(val project: Project) {
         /**
          * 弹出通知
          */
-        fun showTip(release: Release, project: Project) {
+        fun showTip(release: Release, project: Project, currentVersion: MyFlutterVersion, channel: String) {
             val createNotification =
                 NotificationGroupManager.getInstance().getNotificationGroup("flutter_version_check").createNotification(
                     "The new Flutter version is ready",
-                    "Update to the latest version: ${release.version}  (dart:${release.dartSDKVersion})",
+                    """
+                    Update to the latest version: ${release.version}  (dart:${release.dartSDKVersion})
+                    <br/>
+                    <br/>
+                    Current version: ${currentVersion.version}
+                    Channel:$channel
+                    """.trimIndent(),
                     NotificationType.INFORMATION,
                 )
             createNotification.setIcon(MyIcons.flutter)

@@ -14,13 +14,10 @@ import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
-import shop.itbug.fluttercheckversionx.widget.jobs.JobsWindow
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
+import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
-//是否开启找工作窗口
-const val ENABLE_FIND_JOBS_WINDOW = false
-const val ENABLE_CHAT_ROOM_WINDOW = false
 
 /**
  * dio 的请求监听窗口, 在这个窗口中,会将手机里面的一系列请求在这个窗口中显示,并可以查看详细信息
@@ -48,28 +45,6 @@ class SocketWindow : ToolWindowFactory {
             toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
         }
 
-        //在线聊天窗口
-        if (ENABLE_CHAT_ROOM_WINDOW) {
-            val flutterChatWindow = FlutterChatMessageWindow(project, toolWindow)
-            val flutterChatWindowContent =
-                instance.createContent(flutterChatWindow, PluginBundle.get("window.idea.chat.title"), false)
-            toolWindow.contentManager.addContent(flutterChatWindowContent)
-        }
-
-
-        //找工作窗口
-        if (ENABLE_FIND_JOBS_WINDOW) {
-            val jobsWindow = JobsWindow(project, toolWindow)
-            val jobsContent = instance.createContent(jobsWindow, "找工作", false)
-            toolWindow.contentManager.addContent(jobsContent)
-        }
-
-        //api索引窗口
-//        val apiIndexWindow = BaseApiIndexWindow(p0,p1)
-//        val apiIndexContent = instance.createContent(apiIndexWindow,"接口管理",false)
-//        p1.contentManager.addContent(apiIndexContent)
-
-
         // sp工具
         val spWindow = SpWindow(project, toolWindow)
         val spContent = instance.createContent(spWindow, "Shared Preferences ${PluginBundle.get("tool")}", false)
@@ -89,8 +64,15 @@ class SocketWindow : ToolWindowFactory {
         val logContent = instance.createContent(logWindow, "Log", false)
         toolWindow.contentManager.addContent(logContent)
 
+
+        //隐私扫描工具窗口
+        val privacyPanel = PrivacyScanWindow(project)
+        val privacyContent = instance.createContent(
+            privacyPanel,
+            "IOS${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}",
+            false
+        )
+        toolWindow.contentManager.addContent(privacyContent)
     }
 
 }
-
-//

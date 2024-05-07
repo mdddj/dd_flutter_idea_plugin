@@ -6,21 +6,12 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioSession
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
 import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
-import shop.itbug.fluttercheckversionx.model.resource.ResourceCategoryTypeEnum
 import shop.itbug.fluttercheckversionx.model.user.User
-import shop.itbug.fluttercheckversionx.services.ItbugService
-import shop.itbug.fluttercheckversionx.services.JSONResult
-import shop.itbug.fluttercheckversionx.services.SERVICE
-import shop.itbug.fluttercheckversionx.services.event.UserLoginStatusEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
-import shop.itbug.fluttercheckversionx.util.CredentialUtil
 import java.util.concurrent.atomic.AtomicReference
 
 @Service
@@ -142,56 +133,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
             }
         }
     }
-
-    /**
-     * 执行登录
-     */
-    fun login() {
-        CredentialUtil.token?.let {
-            val userToken = it
-            val r = SERVICE.create<ItbugService>().getUserInfo(userToken)
-            r.enqueue(object : Callback<JSONResult<User?>> {
-                override fun onResponse(call: Call<JSONResult<User?>>, response: Response<JSONResult<User?>>) {
-                    val body = response.body()
-                    if (body?.state == 200) {
-                        user = body.data
-                        messageBus.syncPublisher(UserLoginStatusEvent.TOPIC).loginSuccess(user)
-                    } else {
-                        CredentialUtil.removeToken()
-                    }
-                }
-
-                override fun onFailure(call: Call<JSONResult<User?>>, t: Throwable) {
-                    t.printStackTrace()
-                    CredentialUtil.removeToken()
-                }
-            })
-        }
-    }
-
-    /**
-     * 加载房间列表
-     */
-    fun loadRooms() {
-        val call = SERVICE.create<ItbugService>().getResourceCategorys(ResourceCategoryTypeEnum.chatRoom.type)
-        call.enqueue(object : Callback<JSONResult<List<ResourceCategory>>> {
-            override fun onResponse(
-                call: Call<JSONResult<List<ResourceCategory>>>, response: Response<JSONResult<List<ResourceCategory>>>
-            ) {
-                response.body()?.apply {
-                    if (state == 200) {
-                        chatRooms = data
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<JSONResult<List<ResourceCategory>>>, t: Throwable) {
-            }
-
-        })
-
-    }
-
 
     companion object {
         @JvmStatic

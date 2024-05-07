@@ -24,6 +24,8 @@ import java.io.File
 
 typealias CreatePsiFileSuccess = (psiFile: PsiFile) -> Unit
 
+class CreatePsiElementException(message: String) : Exception(message)
+
 fun Project.reformat(element: PsiElement) {
     WriteCommandAction.runWriteCommandAction(this) {
         CodeStyleManager.getInstance(this).reformat(element)
@@ -329,7 +331,71 @@ class MyDartPsiElementUtil {
          */
         fun createDartNamePsiElement(name: String, project: Project): DartComponentNameImpl {
             val createDummyFile = DartElementGenerator.createDummyFile(project, "class $name {}")!!
-            return PsiTreeUtil.getChildOfType(createDummyFile, DartComponentNameImpl::class.java)!!
+            ///扫描子节点中的元素
+            val elements =
+                MyPsiElementUtil.findAllMatchingElements(createDummyFile) { _: String, psiElement: PsiElement ->
+                    psiElement is DartComponentNameImpl
+                }
+            return elements.firstOrNull() as? DartComponentNameImpl
+                ?: throw CreatePsiElementException("MyDartPsiElementUtil.createDartNamePsiElement Not working properly")
+
+        }
+
+
+        /**
+         *
+         * 创建DartTypeImpl
+         * class Test {
+         *   factory Test() = _Test;
+         * }
+         */
+        fun createDartTypeImplElement(name: String, project: Project): DartTypeImpl {
+            val dummy = DartElementGenerator.createDummyFile(
+                project, "class Test {\n" +
+                        "  factory Test() = $name;\n" +
+                        "}"
+            )
+            val elements =
+                MyPsiElementUtil.findAllMatchingElements(dummy) { _: String, psiElement: PsiElement ->
+                    psiElement is DartTypeImpl
+                }
+            return elements.firstOrNull() as? DartTypeImpl
+                ?: throw CreatePsiElementException("MyDartPsiElementUtil.createDartTypeImplElement Not working properly")
+        }
+
+
+        /**
+         * 创建结构体
+         */
+        fun createFunBody(name: String, project: Project): DartFactoryConstructorDeclarationImpl {
+            val dummy = DartElementGenerator.createDummyFile(
+                project, "class Test {\n" +
+                        "  $name\n" +
+                        "}"
+            )
+            val elements =
+                MyPsiElementUtil.findAllMatchingElements(dummy) { _: String, psiElement: PsiElement ->
+                    psiElement is DartFactoryConstructorDeclarationImpl
+                }
+            return elements.firstOrNull() as? DartFactoryConstructorDeclarationImpl
+                ?: throw CreatePsiElementException("MyDartPsiElementUtil.createFunBody Not working properly")
+        }
+
+        /**
+         * 创建结构体
+         */
+        fun createMixin(name: String, project: Project): DartTypeListImpl {
+            val dummy = DartElementGenerator.createDummyFile(
+                project, """
+                    class Test with $name{}
+                """.trimIndent()
+            )
+            val elements =
+                MyPsiElementUtil.findAllMatchingElements(dummy) { _: String, psiElement: PsiElement ->
+                    psiElement is DartTypeListImpl
+                }
+            return elements.firstOrNull() as? DartTypeListImpl
+                ?: throw CreatePsiElementException("MyDartPsiElementUtil.createMixin Not working properly")
         }
 
         fun createDartDartReferenceExpressionImplPsiElement(

@@ -7,8 +7,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
-import shop.itbug.fluttercheckversionx.services.await
 
 /// 自动加载版本号
 class PluginVersionHints : CompletionContributor() {
@@ -20,9 +18,8 @@ class PluginVersionHints : CompletionContributor() {
             runBlocking {
                 launch {
                     try {
-                        val data =
-                            ServiceCreate.create(PubService::class.java).getPackageVersions(currLinePluginName).await()
-                        data.versions.forEach {
+                        val data = PubService.getPackageVersions(currLinePluginName)
+                        data?.versions?.forEach {
                             result.addElement(LookupElementBuilder.create(it))
                         }
                     } catch (_: Exception) {

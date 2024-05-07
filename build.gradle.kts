@@ -1,18 +1,21 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val ideaVersion: String by project
 val ideaType: String by project
 val pluginVersion: String by project
+val type: String by project
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.20"
     id("org.jetbrains.intellij") version "1.16.1"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20-RC"
     idea
 }
 group = "shop.itbug"
-version = pluginVersion
+version = pluginVersion + type
 
 repositories {
     mavenLocal()
@@ -33,12 +36,6 @@ val pluginList = mutableListOf(
 )
 
 
-if (ideaType == "IU" && ideaVersion == "2023.3") {
-    pluginList.add("org.jetbrains.android:233.11799.272")
-}
-
-
-
 intellij {
     version.set(ideaVersion)
     if (ideaType.trim().isNotBlank()) {
@@ -55,19 +52,20 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:latest.release")
-    implementation("com.squareup.retrofit2:converter-gson:latest.release")
-    implementation("cn.hutool:hutool-all:latest.release")
+    implementation("cn.hutool:hutool-http:latest.release")
     implementation("org.smartboot.socket:aio-pro:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2:latest.release")
-    implementation("com.alibaba.fastjson2:fastjson2-kotlin:latest.release")
-    implementation("com.google.code.gson:gson:latest.release")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
     testImplementation(kotlin("test"))
 }
 
-
+val pushToken: String? = System.getenv("idea_push_token")
 var javaVersion = "17"
+
+
+val currentTime: LocalDateTime = LocalDateTime.now()
+val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+val formattedNow: String = currentTime.format(formatter)
+
 tasks {
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -88,14 +86,17 @@ tasks {
         changeNotes.set(
             """
                 <div>
-                     <h1>4.0.6</h1>
-                     <p>1. Optimize document rendering</p>
+                     <h1>4.1.5 (${formattedNow})</h1>
+                     <p>1. Added third-party dependency package privacy file scanning tool(IOS)</p>
+                     <p>2. Added reindex shortcut button (pubspec.yaml)</p>
+                     <div />
+                     <h1>4.1.3</h1>
+                     <p>1. Improved floating panel documentation</p>
+                     <p>2. Added constructor to convert into <code>freezed</code> object</p>
                 </div>
             """.trimIndent()
         )
     }
-
-
 
     signPlugin {
         certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
@@ -104,7 +105,7 @@ tasks {
     }
 
     publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        token.set(pushToken)
     }
 
     runIde {

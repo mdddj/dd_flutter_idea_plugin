@@ -42,7 +42,7 @@ class AppConfig : Configurable, Disposable, SearchableConfigurable {
         return JBTabbedPane().apply {
             add(PluginBundle.get("basic"), panel)
             add(PluginBundle.get("assets.gen"), generateSettingPanel)
-            add("保存后执行", dog)
+//            add("保存后执行", dog)
         }
     }
 

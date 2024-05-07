@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
-import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -11,14 +10,13 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.services.ServiceCreate
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
 
 /**
  * pub包自动提示的文档
  */
-class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
+class YamlDocument : DocumentationProvider {
 
     /**
      * 生成插件版本的提示
@@ -29,19 +27,14 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
 
                 var pluginName = ""
 
-                if(element is YAMLKeyValueImpl && element.isDartPluginElement()){
+                if (element is YAMLKeyValueImpl && element.isDartPluginElement()) {
                     pluginName = element.keyText
                 }
-                if(element is LeafPsiElement && element.parent is YAMLKeyValueImpl){
+                if (element is LeafPsiElement && element.parent is YAMLKeyValueImpl) {
                     pluginName = element.text
                 }
                 if (pluginName.isNotEmpty()) {
-                    var detail: PubVersionDataModel? = null
-                    val service = ServiceCreate.create(PubService::class.java)
-                    try {
-                        detail = service.callPluginDetails(pluginName).execute().body()
-                    } catch (_: Exception) {
-                    }
+                    val detail: PubVersionDataModel? = PubService.callPluginDetails(pluginName)
                     if (detail != null) {
                         return renderFullDoc(
                             pluginName = detail.name,
@@ -55,7 +48,7 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
                 }
             }
         }
-        return  super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "无法识别插件")
+        return super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "无法识别插件")
     }
 
     /**
@@ -68,8 +61,8 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
 
-        if(contextElement!=null && contextElement.isDartPluginElement()){
-            return  contextElement
+        if (contextElement != null && contextElement.isDartPluginElement()) {
+            return contextElement
         }
         return null
     }
@@ -108,16 +101,5 @@ class YamlDocument : DocumentationProvider, ExternalDocumentationProvider {
         return sb.toString()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun hasDocumentationFor(element: PsiElement?, originalElement: PsiElement?): Boolean {
-        return false
-    }
-
-    override fun canPromptToConfigureDocumentation(element: PsiElement?): Boolean {
-        return true
-    }
-
-    override fun promptToConfigureDocumentation(element: PsiElement?) {
-    }
 
 }

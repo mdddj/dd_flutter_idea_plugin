@@ -3,15 +3,16 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import javax.swing.JComponent
 
 
 fun Project.showCodePreviewDialog(code: String) {
-    CodeCopyDialog(this,code).show()
+    CodeCopyDialog(this, code).show()
 }
 
 class CodeCopyDialog(override val project: Project, val code: String) : MyDialogWrapper(project) {
@@ -26,14 +27,14 @@ class CodeCopyDialog(override val project: Project, val code: String) : MyDialog
 
     init {
         super.init()
-        title = "Copy code dialog"
+        title = PluginBundle.get("copy_code_dialog_title")
         super.setOKButtonText("Copy Code")
     }
 
     override fun createCenterPanel(): JComponent {
         return panel {
             row {
-                scrollCell(editor).horizontalAlign(HorizontalAlign.FILL)
+                scrollCell(editor).align(Align.FILL)
             }
         }
     }

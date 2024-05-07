@@ -44,7 +44,10 @@ data class DoxListeningSetting(
     var autoScroller: Boolean = true,
 
     ///显示项目名字
-    var showProjectName: Boolean = true
+    var showProjectName: Boolean = true,
+
+    ///项目启动时是否检测flutter新版本
+    var checkFlutterVersion: Boolean = true
 
 )
 

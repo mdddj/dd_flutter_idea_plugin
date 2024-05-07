@@ -2,75 +2,62 @@ package shop.itbug.fluttercheckversionx.services
 
 
 import cn.hutool.http.HttpUtil
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import com.alibaba.fastjson2.JSONObject
+import com.alibaba.fastjson2.annotation.JSONField
+
+class FlutterVersionCheckException(message: String) : Exception(message)
 
 object FlutterService {
-    fun getVersion() : FlutterVersions? {
-        return try{
+
+
+    fun getVersion(): FlutterVersions {
+        try {
             val url = " https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json"
-            val get:String = HttpUtil.get(url)
-            val json =  Json { allowStructuredMapKeys = true }
-            json.decodeFromString(FlutterVersions.serializer(),get)
-        }catch (e: Exception){
-            null
+            val get: String = HttpUtil.get(url)
+            return JSONObject.parseObject(get, FlutterVersions::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw FlutterVersionCheckException("Failed to detect new version of flutter:${e.localizedMessage}")
         }
     }
 }
 
-// To parse the JSON, install kotlin's serialization plugin and do:
-//
-// val json            = Json { allowStructuredMapKeys = true }
-// val flutterVersions = json.parse(FlutterVersions.serializer(), jsonString)
 
+///使用channel来判断版本
+fun FlutterVersions.getCurrentReleaseByChannel(channel: String): String? {
+    return when (channel.trim()) {
+        "beta" -> currentRelease.beta
+        "stable" -> currentRelease.stable
+        "dev" -> currentRelease.dev
+        else -> null
+    }
 
-@Serializable
-data class FlutterVersions (
-    @SerialName("base_url")
+}
+
+data class FlutterVersions(
+    @JSONField(name = "base_url")
     val baseURL: String,
 
-    @SerialName("current_release")
+    @JSONField(name = "current_release")
     val currentRelease: CurrentRelease,
 
     val releases: List<Release>
 )
 
-@Serializable
-data class CurrentRelease (
+data class CurrentRelease(
     val beta: String,
     val dev: String,
     val stable: String
 )
 
-@Serializable
-data class Release (
+data class Release(
     val hash: String,
-    val channel: Channel,
     val version: String,
-
-    @SerialName("dart_sdk_version")
+    @JSONField(name = "dart_sdk_version")
     val dartSDKVersion: String? = null,
-
-    @SerialName("dart_sdk_arch")
-    val dartSDKArch: DartSDKArch? = null,
-
-    @SerialName("release_date")
+    @JSONField(name = "release_date")
     val releaseDate: String,
-
     val archive: String,
     val sha256: String
 )
 
-@Serializable
-enum class Channel(val value: String) {
-    @SerialName("beta") Beta("beta"),
-    @SerialName("dev") Dev("dev"),
-    @SerialName("stable") Stable("stable");
-}
-
-@Serializable
-enum class DartSDKArch(val value: String) {
-    @SerialName("arm64") Arm64("arm64"),
-    @SerialName("x64") X64("x64");
-}
