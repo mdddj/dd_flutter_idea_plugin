@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBScrollPane
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.util.findPropertiesMaxLenObject
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
 import javax.swing.JComponent
@@ -23,10 +24,13 @@ class JsonToFreezedInputDialog(val project: Project) : DialogWrapper(project) {
         title = PluginBundle.get("input.your.json")
         setSize(500, 500)
         setOKButtonText(PluginBundle.get("freezed.btn.text"))
+        jsonEditView.background = this.contentPanel.background
     }
 
     override fun createCenterPanel(): JComponent {
-        return JBScrollPane(jsonEditView)
+        return JBScrollPane(jsonEditView).apply {
+            border = emptyBorder()
+        }
     }
 
 

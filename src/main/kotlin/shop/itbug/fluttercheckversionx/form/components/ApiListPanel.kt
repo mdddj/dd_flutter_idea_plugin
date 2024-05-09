@@ -6,7 +6,6 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataProvider
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
@@ -28,6 +27,7 @@ import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
+import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.util.Util
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
 import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
@@ -46,7 +46,7 @@ import javax.swing.event.ListSelectionListener
 class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider,
     DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent {
 
-    private val appService = service<AppService>()
+    private val appService = AppService.getInstance()
     private fun listModel(): ItemModel = model as ItemModel
 
 
@@ -54,7 +54,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         return JBPopupFactory.getInstance().createActionGroupPopup(
             null, myActionGroup, DataManager.getInstance().getDataContext(this), true, { }, 10
         )
-
     }
 
 
@@ -66,7 +65,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         setApiListEmptyText()
         addListSelectionListener(this)
         addRightPopupMenuClick()
-        border = null
+        border = emptyBorder()
         DioWindowApiSearchBus.listing { doSearch(it) }
         DioWindowCleanRequests.listening { listModel().clear() }
         DioSettingChangeEvent.listen { _, _ ->

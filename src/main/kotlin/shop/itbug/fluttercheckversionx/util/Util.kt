@@ -23,6 +23,7 @@ import java.io.InputStreamReader
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
+import java.nio.charset.Charset
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -32,6 +33,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.log10
+import kotlin.math.pow
 
 
 fun Color.toHexString(): String {
@@ -45,6 +48,21 @@ fun String.formatDartName(): String {
 
 fun String.firstChatToUpper(): String {
     return CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, this)
+}
+
+
+fun String.getSizeText(): String {
+    fun getStringSizeInBytes(text: String, charset: Charset = Charsets.UTF_8): Long {
+        return text.toByteArray(charset).size.toLong()
+    }
+
+    fun bytesToHumanReadable(size: Long): String {
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        if (size <= 0) return "0 B"
+        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+        return String.format("%.1f %s", size / 1024.0.pow(digitGroups.toDouble()), units[digitGroups])
+    }
+    return bytesToHumanReadable(getStringSizeInBytes(this))
 }
 
 /**

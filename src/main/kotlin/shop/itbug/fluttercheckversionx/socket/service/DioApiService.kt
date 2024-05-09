@@ -194,7 +194,6 @@ private class MyHeartCommon : MyHeartPlugin<String>(15, TimeUnit.SECONDS) {
             val json = JSONObject.parse(msg)
             if (json.getString("type") == "ping") {
                 MyLoggerEvent.fire(MyLogInfo(message = "$msg", key = LogKeys.ping))
-                println("收到心跳消息")
                 return true
             }
         }

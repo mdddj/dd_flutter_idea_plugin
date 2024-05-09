@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.tools
 
 import kotlinx.coroutines.*
+import javax.swing.BorderFactory
 
 
 /**
@@ -13,8 +14,8 @@ import kotlinx.coroutines.*
  */
 @OptIn(DelicateCoroutinesApi::class)
 fun <T> launchIOToMain(
-    block:  suspend CoroutineScope.() -> T,
-    callback:(T) -> Unit,
+    block: suspend CoroutineScope.() -> T,
+    callback: (T) -> Unit,
     error: ((Exception) -> Unit) = {}
 ): Job {
     return GlobalScope.launch {
@@ -32,3 +33,5 @@ fun <T> launchIOToMain(
         }
     }
 }
+
+fun emptyBorder() = BorderFactory.createEmptyBorder(0, 0, 0, 0)

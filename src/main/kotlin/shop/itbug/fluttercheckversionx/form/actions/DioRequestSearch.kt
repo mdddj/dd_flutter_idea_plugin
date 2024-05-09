@@ -22,7 +22,6 @@ class DioApiSearchAction : MyComboActionNew.MySearchAnAction() {
  */
 class DioRequestSearch : SearchTextField(), DocumentListener {
 
-
     init {
         addDocumentListener(this)
         textEditor.border = JBUI.Borders.empty()
@@ -35,7 +34,6 @@ class DioRequestSearch : SearchTextField(), DocumentListener {
     override fun insertUpdate(e: DocumentEvent?) {
         handleDocument(e)
     }
-
 
     private fun handleDocument(e: DocumentEvent?) {
         e?.document?.apply { DioWindowApiSearchBus.fire(getText(0, length)) }

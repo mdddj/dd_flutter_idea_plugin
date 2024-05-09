@@ -126,9 +126,6 @@ tasks {
         kotlinOptions.jvmTarget = javaVersion
     }
 
-    verifyPluginConfiguration {
-
-    }
 
     test {
         useJUnitPlatform()

@@ -53,7 +53,6 @@ class MyUserBarFactory : StatusBarWidgetFactory {
 
 /**
  * 底部工具栏中的扩展操作
- *
  */
 class MyUserAccountBar(var project: Project) : TextPanel.WithIconAndArrows(), IconLikeCustomStatusBarWidget {
 
@@ -116,7 +115,6 @@ class MyUserAccountBar(var project: Project) : TextPanel.WithIconAndArrows(), Ic
             10
         ) { false }
     }
-
 
 }
 

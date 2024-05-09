@@ -14,7 +14,7 @@ import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
  *
  */
 
-class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
+open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
 
 
     /**
