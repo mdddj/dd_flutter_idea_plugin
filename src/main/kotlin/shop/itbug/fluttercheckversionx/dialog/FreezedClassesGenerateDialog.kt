@@ -103,10 +103,6 @@ class FreezedClassesGenerateDialog(
                         fileName = it
                     }).align(Align.FILL)
                         .cellValidation {
-//                            val file = File(filePath + File.separator + it.text)
-//                            val msg = PluginBundle.get("file.already.exist")
-//                            println(file)
-//                            addInputRule(msg, Level.ERROR) { file.exists() }
                         }
                 }
                 row {
@@ -203,8 +199,4 @@ class FreezedClassesGenerateDialog(
     override fun getPreferredSize(): Dimension {
         return ScreenUtil.dimension
     }
-}
-
-private fun containsDigit(s: String?): Boolean {
-    return s?.contains(Regex("\\d")) == true
 }

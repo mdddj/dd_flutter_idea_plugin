@@ -17,7 +17,7 @@ import shop.itbug.fluttercheckversionx.hive.component.HiveValueComponent
 class HiveWidget(project: Project, toolWindow: ToolWindow) : BorderLayoutPanel() {
 
 
-    private val boxAndKeys = HiveBoxListComponent(project)
+    private val boxAndKeys = HiveBoxListComponent()
     private val jsonRender = HiveValueComponent(project).apply {
         border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
     }

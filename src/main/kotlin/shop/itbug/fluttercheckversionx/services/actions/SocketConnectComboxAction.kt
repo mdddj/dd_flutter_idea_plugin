@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.services.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.ui.popup.JBPopup
@@ -18,7 +19,7 @@ class SocketConnectComboxAction : MyExpandableComboAction() {
 
     private fun createGroup() = object : DefaultActionGroup() {
         init {
-            addAll(DioApiService.INSTANCESupplierSupplier.get().get().getSessions().map {
+            addAll(DioApiService.getInstance().getSessions().map {
                 object : MyAction({ it.sessionID }) {
                     override fun actionPerformed(e: AnActionEvent) {
                         println("勾选。。。")
@@ -31,7 +32,7 @@ class SocketConnectComboxAction : MyExpandableComboAction() {
 
 
     override fun update(e: AnActionEvent) {
-        val sessions = DioApiService.INSTANCESupplierSupplier.get().get().getSessions()
+        val sessions = DioApiService.getInstance().getSessions()
         if (sessions.isEmpty()) {
             e.presentation.description = "Empty"
             e.presentation.text = PluginBundle.get("empty")
@@ -41,7 +42,7 @@ class SocketConnectComboxAction : MyExpandableComboAction() {
     }
 
 
-    override fun createPopup(event: AnActionEvent): JBPopup? {
+    override fun createPopup(event: AnActionEvent): JBPopup {
         val pop = JBPopupFactory.getInstance().createActionGroupPopup(
             null,
             createGroup(),
@@ -50,5 +51,9 @@ class SocketConnectComboxAction : MyExpandableComboAction() {
             true
         )
         return pop
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 }

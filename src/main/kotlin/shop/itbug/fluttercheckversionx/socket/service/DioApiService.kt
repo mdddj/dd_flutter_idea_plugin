@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.socket.service
 
 import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
-import com.intellij.openapi.application.CachedSingletonsRegistry
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.StateMachineEnum
@@ -13,22 +12,17 @@ import org.smartboot.socket.transport.WriteBuffer
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService.Companion.getInstance
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
 import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import java.util.concurrent.TimeUnit
-import java.util.function.Supplier
 
 @Service(Service.Level.APP)
 class DioApiService {
 
     companion object {
-        //        val INSTANCESupplier: Supplier<DioApiService> = CachedSingletonsRegistry.lazy { service<DioApiService>() }
-        val INSTANCESupplierSupplier: Supplier<DioApiService> =
-            CachedSingletonsRegistry.lazy { service<DioApiService>() }
-
+        fun getInstance() = service<DioApiService>()
     }
-
-    fun get() = INSTANCESupplierSupplier.get()
 
 
     private val sessions = mutableSetOf<AioSession>()
@@ -69,7 +63,7 @@ class DioApiService {
 
 
         fun register() {
-            INSTANCESupplierSupplier.get().get().addHandle(this)
+            getInstance().addHandle(this)
         }
 
         /**
@@ -162,16 +156,16 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
         println("==$session $stateMachineEnum")
         when (stateMachineEnum) {
             StateMachineEnum.NEW_SESSION -> {
-                DioApiService.INSTANCESupplierSupplier.get().get().addSession(session)
+                getInstance().addSession(session)
             }
 
-            StateMachineEnum.INPUT_SHUTDOWN -> DioApiService.INSTANCESupplierSupplier.get().get().removeSession(session)
-            StateMachineEnum.SESSION_CLOSING -> DioApiService.INSTANCESupplierSupplier.get().get()
+            StateMachineEnum.INPUT_SHUTDOWN -> getInstance().removeSession(session)
+            StateMachineEnum.SESSION_CLOSING -> getInstance()
                 .removeSession(session)
 
-            StateMachineEnum.SESSION_CLOSED -> DioApiService.INSTANCESupplierSupplier.get().get().removeSession(session)
-            StateMachineEnum.REJECT_ACCEPT -> DioApiService.INSTANCESupplierSupplier.get().get().removeSession(session)
-            StateMachineEnum.ACCEPT_EXCEPTION -> DioApiService.INSTANCESupplierSupplier.get().get()
+            StateMachineEnum.SESSION_CLOSED -> getInstance().removeSession(session)
+            StateMachineEnum.REJECT_ACCEPT -> getInstance().removeSession(session)
+            StateMachineEnum.ACCEPT_EXCEPTION -> getInstance()
                 .removeSession(session)
 
             else -> {}

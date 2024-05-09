@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.hive.component
 
 import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.Project
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
@@ -25,7 +24,7 @@ import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 ///盒子列表
-class HiveBoxListComponent(project: Project) : OnePixelSplitter() {
+class HiveBoxListComponent : OnePixelSplitter() {
 
 
     private val hiveBoxList = HiveBoxList()
@@ -62,7 +61,7 @@ class HiveBoxListComponent(project: Project) : OnePixelSplitter() {
 class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, ListSelectionListener {
 
     init {
-        DioApiService.INSTANCESupplierSupplier.get().get().addHandle(this)
+        DioApiService.getInstance().addHandle(this)
         cellRenderer = ItemRender()
         addListSelectionListener(this)
     }
@@ -97,7 +96,7 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
     override fun valueChanged(e: ListSelectionEvent?) {
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {
             val projectName = service<AppService>().currentSelectName.get() ?: ""
-            DioApiService.INSTANCESupplierSupplier.get().get()
+            DioApiService.getInstance()
                 .sendByAnyObject(HiveActionGetKeys(projectName = projectName, boxName = selectedValue))
         }
     }
@@ -130,7 +129,7 @@ class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioA
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {
             val projectName = service<AppService>().currentSelectName.get() ?: ""
             val boxName = boxList.selectedValue
-            DioApiService.INSTANCESupplierSupplier.get().get().sendByAnyObject(
+            DioApiService.getInstance().sendByAnyObject(
                 HiveActionGetValue(
                     projectName = projectName, boxName = boxName, key = selectedValue
                 )

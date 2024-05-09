@@ -19,8 +19,6 @@ class DartDocumentExt : AbstractDocumentationProvider() {
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String {
-
-
         val reference = element.parent?.parent?.reference?.resolve()
         val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
             element.containingFile.virtualFile,
