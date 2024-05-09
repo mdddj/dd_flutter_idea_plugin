@@ -126,13 +126,23 @@ tasks {
         kotlinOptions.jvmTarget = javaVersion
     }
 
-
     test {
         useJUnitPlatform()
     }
 
     configurations.all {
 
+    }
+
+    verifyPlugin {
+
+    }
+
+    verifyPluginConfiguration {
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+        kotlinJvmTarget = javaVersion
+        version = ideaVersion
     }
 
 }
