@@ -70,7 +70,7 @@ private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: 
     private val args: List<DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper> =
         manager.getPropertiesWrapper
     private val setting = SettingModel(
-        className = manager.getClassName ?: "", generateClass = args.generateClassString(manager.getClassName ?: "Root")
+        className = manager.getClassName, generateClass = args.generateClassString(manager.getClassName)
     )
     private val editor = DartEditorTextPanel(project, setting.generateClass)
 

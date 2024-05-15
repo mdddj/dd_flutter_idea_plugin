@@ -252,7 +252,7 @@ fun MarkdownNode.toHtml(): String {
             }
 
             MarkdownTokenTypes.CODE_FENCE_START -> {
-                sb.append("<pre style='padding-bottom:0px'>")
+                sb.append("<pre style='padding-bottom:0px;'>")
             }
 
             MarkdownTokenTypes.CODE_FENCE_END -> {

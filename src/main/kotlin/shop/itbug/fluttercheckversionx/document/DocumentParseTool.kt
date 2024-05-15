@@ -20,7 +20,7 @@ class DocumentParseTool(val element: PsiElement) {
 
     ///获取参数.
     fun getParams(): String? {
-        println(element::class.java)
+        println("节点:" + element::class.java)
         return when (element) {
 
             is DartNamedConstructorDeclarationImpl -> {
@@ -94,10 +94,11 @@ fun generateClassByNames(
     if (requiredParams.isNotEmpty()) {
         requiredParams.forEach {
             val fs = it.fieldString
-            if (requiredParams.lastOrNull() == it) {
-                sb.append(fs)
+            if (requiredParams.lastOrNull() == it && requiredParams.size > 1) {
+                sb.appendLine("\t" + fs)
             } else {
-                sb.append("$fs,")
+                val lst = if (requiredParams.size == 1) "" else ","
+                sb.appendLine("$fs$lst")
             }
         }
     }
@@ -107,25 +108,23 @@ fun generateClassByNames(
         }
 
         if (optionalParams.isNotEmpty()) {
-            sb.append("{")
+            sb.appendLine("{")
         }
 
         optionalParams.forEach {
             val fs = it.fieldString
             if (optionalParams.lastOrNull() == it) {
-                sb.append(fs)
+                sb.appendLine("\t" + fs)
             } else {
-                sb.append("$fs,")
+                sb.appendLine("\t$fs,")
             }
         }
-        if (optionalParams.isNotEmpty()) {
-            sb.append("}")
-        }
-
     }
 
+    val lst = if (optionalParams.isNotEmpty()) "}" else ""
+
     //可选属性
-    sb.append(")")
+    sb.append("$lst)")
     return sb.toString()
 }
 

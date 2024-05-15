@@ -5,7 +5,6 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -17,9 +16,6 @@ import shop.itbug.fluttercheckversionx.constance.dartKeys
 import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclarationImplManager
 import java.awt.Color
 import java.awt.Point
-import java.io.BufferedReader
-import java.io.ByteArrayInputStream
-import java.io.InputStreamReader
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -116,7 +112,7 @@ class Util {
         /**
          * 获取flutter当前版本通道
          */
-        fun getFlutterChannel(project: Project): String? {
+        fun getFlutterChannel(): String? {
             fun findChannelNameWithStar(lines: List<String>): Pair<Int, String>? {
                 lines.forEachIndexed { index, line ->
                     if (line.contains("*")) {
@@ -302,15 +298,6 @@ class Util {
             return m.find()
         }
 
-
-        fun addStringToLineStart(text: String, value: String): String {
-            val bufferedReader = BufferedReader(InputStreamReader(ByteArrayInputStream(text.toByteArray())))
-            val sb = StringBuilder()
-            bufferedReader.forEachLine {
-                sb.appendLine("$value $it")
-            }
-            return sb.toString()
-        }
 
     }
 }

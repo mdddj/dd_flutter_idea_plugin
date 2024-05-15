@@ -10,27 +10,46 @@ import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import java.awt.Dimension
 import java.net.URI
+import java.util.regex.Pattern
 import javax.swing.BorderFactory
 
+fun extractIpAddressFromUrl(url: String): String {
+    val pattern = Pattern.compile("(?<=http[s]?://)(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})(?::\\d+)?")
+    val matcher = pattern.matcher(url)
+    return if (matcher.find()) matcher.group(1) else ""
+}
+
+
+fun removePortFromUrl(url: String): String {
+    // 正则表达式匹配":数字/"，其中\d+表示一个或多个数字
+    val pattern = Pattern.compile(":\\d+/")
+    val matcher = pattern.matcher(url)
+    // 使用replaceFirst函数替换第一个匹配到的部分为空字符串，实现删除效果
+    return matcher.replaceFirst("/")
+}
 
 //获取 URL 显示
 fun Request.formatUrl(setting: DoxListeningSetting): String {
     val uri = URI(url ?: "")
-    val host = uri.host
+    var host = uri.host ?: ""
     val scheme = uri.scheme + "://"
-
+    if (host.isEmpty()) {
+        host = extractIpAddressFromUrl(url ?: "")
+    }
     val param = uri.rawQuery
     var string = this.url ?: ""
     if (setting.showHost.not()) {
-        string = string.replace(scheme, "").replace(host, "")
+        string = string.replace(host, "").replace(scheme, "")
         if (string.startsWith(":${uri.port}")) {
             string = string.replace(":${uri.port}", "")
+        } else if (uri.port == -1) {
+            string = removePortFromUrl(string)
         }
     }
     if (setting.showQueryParams.not()) {
         string = string.replace("?$param", "")
-
     }
+    string = string.replace("&", "\u0026")
     return string
 }
 

@@ -74,6 +74,8 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         SwingUtilities.invokeLater {
             appService.refreshProjectRequest(project)
         }
+        // test
+//        model = ItemModel(mutableListOf(ProjectSocketService.getTestApi()))
     }
 
 

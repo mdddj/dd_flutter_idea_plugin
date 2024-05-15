@@ -123,7 +123,7 @@ public final class AssetsListeningProjectService(val project: Project) {
     ///检测flutter新版本弹出
     private inner class CheckFlutterVersionTask : Task.Backgroundable(project, "Detecting Flutter version...") {
         override fun run(indicator: ProgressIndicator) {
-            val flutterChannel = Util.getFlutterChannel(project)
+            val flutterChannel = Util.getFlutterChannel()
 
             val currentFlutterVersion = FlutterVersionTool.readVersionFromSdkHome(project)
             println("flutter channel :$flutterChannel    version:$currentFlutterVersion")

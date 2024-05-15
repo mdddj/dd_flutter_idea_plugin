@@ -32,8 +32,8 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
     ///
     override var value: String
         get() = appService.currentSelectName.get() ?: ""
-        set(value) {
-            value
+        set(v) {
+            println(v)
         }
 
 
