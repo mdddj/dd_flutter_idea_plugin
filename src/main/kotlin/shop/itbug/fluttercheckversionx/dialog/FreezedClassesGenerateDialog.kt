@@ -102,8 +102,6 @@ class FreezedClassesGenerateDialog(
                     nameLabel = textField().bindText({ fileName }, {
                         fileName = it
                     }).align(Align.FILL)
-                        .cellValidation {
-                        }
                 }
                 row {
                     checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(

@@ -72,7 +72,6 @@ class MyComboActionNew {
             override fun actionPerformed(e: AnActionEvent) {
                 value = myOption
                 setNewValue(myOption, e)
-                super.update(e)
             }
         }
     }
