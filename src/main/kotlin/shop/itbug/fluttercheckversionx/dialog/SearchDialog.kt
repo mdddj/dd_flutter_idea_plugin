@@ -11,6 +11,9 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.components.BorderLayoutPanel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
@@ -72,14 +75,20 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
 
 
     //执行插入
+    @OptIn(DelicateCoroutinesApi::class)
     private fun doInset() {
         selectedModel?.let {
-            MyPsiElementUtil.insertPluginToPubspecFile(
-                project,
-                it.`package`,
-                versionSelect.item,
-                FlutterPluginType.Dependencies
-            )
+            GlobalScope.launch {
+                launch {
+                    MyPsiElementUtil.insertPluginToPubspecFile(
+                        project,
+                        it.`package`,
+                        versionSelect.item,
+                        FlutterPluginType.Dependencies
+                    )
+                }
+            }
+
         }
     }
 
@@ -93,8 +102,11 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
         return false
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun getAllPlugins() {
-        allPlugins = MyPsiElementUtil.getAllPlugins(project)
+        GlobalScope.launch {
+            allPlugins = MyPsiElementUtil.getAllPlugins(project)
+        }
     }
 
     override fun createCenterPanel(): JComponent {
@@ -143,7 +155,7 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
 
     //执行搜索
     private fun doSearch() {
-        searchButton.label = "${PluginBundle.get("search")}..."
+        searchButton.text = "${PluginBundle.get("search")}..."
         val keyWorlds = searchTextField.text
         try {
             val response = HttpRequest.get("https://pub.dartlang.org/api/search?q=${keyWorlds}").execute()
@@ -151,7 +163,7 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
             handle(result)
         } catch (_: Exception) {
         }
-        searchButton.label = PluginBundle.get("search")
+        searchButton.text = PluginBundle.get("search")
     }
 
 }

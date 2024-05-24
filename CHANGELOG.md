@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## [4.3.1] - 2024-05-24
+
+- Optimize dart package version replacement logic
+- Fix the bug that modifying the file pubspec.yaml may cause unresponsiveness
+
+## [4.2.5] - 2024-05-23
+
+- Fix the problem of `flutter upgrade` and `flutter pub run build_runner build` command execution failure(idea **241+**)
+- New terminal adapted to `IDEA 2024.1+`
+- Fix some operation error reports. <code>Slow operations are prohibited on EDT. See
+  SlowOperations.assertSlowOperationsAreAllowed javadoc.</code>
+- Adaptation 2024.2
+- Remove some deprecated functions
+- Replace flutter update log `What's New` Url Link
+
+## [4.2.1] - 2024-05-17
+
+- Adaptation 2024.2
+- Fix performance issues caused by iOS privacy scanning window
+
 ## [4.2.0] - 2024-05-15
 
 - Fixed the problem of IP type URI being accessed and parsed incorrectly in the dio panel

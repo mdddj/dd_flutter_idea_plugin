@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
+import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.constance.MyKeys
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
@@ -22,8 +23,8 @@ class PsiElementEditorPopupMenuInlay : MyBaseInlay("WidgetCovertToRiverpod") {
 
 
     override fun needHandle(element: PsiElement, setting: PluginSetting): Boolean {
-        return setting.showRiverpodInlay && element is DartClassDefinitionImpl && MyPsiElementUtil.getAllPlugins(element.project)
-            .contains("hooks_riverpod") && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
+        val config: List<String> = runBlocking { MyPsiElementUtil.getAllPlugins(element.project) }
+        return setting.showRiverpodInlay && element is DartClassDefinitionImpl && config.contains("hooks_riverpod") && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
     }
 
     override fun handle(element: PsiElement, myFactory: HintsInlayPresentationFactory, model: MyBaseInlayModel) {

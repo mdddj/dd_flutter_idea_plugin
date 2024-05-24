@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
@@ -22,12 +23,15 @@ class YamlDocument : DocumentationProvider {
      * 生成插件版本的提示
      */
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
+
+
         element?.let {
+            val isPluginElement = runBlocking { element.isDartPluginElement() }
             originalElement?.let {
 
                 var pluginName = ""
 
-                if (element is YAMLKeyValueImpl && element.isDartPluginElement()) {
+                if (element is YAMLKeyValueImpl && isPluginElement) {
                     pluginName = element.keyText
                 }
                 if (element is LeafPsiElement && element.parent is YAMLKeyValueImpl) {
@@ -60,9 +64,11 @@ class YamlDocument : DocumentationProvider {
         contextElement: PsiElement?,
         targetOffset: Int
     ): PsiElement? {
-
-        if (contextElement != null && contextElement.isDartPluginElement()) {
-            return contextElement
+        if (contextElement != null) {
+            val isDartPluginElement = runBlocking { contextElement.isDartPluginElement() }
+            if (isDartPluginElement) {
+                return contextElement
+            }
         }
         return null
     }

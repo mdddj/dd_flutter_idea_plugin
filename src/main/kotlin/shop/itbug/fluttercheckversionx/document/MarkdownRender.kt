@@ -69,10 +69,10 @@ $m
             val maybeSingleParagraph = markdownNode.children.singleOrNull { it.type != MarkdownTokenTypes.EOL }
             val firstParagraphOmitted = when {
                 maybeSingleParagraph != null && !allowSingleParagraph -> {
-                    maybeSingleParagraph.children.joinToString("") { if (it.text == "\n") " " else it.toHtml() }
+                    maybeSingleParagraph.children.joinToString("") { if (it.text == "\n") " " else it.toHtml(comment.project) }
                 }
 
-                else -> markdownNode.toHtml()
+                else -> markdownNode.toHtml(comment.project)
             }
 
             val topMarginOmitted = when {
@@ -97,13 +97,14 @@ private fun processTableRow(
     node: MarkdownNode,
     cellTag: String,
     alignment: List<String>,
+    project: Project
 ) {
     sb.append("<tr style=\"${if (cellTag == "th") "" else ""}\">")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
         val alignValue = alignment.getOrElse(i) { "" }
         val alignTag = if (alignValue.isEmpty()) "" else " align=\"$alignValue\" "
         sb.append("<$cellTag$alignTag style=\"padding: 2px 8px;white-space: nowrap;margin:1px;${if (cellTag == "td") "" else ""}\">")
-        sb.append("<code>${child.toHtml()}</code>")
+        sb.append("<code>${child.toHtml(project)}</code>")
         sb.append("</$cellTag>")
     }
     sb.append("</tr>")
@@ -112,7 +113,7 @@ private fun processTableRow(
 /**
  * markdown节点转成html
  */
-fun MarkdownNode.toHtml(): String {
+fun MarkdownNode.toHtml(project: Project): String {
 
 
     if (node.type == MarkdownTokenTypes.WHITE_SPACE) {
@@ -120,7 +121,7 @@ fun MarkdownNode.toHtml(): String {
     }
 
     var currentCodeFenceLang = "dart"
-
+    val lang = guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE
     val sb = StringBuilder()
     visit { node, processChildren ->
 
@@ -141,8 +142,8 @@ fun MarkdownNode.toHtml(): String {
         if (nodeText.contains("{@end-tool}")) {
             nodeText = nodeText.replace("{@end-tool}", "</p>")
         }
-        println("nodeText: $nodeText  nodeType: $nodeType")
 
+        println(nodeType)
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
             MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
@@ -169,19 +170,8 @@ fun MarkdownNode.toHtml(): String {
                     sb.append(
                         "<code style='display:block;background-color: #${
                             UIUtil.getEditorPaneBackground().toHexString()
-                        };border: 1px solid blue;padding:4px;font-size:${
-                            DocumentationSettings.getMonospaceFontSizeCorrection(
-                                true
-                            )
-                        }%;'>"
+                        };border: 1px solid blue;padding:4px;' >$text</code>"
                     )
-                    sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                        DocumentationSettings.getInlineCodeHighlightingMode(),
-                        comment.project,
-                        DartLanguage.INSTANCE,
-                        text
-                    )
-                    sb.append("</code>")
                 } else {
                     sb.append(
                         "<code style='display:block;background-color: #${
@@ -194,7 +184,6 @@ fun MarkdownNode.toHtml(): String {
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
                 val color = UIUtil.getEditorPaneBackground().toHexString()
-                println("color: $color")
                 sb.append(
                     "<div style='background-color:#$color;'>"
                 )
@@ -215,7 +204,7 @@ fun MarkdownNode.toHtml(): String {
                     ?.dropLastWhile { it.type == MarkdownTokenTypes.RBRACKET }
                 if (linkLabelContent != null) {
                     val label = linkLabelContent.joinToString(separator = "") { it.text }
-                    val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml() ?: label
+                    val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml(project) ?: label
                     if (DumbService.isDumb(comment.project)) {
                         sb.append(linkText)
                     } else {
@@ -227,7 +216,7 @@ fun MarkdownNode.toHtml(): String {
             }
 
             MarkdownElementTypes.INLINE_LINK -> {
-                val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml()
+                val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml(project)
                 val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                 if (label != null && destination != null) {
                     sb.append("<a href=\"$destination\">$label</a>")
@@ -262,7 +251,6 @@ fun MarkdownNode.toHtml(): String {
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
                 val en = DocumentationSettings.isHighlightingOfCodeBlocksEnabled()
-                val lang = guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE
                 sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
                     when (en) {
                         true -> DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING
@@ -289,7 +277,7 @@ fun MarkdownNode.toHtml(): String {
             MarkdownElementTypes.LINK_TEXT -> {
                 val childrenWithoutBrackets = node.children.drop(1).dropLast(1)
                 for (child in childrenWithoutBrackets) {
-                    sb.append(child.toHtml())
+                    sb.append(child.toHtml(project))
                 }
             }
 
@@ -314,7 +302,7 @@ fun MarkdownNode.toHtml(): String {
                 for (child in node.children) {
                     if (child.type == GFMElementTypes.HEADER) {
                         sb.append("<thead>")
-                        processTableRow(sb, child, "th", alignment)
+                        processTableRow(sb, child, "th", alignment, project)
                         sb.append("</thead>")
                     } else if (child.type == GFMElementTypes.ROW) {
                         if (!addedBody) {
@@ -322,7 +310,7 @@ fun MarkdownNode.toHtml(): String {
                             addedBody = true
                         }
 
-                        processTableRow(sb, child, "td", alignment)
+                        processTableRow(sb, child, "td", alignment, project)
                     }
                 }
 
@@ -402,18 +390,6 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
     return this
 }
 
-private fun StringBuilder.appendStyledSpan(
-    doHighlighting: Boolean,
-    attributesKey: TextAttributesKey,
-    value: String?
-): StringBuilder {
-    if (doHighlighting) {
-        appendStyledSpan(this, attributesKey, value, DocumentationSettings.getHighlightingSaturation(true))
-    } else {
-        append(value)
-    }
-    return this
-}
 
 private fun StringBuilder.appendStyledSpan(
     doHighlighting: Boolean,

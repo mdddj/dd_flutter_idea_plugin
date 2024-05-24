@@ -74,8 +74,6 @@ tasks {
             Changelog.OutputType.HTML
         )
     }
-    println("更新日志:\n" + myChangeLog.get())
-
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.jvmTarget = javaVersion
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"

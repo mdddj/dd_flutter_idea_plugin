@@ -20,11 +20,10 @@ object PubService {
     fun callPluginDetails(plugName: String): PubVersionDataModel? {
         val url = "https://pub.dartlang.org/api/packages/$plugName"
         try {
-            val resposne = HttpUtil.get(url)
+            val resposne = HttpUtil.get(url, 2000)
             return JSONObject.parseObject(resposne, PubVersionDataModel::class.java)
         } catch (e: Exception) {
-            println("获取插件信息失败:${e.message}")
-            e.printStackTrace()
+            println("获取插件信息失败${plugName}:${e.message} url:$url")
             return null
         }
     }
