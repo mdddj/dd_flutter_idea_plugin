@@ -102,12 +102,6 @@ class FreezedClassesGenerateDialog(
                     nameLabel = textField().bindText({ fileName }, {
                         fileName = it
                     }).align(Align.FILL)
-                        .cellValidation {
-//                            val file = File(filePath + File.separator + it.text)
-//                            val msg = PluginBundle.get("file.already.exist")
-//                            println(file)
-//                            addInputRule(msg, Level.ERROR) { file.exists() }
-                        }
                 }
                 row {
                     checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
@@ -203,8 +197,4 @@ class FreezedClassesGenerateDialog(
     override fun getPreferredSize(): Dimension {
         return ScreenUtil.dimension
     }
-}
-
-private fun containsDigit(s: String?): Boolean {
-    return s?.contains(Regex("\\d")) == true
 }

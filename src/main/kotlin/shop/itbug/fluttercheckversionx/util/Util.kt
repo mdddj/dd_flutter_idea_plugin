@@ -5,7 +5,6 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -17,12 +16,10 @@ import shop.itbug.fluttercheckversionx.constance.dartKeys
 import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclarationImplManager
 import java.awt.Color
 import java.awt.Point
-import java.io.BufferedReader
-import java.io.ByteArrayInputStream
-import java.io.InputStreamReader
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
+import java.nio.charset.Charset
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -32,6 +29,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.log10
+import kotlin.math.pow
 
 
 fun Color.toHexString(): String {
@@ -45,6 +44,21 @@ fun String.formatDartName(): String {
 
 fun String.firstChatToUpper(): String {
     return CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, this)
+}
+
+
+fun String.getSizeText(): String {
+    fun getStringSizeInBytes(text: String, charset: Charset = Charsets.UTF_8): Long {
+        return text.toByteArray(charset).size.toLong()
+    }
+
+    fun bytesToHumanReadable(size: Long): String {
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        if (size <= 0) return "0 B"
+        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+        return String.format("%.1f %s", size / 1024.0.pow(digitGroups.toDouble()), units[digitGroups])
+    }
+    return bytesToHumanReadable(getStringSizeInBytes(this))
 }
 
 /**
@@ -98,7 +112,7 @@ class Util {
         /**
          * 获取flutter当前版本通道
          */
-        fun getFlutterChannel(project: Project): String? {
+        fun getFlutterChannel(): String? {
             fun findChannelNameWithStar(lines: List<String>): Pair<Int, String>? {
                 lines.forEachIndexed { index, line ->
                     if (line.contains("*")) {
@@ -284,15 +298,6 @@ class Util {
             return m.find()
         }
 
-
-        fun addStringToLineStart(text: String, value: String): String {
-            val bufferedReader = BufferedReader(InputStreamReader(ByteArrayInputStream(text.toByteArray())))
-            val sb = StringBuilder()
-            bufferedReader.forEachLine {
-                sb.appendLine("$value $it")
-            }
-            return sb.toString()
-        }
 
     }
 }

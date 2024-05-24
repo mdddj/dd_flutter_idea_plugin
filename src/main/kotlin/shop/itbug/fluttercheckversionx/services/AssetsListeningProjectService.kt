@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.messages.MessageBusConnection
+import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
@@ -51,7 +52,7 @@ public final class AssetsListeningProjectService(val project: Project) {
 
     private lateinit var connect: MessageBusConnection
 
-    private var checkFlutterVersionTask: Task = CheckFlutterVersionTask()
+    private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
 
 
     companion object {
@@ -74,9 +75,11 @@ public final class AssetsListeningProjectService(val project: Project) {
     ///初始化
     fun initListening() {
         if (DioListingUiConfig.setting.checkFlutterVersion) {
+
             ProgressManager.getInstance().run(checkFlutterVersionTask)
         }
-
+// 通知测试
+//        checkFlutterVersionTask.showTestTip(project)
         checkAssetsChange()
     }
 
@@ -90,6 +93,7 @@ public final class AssetsListeningProjectService(val project: Project) {
                 if (project.isDisposed) {
                     return
                 }
+
                 val projectPath = project.basePath
                 val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
                 if (!setting.autoListenFileChange) {
@@ -123,15 +127,12 @@ public final class AssetsListeningProjectService(val project: Project) {
     ///检测flutter新版本弹出
     private inner class CheckFlutterVersionTask : Task.Backgroundable(project, "Detecting Flutter version...") {
         override fun run(indicator: ProgressIndicator) {
-            val flutterChannel = Util.getFlutterChannel(project)
-
-            val currentFlutterVersion = FlutterVersionTool.readVersionFromSdkHome(project)
+            val flutterChannel = Util.getFlutterChannel()
+            val currentFlutterVersion = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
             println("flutter channel :$flutterChannel    version:$currentFlutterVersion")
             if (flutterChannel == null) {
                 return
             }
-
-
             currentFlutterVersion?.let { c ->
                 val version = FlutterService.getVersion()
                 version.apply {
@@ -146,6 +147,11 @@ public final class AssetsListeningProjectService(val project: Project) {
                     }
                 }
             }
+        }
+
+        fun showTestTip(project: Project) {
+            println("show test tips")
+            showTip(testRelease, project, MyFlutterVersion("3.22.0"), "stable")
         }
 
         /**
@@ -187,7 +193,7 @@ public final class AssetsListeningProjectService(val project: Project) {
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
                 override fun actionPerformed(e: AnActionEvent) {
-                    BrowserUtil.browse("https://github.com/flutter/flutter/wiki/Hotfixes-to-the-Stable-Channel")
+                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/master/docs/releases/Hotfixes-to-the-Stable-Channel.md")
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {
@@ -199,6 +205,7 @@ public final class AssetsListeningProjectService(val project: Project) {
             createNotification.addAction(object : DumbAwareAction("Cancel") {
                 override fun actionPerformed(p0: AnActionEvent) {
                     createNotification.hideBalloon()
+                    createNotification.expire()
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {

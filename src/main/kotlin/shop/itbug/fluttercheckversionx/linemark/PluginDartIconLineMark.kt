@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
@@ -26,8 +27,8 @@ import javax.swing.Icon
 class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        if (element.isDartPluginElement() && element is YAMLKeyValueImpl) {
-//            val isExits = FlutterCollectService.exits(element.getPluginName()) //是否已经收藏了
+        val isDartPlugin = runBlocking { element.isDartPluginElement() }
+        if (isDartPlugin && element is YAMLKeyValueImpl) {
             return LineMarkerInfo(
                 element.firstChild,
                 element.firstChild.textRange,

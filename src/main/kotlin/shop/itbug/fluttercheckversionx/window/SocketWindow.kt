@@ -34,7 +34,7 @@ class SocketWindow : ToolWindowFactory {
         if (AppService.getInstance().dioIsStart.not()) {
             toolWindow.activate {
                 try {
-                    DioApiService.INSTANCESupplierSupplier.get().get().builder(port).start()
+                    DioApiService.getInstance().builder(port).start()
                     toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
                 } catch (e: Exception) {

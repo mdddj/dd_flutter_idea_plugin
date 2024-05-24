@@ -6,8 +6,6 @@ import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.ui.SearchTextField
-import com.intellij.util.ArrayUtil
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.Unmodifiable
 import javax.swing.JComponent
@@ -74,48 +72,7 @@ class MyComboActionNew {
             override fun actionPerformed(e: AnActionEvent) {
                 value = myOption
                 setNewValue(myOption, e)
-                super.update(e)
             }
-        }
-    }
-
-
-    /**
-     * 枚举类型的 action
-     */
-    abstract class EnumPolicySettingAction<T : Enum<T>>(private val policies: Array<T>) : ComboBoxSettingAction<T>() {
-
-
-        override fun update(e: AnActionEvent) {
-            super.update(e)
-            e.presentation.isEnabledAndVisible = policies.size > 1
-        }
-
-
-        override val reGetActions: Boolean
-            get() = false
-
-
-        override val availableOptions: MutableList<T>
-            get() = ContainerUtil.sorted(listOf(*policies))
-
-        fun getValue(): T {
-            val value = storedValue
-            if (ArrayUtil.contains(value, *policies)) return value
-
-            val substitutes = getValueSubstitutes(value)
-            for (substitute in substitutes) {
-                if (ArrayUtil.contains(substitute, *policies)) return substitute
-            }
-
-            return policies[0]
-        }
-
-
-        protected abstract val storedValue: T
-
-        protected fun getValueSubstitutes(value: T): List<T> {
-            return emptyList()
         }
     }
 

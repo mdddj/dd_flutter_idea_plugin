@@ -106,11 +106,16 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
         val files = ProjectRootManager.getInstance(project).orderEntries().librariesOnly().roots(OrderRootType.CLASSES)
         for (file in files.roots) {
             if (file.isDirectory) {
-                val iosDir = file.findChild("ios")
-                if (iosDir != null) {
-                    list.add(file)
-                    pathList.model = ListModel(list)
+                ApplicationManager.getApplication().executeOnPooledThread {
+                    val iosDir = file.findChild("ios")
+                    ApplicationManager.getApplication().invokeLater {
+                        if (iosDir != null) {
+                            list.add(file)
+                            pathList.model = ListModel(list)
+                        }
+                    }
                 }
+
             }
         }
     }

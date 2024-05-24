@@ -1,8 +1,27 @@
 package shop.itbug.fluttercheckversionx.socket
 
 import cn.hutool.core.date.DateUtil
+import shop.itbug.fluttercheckversionx.form.socket.Request
+
 
 class ProjectSocketService {
+    companion object {
+        fun getTestApi(): Request {
+            return Request(
+                data = "{}",
+                method = "GET",
+                queryParams = emptyMap(),
+                url = "https://itbug.shop:6666/api/test?hello=1&test=true",
+                statusCode = 200,
+                body = null,
+                headers = emptyMap(),
+                responseHeaders = emptyMap(),
+                timestamp = 300,
+                projectName = "Test Request",
+                createDate = DateUtil.now(),
+            )
+        }
+    }
 
     /**
      * 解析flutter发送过来的模型
@@ -10,13 +29,10 @@ class ProjectSocketService {
     data class SocketResponseModel(
         ///服务器返回谁
         val data: Any?,
-
         ///请求类型
         val method: String?,
-
         /// get 查询参数
         val queryParams: Map<String, Any>?,
-
         ///请求URL
         val url: String?,
 

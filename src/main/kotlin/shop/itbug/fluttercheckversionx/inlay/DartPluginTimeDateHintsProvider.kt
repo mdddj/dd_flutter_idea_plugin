@@ -8,7 +8,6 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.FormBuilder
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.util.Util
-import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 import javax.swing.JComponent
 
 const val pluginInfoSettingKey = "dart plugin infos show"
@@ -39,18 +38,6 @@ class DartPluginTimeDateHintsProvider : InlayHintsProvider<TimeDateHintSetting> 
 
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                if (element.isDartPluginElement()) {
-//                    val callRespose = ServiceCreate.create(PubService::class.java).callPluginDetails(element.getPluginName())
-//                    val body = callRespose.execute().body()
-//                    if(body!=null){
-//                        val myFactory = HintsInlayPresentationFactory(factory = factory)
-//                        println("获取到插件信息:$body")
-//                        sink.addInlineElement(element.endOffset,false,myFactory.simpleText(formatText(body), "提示"),true)
-//
-//                    }else{
-//                        println("body为null")
-//                    }
-                }
                 return true
             }
 

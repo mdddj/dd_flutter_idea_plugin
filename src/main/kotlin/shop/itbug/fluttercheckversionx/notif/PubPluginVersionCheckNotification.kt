@@ -13,6 +13,10 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartFileType
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
@@ -31,7 +35,10 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
         file: VirtualFile
     ): Function<in FileEditor, out JComponent?> {
         return Function<FileEditor, JComponent?> {
-            project.getPubspecYAMLFile() ?: return@Function null
+
+            val pub = runBlocking { project.getPubspecYAMLFile() }
+
+            pub ?: return@Function null
             if (file.fileType is DartFileType) {
                 return@Function null
             }
@@ -39,7 +46,8 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (filename != "pubspec.yaml") {
                 return@Function null
             }
-            FlutterVersionTool.readVersionFromSdkHome(project) ?: return@Function null
+            val flutterVersionInfo = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
+            flutterVersionInfo ?: return@Function null
             YamlFileNotificationPanel(it, project)
         }
     }
@@ -95,18 +103,22 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
     }
 
     ///重新索引
+    @OptIn(DelicateCoroutinesApi::class)
     private fun doReIndex() {
-        MyPsiElementUtil.getPubSecpYamlFile(project)?.let { _ ->
-            run {
-                WriteCommandAction.runWriteCommandAction(project) {
-                    VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
+        GlobalScope.launch {
+            MyPsiElementUtil.getPubSpecYamlFile(project)?.let { _ ->
+                run {
+                    WriteCommandAction.runWriteCommandAction(project) {
+                        VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
+                    }
                 }
             }
         }
+
     }
 
     private fun checkNewVersions() {
-        val file = project.getPubspecYAMLFile()
+        val file = runBlocking { project.getPubspecYAMLFile() }
         file?.containingFile?.let { DaemonCodeAnalyzer.getInstance(project).restart(it) }
         val component = JBPopupFactory.getInstance()
             .createComponentPopupBuilder(AllPluginsCheckVersion(project) {

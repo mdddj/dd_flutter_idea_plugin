@@ -1,30 +1,32 @@
 package shop.itbug.fluttercheckversionx.tools
 
 import cn.hutool.core.date.DateUtil
-import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
-import shop.itbug.fluttercheckversionx.util.*
+import shop.itbug.fluttercheckversionx.util.ApiService
+import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
+import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.YamlExtends
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
 import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
-
 
 /**
  * 插件新版本检测
@@ -60,6 +62,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
     }
 
     //执行长时间操作
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun doAnnotate(collectedInfo: Input?): List<Problem> {
         val arr = mutableListOf<Problem>()
         collectedInfo?.let {
@@ -69,7 +72,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                     key = LogKeys.checkPlugin
                 )
             )
-            val infos: List<PubVersionDataModel?> = runBlocking {
+            val infos: List<PubVersionDataModel?> = runBlocking(Dispatchers.IO.limitedParallelism(100)) {
                 val tasks = it.element.map { info ->
                     val pluginName = info.packageInfo.name
                     val r: Deferred<PubVersionDataModel?> = async {
@@ -90,7 +93,6 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                 val find: PubVersionDataModel? = infos.find { detail -> detail?.name == packageName }
                 find?.let { model ->
                     run {
-
                         val versionText = model.getLastVersionText(info.packageInfo)
                         if (versionText != null) {
                             MyLoggerEvent.fire(
@@ -116,40 +118,33 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
 
     override fun apply(file: PsiFile, annotationResult: List<Problem>?, holder: AnnotationHolder) {
         annotationResult?.forEach {
-
+            val fixText = PluginBundle.get("version.tip.3") + it.lastVersion
+            val fix = MyLocalFix(fixText, it.lastVersion)
+            val desc = InspectionManager.getInstance(file.project).createProblemDescriptor(
+                it.element,
+                fixText,
+                fix,
+                ProblemHighlightType.WARNING,
+                false
+            )
             holder.newAnnotation(
                 HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${it.lastVersion}"
-            ).newFix(object : IntentionAction {
-                val fixText = PluginBundle.get("version.tip.3") + it.lastVersion
-                var available = true
-                override fun startInWriteAction(): Boolean {
-                    return true
-                }
-
-                override fun getFamilyName(): String {
-                    return fixText
-                }
-
-                override fun getText(): String {
-                    return fixText
-                }
-
-                override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-                    return available
-                }
-
-                override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-                    MyPsiElementUtil.modifyPsiElementText(it.element.lastChild, it.lastVersion)
-                    available = false
-                    project.restartPubFileAnalyzer();
-                }
-
-
-            }).registerFix().range(it.element.lastChild).needsUpdateOnTyping().create()
+            ).newLocalQuickFix(fix, desc).registerFix().range(it.element.lastChild).needsUpdateOnTyping().create()
 
         }
 
     }
+}
 
 
+///修复新版本
+class MyLocalFix(private val fixText: String, private val newText: String) : LocalQuickFix {
+    override fun getFamilyName(): String = fixText
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        val element = descriptor.psiElement
+        ApplicationManager.getApplication().invokeLater {
+            MyPsiElementUtil.modifyPsiElementText(element.lastChild, newText)
+        }
+    }
 }

@@ -13,7 +13,7 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
-import com.intellij.vcs.commit.NonModalCommitPanel.Companion.showAbove
+import com.intellij.vcsUtil.showAbove
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -58,8 +58,6 @@ class GeneraAssetsSettingPanel(
         val actionGroup = DefaultActionGroup(*createActions())
         val toolbar =
             ActionManager.getInstance().createActionToolbar("GenerateAssetsIgFileToolbar", actionGroup, true).apply {
-                setReservePlaceAutoPopupIcon(true)
-                layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
                 targetComponent = igFilesWidget
             }
 
@@ -179,9 +177,6 @@ fun getGeneraAssetsPanel(
 
     return p
 }
-
-
-
 
 
 /**

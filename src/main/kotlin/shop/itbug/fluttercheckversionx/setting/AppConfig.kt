@@ -22,13 +22,10 @@ class AppConfig : Configurable, Disposable, SearchableConfigurable {
     var model = PluginStateService.getInstance().state ?: AppStateModel()
 
     private var dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
-
     private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
     private val dartSaveSettingState = DartFileSaveSettingState.getInstance().state
-
     private var generaAssetsSettingPanelModelIs = false
     private var dartFileSaveSettingPanelModelIs = false
-
     private var generateSettingPanel =
         GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
             generaAssetsSettingPanelModelIs = it

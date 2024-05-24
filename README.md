@@ -22,7 +22,13 @@ beautification of Dart documents and other tools, documents are under preparatio
 
 More tools in development...
 
-# Screenshot
+## Sponsor
+
+Thanks to **JETBRAINS** for the free open source license
+
+<a href='https://www.jetbrains.com'><img src='https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png' width='320px' /></a>
+
+## Screenshot
 
 <img width="705" alt="image" src="https://user-images.githubusercontent.com/29020213/169470371-182f38a0-33b1-49c3-8414-c80b232c6865.png">
 <img width="774" alt="image" src="https://user-images.githubusercontent.com/29020213/169472140-c0f76ae3-960f-4b02-838c-1365d23dbb59.png">
@@ -34,6 +40,7 @@ More tools in development...
 <img width="1076" alt="image" src="https://user-images.githubusercontent.com/29020213/169471759-491bbb6b-2ae1-4f57-ad4d-d8ef41a728ad.png">
 <img width="571" alt="image" src="https://user-images.githubusercontent.com/29020213/169472033-689819e6-ac05-46bd-a72b-e048c6c7b589.png">
 
-### 打赏
+## 打赏
 
 ![IMG_1839](https://user-images.githubusercontent.com/29020213/169472413-8dad4bf8-a2bb-4eda-bfda-c05b95877b78.JPG)
+

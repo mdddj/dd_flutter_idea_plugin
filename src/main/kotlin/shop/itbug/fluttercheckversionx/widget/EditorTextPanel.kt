@@ -10,17 +10,17 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
+import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import java.awt.Font
-import javax.swing.BorderFactory
 
 
-open class JsonEditorTextPanel(project: Project) : LanguageTextField(JsonLanguage.INSTANCE, project, "", false) {
+open class JsonEditorTextPanel(project: Project, initText: String = "") :
+    LanguageTextField(JsonLanguage.INSTANCE, project, initText, false) {
 
 
     override fun createEditor(): EditorEx {
         return myCreateEditor(super.createEditor())
     }
-
 
     fun scrollToTop() {
         editor?.scrollingModel?.scrollVertically(0)
@@ -36,7 +36,7 @@ class DartEditorTextPanel(project: Project, text: String = "") :
 
 
     init {
-        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+        border = emptyBorder()
         this.text = text
         reformat()
 
@@ -88,5 +88,6 @@ private fun myCreateEditor(ex: EditorEx): EditorEx {
     settings.isFoldingOutlineShown = true
     settings.isAllowSingleLogicalLineFolding = true
     settings.isRightMarginShown = true
+    ex.scrollPane.border = emptyBorder()
     return ex
 }
