@@ -11,8 +11,6 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -27,8 +25,7 @@ import javax.swing.Icon
 class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        val isDartPlugin = runBlocking { element.isDartPluginElement() }
-        if (isDartPlugin && element is YAMLKeyValueImpl) {
+        if (element.isDartPluginElement()) {
             return LineMarkerInfo(
                 element.firstChild,
                 element.firstChild.textRange,

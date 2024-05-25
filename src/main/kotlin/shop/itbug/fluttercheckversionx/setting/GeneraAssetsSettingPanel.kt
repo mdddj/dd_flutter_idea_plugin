@@ -7,13 +7,13 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
-import com.intellij.vcsUtil.showAbove
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -68,7 +68,7 @@ class GeneraAssetsSettingPanel(
         object : DumbAwareAction(AllIcons.General.Add) {
             override fun actionPerformed(e: AnActionEvent) {
                 WidgetUtil.getTextEditorPopup(PluginBundle.get("g.13"), "", {
-                    it.showAbove(igFilesWidget)
+                    it.show(RelativePoint.fromScreen(igFilesWidget.locationOnScreen))
                 }) {
                     this@GeneraAssetsSettingPanel.igFilesWidget.addItemString(it)
                 }

@@ -1,4 +1,6 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 val dartVersion: String by project
 val sinceBuildVersion: String by project
@@ -9,7 +11,7 @@ val pluginVersion: String by project
 val type: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.20"
+    id("org.jetbrains.kotlin.jvm") version "2.0.0"
     id("org.jetbrains.intellij") version "1.16.1"
     idea
     id("org.jetbrains.changelog") version "2.2.0"
@@ -17,7 +19,6 @@ plugins {
 group = "shop.itbug"
 version = pluginVersion + type
 
-println(project.version)
 repositories {
     mavenLocal()
     mavenCentral()
@@ -60,8 +61,6 @@ dependencies {
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
-var javaVersion = "17"
-
 
 tasks {
 
@@ -75,11 +74,10 @@ tasks {
         )
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = javaVersion
-        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
         compilerOptions {
-
+            languageVersion.set(KotlinVersion.KOTLIN_2_0)
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
 
@@ -113,11 +111,9 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = javaVersion
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = javaVersion
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
     }
 
     test {
@@ -125,11 +121,9 @@ tasks {
     }
 
     configurations.all {
-
     }
 
     verifyPlugin {
-
     }
 
     verifyPluginConfiguration {

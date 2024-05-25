@@ -15,7 +15,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
@@ -62,7 +65,6 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
     }
 
     //执行长时间操作
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun doAnnotate(collectedInfo: Input?): List<Problem> {
         val arr = mutableListOf<Problem>()
         collectedInfo?.let {
@@ -72,7 +74,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                     key = LogKeys.checkPlugin
                 )
             )
-            val infos: List<PubVersionDataModel?> = runBlocking(Dispatchers.IO.limitedParallelism(100)) {
+            val infos: List<PubVersionDataModel?> = runBlocking {
                 val tasks = it.element.map { info ->
                     val pluginName = info.packageInfo.name
                     val r: Deferred<PubVersionDataModel?> = async {
