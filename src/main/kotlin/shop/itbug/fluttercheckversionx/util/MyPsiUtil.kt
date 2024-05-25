@@ -192,20 +192,11 @@ fun PsiElement.exByModifyPsiElementText(newText: String) {
 /**
  * 判断此节点是否为flutter插件
  */
-suspend fun PsiElement.isDartPluginElement(): Boolean {
-
-    if (this is YAMLKeyValueImpl) {
-        val allPluginsMap = MyPsiElementUtil.getAllFlutters(project)
-        val allPlugins = allPluginsMap.values.toList()
-        var isin = false
-        allPlugins.forEach { e1 ->
-            try {
-                e1.first { it.name == this.keyText }
-                isin = true
-            } catch (_: Exception) {
-            }
-        }
-        return isin
+fun PsiElement.isDartPluginElement(): Boolean {
+    if (this is YAMLKeyValueImpl && this.parent.parent is YAMLKeyValueImpl) {
+        val p = this.parent.parent as YAMLKeyValueImpl
+        val temp = p.keyText
+        return temp == "dependencies" || temp == "dependency_overrides" || temp == "dev_dependencies"
     }
     return false
 }

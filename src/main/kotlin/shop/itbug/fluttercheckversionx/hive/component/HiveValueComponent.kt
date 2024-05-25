@@ -20,7 +20,7 @@ class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.
 
 
     ///更新值
-    private fun changeJsonValue(value: Any) {
+    private fun changeJsonValue(value: Any?) {
         jsonEditor.changeValue(value)
     }
 

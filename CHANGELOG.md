@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [4.4.0] - 2024-05-25
+
+- Fix the problem of stuck idea or Android studio
+- 修复as或者idea卡死的问题
+
 ## [4.3.1] - 2024-05-24
 
 - Optimize dart package version replacement logic
