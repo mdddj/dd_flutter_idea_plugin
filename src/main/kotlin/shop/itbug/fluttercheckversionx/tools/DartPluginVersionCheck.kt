@@ -113,7 +113,6 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
             }
 
         }
-
         return arr
     }
 

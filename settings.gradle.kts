@@ -5,3 +5,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+include("service")

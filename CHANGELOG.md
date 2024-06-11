@@ -2,18 +2,17 @@
 
 ## Unreleased
 
-## [4.4.0] - 2024-05-25
+## [4.5.2] - 2024-05-30
+
+- Optimize dart file inlay detection performance
+- Optimize some known bugs
+
+## [4.5.0] - 2024-05-25
 
 - Fix the problem of stuck idea or Android studio
-- 修复as或者idea卡死的问题
-
-## [4.3.1] - 2024-05-24
-
+- Upgrade kotlin version to `2.0.0` to `support k2 compiler`
 - Optimize dart package version replacement logic
 - Fix the bug that modifying the file pubspec.yaml may cause unresponsiveness
-
-## [4.2.5] - 2024-05-23
-
 - Fix the problem of `flutter upgrade` and `flutter pub run build_runner build` command execution failure(idea **241+**)
 - New terminal adapted to `IDEA 2024.1+`
 - Fix some operation error reports. <code>Slow operations are prohibited on EDT. See

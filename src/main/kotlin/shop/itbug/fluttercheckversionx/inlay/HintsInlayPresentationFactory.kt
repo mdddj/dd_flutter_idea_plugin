@@ -37,6 +37,7 @@ fun Editor.getLineStart(element: PsiElement): Int {
 
 /**
  * 获取缩进长度
+ * 或者可以参考@[EditorUtil#getPlainSpaceWidth]
  */
 fun Editor.getIndent(element: PsiElement): Int {
     val offset = element.textRange.startOffset
@@ -156,7 +157,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
     private fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> =
-        MyPluginMenusAvtionPopup(actionMenus, itemSelected)
+        MyPluginMenusActionPopup(actionMenus, itemSelected)
 
 
     fun getImageWithPath(path: String, basePath: String): InlayPresentation? {
@@ -173,7 +174,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     }
 
     /// 自定义菜单弹窗
-    class MyPluginMenusAvtionPopup(private val items: List<MenuItem>, private val itemSelected: (key: String) -> Unit) :
+    class MyPluginMenusActionPopup(private val items: List<MenuItem>, private val itemSelected: (key: String) -> Unit) :
         BaseListPopupStep<String>() {
 
         init {

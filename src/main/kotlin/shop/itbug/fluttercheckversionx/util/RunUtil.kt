@@ -23,9 +23,9 @@ object RunUtil {
             }
             toolWindow.activate {
                 // 241--
-//                instance.createLocalShellWidget(project.basePath, title).executeCommand(command)
+                instance.createLocalShellWidget(project.basePath, title).executeCommand(command)
                 // 241+
-                instance.createShellWidget(project.basePath, title, true, true).sendCommandToExecute(command) //241+
+//                instance.createShellWidget(project.basePath, title, true, true).sendCommandToExecute(command) //241+
             }
         }
     }

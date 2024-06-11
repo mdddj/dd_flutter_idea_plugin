@@ -1,7 +1,8 @@
 package shop.itbug.fluttercheckversionx.util
 
-import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
@@ -20,7 +21,7 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.constance.igFlutterPlugin
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
-import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
+import shop.itbug.fluttercheckversionx.services.PubspecService
 import java.io.File
 
 
@@ -79,13 +80,12 @@ class MyPsiElementUtil {
         /**
          * 获取项目pubspec.yaml 文件
          */
-        suspend fun getPubSpecYamlFile(project: Project): PsiFile? {
-            FlutterVersionTool.readVersionFromSdkHome(project) ?: return null
+        fun getPubSpecYamlFile(project: Project): PsiFile? {
             val pubspecYamlFile =
                 LocalFileSystem.getInstance()
                     .findFileByIoFile(File("${project.stateStore.projectBasePath}/pubspec.yaml"))
             if (pubspecYamlFile != null) {
-                return readAction { PsiManager.getInstance(project).findFile(pubspecYamlFile) }
+                return runReadAction { PsiManager.getInstance(project).findFile(pubspecYamlFile) }
             }
             return null
         }
@@ -93,23 +93,26 @@ class MyPsiElementUtil {
         /**
          * 获取项目的所有插件
          */
-        suspend fun getAllPlugins(project: Project, key: String = "dependencies"): List<String> {
+        fun getAllPlugins(project: Project): List<String> {
+            return project.service<PubspecService>().getAllDependencies()
+        }
+
+
+        fun getAllPluginsString(project: Project, key: String = "dependencies"): List<String> {
             val yamlFile = project.getPubspecYAMLFile()
             yamlFile?.let { file ->
                 val deps = YAMLUtil.getQualifiedKeyInFile(file, key)
                 if (deps != null) {
-
                     return deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
                 }
             }
             return emptyList()
         }
 
-
         /**
          * 获取项目插件列表
          */
-        suspend fun getAllFlutters(project: Project): MutableMap<FlutterPluginType, List<FlutterPluginElementModel>> {
+        fun getAllFlutters(project: Project): MutableMap<FlutterPluginType, List<FlutterPluginElementModel>> {
             val yamlFile = project.getPubspecYAMLFile()
             val map = mutableMapOf<FlutterPluginType, List<FlutterPluginElementModel>>()
             yamlFile?.let { yaml ->
@@ -209,6 +212,6 @@ fun PsiElement.getPluginName(): String {
 /**
  * 获取项目下的pubspec.yaml文件的yaml file对象
  */
-suspend fun Project.getPubspecYAMLFile(): YAMLFile? {
+fun Project.getPubspecYAMLFile(): YAMLFile? {
     return MyPsiElementUtil.getPubSpecYamlFile(this) as? YAMLFile
 }

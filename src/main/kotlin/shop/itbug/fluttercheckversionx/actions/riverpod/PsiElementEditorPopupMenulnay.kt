@@ -4,12 +4,12 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
-import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.constance.MyKeys
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
@@ -22,8 +22,8 @@ import java.awt.event.MouseEvent
 class PsiElementEditorPopupMenuInlay : MyBaseInlay("WidgetCovertToRiverpod") {
 
 
-    override fun needHandle(element: PsiElement, setting: PluginSetting): Boolean {
-        val config: List<String> = runBlocking { MyPsiElementUtil.getAllPlugins(element.project) }
+    override fun needHandle(element: PsiElement, setting: PluginSetting, editor: Editor): Boolean {
+        val config: List<String> = MyPsiElementUtil.getAllPlugins(element.project)
         return setting.showRiverpodInlay && element is DartClassDefinitionImpl && config.contains("hooks_riverpod") && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
     }
 

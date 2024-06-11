@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
@@ -26,7 +25,7 @@ class YamlDocument : DocumentationProvider {
 
 
         element?.let {
-            val isPluginElement = runBlocking { element.isDartPluginElement() }
+            val isPluginElement = element.isDartPluginElement()
             originalElement?.let {
 
                 var pluginName = ""
@@ -65,7 +64,7 @@ class YamlDocument : DocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
         if (contextElement != null) {
-            val isDartPluginElement = runBlocking { contextElement.isDartPluginElement() }
+            val isDartPluginElement = contextElement.isDartPluginElement()
             if (isDartPluginElement) {
                 return contextElement
             }

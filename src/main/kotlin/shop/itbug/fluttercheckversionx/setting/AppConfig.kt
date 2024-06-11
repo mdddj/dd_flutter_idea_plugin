@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.setting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
@@ -17,7 +18,12 @@ import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import javax.swing.JComponent
 
-class AppConfig : Configurable, Disposable, SearchableConfigurable {
+class AppConfig(project: Project) : Configurable, Disposable, SearchableConfigurable {
+
+
+    init {
+        println("project config init...:${project.basePath}")
+    }
 
     var model = PluginStateService.getInstance().state ?: AppStateModel()
 
