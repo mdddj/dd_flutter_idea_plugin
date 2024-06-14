@@ -52,8 +52,6 @@
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-
-
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
@@ -173,6 +171,8 @@
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
 
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubspecStartActivity"/>
+
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <!--        错误处理-->
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
 

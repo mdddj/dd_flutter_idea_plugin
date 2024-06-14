@@ -21,7 +21,6 @@ group = "shop.itbug"
 version = pluginVersion + type
 
 repositories {
-//    mavenLocal()
     mavenCentral()
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
@@ -60,7 +59,6 @@ dependencies {
     implementation("cn.hutool:hutool-http:latest.release")
     implementation("org.smartboot.socket:aio-pro:latest.release")
     implementation("com.alibaba.fastjson2:fastjson2:latest.release")
-    implementation(project(":service"))
 }
 
 val pushToken: String? = System.getenv("idea_push_token")

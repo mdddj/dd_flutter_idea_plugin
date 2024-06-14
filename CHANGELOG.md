@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [4.6.0] - 2024-06-14
+
+- After optimizing the terminal running logic, windows will no longer be created repeatedly.
+- Add `part of libarary` autocomplete command
+- Optimize the automatic completion popup timing of **_freezed from json_**
+- Fix the problem that **_@Freezed_** does not display the freezed function
+
 ## [4.5.2] - 2024-05-30
 
 - Optimize dart file inlay detection performance

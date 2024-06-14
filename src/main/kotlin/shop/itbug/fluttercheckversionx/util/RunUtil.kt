@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.util
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.terminal.ui.TerminalWidget
 import org.jetbrains.plugins.terminal.TerminalToolWindowFactory
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 
@@ -12,6 +13,8 @@ object RunUtil {
         ApplicationManager.getApplication().invokeLater {
             val instance = TerminalToolWindowManager.getInstance(project)
             var toolWindow = instance.toolWindow
+
+            //显示窗口
             if (toolWindow == null) {
                 toolWindow =
                     ToolWindowManager.getInstance(project).getToolWindow(TerminalToolWindowFactory.TOOL_WINDOW_ID)
@@ -21,11 +24,23 @@ object RunUtil {
                     toolWindow.show()
                 }
             }
-            toolWindow.activate {
-                // 241--
-                instance.createLocalShellWidget(project.basePath, title).executeCommand(command)
-                // 241+
-//                instance.createShellWidget(project.basePath, title, true, true).sendCommandToExecute(command) //241+
+
+
+            val find = toolWindow.contentManager.findContent(title)
+            if (find != null) {
+                val tw = TerminalToolWindowManager.findWidgetByContent(find)
+                tw?.requestFocus()
+                tw?.sendCommandToExecute(command)
+                tw?.setCursorVisible(true)
+                toolWindow.contentManager.setSelectedContent(find)
+            } else {
+                toolWindow.activate {
+                    // 241--
+//                instance.createLocalShellWidget(project.basePath, title).executeCommand(command)
+                    // 241+
+                    val terminal: TerminalWidget = instance.createShellWidget(project.basePath, title, true, true)
+                    terminal.sendCommandToExecute(command)
+                }
             }
         }
     }

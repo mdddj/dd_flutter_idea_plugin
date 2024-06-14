@@ -1,3 +1,5 @@
+package shop.itbug.fluttercheckversionx.services
+
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service

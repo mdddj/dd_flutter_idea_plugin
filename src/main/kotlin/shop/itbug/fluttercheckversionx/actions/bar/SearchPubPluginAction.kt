@@ -32,7 +32,7 @@ class SearchPubPluginAction : AnAction() {
 // run builder
 class FlutterRunBuilderCommandAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        e.project?.let { RunUtil.runCommand(it, "FlutterX", "flutter pub run build_runner build") }
+        e.project?.let { RunUtil.runCommand(it, "FlutterX run build", "flutter pub run build_runner build") }
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
