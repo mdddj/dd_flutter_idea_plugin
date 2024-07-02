@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.dsl
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.*
@@ -9,7 +8,6 @@ import com.intellij.util.Alarm
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
-import shop.itbug.fluttercheckversionx.util.MyNotificationUtil
 import javax.swing.SwingUtilities
 
 /**
@@ -72,6 +70,9 @@ fun settingPanel(
                 twoColumnsRow({
                     checkBox(PluginBundle.get("bold.link")).bindSelected(dioxSetting::urlBold)
                 }, {})
+                row {
+                    checkBox(PluginBundle.get("dio.setting.show.data.size")).bindSelected(dioxSetting::showDataSize)
+                }
             }
 
         }

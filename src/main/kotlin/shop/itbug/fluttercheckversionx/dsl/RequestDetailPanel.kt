@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.dsl
 
-import com.alibaba.fastjson2.JSONObject
-import com.alibaba.fastjson2.JSONWriter
+import com.google.gson.Gson
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
@@ -21,14 +20,14 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
 
     val p = panel {
         row("Url") {
-            label(request.url?: "")
+            label(request.url ?: "")
         }
         row("Method") {
-            label(request.method ?:"")
+            label(request.method ?: "")
         }
         row("Time") {
             label("${request.timestamp}ms").apply {
-                if (request.timestamp!=null && request.timestamp!! > 2000) {
+                if (request.timestamp != null && request.timestamp!! > 2000) {
                     component.foreground = JBColor.ORANGE
                 } else {
                     component.foreground = UIUtil.getLabelInfoForeground()
@@ -49,7 +48,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
                 LanguageTextField(
                     JsonLanguage.INSTANCE,
                     project,
-                    JSONObject.toJSONString(request.headers, JSONWriter.Feature.PrettyFormat),
+                    Gson().toJson(request.headers),
                     false
                 ).apply {
                     border = BorderFactory.createEmptyBorder()
@@ -65,7 +64,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
                 LanguageTextField(
                     JsonLanguage.INSTANCE,
                     project,
-                    JSONObject.toJSONString(request.responseHeaders, JSONWriter.Feature.PrettyFormat),
+                    Gson().toJson(request.responseHeaders),
                     false
                 ).apply {
                     border = BorderFactory.createEmptyBorder()

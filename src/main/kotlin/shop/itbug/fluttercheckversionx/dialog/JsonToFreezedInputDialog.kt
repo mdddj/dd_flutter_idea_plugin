@@ -1,11 +1,13 @@
 package shop.itbug.fluttercheckversionx.dialog
 
-import com.alibaba.fastjson2.JSON
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBScrollPane
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
@@ -57,18 +59,15 @@ class JsonToFreezedInputDialog(val project: Project) : DialogWrapper(project) {
 /**
  * 获取可以转换的 json object
  */
-fun String.getParseJsonObject(): JSONObject? {
+fun String.getParseJsonObject(): JsonObject? {
     if (this.validParseToFreezed()) {
-        val isArr = JSON.isValidArray(this)
+        val isArr = this.isJsonArray()
         if (isArr) {
-            val parseArray = JSON.parseArray(this)
+            val parseArray = Json.parseToJsonElement(this) as JsonArray
             val json = parseArray.findPropertiesMaxLenObject() //属性最多的那一个对象
-            return json
+            return json.jsonObject
         } else {
-            val isJson = JSON.isValidObject(this)
-            if (isJson) {
-                return JSONObject.parse(this)
-            }
+            return Json.decodeFromString(this)
         }
 
     }
@@ -76,14 +75,23 @@ fun String.getParseJsonObject(): JSONObject? {
 }
 
 
+fun String.isJsonArray(): Boolean {
+    return try {
+        Json.parseToJsonElement(this) is JsonArray
+    } catch (e: Exception) {
+        false
+    }
+}
+
+
 /**
  * 判断是否可以转换为 freezed
  */
 fun String.validParseToFreezed(): Boolean {
-    var isJson = JSON.isValidObject(this)
-    if (isJson) {
-        return true
+    return try {
+        Json.parseToJsonElement(this)
+        true
+    } catch (e: Exception) {
+        false
     }
-    isJson = JSON.isValidArray(this)
-    return isJson
 }

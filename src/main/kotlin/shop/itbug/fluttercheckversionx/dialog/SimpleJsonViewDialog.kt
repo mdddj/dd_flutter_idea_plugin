@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog
 
-import com.alibaba.fastjson2.JSONObject
-import com.alibaba.fastjson2.JSONWriter
+import com.google.gson.Gson
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -11,7 +10,7 @@ import javax.swing.JComponent
 
 ///简单的一个json查看弹窗
 class SimpleJsonViewDialog(jsonObject: Any, project: Project) : DialogWrapper(project) {
-    private val initText: String = JSONObject.toJSONString(jsonObject, JSONWriter.Feature.PrettyFormat)
+    private val initText: String = Gson().toJson(jsonObject)
 
     private var jsonView = JsonEditorTextPanel(project, initText)
 

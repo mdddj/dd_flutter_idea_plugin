@@ -15,7 +15,9 @@ enum class DioUiSettingMenu(val title: String) {
     Status(PluginBundle.get("display.status.code")),
     Time(PluginBundle.get("display.time")),
     RequestTime(PluginBundle.get("time")),
-    ProjectName(PluginBundle.get("dio.setting.project.name.show.option"))
+    ProjectName(PluginBundle.get("dio.setting.project.name.show.option")),
+    DataSize(PluginBundle.get("dio.setting.show.data.size"))
+
 }
 
 
@@ -40,6 +42,7 @@ private class DioUiRenderOption(val menu: DioUiSettingMenu) : DumbAwareToggleAct
             DioUiSettingMenu.Time -> setting.showTimestamp
             DioUiSettingMenu.RequestTime -> setting.showDate
             DioUiSettingMenu.ProjectName -> setting.showProjectName
+            DioUiSettingMenu.DataSize -> setting.showDataSize
         }
     }
 
@@ -52,6 +55,7 @@ private class DioUiRenderOption(val menu: DioUiSettingMenu) : DumbAwareToggleAct
             DioUiSettingMenu.Time -> DioListingUiConfig.changeSetting { it.copy(showTimestamp = state) }
             DioUiSettingMenu.RequestTime -> DioListingUiConfig.changeSetting { it.copy(showDate = state) }
             DioUiSettingMenu.ProjectName -> DioListingUiConfig.changeSetting { it.copy(showProjectName = state) }
+            DioUiSettingMenu.DataSize -> DioListingUiConfig.changeSetting { it.copy(showDataSize = state) }
         }
     }
 

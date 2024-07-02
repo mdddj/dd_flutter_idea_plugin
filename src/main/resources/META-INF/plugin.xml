@@ -209,9 +209,9 @@
         </action>
         <action id="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"
                 class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
-        <action id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
-                class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
-                text="DioRequestRenderStyle"/>
+        <group id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+               class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+               text="DioRequestRenderStyle"/>
 
 
         <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">

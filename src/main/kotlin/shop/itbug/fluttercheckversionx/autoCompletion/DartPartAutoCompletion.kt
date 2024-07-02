@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.autoCompletion
 
-import UserDartLibService
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -10,6 +9,7 @@ import com.intellij.util.ProcessingContext
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.DartFile
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.UserDartLibService
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 /**

@@ -1,4 +1,5 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.intellij.tasks.RunPluginVerifierTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -11,9 +12,8 @@ val pluginVersion: String by project
 val type: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.jetbrains.intellij") version "1.17.3"
-    idea
+    kotlin("jvm") version "2.0.0"
+    id("org.jetbrains.intellij") version "1.17.4"
     id("org.jetbrains.changelog") version "2.2.0"
 }
 
@@ -56,9 +56,7 @@ kotlin {
 }
 
 dependencies {
-    implementation("cn.hutool:hutool-http:latest.release")
     implementation("org.smartboot.socket:aio-pro:latest.release")
-    implementation("com.alibaba.fastjson2:fastjson2:latest.release")
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
@@ -122,12 +120,7 @@ tasks {
     }
 
     configurations.all {
-    }
 
-    verifyPlugin {
-    }
-
-    verifyPluginConfiguration {
     }
 
 }
@@ -139,3 +132,6 @@ changelog {
     groups.empty()
 }
 
+tasks.withType(RunPluginVerifierTask::class.java) {
+    ideVersions.set(listOf("2024.1.3", "2024.1.2"))
+}

@@ -1,13 +1,11 @@
 package shop.itbug.fluttercheckversionx.common
 
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBScrollPane
-import shop.itbug.fluttercheckversionx.dialog.FreezedClassesGenerateDialog
-import shop.itbug.fluttercheckversionx.dialog.getParseJsonObject
-import shop.itbug.fluttercheckversionx.services.impl.ModelToFreezedModelServiceImpl
+import kotlinx.serialization.json.JsonElement
+import shop.itbug.fluttercheckversionx.dialog.freezed.StringToFreezedDialog
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import javax.swing.JComponent
 
@@ -25,18 +23,20 @@ fun String.getVirtualFile(): VirtualFile? {
 
 ///json转 freezed 通用函数
 fun Project.jsonToFreezedRun(jsonText: String) {
-    val jsonObject = jsonText.getParseJsonObject()
-    jsonObject?.let {
-        jsonToFreezedRun2(it)
-    }
+    StringToFreezedDialog(this, jsonText).show()
+//    val jsonObject = jsonText.getParseJsonObject()
+//    jsonObject?.let {
+//        jsonToFreezedRun2(it)
+//    }
 }
 
 
-private fun Project.jsonToFreezedRun2(jsonObject: JSONObject) {
+private fun Project.jsonToFreezedRun2(jsonObject: JsonElement) {
     try {
-        val jsonObjectToFreezedCovertModelList =
-            ModelToFreezedModelServiceImpl().jsonObjectToFreezedCovertModelList(jsonObject)
-        FreezedClassesGenerateDialog(this, jsonObjectToFreezedCovertModelList).show()
+
+//        val jsonObjectToFreezedCovertModelList =
+//            ModelToFreezedModelServiceImpl().jsonObjectToFreezedCovertModelList(jsonObject)
+//        FreezedClassesGenerateDialog(this, jsonObjectToFreezedCovertModelList).show()
     } catch (e: Exception) {
         println("json to freezed error:$e")
         toastWithError("$e")

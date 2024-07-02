@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.hive.component
 
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
@@ -24,12 +23,11 @@ class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.
         jsonEditor.changeValue(value)
     }
 
-    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
+    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
         jsonObject?.apply {
-            val type = getString("type")
+            val type = jsonObject["type"]
             if (type == "getValue" && get("data") != null) {
                 changeJsonValue(get("data"))
-
             }
         }
     }

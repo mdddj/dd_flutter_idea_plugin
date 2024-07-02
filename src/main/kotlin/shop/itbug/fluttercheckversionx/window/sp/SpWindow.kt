@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
@@ -62,9 +61,9 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
         }
     }
 
-    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
+    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
         if (jsonObject != null) {
-            val type = jsonObject.getString("type")
+            val type = jsonObject["type"]
             if (type == SpManager.KEYS || type == SpManager.VALUE_GET) {
                 SpManager(nativeMessage).handle()
             }

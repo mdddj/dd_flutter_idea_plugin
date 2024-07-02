@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [4.6.0] - 2024-06-14
+## [4.6.0] - 2024-06-18
 
 - After optimizing the terminal running logic, windows will no longer be created repeatedly.
 - Add `part of libarary` autocomplete command

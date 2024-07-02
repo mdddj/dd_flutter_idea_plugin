@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.services
 
 import PluginVersionModel
-import cn.hutool.http.HttpUtil
-import com.alibaba.fastjson2.JSONObject
+import com.intellij.util.io.HttpRequests
+import kotlinx.serialization.json.Json
 import shop.itbug.fluttercheckversionx.model.PubSearchResult
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 
@@ -20,8 +20,8 @@ object PubService {
     fun callPluginDetails(plugName: String): PubVersionDataModel? {
         val url = "https://pub.dartlang.org/api/packages/$plugName"
         try {
-            val resposne = HttpUtil.get(url, 2000)
-            return JSONObject.parseObject(resposne, PubVersionDataModel::class.java)
+            val resposne = HttpRequests.request(url).readString()
+            return Json.decodeFromString(resposne)
         } catch (e: Exception) {
             println("获取插件信息失败${plugName}:${e.message} url:$url")
             return null
@@ -34,8 +34,8 @@ object PubService {
     fun getPackageVersions(pluginName: String): PluginVersionModel? {
         val url = "https://pub.dartlang.org/packages/$pluginName.json"
         try {
-            val resposne = HttpUtil.get(url)
-            return JSONObject.parseObject(resposne, PluginVersionModel::class.java)
+            val resposne = HttpRequests.request(url).readString()
+            return Json.decodeFromString(resposne)
         } catch (e: Exception) {
             return null
         }
@@ -47,8 +47,8 @@ object PubService {
     fun search(pluginName: String): PubSearchResult? {
         val url = "https://pub.dartlang.org/api/search?q=$pluginName"
         try {
-            val resposne = HttpUtil.get(url)
-            return JSONObject.parseObject(resposne, PubSearchResult::class.java)
+            val resposne = HttpRequests.request(url).readString()
+            return Json.decodeFromString(resposne)
         } catch (e: Exception) {
             return null
         }

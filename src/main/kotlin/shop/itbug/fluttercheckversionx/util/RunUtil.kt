@@ -9,6 +9,10 @@ import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 
 object RunUtil {
 
+    fun runFlutterBuildCommand(project: Project) {
+        runCommand(project, "Flutter Builder", "flutter pub run build_runner build")
+    }
+
     fun runCommand(project: Project, title: String, command: String) {
         ApplicationManager.getApplication().invokeLater {
             val instance = TerminalToolWindowManager.getInstance(project)

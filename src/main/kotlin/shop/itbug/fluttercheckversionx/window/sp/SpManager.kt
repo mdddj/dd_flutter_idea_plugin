@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
+import kotlinx.serialization.json.Json
 
 val bus = ApplicationManager.getApplication().messageBus
 
@@ -22,9 +22,11 @@ data class SPValueModel(
     val runtimeType: String
 )
 
+
 class SpManager(message: String) {
 
-    private val jsonObject: SPResult = JSONObject.parseObject(message, SPResult::class.java)
+    //private val jsonObject: SPResult = JSONObject.parseObject(message, SPResult::class.java)
+    private val jsonObject: SPResult = Json.decodeFromString(message)
     fun handle() {
         val type = jsonObject.type
         when (type) {
@@ -35,13 +37,13 @@ class SpManager(message: String) {
     }
 
     private fun valueHandle() {
-        val valueModel = JSONObject.parseObject(jsonObject.jsonString, SPValueModel::class.java)
+        val valueModel = Json.decodeFromString<SPValueModel>(jsonObject.jsonString)
         SpManagerListen.fireValue(valueModel)
     }
 
     //处理key
     private fun keysHandle() {
-        val spKeysModel = JSONObject.parseObject(jsonObject.jsonString, SPKeysModel::class.java)
+        val spKeysModel = Json.decodeFromString<SPKeysModel>(jsonObject.jsonString)
         SpManagerListen.fire(spKeysModel)
     }
 

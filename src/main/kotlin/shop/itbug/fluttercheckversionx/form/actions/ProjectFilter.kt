@@ -26,7 +26,7 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
 
     override val availableOptions: MutableList<String>
-        get() = appService.flutterProjects.keys.toMutableList()
+        get() = appService.flutterProjects.keys.filterNotNull().toMutableList()
 
 
     ///

@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.tools
 
-import cn.hutool.core.date.DateUtil
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
@@ -30,6 +29,7 @@ import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
 import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
+import java.time.LocalDateTime
 
 /**
  * 插件新版本检测
@@ -70,7 +70,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
         collectedInfo?.let {
             MyLoggerEvent.fire(
                 MyLogInfo(
-                    message = "${DateUtil.now()} Start detecting new version of package",
+                    message = "${LocalDateTime.now()} Start detecting new version of package",
                     key = LogKeys.checkPlugin
                 )
             )
@@ -86,7 +86,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
             }
             MyLoggerEvent.fire(
                 MyLogInfo(
-                    message = "${DateUtil.now()} The new version of the detection package has ended, with a total of ${it.element.size} packages",
+                    message = "${LocalDateTime.now()} The new version of the detection package has ended, with a total of ${it.element.size} packages",
                     key = LogKeys.checkPlugin
                 )
             )

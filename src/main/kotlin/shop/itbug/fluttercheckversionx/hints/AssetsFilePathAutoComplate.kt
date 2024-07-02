@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.hints
 
-import FlutterAssetsService
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.DumbAware
@@ -12,6 +11,7 @@ import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.AppStateModel
+import shop.itbug.fluttercheckversionx.services.FlutterAssetsService
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 
 

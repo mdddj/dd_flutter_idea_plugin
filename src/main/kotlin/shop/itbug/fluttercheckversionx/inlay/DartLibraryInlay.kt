@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.inlay
 
-import UserDartLibService
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.startOffset
@@ -9,6 +8,7 @@ import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.inlay.base.MyBaseInlay
 import shop.itbug.fluttercheckversionx.inlay.base.MyBaseInlayModel
+import shop.itbug.fluttercheckversionx.services.UserDartLibService
 
 class DartLibraryInlay : MyBaseInlay("Dart Library Tips") {
 

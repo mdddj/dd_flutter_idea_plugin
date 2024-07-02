@@ -115,7 +115,6 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
         override fun run(indicator: ProgressIndicator) {
             val flutterChannel = Util.getFlutterChannel()
             val currentFlutterVersion = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
-            println("flutter channel :$flutterChannel    version:$currentFlutterVersion")
             if (flutterChannel == null) {
                 return
             }
@@ -124,7 +123,6 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                 version.apply {
                     val hash = version.getCurrentReleaseByChannel(flutterChannel)
                     val release = releases.find { o -> o.hash == hash }
-                    println("找到的版本:$release  hash=$hash")
                     release?.let { r ->
                         if (r.version != c.version) {
                             println("has new version")

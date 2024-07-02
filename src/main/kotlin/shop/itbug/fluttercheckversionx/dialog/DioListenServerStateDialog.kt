@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.panel
@@ -19,14 +18,14 @@ import javax.swing.JComponent
 fun Project.openSocketStatusDialog() {
     DioListenServerStateDialog(this).show()
 }
+
 class DioListenServerStateDialog(val project: Project) : DialogWrapper(project) {
 
 
-    private var service: AppService = service<AppService>()
+    private var service: AppService = AppService.getInstance()
     private var status: StateMachineEnum? = service.dioServerStatus
 
     private var threadIsAlive = false
-
 
 
     init {
@@ -61,7 +60,7 @@ class DioListenServerStateDialog(val project: Project) : DialogWrapper(project) 
                 button("检测") {
                     checkDioThread()
                 }
-                label(if(threadIsAlive) "活跃状态" else "已关闭")
+                label(if (threadIsAlive) "活跃状态" else "已关闭")
             }
 
         }

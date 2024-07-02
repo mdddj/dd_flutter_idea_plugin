@@ -1,20 +1,18 @@
 package shop.itbug.fluttercheckversionx.services
 
 
-import cn.hutool.http.HttpUtil
-import com.alibaba.fastjson2.JSONObject
-import com.alibaba.fastjson2.annotation.JSONField
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
+import com.intellij.util.io.HttpRequests
 
 class FlutterVersionCheckException(message: String) : Exception(message)
 
 object FlutterService {
-
-
     fun getVersion(): FlutterVersions {
         try {
             val url = " https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json"
-            val get: String = HttpUtil.get(url)
-            return JSONObject.parseObject(get, FlutterVersions::class.java)
+            val get: String = HttpRequests.request(url).readString()
+            return Gson().fromJson(get, FlutterVersions::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
             throw FlutterVersionCheckException("Failed to detect new version of flutter:${e.localizedMessage}")
@@ -35,19 +33,19 @@ fun FlutterVersions.getCurrentReleaseByChannel(channel: String): String? {
 }
 
 data class FlutterVersions(
-    @JSONField(name = "base_url")
-    val baseURL: String,
+    @SerializedName("base_url")
+    var baseURL: String,
 
-    @JSONField(name = "current_release")
-    val currentRelease: CurrentRelease,
+    @SerializedName("current_release")
+    var currentRelease: CurrentRelease,
 
-    val releases: List<Release>
+    var releases: List<Release>
 )
 
 data class CurrentRelease(
-    val beta: String,
-    val dev: String,
-    val stable: String
+    var beta: String,
+    var dev: String,
+    var stable: String
 )
 
 val testRelease = Release(
@@ -55,14 +53,14 @@ val testRelease = Release(
 )
 
 data class Release(
-    val hash: String,
-    val version: String,
-    @JSONField(name = "dart_sdk_version")
-    val dartSDKVersion: String? = null,
-    @JSONField(name = "release_date")
-    val releaseDate: String,
-    val archive: String,
-    val sha256: String
+    var hash: String,
+    var version: String,
+    @SerializedName("dart_sdk_version")
+    var dartSDKVersion: String? = null,
+    @SerializedName("release_date")
+    var releaseDate: String,
+    var archive: String,
+    var sha256: String
 )
 
 

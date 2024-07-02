@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.model
 
-import com.alibaba.fastjson2.annotation.JSONField
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -40,6 +41,7 @@ fun PubVersionDataModel.getLastVersionText(model: DartPluginVersionName): String
 }
 
 
+@Serializable
 data class PubVersionDataModel(
     val name: String, val latest: Latest, val versions: List<Version>
 ) {
@@ -63,20 +65,22 @@ data class PubVersionDataModel(
     val lastVersionUpdateTimeString get() = getLastUpdateTime()
 }
 
+@Serializable
 data class Latest(
     val version: String,
     val pubspec: Pubspec,
-    @JSONField(name = "archive_url") val archiveURL: String,
+    @SerialName("archive_url") val archiveURL: String,
     val published: String
 )
 
+@Serializable
 data class Pubspec(
     val name: String, val version: String, val homepage: String?, val description: String
 )
 
 val Pubspec.dartPluginModel get() = DartPluginVersionName(name, version)
 
-
+@Serializable
 data class Version(
     val version: String, val published: String, val pubspec: Pubspec
 )
