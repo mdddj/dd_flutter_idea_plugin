@@ -1,19 +1,20 @@
 package shop.itbug.fluttercheckversionx.dialog.freezed
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.validation.Level
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.DartFileType
@@ -24,6 +25,7 @@ import shop.itbug.fluttercheckversionx.util.VerifyFileDir
 import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
+import kotlin.io.path.Path
 
 
 ///json转freezed对象的弹出
@@ -50,6 +52,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 
     private fun listenChange() {
         alarm.addRequest({
+            println(settingPanel.isModified())
             if (settingPanel.isModified()) {
                 settingPanel.apply()
                 FreezedClassConfigStateService.getInstance(project).loadState(generateConfig)
@@ -82,18 +85,20 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 panel {
                     group(PluginBundle.get("save.to.directory")) {
                         row(PluginBundle.get("g.2")) {
-                            textField().align(Align.FILL).bindText(generateConfig::saveFileName)
+                            textField().align(Align.FILL).bindText(generateConfig::saveFileName).cellValidation {
+                                addInputRule(VerifyFileDir.ENTER_YOU_FILE_NAME, Level.ERROR) {
+                                    it.text.trim().isBlank()
+                                }
+                            }
                         }
                         row(PluginBundle.get("g.3")) {
                             textFieldWithBrowseButton(
                                 "Select Dir", project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                            ) { it.path }.validationOnInput {
-                                val r = VerifyFileDir.validateDir(it.text)
-                                return@validationOnInput if (r != null) error(r.second) else null
-                            }.validationOnApply {
-                                val r = VerifyFileDir.validateDir(it.text)
-                                return@validationOnApply if (r != null) error(r.second) else null
-                            }.bindText(generateConfig::saveDirectory).align(Align.FILL)
+                            ) { it.path }.bindText(generateConfig::saveDirectory).align(Align.FILL).cellValidation {
+                                addInputRule(VerifyFileDir.ERROR_MSG, Level.ERROR) {
+                                    VerifyFileDir.validDirByComponent(it)
+                                }
+                            }
                         }
                         row {
                             checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
@@ -140,7 +145,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 }
             }
         }
-
+        settingPanel.registerValidators(disposable)
         return BorderLayoutPanel().addToCenter(tabs).addToBottom(settingPanel)
     }
 
@@ -164,18 +169,15 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
             sb.appendLine(it.getObjectClassText())
             sb.appendLine()
         }
-        val dirVirtualFile = VirtualFileManager.getInstance().findFileByUrl(dirPath)
+        val dirVirtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path(dirPath))
         if (dirVirtualFile != null) {
             val findDirectory = PsiManager.getInstance(project).findDirectory(dirVirtualFile)
             if (findDirectory != null) {
                 val createDartFile = PsiFileFactory.getInstance(project)
                     .createFileFromText("$fileName.dart", DartFileType.INSTANCE, sb.toString())
                 try {
-                    val psiElement = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                        ThrowableComputable {
-                            return@ThrowableComputable findDirectory.add(createDartFile)
-                        }, PluginBundle.get(" freezed.gen.create.task.title"), true, project
-                    )
+                    val psiElement = ApplicationManager.getApplication()
+                        .runWriteAction(Computable { findDirectory.add(createDartFile) })
                     if (generateConfig.openInEditor) {
                         FileEditorManager.getInstance(project).openFile(psiElement.containingFile.virtualFile)
                     }
@@ -195,8 +197,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
             // todo 查找目录失败
             println("查找目录失败1")
         }
-
-
     }
 }
 
