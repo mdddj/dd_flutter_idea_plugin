@@ -1,9 +1,12 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
+
 
 /**
  * json viewer
@@ -29,6 +32,15 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
         }
     }
 
+    private fun isValidJson(jsonString: String?): Boolean {
+        try {
+            JsonParser.parseString(jsonString)
+            return true
+        } catch (e: JsonSyntaxException) {
+            return false
+        }
+    }
+
     /**
      * 改变显示内容
      *
@@ -38,10 +50,12 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
         val builder = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
         if (json is String) {
             try {
-                val map = builder.fromJson(json, Map::class.java)
-                return builder.toJson(map)
+                if (isValidJson(json)) {
+                    val map = builder.fromJson(json, Map::class.java)
+                    return builder.toJson(map)
+                }
             } catch (e: Exception) {
-                e.printStackTrace()
+                println("尝试String转json失败:${e.localizedMessage} \n String is $json")
             }
         }
         if (json is Map<*, *>) {

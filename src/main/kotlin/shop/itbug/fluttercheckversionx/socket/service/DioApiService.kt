@@ -41,20 +41,20 @@ class DioApiService {
     }
 
     private fun sendMessage(message: String) {
+        println("发送JSON:$message")
         sessions.forEach {
             it.send(message)
         }
     }
 
-    fun sendByMap(map: Map<String, Any>) {
-        sendMessage(Gson().toJson(map))
-    }
-
     fun sendByAnyObject(obj: Any) {
         try {
-            val json: String = Gson().toJson(obj)
-            val map = Gson().fromJson(json, Map::class.java)
-            sendByMap(map.toMapAny)
+            if (obj is String) {
+                sendMessage(obj)
+            } else {
+                val jsonString = Gson().toJson(obj)
+                sendMessage(jsonString)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -62,7 +62,6 @@ class DioApiService {
 
 
     interface NativeMessageProcessing {
-
 
         fun register() {
             getInstance().addHandle(this)
@@ -92,9 +91,6 @@ class DioApiService {
             try {
                 if (jsonObject != null && jsonObject["projectName"] != null) {
                     val model = Gson().fromJson(nativeMessage, ProjectSocketService.SocketResponseModel::class.java)
-                    println("-----start")
-                    println(model)
-                    println("-----end")
                     handleModel(model)
                 }
             } catch (e: Exception) {
@@ -130,7 +126,9 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
 
     private fun jsonStringToModel(msg: String, session: AioSession?) {
         try {
+            println("收到message:$msg")
             val json = Gson().fromJson(msg, Map::class.java).toMapAny
+            println("json is $json")
             handle.forEach {
                 it.handleFlutterAppMessage(msg, json, session)
             }

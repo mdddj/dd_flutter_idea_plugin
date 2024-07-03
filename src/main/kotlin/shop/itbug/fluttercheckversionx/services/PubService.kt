@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.services
 
 import PluginVersionModel
+import com.google.gson.Gson
 import com.intellij.util.io.HttpRequests
-import kotlinx.serialization.json.Json
 import shop.itbug.fluttercheckversionx.model.PubSearchResult
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 
@@ -21,9 +21,9 @@ object PubService {
         val url = "https://pub.dartlang.org/api/packages/$plugName"
         try {
             val resposne = HttpRequests.request(url).readString()
-            return Json.decodeFromString(resposne)
+            return Gson().fromJson(resposne, PubVersionDataModel::class.java)
         } catch (e: Exception) {
-            println("获取插件信息失败${plugName}:${e.message} url:$url")
+            println("获取插件信息失败${plugName} url:$url  ${e.localizedMessage}")
             return null
         }
     }
@@ -35,7 +35,7 @@ object PubService {
         val url = "https://pub.dartlang.org/packages/$pluginName.json"
         try {
             val resposne = HttpRequests.request(url).readString()
-            return Json.decodeFromString(resposne)
+            return Gson().fromJson(resposne, PluginVersionModel::class.java)
         } catch (e: Exception) {
             return null
         }
@@ -48,7 +48,7 @@ object PubService {
         val url = "https://pub.dartlang.org/api/search?q=$pluginName"
         try {
             val resposne = HttpRequests.request(url).readString()
-            return Json.decodeFromString(resposne)
+            return Gson().fromJson(resposne, PubSearchResult::class.java)
         } catch (e: Exception) {
             return null
         }

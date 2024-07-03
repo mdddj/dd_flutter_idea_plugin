@@ -1,35 +1,34 @@
 package shop.itbug.fluttercheckversionx.tools
 
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
+import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
-import shop.itbug.fluttercheckversionx.util.ApiService
+import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
+import shop.itbug.fluttercheckversionx.util.MyYamlPsiElementFactory
 import shop.itbug.fluttercheckversionx.util.YamlExtends
-import shop.itbug.fluttercheckversionx.window.logger.LogKeys
-import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
-import java.time.LocalDateTime
+import javax.swing.Icon
 
 /**
  * 插件新版本检测
@@ -68,28 +67,16 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
     override fun doAnnotate(collectedInfo: Input?): List<Problem> {
         val arr = mutableListOf<Problem>()
         collectedInfo?.let {
-            MyLoggerEvent.fire(
-                MyLogInfo(
-                    message = "${LocalDateTime.now()} Start detecting new version of package",
-                    key = LogKeys.checkPlugin
-                )
-            )
             val infos: List<PubVersionDataModel?> = runBlocking {
                 val tasks = it.element.map { info ->
                     val pluginName = info.packageInfo.name
                     val r: Deferred<PubVersionDataModel?> = async {
-                        return@async ApiService.getPluginDetail(pluginName)
+                        return@async PubService.callPluginDetails(pluginName)
                     }
                     return@map r
                 }
                 return@runBlocking tasks.awaitAll()
             }
-            MyLoggerEvent.fire(
-                MyLogInfo(
-                    message = "${LocalDateTime.now()} The new version of the detection package has ended, with a total of ${it.element.size} packages",
-                    key = LogKeys.checkPlugin
-                )
-            )
             it.element.forEach { info ->
                 val packageName = info.packageInfo.name
                 val find: PubVersionDataModel? = infos.find { detail -> detail?.name == packageName }
@@ -97,15 +84,6 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                     run {
                         val versionText = model.getLastVersionText(info.packageInfo)
                         if (versionText != null) {
-                            MyLoggerEvent.fire(
-                                MyLogInfo(
-                                    message = "${model.name}: old version is :${info.packageInfo.version}, new version is :${
-                                        model.getLastVersionText(
-                                            info.packageInfo
-                                        )
-                                    }, push date : ${model.lastVersionUpdateTimeString}", key = LogKeys.checkPlugin
-                                )
-                            )
                             arr.add(Problem(info.element.lastChild.textRange, model, info.element, versionText))  //有新版本
                         }
                     }
@@ -120,32 +98,35 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
     override fun apply(file: PsiFile, annotationResult: List<Problem>?, holder: AnnotationHolder) {
         annotationResult?.forEach {
             val fixText = PluginBundle.get("version.tip.3") + it.lastVersion
-            val fix = MyLocalFix(fixText, it.lastVersion)
-            val desc = InspectionManager.getInstance(file.project).createProblemDescriptor(
-                it.element,
-                fixText,
-                fix,
-                ProblemHighlightType.WARNING,
-                false
-            )
             holder.newAnnotation(
                 HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${it.lastVersion}"
-            ).newLocalQuickFix(fix, desc).registerFix().range(it.element.lastChild).needsUpdateOnTyping().create()
+            )
+                .newFix(object : PsiElementBaseIntentionAction(), Iconable, DumbAware {
+                    override fun getFamilyName() = fixText
+                    override fun getText() = fixText
+                    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
+                        if (element.text == it.lastVersion) return false
+                        return true
+                    }
+
+                    override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
+                        val newElement = MyYamlPsiElementFactory.createPlainPsiElement(project, it.lastVersion)
+                        if (newElement != null) {
+                            if (element is LeafPsiElement && element.prevSibling is YAMLKeyValueImpl && element.prevSibling.lastChild is YAMLPlainTextImpl) {
+                                element.prevSibling.lastChild.replace(newElement)
+                            } else {
+                                element.replace(newElement)
+                            }
+                        }
+                    }
+
+                    override fun getIcon(flags: Int): Icon = MyIcons.flutter
+
+                }).registerFix().range(it.element.lastChild)
+                .needsUpdateOnTyping()
+                .create()
 
         }
 
-    }
-}
-
-
-///修复新版本
-class MyLocalFix(private val fixText: String, private val newText: String) : LocalQuickFix {
-    override fun getFamilyName(): String = fixText
-
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val element = descriptor.psiElement
-        ApplicationManager.getApplication().invokeLater {
-            MyPsiElementUtil.modifyPsiElementText(element.lastChild, newText)
-        }
     }
 }

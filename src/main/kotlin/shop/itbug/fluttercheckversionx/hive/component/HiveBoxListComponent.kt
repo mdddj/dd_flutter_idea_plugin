@@ -67,13 +67,17 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
 
 
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
+        println("处理Hive盒子消息:$jsonObject")
         jsonObject?.apply {
             val type = this["type"]
             if (type == "getBoxList") {
                 val data = jsonObject["data"]
-                if (data is Array<*>) {
-                    model = ItemModel(data.map { it.toString() })
+                data?.let {
+                    if (data is ArrayList<*>) {
+                        model = ItemModel(data.map { it.toString() })
+                    }
                 }
+
             }
         }
     }
@@ -121,7 +125,7 @@ class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioA
             val type = jsonObject["type"]
             if (type == "getKeys") {
                 val data = jsonObject["data"]
-                if (data is Array<*>) {
+                if (data is ArrayList<*>) {
                     model = ItemModel(data.map { it.toString() })
                 }
             }

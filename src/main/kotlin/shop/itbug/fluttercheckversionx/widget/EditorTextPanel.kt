@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.json.JsonLanguage
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.ex.EditorEx
@@ -23,7 +24,9 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
     }
 
     fun scrollToTop() {
-        editor?.scrollingModel?.scrollVertically(0)
+        ApplicationManager.getApplication().invokeLater {
+            editor?.scrollingModel?.scrollVertically(0)
+        }
     }
 
     override fun getFont(): Font {

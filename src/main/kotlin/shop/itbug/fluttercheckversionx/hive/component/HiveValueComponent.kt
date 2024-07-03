@@ -24,9 +24,9 @@ class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.
     }
 
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
+        println("处理Hive值:$jsonObject")
         jsonObject?.apply {
-            val type = jsonObject["type"]
-            if (type == "getValue" && get("data") != null) {
+            if (get("data") != null && get("type") == "getValue") {
                 changeJsonValue(get("data"))
             }
         }

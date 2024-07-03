@@ -27,7 +27,7 @@ fun requestDetailPanel(request: Request, project: Project): DialogPanel {
         }
         row("Time") {
             label("${request.timestamp}ms").apply {
-                if (request.timestamp != null && request.timestamp!! > 2000) {
+                if (request.timestamp > 2000) {
                     component.foreground = JBColor.ORANGE
                 } else {
                     component.foreground = UIUtil.getLabelInfoForeground()

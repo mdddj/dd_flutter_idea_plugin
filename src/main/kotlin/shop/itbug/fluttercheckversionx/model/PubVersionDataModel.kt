@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.model
 
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -41,7 +40,6 @@ fun PubVersionDataModel.getLastVersionText(model: DartPluginVersionName): String
 }
 
 
-@Serializable
 data class PubVersionDataModel(
     val name: String, val latest: Latest, val versions: List<Version>
 ) {
@@ -65,7 +63,6 @@ data class PubVersionDataModel(
     val lastVersionUpdateTimeString get() = getLastUpdateTime()
 }
 
-@Serializable
 data class Latest(
     val version: String,
     val pubspec: Pubspec,
@@ -73,14 +70,12 @@ data class Latest(
     val published: String
 )
 
-@Serializable
 data class Pubspec(
     val name: String, val version: String, val homepage: String?, val description: String
 )
 
 val Pubspec.dartPluginModel get() = DartPluginVersionName(name, version)
 
-@Serializable
 data class Version(
     val version: String, val published: String, val pubspec: Pubspec
 )

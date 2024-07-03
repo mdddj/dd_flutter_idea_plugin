@@ -47,7 +47,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
     }
 
     private fun getAllKeys() {
-        DioApiService.getInstance().sendByMap(mutableMapOf("action" to "SP_KEY"))
+        DioApiService.getInstance().sendByAnyObject(mutableMapOf("action" to "SP_KEY"))
     }
 
 
@@ -77,7 +77,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 ///刷新sp keys操作
 class SpRefreshAction : DumbAwareAction(AllIcons.Actions.Refresh) {
     override fun actionPerformed(e: AnActionEvent) {
-        DioApiService.getInstance().sendByMap(mutableMapOf("action" to "SP_KEY"))
+        DioApiService.getInstance().sendByAnyObject(mutableMapOf("action" to "SP_KEY"))
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
@@ -120,7 +120,7 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
     override fun valueChanged(e: ListSelectionEvent?) {
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {
             DioApiService.getInstance()
-                .sendByMap(mutableMapOf("action" to "SP_GET_VALUE", "data" to selectedValue))
+                .sendByAnyObject(mutableMapOf("action" to "SP_GET_VALUE", "data" to selectedValue))
         }
     }
 

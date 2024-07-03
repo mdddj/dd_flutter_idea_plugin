@@ -5,13 +5,9 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBScrollPane
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
-import shop.itbug.fluttercheckversionx.util.findPropertiesMaxLenObject
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
 import javax.swing.JComponent
 
@@ -53,34 +49,6 @@ class JsonToFreezedInputDialog(val project: Project) : DialogWrapper(project) {
         return ValidationInfo(PluginBundle.get("json.format.verification.failed"), jsonEditView)
     }
 
-}
-
-
-/**
- * 获取可以转换的 json object
- */
-fun String.getParseJsonObject(): JsonObject? {
-    if (this.validParseToFreezed()) {
-        val isArr = this.isJsonArray()
-        if (isArr) {
-            val parseArray = Json.parseToJsonElement(this) as JsonArray
-            val json = parseArray.findPropertiesMaxLenObject() //属性最多的那一个对象
-            return json.jsonObject
-        } else {
-            return Json.decodeFromString(this)
-        }
-
-    }
-    return null
-}
-
-
-fun String.isJsonArray(): Boolean {
-    return try {
-        Json.parseToJsonElement(this) is JsonArray
-    } catch (e: Exception) {
-        false
-    }
 }
 
 
