@@ -7,7 +7,6 @@ import com.intellij.ui.components.JBScrollPane
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.model.getElementVersion
@@ -26,7 +25,7 @@ class AllPluginsCheckVersion(val project: Project, val onDone: () -> Unit) : JPa
 
     //插件列表
     private var plugins: MutableMap<FlutterPluginType, List<FlutterPluginElementModel>> =
-        runBlocking { MyPsiElementUtil.getAllFlutters(project) }
+        MyPsiElementUtil.getAllFlutters(project)
 
     //展示列表组件
     private val listView = JBList<FlutterPluginElementModel>()

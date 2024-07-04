@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.dialog
 
-import cn.hutool.core.swing.ScreenUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -27,7 +26,6 @@ import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.widget.FreezedCovertModelWidget
-import java.awt.Dimension
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
@@ -193,8 +191,4 @@ class FreezedClassesGenerateDialog(
         return sb.toString()
     }
 
-
-    override fun getPreferredSize(): Dimension {
-        return ScreenUtil.dimension
-    }
 }

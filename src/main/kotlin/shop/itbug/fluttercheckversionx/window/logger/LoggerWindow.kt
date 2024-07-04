@@ -1,7 +1,5 @@
 package shop.itbug.fluttercheckversionx.window.logger
 
-import cn.hutool.core.date.DateTime
-import cn.hutool.core.date.DateUtil
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
@@ -13,6 +11,7 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import java.awt.Component
+import java.time.LocalDateTime
 import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
 import javax.swing.JList
@@ -21,7 +20,7 @@ import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 data class MyLogKey(val key: String)
-data class MyLogInfo(val message: String, val time: DateTime? = DateUtil.date(), val key: MyLogKey)
+data class MyLogInfo(val message: String, val time: LocalDateTime? = LocalDateTime.now(), val key: MyLogKey)
 object LogKeys {
     val dioLog = MyLogKey(key = "Dio Listen")
     val ping = MyLogKey(key = "Socket Ping")

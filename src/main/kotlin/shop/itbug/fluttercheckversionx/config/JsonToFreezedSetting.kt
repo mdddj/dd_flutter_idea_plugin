@@ -36,11 +36,10 @@ class JsonToFreezedSettingModelConfig : PersistentStateComponent<JsonToFreezedSe
         stateModel = state
     }
 
-
     /**
      * 更改状态
      */
-    fun changeState( update: UpdateJsonToFreezedSettingModelState) {
+    fun changeState(update: UpdateJsonToFreezedSettingModelState) {
         loadState(update.invoke(stateModel))
     }
 

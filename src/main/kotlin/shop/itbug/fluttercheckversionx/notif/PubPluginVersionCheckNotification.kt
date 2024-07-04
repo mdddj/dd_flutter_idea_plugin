@@ -16,11 +16,9 @@ import com.jetbrains.lang.dart.DartFileType
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
@@ -36,7 +34,7 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
     ): Function<in FileEditor, out JComponent?> {
         return Function<FileEditor, JComponent?> {
 
-            val pub = runBlocking { project.getPubspecYAMLFile() }
+            val pub = project.getPubspecYAMLFile()
 
             pub ?: return@Function null
             if (file.fileType is DartFileType) {
@@ -46,8 +44,6 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (filename != "pubspec.yaml") {
                 return@Function null
             }
-            val flutterVersionInfo = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
-            flutterVersionInfo ?: return@Function null
             YamlFileNotificationPanel(it, project)
         }
     }
@@ -118,7 +114,7 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
     }
 
     private fun checkNewVersions() {
-        val file = runBlocking { project.getPubspecYAMLFile() }
+        val file = project.getPubspecYAMLFile()
         file?.containingFile?.let { DaemonCodeAnalyzer.getInstance(project).restart(it) }
         val component = JBPopupFactory.getInstance()
             .createComponentPopupBuilder(AllPluginsCheckVersion(project) {

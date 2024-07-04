@@ -374,7 +374,7 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
 
         ///获取 dart 类型
         fun getMyDartType(): MyDartType? {
-            return MyDartType.entries.find { it.dartType == dartType }
+            return MyDartType.values().find { it.dartType == dartType }
         }
 
     }

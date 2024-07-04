@@ -1,9 +1,10 @@
 package shop.itbug.fluttercheckversionx.services.impl
 
-import com.alibaba.fastjson2.JSONArray
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.services.ModelToFreezedModelService
@@ -13,7 +14,9 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
     override fun psiElementToFreezedCovertModel(classPsiElement: DartClassDefinitionImpl): FreezedCovertModel {
         val classProperties = DartPsiElementUtil.getClassProperties(classPsiElement)
         val models = DartPsiElementUtil.getModels(classProperties)
-        return FreezedCovertModel(properties = models, className = classPsiElement.componentName.text, isDartClassElementType = true)
+        return FreezedCovertModel(
+            properties = models, className = classPsiElement.componentName.text, isDartClassElementType = true
+        )
     }
 
     override fun anActionEventToFreezedCovertModel(event: AnActionEvent): FreezedCovertModel {
@@ -23,42 +26,61 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
 
 
     override fun jsonObjectToFreezedCovertModelList(
-        jsonObject: JSONObject,
-        oldList: MutableList<FreezedCovertModel>,
-        className: String
+        jsonObject: JsonElement, oldList: MutableList<FreezedCovertModel>, className: String
     ): MutableList<FreezedCovertModel> {
         val filter = oldList.none { it.className == className }
         if (filter) {
             val rootModel = jsonObjectToFreezedCovertModel(jsonObject, className)
             oldList.add(rootModel)
-            jsonObject.forEach { key, value ->
-                if (value is JSONObject) {
-                    jsonObjectToFreezedCovertModelList(value, oldList, key.toString().formatDartName())
-                } else if (value is JSONArray && value.isNotEmpty() && value.first() is JSONObject) {
-                    val parse = JSONObject.parse(JSONObject.toJSONString(value.findPropertiesMaxLenObject()))
-                    jsonObjectToFreezedCovertModelList(parse, oldList, key.toString().formatDartName())
+
+            if (jsonObject.isObject) {
+                jsonObject.jsonObject.forEach { k, v ->
+                    run {
+                        if (v.isObject) {
+                            jsonObjectToFreezedCovertModelList(v, oldList, k.formatDartName())
+                        }
+                        if (v.isJsonArray) {
+                            val maxEle = v.jsonArray.findPropertiesMaxLenObject()
+                            jsonObjectToFreezedCovertModelList(maxEle, oldList, k.formatDartName())
+                        }
+                    }
                 }
             }
+
+
         }
         return oldList
     }
 
-    //
-    override fun jsonObjectToFreezedCovertModel(jsonObject: JSONObject, className: String): FreezedCovertModel {
+    override fun jsonObjectToFreezedCovertModel(jsonObject: JsonElement, className: String): FreezedCovertModel {
         val properties = mutableListOf<DartClassProperty>()
-        jsonObject.forEach { key, value ->
-            val dartType = DartJavaCovertUtil.getDartType(value, key)
-            val dartClassProperty = DartClassProperty(
-                type = dartType,
-                name = key,
-                isNonNull = false,
-                finalPropertyValue = value,
-                finalPropertyName = key
-            )
-            properties.add(dartClassProperty)
+        if (jsonObject.isObject) {
+            jsonObject.jsonObject.forEach { key, value ->
+                val dartType = DartJavaCovertUtil.getDartType(value, key)
+                val dartClassProperty = DartClassProperty(
+                    type = dartType, name = key, isNonNull = false, finalPropertyValue = value, finalPropertyName = key
+                )
+                properties.add(dartClassProperty)
+            }
         }
         return FreezedCovertModel(properties = properties, className = className)
     }
 
 
 }
+
+val JsonElement.isObject: Boolean
+    get() = try {
+        this.jsonObject
+        true
+    } catch (_: Exception) {
+        false
+    }
+
+val JsonElement.isJsonArray: Boolean
+    get() = try {
+        this.jsonArray
+        true
+    } catch (_: Exception) {
+        false
+    }

@@ -2,16 +2,17 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
+import java.util.concurrent.Callable
 
 
 /**
@@ -26,7 +27,7 @@ class YamlDocument : DocumentationProvider {
 
 
         element?.let {
-            val isPluginElement = runBlocking { element.isDartPluginElement() }
+            val isPluginElement = element.isDartPluginElement()
             originalElement?.let {
 
                 var pluginName = ""
@@ -38,15 +39,22 @@ class YamlDocument : DocumentationProvider {
                     pluginName = element.text
                 }
                 if (pluginName.isNotEmpty()) {
-                    val detail: PubVersionDataModel? = PubService.callPluginDetails(pluginName)
-                    if (detail != null) {
-                        return renderFullDoc(
-                            pluginName = detail.name,
-                            lastVersion = detail.latest.version,
-                            githubUrl = detail.latest.pubspec.homepage,
-                            desc = detail.latest.pubspec.description,
-                            lastUpdate = detail.latest.published
-                        )
+
+                    val future = ApplicationManager.getApplication()
+                        .executeOnPooledThread(Callable<PubVersionDataModel?> { PubService.callPluginDetails(pluginName) })
+                    try {
+                        val detail: PubVersionDataModel? = future.get()
+                        if (detail != null) {
+                            return renderFullDoc(
+                                pluginName = detail.name,
+                                lastVersion = detail.latest.version,
+                                githubUrl = detail.latest.pubspec.homepage,
+                                desc = detail.latest.pubspec.description,
+                                lastUpdate = detail.latest.published
+                            )
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
 
                 }
@@ -65,7 +73,7 @@ class YamlDocument : DocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
         if (contextElement != null) {
-            val isDartPluginElement = runBlocking { contextElement.isDartPluginElement() }
+            val isDartPluginElement = contextElement.isDartPluginElement()
             if (isDartPluginElement) {
                 return contextElement
             }

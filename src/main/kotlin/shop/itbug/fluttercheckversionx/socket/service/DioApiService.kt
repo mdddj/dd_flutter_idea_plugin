@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
-import com.alibaba.fastjson2.JSON
-import com.alibaba.fastjson2.JSONObject
+import com.google.gson.Gson
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.StateMachineEnum
@@ -33,8 +32,6 @@ class DioApiService {
         messageProcessor.addHandle(processor)
     }
 
-    fun getSessions() = sessions
-
     fun addSession(session: AioSession?) {
         session?.let { sessions.add(it) }
     }
@@ -44,23 +41,27 @@ class DioApiService {
     }
 
     private fun sendMessage(message: String) {
+        println("发送JSON:$message")
         sessions.forEach {
             it.send(message)
         }
     }
 
-    fun sendByMap(map: MutableMap<String, Any>) {
-        sendMessage(JSONObject.toJSONString(map))
-    }
-
     fun sendByAnyObject(obj: Any) {
-        val json = JSON.toJSONString(obj)
-        sendByMap(JSON.parseObject(json))
+        try {
+            if (obj is String) {
+                sendMessage(obj)
+            } else {
+                val jsonString = Gson().toJson(obj)
+                sendMessage(jsonString)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 
     interface NativeMessageProcessing {
-
 
         fun register() {
             getInstance().addHandle(this)
@@ -71,7 +72,7 @@ class DioApiService {
          * @param nativeMessage 字符串消息
          * @param jsonObject 会尝试转换字符串消息为JSON,注意判空
          */
-        fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?)
+        fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?)
 
         fun stateEvent(
             session: AioSession?, stateMachineEnum: StateMachineEnum?, throwable: Throwable?
@@ -86,14 +87,15 @@ class DioApiService {
 
         fun covertJsonError(e: Exception, aio: AioSession?) {}
 
-        override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
+        override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
             try {
-                jsonObject?.to(ProjectSocketService.SocketResponseModel::class.java)?.let {
-                    if (it.projectName.isNotBlank()) {
-                        handleModel(it)
-                    }
+                if (jsonObject != null && jsonObject["projectName"] != null) {
+                    val model = Gson().fromJson(nativeMessage, ProjectSocketService.SocketResponseModel::class.java)
+                    handleModel(model)
                 }
             } catch (e: Exception) {
+                println("转换异常:${e.localizedMessage}")
+                e.printStackTrace()
                 covertJsonError(e, aio)
             }
         }
@@ -124,11 +126,14 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
 
     private fun jsonStringToModel(msg: String, session: AioSession?) {
         try {
-            val json = JSONObject.parse(msg)
+            println("收到message:$msg")
+            val json = Gson().fromJson(msg, Map::class.java).toMapAny
+            println("json is $json")
             handle.forEach {
                 it.handleFlutterAppMessage(msg, json, session)
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
             handle.forEach {
                 it.handleFlutterAppMessage(msg, null, session)
             }
@@ -155,19 +160,12 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
     private fun defaultEventHandle(session: AioSession?, stateMachineEnum: StateMachineEnum?) {
         println("==$session $stateMachineEnum")
         when (stateMachineEnum) {
-            StateMachineEnum.NEW_SESSION -> {
-                getInstance().addSession(session)
-            }
-
+            StateMachineEnum.NEW_SESSION -> getInstance().addSession(session)
             StateMachineEnum.INPUT_SHUTDOWN -> getInstance().removeSession(session)
-            StateMachineEnum.SESSION_CLOSING -> getInstance()
-                .removeSession(session)
-
+            StateMachineEnum.SESSION_CLOSING -> getInstance().removeSession(session)
             StateMachineEnum.SESSION_CLOSED -> getInstance().removeSession(session)
             StateMachineEnum.REJECT_ACCEPT -> getInstance().removeSession(session)
-            StateMachineEnum.ACCEPT_EXCEPTION -> getInstance()
-                .removeSession(session)
-
+            StateMachineEnum.ACCEPT_EXCEPTION -> getInstance().removeSession(session)
             else -> {}
         }
     }
@@ -185,8 +183,8 @@ private class MyHeartCommon : MyHeartPlugin<String>(15, TimeUnit.SECONDS) {
 
     override fun isHeartMessage(session: AioSession?, msg: String?): Boolean {
         msg?.let {
-            val json = JSONObject.parse(msg)
-            if (json.getString("type") == "ping") {
+            val json = Gson().fromJson(it, HashMap::class.java)
+            if (json["type"] == "ping") {
                 MyLoggerEvent.fire(MyLogInfo(message = "$msg", key = LogKeys.ping))
                 return true
             }
@@ -207,3 +205,16 @@ private fun AioSession.send(message: String) {
         println("发送消息失败:$e")
     }
 }
+
+val Map<*, *>.toMapAny: Map<String, Any>
+    get() {
+        val map = mutableMapOf<String, Any>()
+        this.forEach { (k, v) ->
+            run {
+                if (v != null) {
+                    map[k.toString()] = v
+                }
+            }
+        }
+        return map
+    }

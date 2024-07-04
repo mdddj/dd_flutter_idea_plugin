@@ -47,7 +47,6 @@ class MyFileUtil {
 
     companion object {
 
-
         /**
          * 遍历文件夹目录内所有的文件
          * @param folderName 项目文件夹目录

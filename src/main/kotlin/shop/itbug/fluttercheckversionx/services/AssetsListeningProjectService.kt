@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.services
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
@@ -28,14 +29,11 @@ import shop.itbug.fluttercheckversionx.tools.MyFlutterVersion
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.Util
-import shop.itbug.fluttercheckversionx.util.projectClosed
-
 
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
     }
-
 }
 
 class MyProjectListening : ProjectManagerListener {
@@ -47,13 +45,9 @@ class MyProjectListening : ProjectManagerListener {
 }
 
 @Service(Service.Level.PROJECT)
-public final class AssetsListeningProjectService(val project: Project) {
-
-
+class AssetsListeningProjectService(val project: Project) : Disposable {
     private lateinit var connect: MessageBusConnection
-
     private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
-
 
     companion object {
         fun getInstance(project: Project): AssetsListeningProjectService {
@@ -61,21 +55,18 @@ public final class AssetsListeningProjectService(val project: Project) {
         }
     }
 
-
-    ///销毁
-    fun dispose() {
-        project.projectClosed {
-            if (DioListingUiConfig.setting.checkFlutterVersion) {
-                checkFlutterVersionTask.onCancel()
-            }
-            connect.dispose()
+    override fun dispose() {
+        println("generate dispose.....")
+        checkFlutterVersionTask.onCancel()
+        if (DioListingUiConfig.setting.checkFlutterVersion) {
+            checkFlutterVersionTask.onCancel()
         }
+        connect.dispose()
     }
 
     ///初始化
     fun initListening() {
         if (DioListingUiConfig.setting.checkFlutterVersion) {
-
             ProgressManager.getInstance().run(checkFlutterVersionTask)
         }
 // 通知测试
@@ -93,7 +84,6 @@ public final class AssetsListeningProjectService(val project: Project) {
                 if (project.isDisposed) {
                     return
                 }
-
                 val projectPath = project.basePath
                 val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
                 if (!setting.autoListenFileChange) {
@@ -106,13 +96,9 @@ public final class AssetsListeningProjectService(val project: Project) {
                         }
                     }
                 }
-
-
             }
-
         })
     }
-
 
     private fun checkAndAutoGenFile(projectPath: String, file: VirtualFile, project: Project) {
         var filePath = file.canonicalPath
@@ -129,7 +115,6 @@ public final class AssetsListeningProjectService(val project: Project) {
         override fun run(indicator: ProgressIndicator) {
             val flutterChannel = Util.getFlutterChannel()
             val currentFlutterVersion = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
-            println("flutter channel :$flutterChannel    version:$currentFlutterVersion")
             if (flutterChannel == null) {
                 return
             }
@@ -138,7 +123,6 @@ public final class AssetsListeningProjectService(val project: Project) {
                 version.apply {
                     val hash = version.getCurrentReleaseByChannel(flutterChannel)
                     val release = releases.find { o -> o.hash == hash }
-                    println("找到的版本:$release  hash=$hash")
                     release?.let { r ->
                         if (r.version != c.version) {
                             println("has new version")
@@ -148,11 +132,11 @@ public final class AssetsListeningProjectService(val project: Project) {
                 }
             }
         }
-
-        fun showTestTip(project: Project) {
-            println("show test tips")
-            showTip(testRelease, project, MyFlutterVersion("3.22.0"), "stable")
-        }
+//
+//        fun showTestTip(project: Project) {
+//            println("show test tips")
+//            showTip(testRelease, project, MyFlutterVersion("3.22.0"), "stable")
+//        }
 
         /**
          * 弹出通知
@@ -189,6 +173,16 @@ public final class AssetsListeningProjectService(val project: Project) {
                 },
             )
 
+            // --force
+            createNotification.addAction(object : DumbAwareAction("Flutter upgrade --force") {
+                override fun actionPerformed(e: AnActionEvent) {
+                    RunUtil.runCommand(project, "flutter upgrade --force", "flutter upgrade --force")
+                }
+
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+            })
 
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {

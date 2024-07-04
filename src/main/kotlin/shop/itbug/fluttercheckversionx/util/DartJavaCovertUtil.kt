@@ -1,15 +1,18 @@
 package shop.itbug.fluttercheckversionx.util
 
-import com.alibaba.fastjson2.JSONArray
-import com.alibaba.fastjson2.JSONObject
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import shop.itbug.fluttercheckversionx.services.impl.isObject
 import java.math.BigDecimal
 
 
-fun JSONArray.findPropertiesMaxLenObject(): JSONObject {
-    var obj = JSONObject()
+fun JsonArray.findPropertiesMaxLenObject(): JsonElement {
+    var obj = this.first()
     for (it in this) {
-        if (it is JSONObject) {
-            if (it.keys.size > obj.keys.size) {
+        if (it.isObject) {
+            val keys = it.jsonObject.keys
+            if (keys.size > obj.jsonObject.keys.size) {
                 obj = it
             }
         }
@@ -40,19 +43,16 @@ object DartJavaCovertUtil {
                 "bool"
             }
 
-            JSONObject::class.java -> {
+            JsonElement::class.java -> {
                 key.formatDartName()
             }
 
-            JSONArray::class.java -> {
+            JsonArray::class.java -> {
 
-                val arr = obj as JSONArray
+                val arr = obj as JsonArray
 
                 if (arr.isNotEmpty()) {
-                    if (arr.first() is JSONObject) {
-                        "List<${key.formatDartName()}>"
-                    }
-
+                    "List<${key.formatDartName()}>"
                 }
                 "List<${if (arr.isEmpty()) "dynamic" else getDartType(arr.first(), key)}>"
 

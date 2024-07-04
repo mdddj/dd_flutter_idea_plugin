@@ -20,10 +20,14 @@ import shop.itbug.fluttercheckversionx.util.*
 
 typealias IfExistsFun = (element: PsiElement) -> Unit
 
+fun DartClassDefinitionImpl.myManagerFun(): DartClassManager = DartClassManager(this)
+
 /**
  * 对dart类的一些操作函数
  */
 class DartClassManager(val className: String, private val psiElement: DartClassDefinitionImpl) {
+
+    private val frs = listOf("freezed", "Freezed", "unfreezed")
 
     constructor(psiElement: DartClassDefinitionImpl) : this(
         className = psiElement.componentName.name ?: "",
@@ -105,6 +109,16 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
      */
     fun findMataDataByText(text: String): DartMetadataImpl? {
         return findTypesByPsiElement<DartMetadataImpl>().find { it.referenceExpression.text == text }
+    }
+
+    fun findFreezedMetadata(): DartMetadataImpl? {
+        return findTypesByPsiElement<DartMetadataImpl>().lastOrNull { frs.contains(it.referenceExpression.text) }
+    }
+
+    fun hasFreezeMetadata(): Boolean {
+        val eles = findTypesByPsiElement<DartMetadataImpl>()
+        val names = eles.map { it.referenceExpression.text }
+        return names.any { it in frs }
     }
 
     /**

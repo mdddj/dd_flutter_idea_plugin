@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.hive.component
 
-import com.alibaba.fastjson2.JSONObject
 import com.intellij.openapi.components.service
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
@@ -67,12 +66,18 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
     }
 
 
-    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
+    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
+        println("处理Hive盒子消息:$jsonObject")
         jsonObject?.apply {
-            val type = getString("type")
+            val type = this["type"]
             if (type == "getBoxList") {
-                val arr = getJSONArray("data").map { it.toString() }
-                model = ItemModel(arr)
+                val data = jsonObject["data"]
+                data?.let {
+                    if (data is ArrayList<*>) {
+                        model = ItemModel(data.map { it.toString() })
+                    }
+                }
+
             }
         }
     }
@@ -115,12 +120,14 @@ class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioA
         register()
     }
 
-    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: JSONObject?, aio: AioSession?) {
+    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
         jsonObject?.apply {
-            val type = getString("type")
+            val type = jsonObject["type"]
             if (type == "getKeys") {
-                val arr = getJSONArray("data").map { it.toString() }
-                model = ItemModel(arr)
+                val data = jsonObject["data"]
+                if (data is ArrayList<*>) {
+                    model = ItemModel(data.map { it.toString() })
+                }
             }
         }
     }

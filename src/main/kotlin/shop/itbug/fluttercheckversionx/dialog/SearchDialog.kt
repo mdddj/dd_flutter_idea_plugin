@@ -1,8 +1,10 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import PluginVersionModel
-import cn.hutool.http.HttpRequest
 import com.google.gson.Gson
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
@@ -10,6 +12,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
+import com.intellij.util.io.HttpRequests
 import com.intellij.util.ui.components.BorderLayoutPanel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -21,6 +24,7 @@ import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
+import java.util.concurrent.Callable
 import javax.swing.*
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -43,7 +47,7 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
     private var selectLabel: JLabel = JLabel()
 
 
-    private var versionSelect: VersionSelect = VersionSelect()
+    private var versionSelect: VersionSelect = VersionSelect(project)
     private var bottomPanel = Box.createHorizontalBox()
     private val resultList = SearchListResultShow {
         myOKAction.isEnabled = false
@@ -158,8 +162,10 @@ class MySearchField(val handle: SearchResultHandle) : JPanel() {
         searchButton.text = "${PluginBundle.get("search")}..."
         val keyWorlds = searchTextField.text
         try {
-            val response = HttpRequest.get("https://pub.dartlang.org/api/search?q=${keyWorlds}").execute()
-            val result = Gson().fromJson(response.body(), PubSearchResult::class.java)
+            val url = "https://pub.dartlang.org/api/search?q=${keyWorlds}"
+            val future = ApplicationManager.getApplication()
+                .executeOnPooledThread(Callable { HttpRequests.request(url).readString() })
+            val result = Gson().fromJson(future.get(), PubSearchResult::class.java)
             handle(result)
         } catch (_: Exception) {
         }
@@ -217,7 +223,7 @@ class ReultItemRender : ListCellRenderer<Package> {
 }
 
 
-class VersionSelect : ComboBox<String>() {
+class VersionSelect(val project: Project) : ComboBox<String>() {
 
     init {
         isEnabled = false
@@ -225,14 +231,28 @@ class VersionSelect : ComboBox<String>() {
     }
 
     fun doRequest(pluginName: String) {
-
         model = VersionSelectModel(emptyList())
         try {
-            val response = HttpRequest.get("https://pub.dartlang.org/packages/$pluginName.json").execute()
-            val result = Gson().fromJson(response.body(), PluginVersionModel::class.java)
-            model = VersionSelectModel(versions = result.versions)
-            isEnabled = true
-            model.selectedItem = result.versions.first()
+
+
+            val task = object : Task.Backgroundable(project, PluginBundle.get("get_package_verion_task_title")) {
+                override fun run(indicator: ProgressIndicator) {
+                    try {
+                        val response =
+                            HttpRequests.request("https://pub.dartlang.org/packages/$pluginName.json")
+                                .readString(indicator)
+                        val result = Gson().fromJson(response, PluginVersionModel::class.java)
+                        model = VersionSelectModel(versions = result.versions)
+                        isEnabled = true
+                        model.selectedItem = result.versions.first()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            task.queue()
+
+
         } catch (e: Exception) {
             println("搜索失败")
         }
@@ -244,7 +264,7 @@ class VersionSelectModel(val versions: List<String>) : DefaultComboBoxModel<Stri
         return versions.size
     }
 
-    override fun getElementAt(index: Int) = versions.get(index)
+    override fun getElementAt(index: Int) = versions[index]
 
     override fun getIndexOf(anObject: Any?) = versions.indexOf(anObject as String)
 

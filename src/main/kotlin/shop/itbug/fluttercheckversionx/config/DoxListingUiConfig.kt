@@ -47,7 +47,10 @@ data class DoxListeningSetting(
     var showProjectName: Boolean = true,
 
     ///项目启动时是否检测flutter新版本
-    var checkFlutterVersion: Boolean = true
+    var checkFlutterVersion: Boolean = true,
+
+    ///显示数据大小
+    var showDataSize: Boolean = true
 
 )
 

@@ -1,6 +1,6 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
-import com.alibaba.fastjson2.JSONObject
+import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
 
@@ -22,9 +22,11 @@ data class SPValueModel(
     val runtimeType: String
 )
 
+
 class SpManager(message: String) {
 
-    private val jsonObject: SPResult = JSONObject.parseObject(message, SPResult::class.java)
+    //private val jsonObject: SPResult = JSONObject.parseObject(message, SPResult::class.java)
+    private val jsonObject: SPResult = Gson().fromJson(message, SPResult::class.java)
     fun handle() {
         val type = jsonObject.type
         when (type) {
@@ -35,13 +37,13 @@ class SpManager(message: String) {
     }
 
     private fun valueHandle() {
-        val valueModel = JSONObject.parseObject(jsonObject.jsonString, SPValueModel::class.java)
+        val valueModel = Gson().fromJson(jsonObject.jsonString, SPValueModel::class.java)
         SpManagerListen.fireValue(valueModel)
     }
 
     //处理key
     private fun keysHandle() {
-        val spKeysModel = JSONObject.parseObject(jsonObject.jsonString, SPKeysModel::class.java)
+        val spKeysModel = Gson().fromJson(jsonObject.jsonString, SPKeysModel::class.java)
         SpManagerListen.fire(spKeysModel)
     }
 

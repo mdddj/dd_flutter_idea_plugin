@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -26,9 +27,9 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
     data class AddPartInlaySetting(var show: Boolean = true)
 
     override val key: SettingsKey<AddPartInlaySetting>
-        get() = SettingsKey("part action inlay")
+        get() = SettingsKey("Part action inlay")
     override val name: String
-        get() = "part action"
+        get() = "Part action"
     override val previewText: String
         get() = """
             part of "test.dart"
@@ -46,21 +47,25 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 val myFactory = HintsInlayPresentationFactory(factory)
                 if (element is DartPartOfStatementImpl) {
-
-
                     val files = element.libraryFiles
                     if (files.isNotEmpty()) {
                         val first = files.first()
-                        val libFilePsi: PsiFile? = PsiManager.getInstance(element.project).findFile(first)
+                        val libFilePsi: PsiFile? =
+                            runReadAction { PsiManager.getInstance(element.project).findFile(first) }
                         if (libFilePsi != null) {
                             val parts =
-                                PsiTreeUtil.findChildrenOfAnyType(libFilePsi, DartPartStatementImpl::class.java)
+                                runReadAction {
+                                    PsiTreeUtil.findChildrenOfAnyType(
+                                        libFilePsi,
+                                        DartPartStatementImpl::class.java
+                                    )
+                                }
                             if (parts.isNotEmpty()) {
                                 val lastPart = parts.last() ///最后一个 part
                                 val p1 = lastPart.containingFile.virtualFile.path
                                 val p2 = element.containingFile.virtualFile.path
                                 val rl = getRelativeOrFileName(p1, p2)
-                                val createPartOf = createPartOf("$rl", project = element.project)
+                                val createPartOf = createPartOf(rl, project = element.project)
 
                                 ///如果存在了就不要显示了
                                 val findPart =
@@ -70,7 +75,7 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
                                     val inlayPresentation = myFactory.simpleText(
                                         "FlutterX: inset part \"${rl}\" to library ${element.libraryName}",
                                         null
-                                    ) { p1, p2 ->
+                                    ) { _, _ ->
                                         createPartOf?.let {
                                             WriteCommandAction.runWriteCommandAction(element.project) {
                                                 lastPart.addAfter(createPartOf, null)
@@ -98,7 +103,7 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
             override fun createComponent(listener: ChangeListener): JComponent {
                 return panel {
                     row("action") {
-                        checkBox("enable").bindSelected(settings::show)
+                        checkBox("Enable").bindSelected(settings::show)
                     }
                 }
             }
@@ -129,6 +134,6 @@ fun getRelativeOrFileName(path1: String, path2: String): String {
         return targetPath.fileName.toString()
     } else {
         val relativePath = basePath.relativize(targetPath).toString()
-        return if (relativePath.isNotEmpty()) relativePath else "./${targetPath.fileName}"
+        return relativePath.ifEmpty { "./${targetPath.fileName}" }
     }
 }

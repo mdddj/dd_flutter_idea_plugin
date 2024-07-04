@@ -1,4 +1,5 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.intellij.tasks.RunPluginVerifierTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -11,16 +12,15 @@ val pluginVersion: String by project
 val type: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.jetbrains.intellij") version "1.16.1"
-    idea
+    kotlin("jvm") version "2.0.0"
+    id("org.jetbrains.intellij") version "1.17.4"
     id("org.jetbrains.changelog") version "2.2.0"
 }
+
 group = "shop.itbug"
 version = pluginVersion + type
 
 repositories {
-    mavenLocal()
     mavenCentral()
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
@@ -38,6 +38,7 @@ val pluginList = mutableListOf(
 )
 
 
+
 intellij {
     version.set(ideaVersion)
     if (ideaType.trim().isNotBlank()) {
@@ -45,6 +46,7 @@ intellij {
     }
     plugins.set(pluginList)
 }
+
 kotlin {
     sourceSets.all {
         languageSettings {
@@ -54,10 +56,7 @@ kotlin {
 }
 
 dependencies {
-    implementation("cn.hutool:hutool-http:latest.release")
     implementation("org.smartboot.socket:aio-pro:latest.release")
-    implementation("com.alibaba.fastjson2:fastjson2:latest.release")
-    testImplementation(kotlin("test"))
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
@@ -121,12 +120,7 @@ tasks {
     }
 
     configurations.all {
-    }
 
-    verifyPlugin {
-    }
-
-    verifyPluginConfiguration {
     }
 
 }
@@ -136,4 +130,8 @@ changelog {
     version = pluginVersion.removeSuffix(".")
     path = file("CHANGELOG.md").canonicalPath
     groups.empty()
+}
+
+tasks.withType(RunPluginVerifierTask::class.java) {
+    ideVersions.set(listOf("2024.1.3", "2024.1.2"))
 }

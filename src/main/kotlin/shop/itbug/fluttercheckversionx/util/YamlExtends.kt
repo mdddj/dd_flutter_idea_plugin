@@ -1,10 +1,15 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.yaml.YAMLLanguage
+import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
+import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 
 
 private val devPattern = Regex("""\bdev\b""")
@@ -67,4 +72,14 @@ class YamlExtends(val element: PsiElement) {
         return null
     }
 
+}
+
+object MyYamlPsiElementFactory {
+
+    ///创建一个节点
+    fun createPlainPsiElement(project: Project, text: String): YAMLPlainTextImpl? {
+        val instance = PsiFileFactory.getInstance(project)
+        val createFileFromText: YAMLFile = instance.createFileFromText(YAMLLanguage.INSTANCE, "name: $text") as YAMLFile
+        return PsiTreeUtil.findChildrenOfAnyType(createFileFromText, YAMLPlainTextImpl::class.java).lastOrNull()
+    }
 }

@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
-import com.alibaba.fastjson2.JSON
-import com.alibaba.fastjson2.JSONObject
+import com.google.gson.Gson
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
@@ -13,6 +12,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
+import shop.itbug.fluttercheckversionx.dialog.validParseToFreezed
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
@@ -27,7 +27,7 @@ fun SocketResponseModel.isParseToJson(): Boolean {
     data?.let {
         when (it) {
             is String -> {
-                return JSON.isValid(it)
+                return it.validParseToFreezed()
             }
 
             is Map<*, *> -> {
@@ -48,8 +48,8 @@ fun SocketResponseModel.getDataString(): String {
     data?.let {
         return when (it) {
             is String -> it
-            is Map<*, *> -> JSONObject.toJSONString(it)
-            is List<*> -> JSONObject.toJSONString(it)
+            is Map<*, *> -> Gson().toJson(it)
+            is List<*> -> Gson().toJson(it)
             else -> "$it"
         }
     }
@@ -66,7 +66,6 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
 
     private val leftPanel = LeftPanel()
-
 
     //右侧面板
     private val rightFirstPanel = RightDetailPanel(project)

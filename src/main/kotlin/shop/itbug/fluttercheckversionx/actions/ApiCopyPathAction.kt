@@ -1,18 +1,18 @@
 package shop.itbug.fluttercheckversionx.actions
 
-import cn.hutool.core.util.URLUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.util.toast
+import java.net.URL
 
 
 ///复制路径
-class ApiCopyPathAction: MyAction({"Copy Path"}) {
+class ApiCopyPathAction : MyAction({ "Copy Path" }) {
     override fun actionPerformed(e: AnActionEvent) {
         val url = e.api()!!.url
-        val path = URLUtil.getPath(url)
+        val path = URL(url).path
 
         path.copyTextToClipboard().apply {
             e.project?.toast("Copy succeeded!")
@@ -20,7 +20,7 @@ class ApiCopyPathAction: MyAction({"Copy Path"}) {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.api()!=null
+        e.presentation.isEnabled = e.api() != null
         super.update(e)
     }
 

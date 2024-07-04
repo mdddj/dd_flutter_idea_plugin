@@ -1,6 +1,6 @@
 package shop.itbug.fluttercheckversionx.form.components
 
-import com.alibaba.fastjson2.JSONObject
+import com.google.gson.Gson
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionGroup
@@ -124,7 +124,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
      */
     private fun doSearch(keyword: String) {
         val allRequest = appService.getAllRequest()
-        val results = allRequest.filter { it.url?.uppercase()?.contains(keyword.uppercase()) ?: false }
+        val results = allRequest.filter { it.url.uppercase().contains(keyword.uppercase()) }
         if (results.isNotEmpty()) {
             listModel().apply {
                 clear()
@@ -215,8 +215,9 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+        println("处理模型:${model.url}")
         try {
-            MyLoggerEvent.fire(MyLogInfo(message = JSONObject.toJSONString(model), key = LogKeys.dioLog))
+            MyLoggerEvent.fire(MyLogInfo(message = Gson().toJson(model), key = LogKeys.dioLog))
         } catch (_: Exception) {
         }
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())

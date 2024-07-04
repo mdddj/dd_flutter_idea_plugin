@@ -52,8 +52,6 @@
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-
-
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
@@ -107,8 +105,8 @@
                 language="Dart"/>
 
 
-        <!--        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"-->
-        <!--                                   language="Dart"/>-->
+        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"
+                                   language="Dart"/>
 
         <!--    插件更新更新时间内联提示     -->
         <codeInsight.inlayProvider
@@ -151,9 +149,9 @@
         <diff.DiffExtension implementation="shop.itbug.fluttercheckversionx.diff.PubYamlGithubAndPathDiff"/>
 
         <!--        系统设置-->
-        <applicationConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
-                                 id="setting.flutterx"
-                                 displayName="FlutterX"/>
+        <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
+                             id="setting.flutterx"
+                             displayName="FlutterX"/>
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
@@ -172,9 +170,15 @@
 
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
 
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubspecStartActivity"/>
+
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <!--        错误处理-->
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
 
+        <!--        <vfs.asyncListener implementation="shop.itbug.fluttercheckversionx.services.PubspecFileChangeListenAsync"/>-->
+
+        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>
     </extensions>
 
     <projectListeners>
@@ -205,12 +209,9 @@
         </action>
         <action id="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"
                 class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
-        <action id="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
-                class="shop.itbug.fluttercheckversionx.services.actions.SocketConnectComboxAction"
-                text="SocketConnectComboxAction" description="Socket connect list" popup="true"/>
-        <action id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
-                class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
-                text="DioRequestRenderStyle"/>
+        <group id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+               class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+               text="DioRequestRenderStyle"/>
 
 
         <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">
@@ -288,7 +289,7 @@
                 text="Add Default Value"/>
         <action id="FreezedClassToSimpleClass"
                 class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedClassToSimpleClass"
-                text="freezed to simple class"/>
+                text="Freezed to Simple Class"/>
 
 
         ////
@@ -332,6 +333,10 @@
         <action id="SimpleClassToFreezedAction"
                 class="shop.itbug.fluttercheckversionx.actions.freezed.SimpleClassToFreezedAction">
         </action>
+        <!--        <action id="FlutterXRunHotRefresh" class="shop.itbug.fluttercheckversionx.actions.run.FlutterXRunHotRefresh"-->
+        <!--                text="FlutterXRunHotRefresh">-->
+        <!--            <add-to-group group-id="RunTab.TopToolbar" anchor="after" relative-to-action="Stop"/>-->
+        <!--        </action>-->
     </actions>
 
     <!--Git.MainMenu.FileActions-->

@@ -30,14 +30,14 @@ fun removePortFromUrl(url: String): String {
 
 //获取 URL 显示
 fun Request.formatUrl(setting: DoxListeningSetting): String {
-    val uri = URI(url ?: "")
+    val uri = URI(url)
     var host = uri.host ?: ""
     val scheme = uri.scheme + "://"
     if (host.isEmpty()) {
-        host = extractIpAddressFromUrl(url ?: "")
+        host = extractIpAddressFromUrl(url)
     }
     val param = uri.rawQuery
-    var string = this.url ?: ""
+    var string = this.url
     if (setting.showHost.not()) {
         string = string.replace(host, "").replace(scheme, "")
         if (string.startsWith(":${uri.port}")) {
@@ -88,7 +88,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
 //                isOpaque = true
             }
             // (在紧凑模式下有效,状态码)
-            label("${request.statusCode ?: -1}").visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showStatusCode).component.apply {
+            label("${request.statusCode}").visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showStatusCode).component.apply {
                 font = JBFont.medium()
                 foreground =
                     if (request.statusCode == 200) UIUtil.getLabelSuccessForeground() else UIUtil.getErrorForeground()
@@ -109,26 +109,35 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                 }
             }
 
-            //其他一些次要的 (在紧凑模式下显示)
-            label(request.timestamp!!.toString() + "ms").visible(setting.showTimestamp && setting.uiStyle == DioRequestUIStyle.CompactStyle).component.apply {
+            label(request.calculateSize()).visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showDataSize).component.apply {
                 font = JBFont.small()
                 foreground = color
             }
-            label(request.createDate).visible(setting.showDate && setting.uiStyle == DioRequestUIStyle.CompactStyle).component.apply {
+
+            label(request.timestamp.toString() + "ms").visible(setting.showTimestamp && setting.uiStyle == DioRequestUIStyle.CompactStyle).component.apply {
                 font = JBFont.small()
                 foreground = color
             }
-            label(
-                request.projectName
-            ).visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showProjectName).component.apply {
-                font = JBFont.small()
-                foreground = color
+            request.createDate.let {
+                label(it).visible(setting.showDate && setting.uiStyle == DioRequestUIStyle.CompactStyle).component.apply {
+                    font = JBFont.small()
+                    foreground = color
+                }
             }
+            request.projectName.let {
+                label(
+                    it
+                ).visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showProjectName).component.apply {
+                    font = JBFont.small()
+                    foreground = color
+                }
+            }
+
         }
 
         //如果是紧凑模式,这些数据就不要显示了
         if (setting.uiStyle == DioRequestUIStyle.DefaultStyle) row {
-            label(request.statusCode!!.toString()).visible(setting.showStatusCode).component.apply {
+            label(request.statusCode.toString()).visible(setting.showStatusCode).component.apply {
                 font = JBFont.small()
                 foreground =
                     if (request.statusCode == 200) UIUtil.getLabelInfoForeground() else UIUtil.getErrorForeground()
@@ -137,19 +146,28 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
                 font = JBFont.small()
                 foreground = color
             }
-            label(request.timestamp!!.toString() + "ms").visible(setting.showTimestamp).component.apply {
+            label(request.calculateSize()).visible(setting.showDataSize).component.apply {
                 font = JBFont.small()
                 foreground = color
             }
-            label(request.createDate).visible(setting.showDate).component.apply {
+            label(request.timestamp.toString() + "ms").visible(setting.showTimestamp).component.apply {
                 font = JBFont.small()
                 foreground = color
             }
-            label(request.projectName).visible(setting.showProjectName).component.apply {
-                font = JBFont.small()
-                foreground = color
+            request.createDate.let {
+                label(it).visible(setting.showDate).component.apply {
+                    font = JBFont.small()
+                    foreground = color
+                }
             }
-        }.visible(setting.showStatusCode || setting.showMethod || setting.showTimestamp || setting.showDate || setting.showProjectName)
+            request.projectName.let {
+                label(it).visible(setting.showProjectName).component.apply {
+                    font = JBFont.small()
+                    foreground = color
+                }
+            }
+
+        }.visible(setting.showStatusCode || setting.showMethod || setting.showTimestamp || setting.showDate || setting.showProjectName || setting.showDataSize)
     }
     p.background = if (isSelected) UIUtil.getListBackground(true, false) else UIUtil.getPanelBackground()
     return p.withBorder(BorderFactory.createEmptyBorder(0, 12, 0, 12))

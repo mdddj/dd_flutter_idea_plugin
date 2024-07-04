@@ -12,8 +12,8 @@ import com.intellij.ui.components.fields.ExtendableTextComponent
 import com.intellij.ui.components.fields.ExtendableTextField
 import com.intellij.util.ui.FormBuilder
 import com.jetbrains.lang.dart.DartFileType
-import icons.DartIcons
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.BorderFactory
@@ -30,12 +30,12 @@ class DartFileGroupAction : MyDumbAwareAction() {
     private lateinit var project: Project
     private lateinit var virtualFile: VirtualFile
     private val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(showForm, null)
-            .setRequestFocus(true)
-            .setTitle("文件名")
-            .setCancelKeyEnabled(true)
-            .setResizable(true)
-            .setMovable(true)
-            .createPopup()
+        .setRequestFocus(true)
+        .setTitle("文件名")
+        .setCancelKeyEnabled(true)
+        .setResizable(true)
+        .setMovable(true)
+        .createPopup()
 
     init {
         fileNameTextFiled.border = BorderFactory.createEmptyBorder()
@@ -111,7 +111,7 @@ class DartFileGroupAction : MyDumbAwareAction() {
 ///图标
 class TextfiledExtends : ExtendableTextComponent.Extension {
     override fun getIcon(hovered: Boolean): Icon {
-        return DartIcons.Dart_file
+        return MyIcons.dartPackageIcon
     }
 
     override fun isIconBeforeText(): Boolean {

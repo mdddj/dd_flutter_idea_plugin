@@ -1,8 +1,8 @@
 package shop.itbug.fluttercheckversionx.model
 
-import com.alibaba.fastjson2.JSONArray
 import com.google.common.base.CaseFormat
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
+import kotlinx.serialization.json.JsonArray
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.formatDartName
 import java.math.BigDecimal
@@ -78,21 +78,18 @@ private fun String.dartNameStandard(): String {
 private fun String.nomenclatureOfHumps(isEnable: Boolean): String {
 
 
-
-
     var s = this.replaceFirstChar { it.lowercase() }
 
-    if(!isEnable){
+    if (!isEnable) {
         return s
     }
 
-    if(s.contains("_")){
+    if (s.contains("_")) {
         s = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, s)
     }
 
     return s
 }
-
 
 
 fun DartClassProperty.formatType(useDefaultValue: Boolean, isJson: Boolean = true): String {
@@ -106,7 +103,7 @@ fun DartClassProperty.formatType(useDefaultValue: Boolean, isJson: Boolean = tru
  * 如果为空设置为默认值
  */
 fun DartClassProperty.getDartDefaultValue(): Any {
-//    println(">>>$finalPropertyName  >>  $finalPropertyValue   >>   ${finalPropertyValue?.javaClass}"  )
+    println(">>>$finalPropertyName  >>  $finalPropertyValue   >>   ${finalPropertyValue?.javaClass}")
     when (finalPropertyValue) {
         is String -> {
             return "\'\'"
@@ -128,7 +125,7 @@ fun DartClassProperty.getDartDefaultValue(): Any {
             return "0.0"
         }
 
-        is JSONArray -> {
+        is JsonArray -> {
             return "[]"
         }
 

@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.refactoring.suggested.endOffset
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
@@ -23,10 +22,10 @@ import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.manager.DartClassManager
+import shop.itbug.fluttercheckversionx.manager.myManagerFun
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
-import shop.itbug.fluttercheckversionx.util.dart.DartClassUtil
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import java.awt.event.MouseEvent
@@ -66,12 +65,10 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
 
     private val inlayFactory = HintsInlayPresentationFactory(factory)
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-
-        val isFreezedClass =
-            DartClassUtil.hasMetadata(element, "freezed") || DartClassUtil.hasMetadata(element, "Freezed")
+        val isFreezedClass = element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()
         if (isFreezedClass) {
             val manager = DartClassManager(psiElement = element as DartClassDefinitionImpl)
-            val freezedElement = manager.findMataDataByText("freezed") ?: manager.findMataDataByText("Freezed")
+            val freezedElement = manager.findFreezedMetadata()
             freezedElement?.let {
                 sink.addInlineElement(
                     it.endOffset,
@@ -93,8 +90,6 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
 
     //显示操作菜单
     private fun showFreezedActionMenu(mouseEvent: MouseEvent, psiElement: PsiElement) {
-
-
         val popupCreate = JBPopupFactory.getInstance().createActionGroupPopup(
             "Freezed Actions", createFreezedActionGroup(psiElement, mouseEvent), DataContext.EMPTY_CONTEXT,
             JBPopupFactory.ActionSelectionAid.MNEMONICS, true
@@ -222,7 +217,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
             })
             add(object : MyAction({ "Run build runner" }) {
                 override fun actionPerformed(e: AnActionEvent) {
-                    RunUtil.runCommand(psiElement.project, "FlutterX", "flutter pub run build_runner build")
+                    RunUtil.runCommand(psiElement.project, "FlutterX run build", "flutter pub run build_runner build")
                 }
             })
 
@@ -236,39 +231,4 @@ class FreezedInlayPanel : ImmediateConfigurable {
         return panel { }
     }
 
-}
-
-//
-//public void replaceTextInSubElements(PsiElement rootElement, Class<? extends PsiElement> targetClass, String oldText, String newText) {
-//    rootElement.accept(new PsiRecursiveElementWalkingVisitor() {
-//        @Override
-//        public void visitElement(PsiElement element) {
-//            super.visitElement(element);
-//
-//            if (targetClass.isInstance(element) && element.getText().equals(oldText)) {
-//                element.replace(element.getManager().getElementFactory().createCommentFromText(newText, element));
-//                // 或者，如果你想替换整个元素的文本而非注释：
-//                // element.replace(element.getManager().getElementFactory().createDummyHolder(newText, element.getLanguage()));
-//            }
-//        }
-//    });
-//}
-
-private fun <T : PsiElement> replaceTextInSubElement(
-    root: PsiElement,
-    targetClass: Class<T>,
-    oldText: String,
-    newComp: T
-) {
-
-    root.accept(object : PsiRecursiveElementVisitor() {
-        override fun visitElement(element: PsiElement) {
-            if (targetClass.isInstance(element) && element.text == oldText) {
-                WriteCommandAction.runWriteCommandAction(root.project) {
-                    element.replace(newComp)
-                }
-            }
-            super.visitElement(element)
-        }
-    })
 }
