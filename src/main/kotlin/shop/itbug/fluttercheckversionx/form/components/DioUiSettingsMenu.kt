@@ -24,7 +24,7 @@ enum class DioUiSettingMenu(val title: String) {
 internal class DioUIShowActionGroup : DumbAware, ActionGroup() {
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
         val actions = ArrayList<AnAction>()
-        actions.addAll(DioUiSettingMenu.entries.map { DioUiRenderOption(it) })
+        actions.addAll(DioUiSettingMenu.values().map { DioUiRenderOption(it) })
         return actions.toTypedArray()
     }
 }

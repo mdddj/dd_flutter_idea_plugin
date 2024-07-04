@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## [4.7.0] - 2024-07-03
+
+- Reconstructed the `json to freezed class code gen` tool,
+- Optimize the repair logic of `package` new version detection
+- Removed some third-party dependencies and reduced the plug-in package to 1M
+- If you encounter problems during use, please submit an issue
+- This is the last updated version below `2023.*`. If you want to receive subsequent updates, please update your idea to
+  version `2024.*` and `above`.
+
 ## [4.6.0] - 2024-06-18
 
 - After optimizing the terminal running logic, windows will no longer be created repeatedly.

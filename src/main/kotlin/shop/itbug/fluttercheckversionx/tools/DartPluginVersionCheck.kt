@@ -105,8 +105,7 @@ class DartPluginVersionCheck : ExternalAnnotator<DartPluginVersionCheck.Input, L
                     override fun getFamilyName() = fixText
                     override fun getText() = fixText
                     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-                        if (element.text == it.lastVersion) return false
-                        return true
+                        return element.text != it.lastVersion
                     }
 
                     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {

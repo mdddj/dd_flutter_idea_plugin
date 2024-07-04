@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.dialog.freezed
 
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -7,14 +9,17 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBTabbedPane
+import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.validation.Level
+import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.DartFileType
@@ -38,6 +43,8 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
     private val generateConfig = FreezedClassConfigStateService.getInstance(project).state
     private val alarm = Alarm(disposable)
     private lateinit var settingPanel: DialogPanel
+    private lateinit var filenameField: Cell<JBTextField>
+    private lateinit var dirField: Cell<TextFieldWithBrowseButton>
 
     init {
         super.init()
@@ -85,19 +92,30 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 panel {
                     group(PluginBundle.get("save.to.directory")) {
                         row(PluginBundle.get("g.2")) {
-                            textField().align(Align.FILL).bindText(generateConfig::saveFileName).cellValidation {
-                                addInputRule(VerifyFileDir.ENTER_YOU_FILE_NAME, Level.ERROR) {
-                                    it.text.trim().isBlank()
+                            filenameField = textField().align(Align.FILL).bindText(generateConfig::saveFileName)
+                            filenameField.addValidationRule(VerifyFileDir.ENTER_YOU_FILE_NAME) {
+                                it.text.trim().isBlank()
+                            }
+                            filenameField.validationOnInput {
+                                println("text:${it.text}")
+                                if (it.text.trim().isBlank()) {
+                                    return@validationOnInput error(VerifyFileDir.ENTER_YOU_FILE_NAME)
                                 }
+                                return@validationOnInput null
                             }
                         }
                         row(PluginBundle.get("g.3")) {
-                            textFieldWithBrowseButton(
+                            dirField = textFieldWithBrowseButton(
                                 "Select Dir", project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                            ) { it.path }.bindText(generateConfig::saveDirectory).align(Align.FILL).cellValidation {
-                                addInputRule(VerifyFileDir.ERROR_MSG, Level.ERROR) {
+                            ) { it.path }.bindText(generateConfig::saveDirectory).align(Align.FILL)
+                                .addValidationRule(VerifyFileDir.ERROR_MSG) {
                                     VerifyFileDir.validDirByComponent(it)
                                 }
+                            dirField.validationOnInput {
+                                if (VerifyFileDir.validDirByComponent(dirField.component)) {
+                                    return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+                                }
+                                return@validationOnInput null
                             }
                         }
                         row {
@@ -115,7 +133,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
             collapsibleGroup(PluginBundle.get("freezed.gen.base.opt")) {
                 buttonsGroup(PluginBundle.get("freezed.gen.formatname.classname") + ":") {
                     row {
-                        NameFormat.entries.forEach {
+                        NameFormat.values().forEach {
                             radioButton(it.title, it)
                             contextHelp(it.example, PluginBundle.get("freezed.gen.formatname.example"))
                         }
@@ -123,7 +141,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 }.bind(generateConfig::classNameFormat)
                 buttonsGroup(PluginBundle.get("freezed.gen.formatname.properties") + ":") {
                     row {
-                        NameFormat.entries.forEach {
+                        NameFormat.values().forEach {
                             radioButton(it.title, it)
                             contextHelp(it.example, PluginBundle.get("freezed.gen.formatname.example"))
                         }
@@ -131,7 +149,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 }.bind(generateConfig::propertyNameFormat)
                 buttonsGroup("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}:") {
                     row {
-                        FormJsonType.entries.forEach {
+                        FormJsonType.values().forEach {
                             radioButton(it.value, it)
                         }
                     }
@@ -147,6 +165,14 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
         }
         settingPanel.registerValidators(disposable)
         return BorderLayoutPanel().addToCenter(tabs).addToBottom(settingPanel)
+    }
+
+    override fun doValidate(): ValidationInfo? {
+        val d = VerifyFileDir.validDirByPath(generateConfig.saveDirectory)
+        if (d) {
+            return ValidationInfoBuilder(dirField.component).error(VerifyFileDir.ERROR_MSG)
+        }
+        return super.doValidate()
     }
 
     override fun doOKAction() {
@@ -186,17 +212,16 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                     }
                     onSuccess.invoke()
                 } catch (e: Exception) {
-                    // todo 创建失败,执行命令失败
-                    println("创建文件失败:$e")
+                    showErrorMessage("${PluginBundle.get("freezed.gen.create.error")}:${e.localizedMessage}")
                 }
-            } else {
-                // todo 查找目录失败
-                println("查找目录失败2")
             }
-        } else {
-            // todo 查找目录失败
-            println("查找目录失败1")
         }
+    }
+
+    private fun showErrorMessage(msg: String) {
+        val groupId = "json_to_freezed_tooltip"
+        NotificationGroupManager.getInstance().getNotificationGroup(groupId)
+            .createNotification(msg, NotificationType.ERROR).notify(project)
     }
 }
 
