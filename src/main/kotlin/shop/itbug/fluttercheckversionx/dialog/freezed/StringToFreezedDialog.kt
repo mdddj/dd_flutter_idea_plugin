@@ -158,7 +158,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 
             collapsibleGroup("Hive ${PluginBundle.get("freezed.gen.base.setting")}") {
                 row {
-                    checkBox("Enable").bindSelected(generateConfig.hiveSetting::enable)
+                    checkBox(PluginBundle.get("freezed.gen.create.enable")).bindSelected(generateConfig.hiveSetting::enable)
                     intTextField().bindIntText(generateConfig.hiveSetting::hiveId).label("HiveType id")
                 }
             }
@@ -234,7 +234,7 @@ private class RustEditorPanel(val project: Project, val dartClass: MyChildObject
     var globalConfig = FreezedClassConfig()
     var config = FreezedPropertiesConfig()
     private val settingPanel = panel {
-        row("Class Name") {
+        row("class Name") {
             textField().bindText(dartClass::className)
         }
     }
@@ -248,9 +248,6 @@ private class RustEditorPanel(val project: Project, val dartClass: MyChildObject
     }
 
     private fun listenChange() {
-        if (project.isDisposed || isDisplayable) {
-            return
-        }
         alarm.addRequest({
             if (settingPanel.isModified()) {
                 settingPanel.apply()
