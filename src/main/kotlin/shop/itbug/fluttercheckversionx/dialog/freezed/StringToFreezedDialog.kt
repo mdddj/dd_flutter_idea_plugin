@@ -59,7 +59,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 
     private fun listenChange() {
         alarm.addRequest({
-            println(settingPanel.isModified())
             if (settingPanel.isModified()) {
                 settingPanel.apply()
                 FreezedClassConfigStateService.getInstance(project).loadState(generateConfig)
@@ -97,7 +96,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                                 it.text.trim().isBlank()
                             }
                             filenameField.validationOnInput {
-                                println("text:${it.text}")
                                 if (it.text.trim().isBlank()) {
                                     return@validationOnInput error(VerifyFileDir.ENTER_YOU_FILE_NAME)
                                 }
@@ -158,7 +156,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 
             collapsibleGroup("Hive ${PluginBundle.get("freezed.gen.base.setting")}") {
                 row {
-                    checkBox("Enable").bindSelected(generateConfig.hiveSetting::enable)
+                    checkBox(PluginBundle.get("freezed.gen.create.enable")).bindSelected(generateConfig.hiveSetting::enable)
                     intTextField().bindIntText(generateConfig.hiveSetting::hiveId).label("HiveType id")
                 }
             }
@@ -226,7 +224,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 }
 
 
-private class RustEditorPanel(val project: Project, val dartClass: MyChildObject, val parentDispose: Disposable) :
+private class RustEditorPanel(project: Project, val dartClass: MyChildObject, val parentDispose: Disposable) :
     BorderLayoutPanel() {
     private val rustEditor = DartEditorTextPanel(project, dartClass.getFreezedClass())
     private val newDispose = Disposer.newDisposable().apply { Disposer.register(parentDispose, this) }
@@ -234,7 +232,7 @@ private class RustEditorPanel(val project: Project, val dartClass: MyChildObject
     var globalConfig = FreezedClassConfig()
     var config = FreezedPropertiesConfig()
     private val settingPanel = panel {
-        row("Class Name") {
+        row("class Name") {
             textField().bindText(dartClass::className)
         }
     }
@@ -248,9 +246,6 @@ private class RustEditorPanel(val project: Project, val dartClass: MyChildObject
     }
 
     private fun listenChange() {
-        if (project.isDisposed || isDisplayable) {
-            return
-        }
         alarm.addRequest({
             if (settingPanel.isModified()) {
                 settingPanel.apply()

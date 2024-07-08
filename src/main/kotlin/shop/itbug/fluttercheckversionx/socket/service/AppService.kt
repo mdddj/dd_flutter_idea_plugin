@@ -9,8 +9,6 @@ import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
-import shop.itbug.fluttercheckversionx.model.resource.ResourceCategory
-import shop.itbug.fluttercheckversionx.model.user.User
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import java.util.concurrent.atomic.AtomicReference
 
@@ -18,20 +16,8 @@ import java.util.concurrent.atomic.AtomicReference
 class AppService : DioApiService.HandleFlutterApiModel {
 
 
-    //用户信息
-    var user: User? = null
-
-    //聊天房间列表
-    var chatRooms: List<ResourceCategory> = emptyList()
-
-    //当前选中的聊天房间
-    var currentChatRoom: ResourceCategory? = null
-
     //socket服务是否正常启动
     private var socketIsInit = false
-
-    //socket服务状态
-    private var socketServerState: StateMachineEnum? = null
 
     //项目名称列表
     var projectNames: List<String> = emptyList()
@@ -40,12 +26,8 @@ class AppService : DioApiService.HandleFlutterApiModel {
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
 
-    val dioServerStatus: StateMachineEnum? get() = socketServerState
-
     //右键选中的项目
     var currentSelectRequest: Request? = null
-
-    private val messageBus get() = ApplicationManager.getApplication().messageBus
 
 
     ///接口列表
@@ -67,8 +49,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
      */
     val flutterProjects get() = requestsList.groupBy { it.projectName }
 
-
-    lateinit var dioThread: Thread
 
     init {
         register()

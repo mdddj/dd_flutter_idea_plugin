@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.util
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.psi.YAMLFile
@@ -48,18 +47,14 @@ class YamlExtends(val element: PsiElement) {
 
     ///判断是不是dart plugin 节点
     fun isDartPluginElement(): Boolean {
-        if (element is YAMLKeyValueImpl && element.parent is YAMLBlockMappingImpl && element.parent.parent is YAMLKeyValueImpl && PsiTreeUtil.findChildOfType(
-                element, YAMLBlockMappingImpl::class.java
-            ) == null
-        ) {
-            val root = element.parent.parent as YAMLKeyValueImpl
-            if (root.firstChild is LeafPsiElement) {
-                val temp = root.firstChild.text
-                if (temp == "dependencies" || temp == "dependency_overrides" || temp == "dev_dependencies") {
-                    return true
-                }
-            }
-        }
+        if (element !is YAMLKeyValueImpl) return false
+        if (element.parent !is YAMLBlockMappingImpl) return false
+        if (element.parent.parent !is YAMLKeyValueImpl) return false
+        val igPluginNames = listOf("flutter_localizations", "flutter")
+        val devTypes = listOf("dependencies", "dependency_overrides", "dev_dependencies")
+        val rootElement: YAMLKeyValueImpl =
+            PsiTreeUtil.getParentOfType(element, YAMLKeyValueImpl::class.java, true, 2) ?: return false
+        if (devTypes.contains(rootElement.keyText) && !igPluginNames.contains(element.keyText)) return true
         return false
     }
 
@@ -67,10 +62,24 @@ class YamlExtends(val element: PsiElement) {
     fun getDartPluginNameAndVersion(): DartPluginVersionName? {
         if (isDartPluginElement()) {
             val ele = (element as YAMLKeyValueImpl)
+            if (ele.valueText == "any") return null
             return DartPluginVersionName(name = ele.keyText, version = ele.valueText)
         }
         return null
     }
+
+
+    /**
+     * 是否有path, git 指定版本
+     *  例子:
+     *  ```dart
+     *   vimeo_video_player:
+     *     path: ../../hlx/github/vimeo_video_player
+     *  ```
+     *  @return true
+     */
+    fun isSpecifyVersion(): Boolean =
+        (element is YAMLKeyValueImpl) && PsiTreeUtil.findChildOfType(element, YAMLBlockMappingImpl::class.java) != null
 
 }
 

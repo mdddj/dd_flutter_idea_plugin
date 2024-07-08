@@ -319,9 +319,13 @@
         <action id="GoToDocumentAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDocumentAction"
         />
+        <action id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"
+                class="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction" text="Json to Dart Macro"/>
         <group id="status_bar_actions">
             <reference id="SearchPubPluginAction"/>
             <reference id="FlutterRunBuilderCommandAction"/>
+            <separator/>
+            <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>
             <reference id="StatusBarJsonToFreezedClass"/>
             <separator/>
             <reference id="GoToDiscordAction"/>
@@ -337,6 +341,7 @@
         <!--                text="FlutterXRunHotRefresh">-->
         <!--            <add-to-group group-id="RunTab.TopToolbar" anchor="after" relative-to-action="Stop"/>-->
         <!--        </action>-->
+
     </actions>
 
     <!--Git.MainMenu.FileActions-->

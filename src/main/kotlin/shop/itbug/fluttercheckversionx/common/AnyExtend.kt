@@ -1,8 +1,6 @@
 package shop.itbug.fluttercheckversionx.common
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBScrollPane
 import kotlinx.serialization.json.JsonElement
 import shop.itbug.fluttercheckversionx.dialog.freezed.StringToFreezedDialog
@@ -15,10 +13,6 @@ import javax.swing.JComponent
  */
 fun JComponent.scroll(): JBScrollPane {
     return JBScrollPane(this)
-}
-
-fun String.getVirtualFile(): VirtualFile? {
-    return LocalFileSystem.getInstance().findFileByPath(this)
 }
 
 ///json转 freezed 通用函数

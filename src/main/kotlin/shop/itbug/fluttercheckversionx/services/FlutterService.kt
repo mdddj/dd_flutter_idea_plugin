@@ -48,10 +48,6 @@ data class CurrentRelease(
     var stable: String
 )
 
-val testRelease = Release(
-    "11", "3.23.9", "3.4.0", "2024-05-17 10:39:16", "1111", "1111"
-)
-
 data class Release(
     var hash: String,
     var version: String,

@@ -1,14 +1,10 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.swing.SwingUtilities
 
 
@@ -17,20 +13,6 @@ fun Project.restartAnalyzer() {
     SwingUtilities.invokeLater {
         runReadAction {
             DaemonCodeAnalyzer.getInstance(this).restart()
-        }
-    }
-}
-
-///重新分析依赖文件
-@OptIn(DelicateCoroutinesApi::class)
-fun Project.restartPubFileAnalyzer() {
-    SwingUtilities.invokeLater {
-        GlobalScope.launch {
-            MyPsiElementUtil.getPubSpecYamlFile(this@restartPubFileAnalyzer)?.let {
-                readAction {
-                    DaemonCodeAnalyzer.getInstance(this@restartPubFileAnalyzer).restart(it)
-                }
-            }
         }
     }
 }

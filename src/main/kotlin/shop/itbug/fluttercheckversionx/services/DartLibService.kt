@@ -1,18 +1,14 @@
 package shop.itbug.fluttercheckversionx.services
 
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartFileType
@@ -66,24 +62,3 @@ class UserDartLibService(private val project: Project) : DumbAware {
 }
 
 
-class OnlyProjectFileSearch(private val myProject: Project) : GlobalSearchScope(myProject) {
-
-    private val fileIndex = ProjectRootManager.getInstance(myProject).fileIndex
-
-    override fun contains(p0: VirtualFile): Boolean {
-        val psiFile = runReadAction { PsiManager.getInstance(myProject).findFile(p0) }
-        println("is in source ${fileIndex.isInSourceContent(p0)}")
-        return fileIndex.isInSourceContent(p0) && PsiTreeUtil.findChildOfAnyType(
-            psiFile, DartLibraryStatementImpl::class.java
-        ) != null
-    }
-
-    override fun isSearchInModuleContent(p0: Module): Boolean {
-        return false
-    }
-
-    override fun isSearchInLibraries(): Boolean {
-        return false
-    }
-
-}

@@ -11,13 +11,13 @@ import com.intellij.openapi.project.guessProjectDir
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.formatDartName
 
-sealed class MyDartType(var dartType: String, var defaultValue: String)
+sealed class MyDartType(var dartType: String, var defaultValue: String, var isBaseType: Boolean = true)
 data object DartDynamicValue : MyDartType("dynamic", "")
 data object DartStringValue : MyDartType("String", "''")
 data object DartNumberValue : MyDartType("num", "0")
 data object DartBooleanValue : MyDartType("bool", "false")
 data class DartCustomObject(var className: String) :
-    MyDartType(className.formatDartName(), "${className.formatDartName()}()")
+    MyDartType(className.formatDartName(), "${className.formatDartName()}()", false)
 
 enum class NameFormat(val title: String, val example: String) {
     Original(
@@ -41,7 +41,7 @@ enum class FormJsonType(val value: String) {
     )
 }
 
-data class DartArrayValue(var className: String) : MyDartType("List<${className.formatDartName()}>", "[]")
+data class DartArrayValue(var className: String) : MyDartType("List<${className}>", "[]")
 data class MyDartProperties(var name: String, var type: MyDartType, var index: Int)
 sealed class DartType
 sealed class DartPropertyGenerateConfig
@@ -111,7 +111,9 @@ class MyJsonParseTool(root: JsonElement, var className: String = "Root") {
                             when (val type = first.getDartType()) {
                                 is DartCustomObject -> list.add(
                                     MyDartProperties(
-                                        t.toString(), DartArrayValue(DartCustomObject(t).className), index
+                                        t.toString(),
+                                        DartArrayValue(DartCustomObject(t).className.formatDartName()),
+                                        index
                                     )
                                 )
 
