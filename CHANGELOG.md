@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [4.8.0] - 2024-07-08
+
+- fix some bugs by 4.7.0
+- Add `json` to `dart macro` generation tool (bate)
+
 ## [4.7.0] - 2024-07-03
 
 - Reconstructed the `json to freezed class code gen` tool,

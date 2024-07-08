@@ -59,7 +59,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 
     private fun listenChange() {
         alarm.addRequest({
-            println(settingPanel.isModified())
             if (settingPanel.isModified()) {
                 settingPanel.apply()
                 FreezedClassConfigStateService.getInstance(project).loadState(generateConfig)
@@ -97,7 +96,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                                 it.text.trim().isBlank()
                             }
                             filenameField.validationOnInput {
-                                println("text:${it.text}")
                                 if (it.text.trim().isBlank()) {
                                     return@validationOnInput error(VerifyFileDir.ENTER_YOU_FILE_NAME)
                                 }
@@ -226,7 +224,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 }
 
 
-private class RustEditorPanel(val project: Project, val dartClass: MyChildObject, val parentDispose: Disposable) :
+private class RustEditorPanel(project: Project, val dartClass: MyChildObject, val parentDispose: Disposable) :
     BorderLayoutPanel() {
     private val rustEditor = DartEditorTextPanel(project, dartClass.getFreezedClass())
     private val newDispose = Disposer.newDisposable().apply { Disposer.register(parentDispose, this) }
