@@ -1,5 +1,4 @@
 import org.jetbrains.changelog.Changelog
-import org.jetbrains.intellij.tasks.RunPluginVerifierTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -11,9 +10,10 @@ val ideaType: String by project
 val pluginVersion: String by project
 val type: String by project
 
+// https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 plugins {
     kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.intellij") version "1.17.4"
+    id("org.jetbrains.intellij.platform") version "2.0.0-RC1"
     id("org.jetbrains.changelog") version "2.2.0"
 }
 
@@ -24,8 +24,12 @@ repositories {
     mavenCentral()
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-    maven {
-        url = uri("https://plugins.gradle.org/m2/")
+    maven { url = uri("https://plugins.gradle.org/m2/") }
+    //新增
+    intellijPlatform {
+        defaultRepositories()
+        releases()
+        marketplace()
     }
 }
 
@@ -37,39 +41,25 @@ val pluginList = mutableListOf(
     "terminal",
 )
 
-
-
-intellij {
-    version.set(ideaVersion)
-    if (ideaType.trim().isNotBlank()) {
-        type.set(ideaType)
-    }
-    plugins.set(pluginList)
-}
-
-kotlin {
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
-}
-
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
+    intellijPlatform {
+        intellijIdeaCommunity(ideaVersion)
+        bundledPlugins("org.jetbrains.plugins.terminal", "org.jetbrains.plugins.yaml", "org.intellij.plugins.markdown")
+        plugins("Dart:$dartVersion")
+        pluginVerifier()
+        zipSigner()
+        instrumentationTools()
+    }
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
 
 tasks {
-
     val myChangeLog = provider {
         changelog.renderItem(
-            changelog
-                .getOrNull(pluginVersion.removeSuffix(".")) ?: changelog.getUnreleased()
-                .withHeader(false)
-                .withEmptySections(false),
-            Changelog.OutputType.HTML
+            changelog.getOrNull(pluginVersion.removeSuffix(".")) ?: changelog.getUnreleased().withHeader(false)
+                .withEmptySections(false), Changelog.OutputType.HTML
         )
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -80,8 +70,8 @@ tasks {
         }
     }
 
-    listProductsReleases {
-    }
+
+    printBundledPlugins {}
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
@@ -100,7 +90,6 @@ tasks {
     }
 
     runIde {
-        autoReloadPlugins.set(true)
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
     }
 
@@ -130,8 +119,4 @@ changelog {
     version = pluginVersion.removeSuffix(".")
     path = file("CHANGELOG.md").canonicalPath
     groups.empty()
-}
-
-tasks.withType(RunPluginVerifierTask::class.java) {
-    ideVersions.set(listOf("2024.1.3", "2024.1.2"))
 }

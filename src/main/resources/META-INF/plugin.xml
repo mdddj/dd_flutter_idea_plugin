@@ -226,11 +226,12 @@
         <action class="shop.itbug.fluttercheckversionx.form.actions.ProjectFilter" id="FlutterProjects"/>
         <!--        dio 接口搜索-->
         <action id="DioApiSearchAction" class="shop.itbug.fluttercheckversionx.form.actions.DioApiSearchAction"
-                text="Dio Apis Search"/>
+                text="Dio Apis Search" icon="AllIcons.Actions.Search"/>
 
         <!--        清理接口-->
         <action id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
                 class="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
+                icon="AllIcons.Actions.GC"
                 text="Clean Dio Request List"/>
         <action id="DioRequestBodyToFreezedAction"
                 class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
