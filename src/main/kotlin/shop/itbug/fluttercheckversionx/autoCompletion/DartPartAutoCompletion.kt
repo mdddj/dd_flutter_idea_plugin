@@ -28,26 +28,33 @@ class DartPartAutoCompletion : CompletionContributor() {
     }
 
     private inner class Provider : CompletionProvider<CompletionParameters>() {
+
         override fun addCompletions(
-            parameters: CompletionParameters,
-            context: ProcessingContext,
-            result: CompletionResultSet
+            parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet
         ) {
             val project = parameters.editor.project!!
-            val libNames = UserDartLibService.getInstance(project).getLibraryNames()
-            libNames.forEach {
-                val psi = createElement(it, project)
+            val partService = UserDartLibService.getInstance(project)
+            val file = parameters.editor.virtualFile
+            partService.getLibraryNames().forEach { name ->
+                val psi = createElement(name, project) { this }
                 result.addElement(psi)
             }
+            partService.calcRelativelyPath(file).forEach { model ->
+                result.addElement(createElement("'${model.path}'", project) {
+                    this.withTypeText(model.libName)
+                })
+            }
+
         }
 
-        private fun createElement(name: String, project: Project): LookupElement {
-            return LookupElementBuilder.create("part of $name").withIcon(
-                MyIcons.flutter
-            ).withPsiElement(
+        private fun createElement(
+            name: String,
+            project: Project,
+            init: LookupElementBuilder.() -> LookupElementBuilder
+        ): LookupElement {
+            return LookupElementBuilder.create("part of $name").withIcon(MyIcons.flutter).init().withPsiElement(
                 MyDartPsiElementUtil.createDartPart(
-                    "part of $name",
-                    project
+                    "part of $name", project
                 )
             )
         }

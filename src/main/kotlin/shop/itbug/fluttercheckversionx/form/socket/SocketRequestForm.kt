@@ -24,7 +24,7 @@ typealias Request = SocketResponseModel
 
 ///是否可以转换到 json 对象
 fun SocketResponseModel.isParseToJson(): Boolean {
-    data?.let {
+    data.let {
         when (it) {
             is String -> {
                 return it.validParseToFreezed()
@@ -45,7 +45,7 @@ fun SocketResponseModel.isParseToJson(): Boolean {
 }
 
 fun SocketResponseModel.getDataString(): String {
-    data?.let {
+    data.let {
         return when (it) {
             is String -> it
             is Map<*, *> -> Gson().toJson(it)
@@ -53,7 +53,6 @@ fun SocketResponseModel.getDataString(): String {
             else -> "$it"
         }
     }
-    return ""
 }
 
 // 监听http请求的窗口

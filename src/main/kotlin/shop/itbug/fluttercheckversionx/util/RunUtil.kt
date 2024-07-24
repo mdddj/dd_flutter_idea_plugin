@@ -12,27 +12,27 @@ object RunUtil {
         runCommand(project, "Flutter Builder", "flutter pub run build_runner build")
     }
 
-    private fun runFlutterCommandBy233(project: Project, title: String, command: String) {
-        ApplicationManager.getApplication().invokeLater {
-            val instance = TerminalToolWindowManager.getInstance(project)
-            var toolWindow = instance.toolWindow
-
-            //显示窗口
-            if (toolWindow == null) {
-                toolWindow =
-                    ToolWindowManager.getInstance(project).getToolWindow(TerminalToolWindowFactory.TOOL_WINDOW_ID)
-                toolWindow?.show()
-            } else {
-                if (toolWindow.isAvailable) {
-                    toolWindow.show()
-                }
-            }
-            toolWindow.activate {
-                // 241--
-                instance.createLocalShellWidget(project.basePath, title).executeCommand(command)
-            }
-        }
-    }
+//    private fun runFlutterCommandBy233(project: Project, title: String, command: String) {
+//        ApplicationManager.getApplication().invokeLater {
+//            val instance = TerminalToolWindowManager.getInstance(project)
+//            var toolWindow = instance.toolWindow
+//
+//            //显示窗口
+//            if (toolWindow == null) {
+//                toolWindow =
+//                    ToolWindowManager.getInstance(project).getToolWindow(TerminalToolWindowFactory.TOOL_WINDOW_ID)
+//                toolWindow?.show()
+//            } else {
+//                if (toolWindow.isAvailable) {
+//                    toolWindow.show()
+//                }
+//            }
+//            toolWindow.activate {
+//                // 241--
+//                instance.createLocalShellWidget(project.basePath, title).executeCommand(command)
+//            }
+//        }
+//    }
 
     private fun runCommandBy244(project: Project, title: String, command: String) {
         ApplicationManager.getApplication().invokeLater {

@@ -76,6 +76,7 @@
 
             <separator/>
             <reference id="DioRequestBodyToFreezedAction"/>
+            <reference id="JsonToDartMacroRightMenuAction"/>
 
 
         </group>

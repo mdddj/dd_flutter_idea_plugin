@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
@@ -22,11 +23,14 @@ import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
+import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
+import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.util.Util
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
@@ -36,6 +40,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.DefaultListModel
 import javax.swing.SwingUtilities
+import javax.swing.event.HyperlinkEvent
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
@@ -215,15 +220,39 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
-        println("处理模型:${model.url}")
         try {
             MyLoggerEvent.fire(MyLogInfo(message = Gson().toJson(model), key = LogKeys.dioLog))
         } catch (_: Exception) {
         }
+        showNewApiTips(model)
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
         super.handleModel(model)
     }
 
+
+    private fun showNewApiTips(req: Request) {
+        val config = PluginStateService.getInstance().state
+        val manager = ToolWindowManager.getInstance(project)
+        val windowId = MyToolWindowTools.windowId
+        if (config?.apiInToolwindowTop == true && manager.canShowNotification(windowId)) {
+            ///在窗口弹出一个api提醒
+            manager.notifyByBalloon(
+                windowId,
+                req.getMessageType(),
+                "<html>${req.getHtmlPrefix()} <a href='${req.url}'>${req.url}</a></html>",
+                MyIcons.flutter
+            ) { e: HyperlinkEvent? ->
+                e?.let {
+                    println("event: ${e.eventType}")
+                    if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+                        e.url?.let { url ->
+                            BrowserUtil.browse(url)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private inner class ItemModel(val list: MutableList<Request>) : DefaultListModel<Request>() {
         init {

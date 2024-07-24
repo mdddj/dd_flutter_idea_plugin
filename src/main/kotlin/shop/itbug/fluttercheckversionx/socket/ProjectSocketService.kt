@@ -1,17 +1,30 @@
 package shop.itbug.fluttercheckversionx.socket
 
 import com.google.gson.annotations.SerializedName
+import com.intellij.openapi.ui.MessageType
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.util.toHexString
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
+
+data class TestRequestBody(
+    var hello: String = "test",
+    var test: Int = 1,
+    var floatValue: Float = 1.2f,
+    var longValue: Long = 12000L,
+    var boolValue: Boolean = true,
+)
 
 
 class ProjectSocketService {
     companion object {
         fun getTestApi(): Request {
             return Request(
-                data = "{}",
+                data = mapOf("testInt" to 1, "testDouble" to 100.2, "testBool" to false, "object" to TestRequestBody()),
                 method = "GET",
                 queryParams = emptyMap(),
                 url = "https://itbug.shop:6666/api/test?hello=1&test=true",
@@ -58,8 +71,7 @@ class ProjectSocketService {
         var projectName: String = "",
 
         ///时间
-        @SerializedName("createDate")
-        var createDate: String = LocalDateTime.now().formatDate(),
+        @SerializedName("createDate") var createDate: String = LocalDateTime.now().formatDate(),
 
         ///扩展label列表
         var extendNotes: List<String> = emptyList()
@@ -71,6 +83,37 @@ class ProjectSocketService {
         ///计算大小
         fun calculateSize(): String {
             return formatSize(data.toString().toByteArray().size.toLong())
+        }
+
+        private fun isSuccessful(): Boolean {
+            return statusCode == 200
+        }
+
+        private fun getInfoColor(): String {
+            return UIUtil.getLabelSuccessForeground().toHexString()
+        }
+
+        private fun getWarningColor(): String {
+            return UIUtil.getErrorForeground().toHexString()
+        }
+
+        fun getHtmlPrefix(): String {
+            val color = if (isSuccessful()) getInfoColor() else getWarningColor()
+            val secColor = JBUI.CurrentTheme.ContextHelp.FOREGROUND.toHexString()
+            fun getColorStyle(color: String): String {
+                return "style='color:${color}'"
+            }
+            return """
+                <span ${getColorStyle(color)}>${statusCode}</span> <span ${getColorStyle(secColor)}>${method}</span> <span ${
+                getColorStyle(
+                    secColor
+                )
+            }>${timestamp}ms</span>
+            """.trimIndent()
+        }
+
+        fun getMessageType(): MessageType {
+            return if (isSuccessful()) MessageType.INFO else MessageType.ERROR
         }
     }
 

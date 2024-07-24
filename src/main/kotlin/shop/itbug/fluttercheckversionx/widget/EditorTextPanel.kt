@@ -34,15 +34,16 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
     }
 }
 
-class DartEditorTextPanel(project: Project, text: String = "") :
+class DartEditorTextPanel(project: Project, text: String = "", initFormat: Boolean = true) :
     LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
 
 
     init {
         border = emptyBorder()
         this.text = text
-        reformat()
-
+        if (initFormat) {
+            reformat()
+        }
     }
 
     override fun createEditor(): EditorEx {

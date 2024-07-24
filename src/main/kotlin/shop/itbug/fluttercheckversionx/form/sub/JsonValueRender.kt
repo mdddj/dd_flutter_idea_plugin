@@ -1,12 +1,27 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
-import com.google.gson.JsonSyntaxException
+import com.google.gson.*
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
+import java.lang.reflect.Type
 
+
+internal class GsonIntAdapter : JsonSerializer<Int?>, JsonDeserializer<Int?> {
+    override fun serialize(p0: Int?, p1: Type?, p2: JsonSerializationContext?): JsonElement {
+        return JsonPrimitive(p0)
+    }
+
+    override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Int {
+        try {
+            println("类型:$typeOfT")
+            return json.asInt
+        } catch (e: NumberFormatException) {
+            throw JsonParseException("Failed to parse Integer value: " + json.asString, e)
+        }
+    }
+}
 
 /**
  * json viewer
@@ -47,7 +62,8 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
      * 返回要显示的json string
      */
     private fun changeJson(json: Any): String {
-        val builder = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+        val builder = DioApiService.getInstance().gson
+
         if (json is String) {
             try {
                 if (isValidJson(json)) {
@@ -73,13 +89,5 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
     }
 
 }
-
-//private fun <T : JComponent> T.createAnActions(text: String): Array<AnAction> {
-//    return arrayOf(
-//        MyActionButton(JsonToFreezedModelAction(text)).action,
-//        WidgetUtil.getCopyAnAction(text),
-//        WidgetUtil.getDiscordAction()
-//    )
-//}
 
 

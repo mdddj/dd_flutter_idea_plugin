@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.components.service
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -14,13 +13,6 @@ class DioRequestCleanAction : AnAction() {
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.EDT
-    }
-
-    override fun update(e: AnActionEvent) {
-        e.presentation.icon = AllIcons.Actions.GC
-//        e.presentation.description = PluginBundle.get("window.idea.dio.view.clean.desc")
-//        e.presentation.text = PluginBundle.get("clean")
-        super.update(e)
     }
 
 }

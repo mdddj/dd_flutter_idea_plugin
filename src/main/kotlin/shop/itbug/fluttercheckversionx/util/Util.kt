@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
+import com.google.gson.GsonBuilder
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
@@ -300,4 +301,9 @@ class Util {
 
 
     }
+}
+
+
+fun getJsonString(any: Any): String {
+    return GsonBuilder().setPrettyPrinting().create().toJson(any)
 }
