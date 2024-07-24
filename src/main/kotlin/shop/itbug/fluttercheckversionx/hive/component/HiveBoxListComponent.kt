@@ -67,7 +67,6 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
 
 
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
-        println("处理Hive盒子消息:$jsonObject")
         jsonObject?.apply {
             val type = this["type"]
             if (type == "getBoxList") {

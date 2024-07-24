@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.socket.service
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.ToNumberPolicy
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.StateMachineEnum
@@ -41,7 +43,6 @@ class DioApiService {
     }
 
     private fun sendMessage(message: String) {
-        println("发送JSON:$message")
         sessions.forEach {
             it.send(message)
         }
@@ -52,7 +53,7 @@ class DioApiService {
             if (obj is String) {
                 sendMessage(obj)
             } else {
-                val jsonString = Gson().toJson(obj)
+                val jsonString = getInstance().gson.toJson(obj)
                 sendMessage(jsonString)
             }
         } catch (e: Exception) {
@@ -90,7 +91,9 @@ class DioApiService {
         override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
             try {
                 if (jsonObject != null && jsonObject["projectName"] != null) {
-                    val model = Gson().fromJson(nativeMessage, ProjectSocketService.SocketResponseModel::class.java)
+
+                    val model =
+                        getInstance().gson.fromJson(nativeMessage, ProjectSocketService.SocketResponseModel::class.java)
                     handleModel(model)
                 }
             } catch (e: Exception) {
@@ -109,6 +112,12 @@ class DioApiService {
     }
 
 
+    val gson: Gson
+        get() {
+            return GsonBuilder().setPrettyPrinting().disableHtmlEscaping()
+                .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
+        }
+
 }
 
 object MyMessageProcessor : AbstractMessageProcessor<String>() {
@@ -126,9 +135,7 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
 
     private fun jsonStringToModel(msg: String, session: AioSession?) {
         try {
-            println("收到message:$msg")
-            val json = Gson().fromJson(msg, Map::class.java).toMapAny
-            println("json is $json")
+            val json = getInstance().gson.fromJson(msg, Map::class.java).toMapAny
             handle.forEach {
                 it.handleFlutterAppMessage(msg, json, session)
             }

@@ -14,8 +14,6 @@ import shop.itbug.fluttercheckversionx.tools.emptyBorder
  */
 class RightDetailPanel(project: Project) : JsonValueRender(project) {
 
-
-
     init {
         border = emptyBorder()
         FlutterApiClickBus.listening {
