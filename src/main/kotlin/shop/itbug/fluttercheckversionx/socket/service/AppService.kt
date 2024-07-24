@@ -52,7 +52,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
 
     init {
         register()
-        addTestRequestItem()
+//        addTestRequestItem()
     }
 
 

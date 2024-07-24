@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+## [4.9.0] - 2024-07-24
+
+- 修复: json查看器没有格式化的问题
+- 修复: Dio接口数据类型int会被转化为double类型的bug
+- 修复: pubspec.yaml工具条可能引发的线程安全问题
+- 修复: 修复part of 会造成卡顿的bug
+- 修复: json转freezed打开后配置没有被重新加载的问题
+- 新增: json转dart macro 添加到了Dio 右键菜单
+- 新增: part of 新增相对路径自动补全,输入"part"会触发自动联想
+- 新增: dio接口到来时添加一个通知,点击可以在浏览器打开链接
+- 新增: json转dart macro对象工具 (dart bete)
+- 新增: json转freezed添加isar选项
+  <hr/>
+- Fixed: Issue where the JSON viewer was not formatted
+- Fixed: Bug where Dio interface data type int was being converted to double
+- Fixed: Thread safety issue potentially caused by the pubspec.yaml toolbar
+- Fixed: Bug where part of would cause lag
+- Fixed: Issue where JSON to Freezed configuration was not reloaded after opening
+- Added: JSON to Dart macro added to the Dio right-click menu
+- Added: Auto-completion for relative paths with part of; typing "part" triggers auto-suggestions
+- Added: Notification when a Dio interface call arrives, with a clickable link to open in the browser
+- Added: JSON to Dart macro object tool (Dart beta)
+- Added: Isar option to JSON to Freezed conversion
+
 ## [4.8.0] - 2024-07-08
 
 - fix some bugs by 4.7.0
