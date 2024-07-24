@@ -24,7 +24,7 @@ typealias Request = SocketResponseModel
 
 ///是否可以转换到 json 对象
 fun SocketResponseModel.isParseToJson(): Boolean {
-    data?.let {
+    data.let {
         when (it) {
             is String -> {
                 return it.validParseToFreezed()

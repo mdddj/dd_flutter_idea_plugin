@@ -7,11 +7,20 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
+data class TestRequestBody(
+    var hello: String = "test",
+    var test: Int = 1,
+    var floatValue: Float = 1.2f,
+    var longValue: Long = 12000L,
+    var boolValue: Boolean = true,
+)
+
+
 class ProjectSocketService {
     companion object {
         fun getTestApi(): Request {
             return Request(
-                data = "{}",
+                data = mapOf("testInt" to 1, "testDouble" to 100.2, "testBool" to false, "object" to TestRequestBody()),
                 method = "GET",
                 queryParams = emptyMap(),
                 url = "https://itbug.shop:6666/api/test?hello=1&test=true",
@@ -58,8 +67,7 @@ class ProjectSocketService {
         var projectName: String = "",
 
         ///时间
-        @SerializedName("createDate")
-        var createDate: String = LocalDateTime.now().formatDate(),
+        @SerializedName("createDate") var createDate: String = LocalDateTime.now().formatDate(),
 
         ///扩展label列表
         var extendNotes: List<String> = emptyList()

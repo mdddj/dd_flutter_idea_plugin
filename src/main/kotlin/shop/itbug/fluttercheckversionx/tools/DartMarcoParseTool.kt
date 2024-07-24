@@ -1,16 +1,19 @@
 package shop.itbug.fluttercheckversionx.tools
 
 
-data class DartMarcoPropertiesConfig(var setDefaultValue: Boolean = false) : DartPropertyGenerateConfig()
+//生成dart macro 规则配置
 data class DartMarcoClassConfig(
     var openInEditor: Boolean = false,
-    var propertiesConfig: DartMarcoPropertiesConfig = DartMarcoPropertiesConfig()
+    var filename: String = "root",
+    var saveDir: String = "",
+    var classNameRule: NameFormat = NameFormat.Original,
+    var propertiesNameRule: NameFormat = NameFormat.Original,
 ) : DartClassGenerateConfig()
 
 ///生成属性
-fun MyDartProperties.generateDartMacro(config: DartMarcoPropertiesConfig = DartMarcoPropertiesConfig()): String {
+fun MyDartProperties.generateDartMacro(config: DartMarcoClassConfig): String {
     val sb = StringBuilder()
-    sb.append("final ${this.type.dartType} ${this.name};")
+    sb.append("final ${this.type.dartType} ${this.name.formatDartName(config.propertiesNameRule)};")
     return sb.toString()
 }
 
@@ -18,9 +21,9 @@ fun MyDartProperties.generateDartMacro(config: DartMarcoPropertiesConfig = DartM
 fun MyChildObject.generateDartMacro(config: DartMarcoClassConfig = DartMarcoClassConfig()): String {
     val sb = StringBuilder()
     sb.appendLine("@JsonCodable()")
-    sb.appendLine("class ${this.className}{")
+    sb.appendLine("class ${this.className.formatDartName(config.classNameRule)}{")
     this.properties.forEach {
-        sb.appendLine("\t${it.generateDartMacro(config.propertiesConfig)}")
+        sb.appendLine("\t${it.generateDartMacro(config)}")
     }
     sb.appendLine("}")
 

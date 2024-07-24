@@ -5,15 +5,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.util.toast
-import java.net.URL
+import java.net.URI
 
 
 ///复制路径
 class ApiCopyPathAction : MyAction({ "Copy Path" }) {
     override fun actionPerformed(e: AnActionEvent) {
         val url = e.api()!!.url
-        val path = URL(url).path
-
+        val path = URI.create(url).toURL().path
         path.copyTextToClipboard().apply {
             e.project?.toast("Copy succeeded!")
         }

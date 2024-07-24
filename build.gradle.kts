@@ -13,7 +13,7 @@ val type: String by project
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 plugins {
     kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.0.0-RC1"
+    id("org.jetbrains.intellij.platform") version "2.0.0-rc1"
     id("org.jetbrains.changelog") version "2.2.0"
 }
 
@@ -50,6 +50,7 @@ dependencies {
         pluginVerifier()
         zipSigner()
         instrumentationTools()
+
     }
 }
 
@@ -62,14 +63,6 @@ tasks {
                 .withEmptySections(false), Changelog.OutputType.HTML
         )
     }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        compilerOptions {
-            languageVersion.set(KotlinVersion.KOTLIN_2_0)
-            jvmTarget.set(JvmTarget.JVM_17)
-            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
-        }
-    }
-
 
     printBundledPlugins {}
 
@@ -93,7 +86,6 @@ tasks {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
     }
 
-
     buildSearchableOptions {
         enabled = false
     }
@@ -101,6 +93,15 @@ tasks {
     compileKotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
+            languageVersion.set(KotlinVersion.KOTLIN_2_0)
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+        }
+    }
+
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 

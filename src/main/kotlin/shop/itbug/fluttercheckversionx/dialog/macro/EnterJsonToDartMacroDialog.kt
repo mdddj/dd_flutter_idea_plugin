@@ -1,47 +1,39 @@
 package shop.itbug.fluttercheckversionx.dialog.macro
 
-import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.ValidationInfoBuilder
+import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
-import shop.itbug.fluttercheckversionx.dialog.validParseToFreezed
+import shop.itbug.fluttercheckversionx.dialog.*
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.tools.DartMarcoClassConfig
 import shop.itbug.fluttercheckversionx.tools.MyChildObject
 import shop.itbug.fluttercheckversionx.tools.MyJsonParseTool
 import shop.itbug.fluttercheckversionx.tools.generateDartMacro
+import shop.itbug.fluttercheckversionx.util.FileWriteService
+import shop.itbug.fluttercheckversionx.util.Listener
+import shop.itbug.fluttercheckversionx.util.MyAlarm
 import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
-import java.awt.Dimension
 import javax.swing.JComponent
+import javax.swing.SwingUtilities
 
 private val testJson = """
     {
-        "hello":"world",
-        "user": {
-            "name":"梁典典"
-        },
-        "array":[
-            1,2,3
-        ],
-        "string_array":[
-            "hello","dart"
-        ],
-        "obj_arr":[
-            {
-                "test": true
-            }
-        ]
+      "hello_world": "你好世界!"
     }
 """.trimIndent()
 
@@ -74,31 +66,27 @@ class EnterJsonToDartMacroDialog(val project: Project) : DialogWrapper(project) 
     }
 
 
-    override fun getPreferredSize(): Dimension {
-        return Dimension(500, 500)
-    }
-
-    override fun getSize(): Dimension {
-        return Dimension(500, 500)
-    }
-
 }
 
 
-///生成窗口
+///生成dart marco dialog
 class DartMacroDialog(val project: Project, json: String) : DialogWrapper(project) {
 
     private val objs: List<MyChildObject> = MyJsonParseTool.parseJson(json).filterIsInstance<MyChildObject>()
-
+    private val editList: List<ClassCodeEditor> = objs.map { ClassCodeEditor(project, it, disposable) }
     private val tab = JBTabbedPane()
-    private val classConfig = DartMarcoClassConfig()
+    private lateinit var myPanel: DialogPanel
+    private val classConfig = DartMarcoClassConfig(
+        saveDir = project.guessProjectDir()?.path ?: "", filename = "root"
+    )
+    private lateinit var myAlarm: MyAlarm
 
     init {
         super.init()
         title = "Flutterx Json to Dart Macro Code Generate"
         setSize(500, 500)
-        objs.forEach {
-            tab.add(it.className, ClassCodeEditor(project, it))
+        editList.forEach {
+            tab.add(it.obj.className, it)
         }
     }
 
@@ -106,23 +94,73 @@ class DartMacroDialog(val project: Project, json: String) : DialogWrapper(projec
         return BorderLayoutPanel().addToCenter(tab).addToBottom(createSettingPanel())
     }
 
+    ///监听class 全局变化
+    private val listen: Listener = {
+        if (it) {
+            myPanel.apply()
+            editList.forEach { edit -> edit.changeClassConfig(classConfig) }
+        }
+    }
+
     private fun createSettingPanel(): DialogPanel {
-        return panel {
+        myPanel = panel {
             row {
-                checkBox(PluginBundle.get("freezed.gen.base.open.in.editor")).bindSelected(classConfig::openInEditor)
+                saveToDirectoryConfig(
+                    project, SaveToDirectoryModelOnChange(
+                        onFilenameChange = classConfig::filename,
+                        onDirectoryChange = classConfig::saveDir,
+                        onOpenInEditor = classConfig::openInEditor
+                    )
+                ).align(Align.FILL)
             }
+            nameRuleConfig(
+                onChange = NameRuleConfig(
+                    className = classConfig::classNameRule, propertiesName = classConfig::propertiesNameRule
+                )
+            )
+        }
+        myAlarm = MyAlarm(disposable, myPanel)
+
+        SwingUtilities.invokeLater {
+            myAlarm.start(listen)
+            myPanel.registerValidators(disposable)
+        }
+        return myPanel
+    }
+
+
+    override fun doOKAction() {
+        writeFile {
+            super.doOKAction()
         }
     }
 
 
+    private fun writeFile(onSuccess: () -> Unit) {
+        val sb = StringBuilder()
+        editList.forEach {
+            val text = it.getClassText()
+            sb.appendLine(text)
+            sb.appendLine()
+        }
+        FileWriteService.getInstance(project).writeTo(
+            sb.toString(), classConfig.filename, classConfig.saveDir
+        ) { _, file ->
+            run {
+                onSuccess.invoke()
+                if (classConfig.openInEditor) {
+                    FileEditorManager.getInstance(project).openFile(file)
+                }
+            }
+        }
+    }
 }
 
 
 ///代码编辑区域
-private class ClassCodeEditor(project: Project, val obj: MyChildObject) :
-    BorderLayoutPanel() {
-    val dartEdit = DartEditorTextPanel(project = project, obj.generateDartMacro())
-
+private class ClassCodeEditor(project: Project, val obj: MyChildObject, disposable: Disposable) : BorderLayoutPanel() {
+    private val dartEdit = DartEditorTextPanel(project = project, obj.generateDartMacro())
+    private val alarm = Alarm(disposable)
     private val settingPanel = panel {
         row("class name: ") {
             textField().bindText(obj::className)
@@ -132,6 +170,33 @@ private class ClassCodeEditor(project: Project, val obj: MyChildObject) :
     init {
         addToCenter(dartEdit)
         addToBottom(settingPanel)
+        SwingUtilities.invokeLater {
+            listenChange()
+        }
+    }
+
+    /**
+     * 当class 生成规则被改变
+     */
+
+    fun changeClassConfig(newConfig: DartMarcoClassConfig) {
+        val newClassText = obj.generateDartMacro(newConfig)
+        dartEdit.text = newClassText
+    }
+
+    fun getClassText(): String {
+        return dartEdit.text
+    }
+
+    private fun listenChange() {
+        alarm.addRequest({
+            val isModified = settingPanel.isModified()
+            if (isModified) {
+                settingPanel.apply()
+                dartEdit.text = obj.generateDartMacro()
+            }
+            listenChange()
+        }, 1000)
     }
 }
 
@@ -143,7 +208,6 @@ class DartMacroAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.project != null
-        e.presentation.icon = AllIcons.General.Beta
         super.update(e)
     }
 

@@ -52,8 +52,16 @@ class AppService : DioApiService.HandleFlutterApiModel {
 
     init {
         register()
+        addTestRequestItem()
     }
 
+
+    /**
+     * 添加测试api接口
+     */
+    private fun addTestRequestItem() {
+        addRequest(ProjectSocketService.getTestApi())
+    }
 
     /**
      * 设置dio接口监听状态

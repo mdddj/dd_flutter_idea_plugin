@@ -11,6 +11,7 @@ import com.jetbrains.lang.dart.psi.DartFile
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.UserDartLibService
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
+import java.util.concurrent.CompletableFuture
 
 /**
  * part lib自动完成提供者
@@ -28,16 +29,20 @@ class DartPartAutoCompletion : CompletionContributor() {
     }
 
     private inner class Provider : CompletionProvider<CompletionParameters>() {
+
         override fun addCompletions(
             parameters: CompletionParameters,
             context: ProcessingContext,
             result: CompletionResultSet
         ) {
             val project = parameters.editor.project!!
-            val libNames = UserDartLibService.getInstance(project).getLibraryNames()
-            libNames.forEach {
-                val psi = createElement(it, project)
-                result.addElement(psi)
+            CompletableFuture.supplyAsync {
+                return@supplyAsync UserDartLibService.getInstance(project).getLibraryNames()
+            }.thenApply { libs ->
+                libs.forEach {
+                    val psi = createElement(it, project)
+                    result.addElement(psi)
+                }
             }
         }
 

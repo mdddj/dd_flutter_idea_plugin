@@ -31,7 +31,19 @@ enum class NameFormat(val title: String, val example: String) {
     UC(
         "C++",
         "${PluginBundle.get("freezed.gen.formatname.start")}:test_properties ${PluginBundle.get("freezed.gen.formatname.after")}:TestProperties"
-    )
+    );
+
+    fun formatText(text: String): String {
+        var finalName = text
+        if (text.startsWith("_")) {
+            finalName = finalName.removePrefix("_")
+        }
+        return when (this) {
+            Original -> finalName
+            Tf -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, finalName)
+            UC -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, finalName)
+        }
+    }
 
 }
 
@@ -309,13 +321,5 @@ fun MyDartProperties.getFreezedProperty(config: FreezedPropertiesConfig): String
 
 
 fun String.formatDartName(type: NameFormat): String {
-    var finalName = this
-    if (this.startsWith("_")) {
-        finalName = finalName.removePrefix("_")
-    }
-    return when (type) {
-        NameFormat.Original -> finalName
-        NameFormat.Tf -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, finalName)
-        NameFormat.UC -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, finalName)
-    }
+    return type.formatText(this)
 }

@@ -1,36 +1,30 @@
 package shop.itbug.fluttercheckversionx.dialog.freezed
 
-import com.intellij.notification.NotificationGroupManager
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
-import com.jetbrains.lang.dart.DartFileType
+import shop.itbug.fluttercheckversionx.dialog.NameRuleConfig
+import shop.itbug.fluttercheckversionx.dialog.SaveToDirectoryModelOnChange
+import shop.itbug.fluttercheckversionx.dialog.nameRuleConfig
+import shop.itbug.fluttercheckversionx.dialog.saveToDirectoryConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.tools.*
+import shop.itbug.fluttercheckversionx.util.FileWriteService
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.VerifyFileDir
 import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
-import kotlin.io.path.Path
 
 
 ///json转freezed对象的弹出
@@ -43,7 +37,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
     private val generateConfig = FreezedClassConfigStateService.getInstance(project).state
     private val alarm = Alarm(disposable)
     private lateinit var settingPanel: DialogPanel
-    private lateinit var filenameField: Cell<JBTextField>
     private lateinit var dirField: Cell<TextFieldWithBrowseButton>
 
     init {
@@ -88,66 +81,31 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                         }
                     }
                 }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
-                panel {
-                    group(PluginBundle.get("save.to.directory")) {
-                        row(PluginBundle.get("g.2")) {
-                            filenameField = textField().align(Align.FILL).bindText(generateConfig::saveFileName)
-                            filenameField.addValidationRule(VerifyFileDir.ENTER_YOU_FILE_NAME) {
-                                it.text.trim().isBlank()
-                            }
-                            filenameField.validationOnInput {
-                                if (it.text.trim().isBlank()) {
-                                    return@validationOnInput error(VerifyFileDir.ENTER_YOU_FILE_NAME)
-                                }
-                                return@validationOnInput null
-                            }
-                        }
-                        row(PluginBundle.get("g.3")) {
-                            dirField = textFieldWithBrowseButton(
-                                "Select Dir", project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                            ) { it.path }.bindText(generateConfig::saveDirectory).align(Align.FILL)
-                                .addValidationRule(VerifyFileDir.ERROR_MSG) {
-                                    VerifyFileDir.validDirByComponent(it)
-                                }
-                            dirField.validationOnInput {
-                                if (VerifyFileDir.validDirByComponent(dirField.component)) {
-                                    return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-                                }
-                                return@validationOnInput null
-                            }
-                        }
-                        row {
-                            checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
-                                generateConfig::runBuildCommand
-                            )
-                        }
-                        row {
-                            checkBox(PluginBundle.get("freezed.gen.base.open.in.editor")).bindSelected(generateConfig::openInEditor)
-                        }
+
+
+                ///保存到目录
+                saveToDirectoryConfig(
+                    project, SaveToDirectoryModelOnChange(
+                        generateConfig::saveDirectory, generateConfig::saveFileName, generateConfig::openInEditor
+                    )
+                ) {
+                    row {
+                        checkBox("${PluginBundle.get("automatic.operation.command")} flutter pub run build_runner build").bindSelected(
+                            generateConfig::runBuildCommand
+                        )
                     }
                 }.align(AlignY.TOP).resizableColumn()
             }
 
-            collapsibleGroup(PluginBundle.get("freezed.gen.base.opt")) {
-                buttonsGroup(PluginBundle.get("freezed.gen.formatname.classname") + ":") {
-                    row {
-                        NameFormat.values().forEach {
-                            radioButton(it.title, it)
-                            contextHelp(it.example, PluginBundle.get("freezed.gen.formatname.example"))
-                        }
-                    }
-                }.bind(generateConfig::classNameFormat)
-                buttonsGroup(PluginBundle.get("freezed.gen.formatname.properties") + ":") {
-                    row {
-                        NameFormat.values().forEach {
-                            radioButton(it.title, it)
-                            contextHelp(it.example, PluginBundle.get("freezed.gen.formatname.example"))
-                        }
-                    }
-                }.bind(generateConfig::propertyNameFormat)
+            ///命名规则
+            nameRuleConfig(
+                NameRuleConfig(
+                    className = generateConfig::classNameFormat, propertiesName = generateConfig::propertyNameFormat
+                )
+            ) {
                 buttonsGroup("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}:") {
                     row {
-                        FormJsonType.values().forEach {
+                        FormJsonType.entries.forEach {
                             radioButton(it.value, it)
                         }
                     }
@@ -193,34 +151,20 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
             sb.appendLine(it.getObjectClassText())
             sb.appendLine()
         }
-        val dirVirtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path(dirPath))
-        if (dirVirtualFile != null) {
-            val findDirectory = PsiManager.getInstance(project).findDirectory(dirVirtualFile)
-            if (findDirectory != null) {
-                val createDartFile = PsiFileFactory.getInstance(project)
-                    .createFileFromText("$fileName.dart", DartFileType.INSTANCE, sb.toString())
-                try {
-                    val psiElement = ApplicationManager.getApplication()
-                        .runWriteAction(Computable { findDirectory.add(createDartFile) })
-                    if (generateConfig.openInEditor) {
-                        FileEditorManager.getInstance(project).openFile(psiElement.containingFile.virtualFile)
-                    }
-                    if (generateConfig.runBuildCommand) {
-                        RunUtil.runFlutterBuildCommand(project)
-                    }
-                    onSuccess.invoke()
-                } catch (e: Exception) {
-                    showErrorMessage("${PluginBundle.get("freezed.gen.create.error")}:${e.localizedMessage}")
+
+        FileWriteService.getInstance(project).writeTo(sb.toString(), fileName, dirPath) { _, psiFile ->
+            run {
+                if (generateConfig.openInEditor) {
+                    FileEditorManager.getInstance(project).openFile(psiFile)
                 }
+                if (generateConfig.runBuildCommand) {
+                    RunUtil.runFlutterBuildCommand(project)
+                }
+                onSuccess.invoke()
             }
         }
     }
 
-    private fun showErrorMessage(msg: String) {
-        val groupId = "json_to_freezed_tooltip"
-        NotificationGroupManager.getInstance().getNotificationGroup(groupId)
-            .createNotification(msg, NotificationType.ERROR).notify(project)
-    }
 }
 
 
