@@ -8,12 +8,10 @@ import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.DartClassBodyImpl
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
-import groovy.util.logging.Slf4j
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.manager.myManagerFun
 import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
 
-@Slf4j
 class FreezedPartAutoComplicate : CompletionContributor() {
 
     init {
