@@ -179,7 +179,7 @@
 
         <!--        <vfs.asyncListener implementation="shop.itbug.fluttercheckversionx.services.PubspecFileChangeListenAsync"/>-->
 
-        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>
+        <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
     </extensions>
 
     <projectListeners>
