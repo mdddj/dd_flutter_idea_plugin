@@ -33,8 +33,9 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
     private val objects: List<MyChildObject> = MyJsonParseTool.parseJson(jsonString).filterIsInstance<MyChildObject>()
         .mapIndexed { index, t -> t.copy(index = index) }
     private val tabs = JBTabbedPane()
-    private val panels = objects.map { RustEditorPanel(project, it, disposable) }
     private val generateConfig = FreezedClassConfigStateService.getInstance(project).state
+    private val panels =
+        objects.map { RustEditorPanel(project, it, disposable, generateConfig.copy(objectIndex = objects.indexOf(it))) }
     private val alarm = Alarm(disposable)
     private lateinit var settingPanel: DialogPanel
     private lateinit var dirField: Cell<TextFieldWithBrowseButton>
@@ -55,7 +56,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
             if (settingPanel.isModified()) {
                 settingPanel.apply()
                 FreezedClassConfigStateService.getInstance(project).loadState(generateConfig)
-                panels.forEach { it.changeText(generateConfig) }
+                panels.forEach { it.changeText(generateConfig.copy(objectIndex = panels.indexOf(it))) }
             }
             listenChange()
         }, 1000)
@@ -112,10 +113,23 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 }.bind(generateConfig::formJsonType)
             }
 
-            collapsibleGroup("Hive ${PluginBundle.get("freezed.gen.base.setting")}") {
+            collapsibleGroup("<html>Hive & Isar ${PluginBundle.get("freezed.gen.base.setting")}</html>", false) {
                 row {
-                    checkBox(PluginBundle.get("freezed.gen.create.enable")).bindSelected(generateConfig.hiveSetting::enable)
-                    intTextField().bindIntText(generateConfig.hiveSetting::hiveId).label("HiveType id")
+                    panel {
+                        group("Hive") {
+                            row {
+                                checkBox(PluginBundle.get("freezed.gen.create.enable")).bindSelected(generateConfig.hiveSetting::enable)
+                                intTextField().bindIntText(generateConfig.hiveSetting::hiveId).label("HiveType id")
+                            }
+                        }
+                    }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
+                    panel {
+                        group("Isar") {
+                            row {
+                                checkBox("Use isar").bindSelected(generateConfig::useIsar)
+                            }
+                        }
+                    }.align(AlignY.TOP).resizableColumn()
                 }
             }
         }
@@ -168,9 +182,13 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
 }
 
 
-private class RustEditorPanel(project: Project, val dartClass: MyChildObject, val parentDispose: Disposable) :
-    BorderLayoutPanel() {
-    private val rustEditor = DartEditorTextPanel(project, dartClass.getFreezedClass())
+private class RustEditorPanel(
+    project: Project,
+    val dartClass: MyChildObject,
+    val parentDispose: Disposable,
+    initConfig: FreezedClassConfig = FreezedClassConfig()
+) : BorderLayoutPanel() {
+    private val rustEditor = DartEditorTextPanel(project, dartClass.getFreezedClass(initConfig), false)
     private val newDispose = Disposer.newDisposable().apply { Disposer.register(parentDispose, this) }
     private val alarm = Alarm(newDispose)
     var globalConfig = FreezedClassConfig()

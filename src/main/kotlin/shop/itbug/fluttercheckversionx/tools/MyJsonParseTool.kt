@@ -11,6 +11,8 @@ import com.intellij.openapi.project.guessProjectDir
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.formatDartName
 
+typealias VoidCallback = () -> Unit
+
 sealed class MyDartType(var dartType: String, var defaultValue: String, var isBaseType: Boolean = true)
 data object DartDynamicValue : MyDartType("dynamic", "")
 data object DartStringValue : MyDartType("String", "''")
@@ -84,7 +86,19 @@ data class FreezedClassConfig(
     var hiveSetting: HiveSetting = HiveSetting(),
     var runBuildCommand: Boolean = false,
     var openInEditor: Boolean = false,
+    var useIsar: Boolean = false,
+    var objectIndex: Int? = null,
 ) : DartClassGenerateConfig()
+
+fun FreezedClassConfig.mainClassRun(mainCall: VoidCallback, otherRun: VoidCallback? = null) {
+    if (objectIndex != null) {
+        if (objectIndex == 0) {
+            mainCall()
+        } else {
+            otherRun?.invoke()
+        }
+    }
+}
 
 @Service(Service.Level.PROJECT)
 @State(name = "FlutterX Freezed Code Gen Setting", category = SettingsCategory.PLUGINS)
@@ -246,6 +260,16 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
     val className = this.className.formatDartName(config.classNameFormat)
     sb.appendLine("@freezed")
 
+
+    //使用isar
+    if (config.useIsar) {
+        config.mainClassRun({
+            sb.appendLine("@Collection(ignore: {'copyWith'})")
+        }) {
+            sb.appendLine("@Embedded(ignore: {'copyWith'})")
+        }
+    }
+
     if (hiveConfig.enable) {
         var id = hiveConfig.hiveId
         index?.let {
@@ -262,6 +286,12 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
         sb.appendLine("")
     }
     sb.appendLine("\tconst factory $className({")
+
+
+    ///添加isar属性
+    if (config.useIsar) {
+        config.mainClassRun({ sb.appendLine("\t\t@Default(Isar.autoIncrement) Id isarId,") })
+    }
 
     ///属性
     properties.forEach { p ->
@@ -282,9 +312,17 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
     sb.appendLine("")
 
 
+    //添加 fromJson
     if (config.addFromJsonFunction) {
-        sb.appendLine("\t factory $className.fromJson(${config.formJsonType.value} json) => _\$$className" + "FromJson(json);")
+        sb.appendLine("\tfactory $className.fromJson(${config.formJsonType.value} json) => _\$$className" + "FromJson(json);")
         sb.appendLine("")
+    }
+
+    if (config.useIsar) {
+        config.mainClassRun({
+            sb.appendLine("\tId get \$id => isarId; ")
+            sb.appendLine("")
+        })
     }
 
     sb.appendLine("}")

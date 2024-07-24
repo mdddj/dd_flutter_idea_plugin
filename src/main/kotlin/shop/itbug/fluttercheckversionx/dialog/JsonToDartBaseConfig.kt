@@ -19,7 +19,7 @@ typealias OnInit = Panel.() -> Unit
 
 ///命名规则配置
 fun Panel.nameRuleConfig(onChange: NameRuleConfig, init: OnInit? = null): CollapsibleRow {
-    return collapsibleGroup(PluginBundle.get("freezed.gen.base.opt")) {
+    return collapsibleGroup(PluginBundle.get("freezed.gen.base.opt"), false) {
         buttonsGroup(PluginBundle.get("freezed.gen.formatname.classname") + ":") {
             row {
                 NameFormat.entries.forEach {
