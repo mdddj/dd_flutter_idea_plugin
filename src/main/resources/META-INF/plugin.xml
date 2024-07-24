@@ -237,6 +237,9 @@
         <action id="DioRequestBodyToFreezedAction"
                 class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
                 icon="/icons/freezed.svg"/>
+        <action id="JsonToDartMacroRightMenuAction"
+                class="shop.itbug.fluttercheckversionx.actions.JsonToDartMacroRightMenuAction"
+                text="Json to Dart Macro"/>
         <!--     dio 接口窗口顶部的操作区域   -->
         <group id="FlutterX Window Top Actions">
             <!--            <reference id="DioApiSearchAction"/>-->

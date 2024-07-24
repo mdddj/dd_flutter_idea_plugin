@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
+import shop.itbug.fluttercheckversionx.dialog.macro.DartMacroDialog
 import shop.itbug.fluttercheckversionx.form.socket.getDataString
 import shop.itbug.fluttercheckversionx.form.socket.isParseToJson
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -12,7 +13,6 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 ///json 转 freezed
 class DioRequestBodyToFreezedAction : AnAction() {
-
 
     override fun actionPerformed(e: AnActionEvent) {
         val currentSelectRequest = service<AppService>().currentSelectRequest
@@ -28,4 +28,23 @@ class DioRequestBodyToFreezedAction : AnAction() {
         e.presentation.isEnabled = currentSelectRequest?.isParseToJson() == true
         super.update(e)
     }
+}
+
+class JsonToDartMacroRightMenuAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        val currentSelectRequest = service<AppService>().currentSelectRequest
+        val json = currentSelectRequest!!.getDataString()
+        DartMacroDialog(e.project!!, json).show()
+    }
+
+    override fun update(e: AnActionEvent) {
+        val currentSelectRequest = service<AppService>().currentSelectRequest
+        e.presentation.isEnabled = currentSelectRequest?.isParseToJson() == true
+        super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
 }
