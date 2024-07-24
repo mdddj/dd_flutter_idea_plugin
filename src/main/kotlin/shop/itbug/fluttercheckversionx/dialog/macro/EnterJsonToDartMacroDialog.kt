@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
@@ -19,10 +18,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.dialog.*
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.tools.DartMarcoClassConfig
-import shop.itbug.fluttercheckversionx.tools.MyChildObject
-import shop.itbug.fluttercheckversionx.tools.MyJsonParseTool
-import shop.itbug.fluttercheckversionx.tools.generateDartMacro
+import shop.itbug.fluttercheckversionx.tools.*
 import shop.itbug.fluttercheckversionx.util.FileWriteService
 import shop.itbug.fluttercheckversionx.util.Listener
 import shop.itbug.fluttercheckversionx.util.MyAlarm
@@ -73,12 +69,10 @@ class EnterJsonToDartMacroDialog(val project: Project) : DialogWrapper(project) 
 class DartMacroDialog(val project: Project, json: String) : DialogWrapper(project) {
 
     private val objs: List<MyChildObject> = MyJsonParseTool.parseJson(json).filterIsInstance<MyChildObject>()
-    private val editList: List<ClassCodeEditor> = objs.map { ClassCodeEditor(project, it, disposable) }
     private val tab = JBTabbedPane()
     private lateinit var myPanel: DialogPanel
-    private val classConfig = DartMarcoClassConfig(
-        saveDir = project.guessProjectDir()?.path ?: "", filename = "root"
-    )
+    private val classConfig: DartMarcoClassConfig = DartMarcoClassConfigStateService.getInstance(project).state
+    private val editList: List<ClassCodeEditor> = objs.map { ClassCodeEditor(project, it, disposable, classConfig) }
     private lateinit var myAlarm: MyAlarm
 
     init {
@@ -99,6 +93,7 @@ class DartMacroDialog(val project: Project, json: String) : DialogWrapper(projec
         if (it) {
             myPanel.apply()
             editList.forEach { edit -> edit.changeClassConfig(classConfig) }
+            DartMarcoClassConfigStateService.getInstance(project).loadState(classConfig)
         }
     }
 
@@ -158,8 +153,13 @@ class DartMacroDialog(val project: Project, json: String) : DialogWrapper(projec
 
 
 ///代码编辑区域
-private class ClassCodeEditor(project: Project, val obj: MyChildObject, disposable: Disposable) : BorderLayoutPanel() {
-    private val dartEdit = DartEditorTextPanel(project = project, obj.generateDartMacro())
+private class ClassCodeEditor(
+    project: Project,
+    val obj: MyChildObject,
+    disposable: Disposable,
+    initConfig: DartMarcoClassConfig
+) : BorderLayoutPanel() {
+    private val dartEdit = DartEditorTextPanel(project = project, obj.generateDartMacro(initConfig))
     private val alarm = Alarm(disposable)
     private val settingPanel = panel {
         row("class name: ") {

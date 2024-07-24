@@ -1,7 +1,11 @@
 package shop.itbug.fluttercheckversionx.socket
 
 import com.google.gson.annotations.SerializedName
+import com.intellij.openapi.ui.MessageType
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.util.toHexString
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -79,6 +83,37 @@ class ProjectSocketService {
         ///计算大小
         fun calculateSize(): String {
             return formatSize(data.toString().toByteArray().size.toLong())
+        }
+
+        private fun isSuccessful(): Boolean {
+            return statusCode == 200
+        }
+
+        private fun getInfoColor(): String {
+            return UIUtil.getLabelSuccessForeground().toHexString()
+        }
+
+        private fun getWarningColor(): String {
+            return UIUtil.getErrorForeground().toHexString()
+        }
+
+        fun getHtmlPrefix(): String {
+            val color = if (isSuccessful()) getInfoColor() else getWarningColor()
+            val secColor = JBUI.CurrentTheme.ContextHelp.FOREGROUND.toHexString()
+            fun getColorStyle(color: String): String {
+                return "style='color:${color}'"
+            }
+            return """
+                <span ${getColorStyle(color)}>${statusCode}</span> <span ${getColorStyle(secColor)}>${method}</span> <span ${
+                getColorStyle(
+                    secColor
+                )
+            }>${timestamp}ms</span>
+            """.trimIndent()
+        }
+
+        fun getMessageType(): MessageType {
+            return if (isSuccessful()) MessageType.INFO else MessageType.ERROR
         }
     }
 

@@ -39,7 +39,6 @@ class UserDartLibService(val project: Project) : DumbAware {
      * 计算[file]的相对地址
      */
     fun calcRelativelyPath(file: VirtualFile): HashSet<DartPartPath> {
-        println("files len : ${virtualFiles.size}")
         val strs = virtualFiles.map {
             try {
                 val path = file.parent.toNioPath().relativize(it.file.toNioPath()).normalize().toString()
@@ -48,8 +47,7 @@ class UserDartLibService(val project: Project) : DumbAware {
                 return@map null
             }
         }.filterNotNull().toHashSet()
-        println(strs)
-        return strs
+        return strs.sortedBy { it.path.length }.toHashSet()
     }
 
 

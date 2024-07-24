@@ -113,6 +113,19 @@ class FreezedClassConfigStateService(project: Project) : SimplePersistentStateCo
     }
 }
 
+@Service(Service.Level.PROJECT)
+@State(name = "FlutterX Dart Macro Code Gen Setting", category = SettingsCategory.PLUGINS)
+@Storage(roamingType = RoamingType.DEFAULT)
+class DartMarcoClassConfigStateService(project: Project) : SimplePersistentStateComponent<DartMarcoClassConfig>(
+    DartMarcoClassConfig(
+        saveDir = project.guessProjectDir()?.path ?: ""
+    )
+) {
+    companion object {
+        fun getInstance(project: Project): DartMarcoClassConfigStateService = project.service()
+    }
+}
+
 ///json数据处理
 class MyJsonParseTool(root: JsonElement, var className: String = "Root") {
 

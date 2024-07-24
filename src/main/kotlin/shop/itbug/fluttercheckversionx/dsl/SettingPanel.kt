@@ -50,7 +50,6 @@ fun settingPanel(
                 checkBox(PluginBundle.get("open")).bindSelected(model::apiInToolwindowTop)
             }
 
-
             indent {
                 twoColumnsRow({
                     checkBox(PluginBundle.get("display_domain_name")).bindSelected(dioxSetting::showHost)
