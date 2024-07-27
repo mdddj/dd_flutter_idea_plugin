@@ -69,7 +69,7 @@ class SocketWindow : ToolWindowFactory {
         val privacyPanel = PrivacyScanWindow(project)
         val privacyContent = instance.createContent(
             privacyPanel,
-            "IOS${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}",
+            "IOS ${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}",
             false
         )
         toolWindow.contentManager.addContent(privacyContent)

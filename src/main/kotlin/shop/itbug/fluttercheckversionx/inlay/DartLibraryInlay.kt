@@ -10,7 +10,7 @@ import shop.itbug.fluttercheckversionx.inlay.base.MyBaseInlay
 import shop.itbug.fluttercheckversionx.inlay.base.MyBaseInlayModel
 import shop.itbug.fluttercheckversionx.services.UserDartLibService
 
-class DartLibraryInlay : MyBaseInlay("Dart Library Tips") {
+class DartLibraryInlay : MyBaseInlay("DartLibraryTips") {
 
     override fun needHandle(element: PsiElement, setting: PluginSetting, editor: Editor): Boolean {
         val text = editor.document.getText(element.textRange)
@@ -33,4 +33,10 @@ class DartLibraryInlay : MyBaseInlay("Dart Library Tips") {
                 }
             })
     }
+
+    override val previewText: String
+        get() = """
+            part of test;
+        """.trimIndent()
+
 }

@@ -67,7 +67,7 @@ abstract class MyBaseInlay(private val inlayName: String) : InlayHintsProvider<P
 
     abstract fun handle(element: PsiElement, myFactory: HintsInlayPresentationFactory, model: MyBaseInlayModel)
 
-    private fun getMyPreviewText(): String {
+    fun getMyPreviewText(): String {
         return ""
     }
 

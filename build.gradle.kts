@@ -122,3 +122,10 @@ changelog {
     path = file("CHANGELOG.md").canonicalPath
     groups.empty()
 }
+
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
+}
