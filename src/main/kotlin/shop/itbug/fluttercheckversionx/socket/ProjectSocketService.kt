@@ -82,7 +82,14 @@ class ProjectSocketService {
 
         ///计算大小
         fun calculateSize(): String {
-            return formatSize(data.toString().toByteArray().size.toLong())
+            try {
+                if (this.data == null) {
+                    return "0"
+                }
+                return formatSize(data.toString().toByteArray().size.toLong())
+            } catch (e: Exception) {
+                return "0"
+            }
         }
 
         private fun isSuccessful(): Boolean {

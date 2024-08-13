@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-## [4.9.0] - 2024-07-24
+## [4.9.1] - 2014-07-29
+
+- 修复inlay命名导致的part of library无法关闭的问题
+- 修改插件idea版本上限 (2024+)
+- <hr />
+- Fixed the issue where part of the library could not be closed due to inlay naming
+- Updated the plugin's IDEA version upper limit (2024.2+)
+
+### [4.9.0] - 2024-07-24
 
 - 修复: json查看器没有格式化的问题
 - 修复: Dio接口数据类型int会被转化为double类型的bug
@@ -26,12 +34,12 @@
 - Added: JSON to Dart macro object tool (Dart beta)
 - Added: Isar option to JSON to Freezed conversion
 
-## [4.8.0] - 2024-07-08
+### [4.8.0] - 2024-07-08
 
 - fix some bugs by 4.7.0
 - Add `json` to `dart macro` generation tool (bate)
 
-## [4.7.0] - 2024-07-03
+### [4.7.0] - 2024-07-03
 
 - Reconstructed the `json to freezed class code gen` tool,
 - Optimize the repair logic of `package` new version detection
@@ -40,19 +48,19 @@
 - This is the last updated version below `2023.*`. If you want to receive subsequent updates, please update your idea to
   version `2024.*` and `above`.
 
-## [4.6.0] - 2024-06-18
+### [4.6.0] - 2024-06-18
 
 - After optimizing the terminal running logic, windows will no longer be created repeatedly.
 - Add `part of libarary` autocomplete command
 - Optimize the automatic completion popup timing of **_freezed from json_**
 - Fix the problem that **_@Freezed_** does not display the freezed function
 
-## [4.5.2] - 2024-05-30
+### [4.5.2] - 2024-05-30
 
 - Optimize dart file inlay detection performance
 - Optimize some known bugs
 
-## [4.5.0] - 2024-05-25
+### [4.5.0] - 2024-05-25
 
 - Fix the problem of stuck idea or Android studio
 - Upgrade kotlin version to `2.0.0` to `support k2 compiler`
@@ -66,12 +74,12 @@
 - Remove some deprecated functions
 - Replace flutter update log `What's New` Url Link
 
-## [4.2.1] - 2024-05-17
+### [4.2.1] - 2024-05-17
 
 - Adaptation 2024.2
 - Fix performance issues caused by iOS privacy scanning window
 
-## [4.2.0] - 2024-05-15
+### [4.2.0] - 2024-05-15
 
 - Fixed the problem of IP type URI being accessed and parsed incorrectly in the dio panel
 - Fixed the issue where the <code><b>&</b></code> symbol in parameters in Dio URL is displayed as blank
