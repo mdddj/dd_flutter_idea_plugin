@@ -14,7 +14,7 @@ val type: String by project
 plugins {
     idea
     kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.0.0-rc1"
+    id("org.jetbrains.intellij.platform") version "2.0.1"
     id("org.jetbrains.changelog") version "2.2.0"
 }
 
@@ -26,7 +26,6 @@ repositories {
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     maven { url = uri("https://plugins.gradle.org/m2/") }
-    //新增
     intellijPlatform {
         defaultRepositories()
         releases()
@@ -51,7 +50,15 @@ dependencies {
         pluginVerifier()
         zipSigner()
         instrumentationTools()
+    }
+}
 
+
+intellijPlatform {
+    pluginVerification {
+        ides {
+            local(file("/Applications/Android Studio.app"))
+        }
     }
 }
 
@@ -64,8 +71,6 @@ tasks {
                 .withEmptySections(false), Changelog.OutputType.HTML
         )
     }
-
-    printBundledPlugins {}
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
@@ -85,10 +90,6 @@ tasks {
 
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
-    }
-
-    buildSearchableOptions {
-        enabled = false
     }
 
     compileKotlin {

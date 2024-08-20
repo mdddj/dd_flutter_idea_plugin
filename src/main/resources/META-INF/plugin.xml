@@ -52,6 +52,19 @@
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
+        <intentionAction>
+            <language>Dart</language>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.RiverpodWrapInternalAction</className>
+        </intentionAction>
+        <intentionAction>
+            <language>Dart</language>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.LayoutBuildWrapInternalAction</className>
+        </intentionAction>
+        <intentionAction>
+            <language>Dart</language>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.ProviderWrapInternaleAction</className>
+        </intentionAction>
+
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
@@ -108,10 +121,6 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"
                                    language="Dart"/>
 
-        <!--    插件更新更新时间内联提示     -->
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.DartPluginTimeDateHintsProvider"
-                language="yaml"/>
 
         <!--   dart变量的内联显示     -->
         <codeInsight.inlayProvider
@@ -146,7 +155,7 @@
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"
                                 id="myUserBarFactory"/>
 
-        <diff.DiffExtension implementation="shop.itbug.fluttercheckversionx.diff.PubYamlGithubAndPathDiff"/>
+        <!--        <diff.DiffExtension implementation="shop.itbug.fluttercheckversionx.diff.PubYamlGithubAndPathDiff"/>-->
 
         <!--        系统设置-->
         <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"

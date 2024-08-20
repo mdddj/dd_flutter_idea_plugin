@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-## [4.9.1] - 2014-07-29
+## [4.9.2] - 2024-08-13
+
+- 修复 <a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues/50'>#50</a>
+
+<hr />
+
+- Fixed <a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues/50'>#50</a>
+
+### [4.9.1] - 2024-07-29
 
 - 修复inlay命名导致的part of library无法关闭的问题
 - 修改插件idea版本上限 (2024+)

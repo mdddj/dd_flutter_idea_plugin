@@ -41,4 +41,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-local.properties
+
+.intellijPlatform/

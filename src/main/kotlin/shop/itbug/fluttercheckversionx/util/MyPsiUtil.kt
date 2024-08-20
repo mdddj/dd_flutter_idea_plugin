@@ -119,7 +119,7 @@ class MyPsiElementUtil {
                 val coreElement = yaml.firstChild.firstChild
                 val coreElementChildren = coreElement.childrenOfType<YAMLKeyValueImpl>()
                 if (coreElementChildren.isNotEmpty()) {
-                    FlutterPluginType.values().forEach { type ->
+                    FlutterPluginType.entries.forEach { type ->
                         val l = coreElementChildren.filter { it.keyText == type.type }.toList()
                         if (l.isNotEmpty()) {
                             val pluginDevs = l.first()
