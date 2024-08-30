@@ -13,16 +13,21 @@ import shop.itbug.fluttercheckversionx.constance.MyKeys
 /// riverpod setting
 class RiverpodActionsSetting : DumbAwareToggleAction() {
     override fun isSelected(e: AnActionEvent): Boolean {
-        return PluginConfig.getState().showRiverpodInlay
+        return PluginConfig.getState(e.project!!).showRiverpodInlay
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-        PluginConfig.changeState { it.showRiverpodInlay = state }
+        PluginConfig.changeState(e.project!!) { it.showRiverpodInlay = state }
         e.getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
             ?.let { dartElement: DartClassDefinitionImpl ->
                 println("restart inlay provider...")
                 DaemonCodeAnalyzer.getInstance(dartElement.project).restart(dartElement.containingFile)
             }
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.isVisible = e.project != null
+        super.update(e)
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

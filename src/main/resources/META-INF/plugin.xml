@@ -118,10 +118,6 @@
                 language="Dart"/>
 
 
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay"
-                                   language="Dart"/>
-
-
         <!--   dart变量的内联显示     -->
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
@@ -168,7 +164,6 @@
 
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState"/>
 
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.PluginConfig"/>
 
         <!--        插件新版本检测-->
 

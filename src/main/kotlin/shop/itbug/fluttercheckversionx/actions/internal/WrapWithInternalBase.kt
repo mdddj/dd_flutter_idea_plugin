@@ -32,6 +32,7 @@ abstract class WrapWithInternalBase : PsiElementBaseIntentionAction(), Iconable 
     }
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
+        if (editor == null) return false
         val returnEle = DartPsiTreeUtil.findReturn(element)
         return returnEle != null && returnEle.expression != null && createElement(returnEle.expression!!) != null
     }
@@ -41,7 +42,6 @@ abstract class WrapWithInternalBase : PsiElementBaseIntentionAction(), Iconable 
         val create = createElement(returnEle.expression!!)
         create?.let { returnEle.expression?.replace(it) }
     }
-
 
     private fun createElement(element: PsiElement): DartCallExpressionImpl? {
         val text = """
