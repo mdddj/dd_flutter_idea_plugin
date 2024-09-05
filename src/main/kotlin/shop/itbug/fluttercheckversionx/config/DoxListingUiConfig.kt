@@ -18,6 +18,20 @@ enum class DioRequestUIStyle(val string: String) {
     CompactStyle(PluginBundle.get("compact.mode"))
 }
 
+
+///拷贝 url 的自定义key
+data class DioCopyAllKey(
+    var url: String = "url",
+    var method: String = "method",
+    var headers: String = "headers",
+    var queryParams: String = "query",
+    var body: String = "body",
+    var responseStatusCode: String = "responseStatusCode",
+    var response: String = "response",
+    var requestTime: String = "requestTime",
+    var timestamp: String = "timestamp",
+)
+
 data class DoxListeningSetting(
     //是否展示前缀host
     var showHost: Boolean = true,
@@ -50,7 +64,10 @@ data class DoxListeningSetting(
     var checkFlutterVersion: Boolean = true,
 
     ///显示数据大小
-    var showDataSize: Boolean = true
+    var showDataSize: Boolean = true,
+
+    ///拷贝的key
+    var copyKeys: DioCopyAllKey = DioCopyAllKey()
 
 )
 

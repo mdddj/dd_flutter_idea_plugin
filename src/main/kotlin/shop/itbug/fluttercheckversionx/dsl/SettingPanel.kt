@@ -73,7 +73,6 @@ fun settingPanel(
                     checkBox(PluginBundle.get("dio.setting.show.data.size")).bindSelected(dioxSetting::showDataSize)
                 }
             }
-
         }
 
         group(PluginBundle.get("ass.setting.title")) {
@@ -85,6 +84,37 @@ fun settingPanel(
             }
             row(PluginBundle.get("ass.5")) {
                 textField().bindText(model::assetScanFolderName)
+            }
+        }
+
+        ///配置拷贝接口的 key
+        group("Copy All Keys") {
+            row("url") {
+                textField().bindText(dioxSetting.copyKeys::url)
+            }
+            row("method") {
+                textField().bindText(dioxSetting.copyKeys::method)
+            }
+            row("headers") {
+                textField().bindText(dioxSetting.copyKeys::headers)
+            }
+            row("queryParams") {
+                textField().bindText(dioxSetting.copyKeys::queryParams)
+            }
+            row("body") {
+                textField().bindText(dioxSetting.copyKeys::body)
+            }
+            row("responseStatusCode") {
+                textField().bindText(dioxSetting.copyKeys::responseStatusCode)
+            }
+            row("response") {
+                textField().bindText(dioxSetting.copyKeys::response)
+            }
+            row("requestTime") {
+                textField().bindText(dioxSetting.copyKeys::requestTime)
+            }
+            row("timestamp") {
+                textField().bindText(dioxSetting.copyKeys::timestamp)
             }
         }
     }

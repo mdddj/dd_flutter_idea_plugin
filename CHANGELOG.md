@@ -2,7 +2,30 @@
 
 ## Unreleased
 
-## [4.9.2] - 2024-08-13
+## [4.9.4] - 2024-09-05
+
+- 更新: 修改flutter新版本,whats new的跳转链接
+- 新增: dio api 接口信息拷贝,支持自定义 key
+    * 详见flutterx设置,Copy all key
+- 新增: dio api 拷贝为图片,在右键菜单,数据量太大的接口会报内存堆栈溢出,这个问题不解决
+
+<hr/>
+
+- Update: Modified the link for “What’s New” in the new version of Flutter.
+- New: Added Dio API interface information copy feature, supporting custom keys.
+    * See Flutterx settings for “Copy all key”.
+- New: Added Dio API copy as image feature in the right-click menu. Interfaces with too much data will cause memory
+  stack overflow, and this issue will not be resolved.
+
+### [4.9.3] - 2024-09-03
+
+- dio拷贝接口信息(Copy all),添加格式化 json
+
+<hr/>
+
+- dio copy interface information (Copy all), add formatted json
+
+### [4.9.2] - 2024-08-13
 
 - 修复 <a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues/50'>#50</a>
 

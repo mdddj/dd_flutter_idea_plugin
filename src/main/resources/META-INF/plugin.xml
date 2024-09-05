@@ -52,18 +52,18 @@
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <intentionAction>
-            <language>Dart</language>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.RiverpodWrapInternalAction</className>
-        </intentionAction>
-        <intentionAction>
-            <language>Dart</language>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.LayoutBuildWrapInternalAction</className>
-        </intentionAction>
-        <intentionAction>
-            <language>Dart</language>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.ProviderWrapInternaleAction</className>
-        </intentionAction>
+        <!--        <intentionAction>-->
+        <!--            <language>Dart</language>-->
+        <!--            <className>shop.itbug.fluttercheckversionx.actions.internal.RiverpodWrapInternalAction</className>-->
+        <!--        </intentionAction>-->
+        <!--        <intentionAction>-->
+        <!--            <language>Dart</language>-->
+        <!--            <className>shop.itbug.fluttercheckversionx.actions.internal.LayoutBuildWrapInternalAction</className>-->
+        <!--        </intentionAction>-->
+        <!--        <intentionAction>-->
+        <!--            <language>Dart</language>-->
+        <!--            <className>shop.itbug.fluttercheckversionx.actions.internal.ProviderWrapInternaleAction</className>-->
+        <!--        </intentionAction>-->
 
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>

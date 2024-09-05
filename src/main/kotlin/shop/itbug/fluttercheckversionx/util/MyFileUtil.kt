@@ -5,6 +5,10 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 import javax.swing.SwingUtilities
 
 
@@ -42,6 +46,9 @@ class MyFileUtil {
             }
         }
 
+        /**
+         *
+         */
         private fun virtualFileHandle(file: VirtualFile, handle: HandleVirtualFile) {
             if (file.isDirectory) {
                 val cs = file.children.toList()
@@ -52,6 +59,35 @@ class MyFileUtil {
                         handle.invoke(f)
                     }
                 }
+            }
+        }
+
+        fun saveTextToTempFile(project: Project, text: String, fileName: String) {
+            try {
+
+
+                // 获取项目的基路径
+                val projectBasePath = project.basePath
+
+                // 定义临时文件夹路径
+                val tempDirPath = (projectBasePath + File.separator) + "temp"
+
+                // 创建临时文件夹
+                val tempDir: File = File(tempDirPath)
+                if (!tempDir.exists()) {
+                    tempDir.mkdir()
+                }
+
+                // 定义文件路径
+                val tempFile = File(tempDir, fileName)
+
+                // 写入文本内容
+                val writer = FileWriter(tempFile)
+                writer.write(text)
+                writer.close()
+                VirtualFileManager.getInstance().syncRefresh()
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
         }
     }

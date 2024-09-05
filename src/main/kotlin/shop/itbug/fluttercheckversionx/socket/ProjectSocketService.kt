@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.intellij.openapi.ui.MessageType
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import shop.itbug.fluttercheckversionx.actions.getDataJson
+import shop.itbug.fluttercheckversionx.config.DioCopyAllKey
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.util.toHexString
 import java.text.DecimalFormat
@@ -121,6 +123,27 @@ class ProjectSocketService {
 
         fun getMessageType(): MessageType {
             return if (isSuccessful()) MessageType.INFO else MessageType.ERROR
+        }
+
+        fun getMap(config: DioCopyAllKey): Map<String, Any?> {
+            val dataMap = mutableMapOf(
+                config.url to url,
+                config.method to method,
+                config.headers to headers,
+            )
+            queryParams.apply {
+                if (this.isNotEmpty()) {
+                    dataMap[config.queryParams] = this
+                }
+            }
+            body?.apply {
+                dataMap[config.body] = this
+            }
+            dataMap[config.responseStatusCode] = statusCode
+            dataMap[config.response] = getDataJson()
+            dataMap[config.requestTime] = createDate
+            dataMap[config.timestamp] = timestamp
+            return dataMap
         }
     }
 

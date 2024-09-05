@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.DumbAwareToggleAction
-import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.constance.MyKeys
 
@@ -17,12 +16,15 @@ class RiverpodActionsSetting : DumbAwareToggleAction() {
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-        PluginConfig.changeState(e.project!!) { it.showRiverpodInlay = state }
-        e.getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
-            ?.let { dartElement: DartClassDefinitionImpl ->
-                println("restart inlay provider...")
-                DaemonCodeAnalyzer.getInstance(dartElement.project).restart(dartElement.containingFile)
+        val project = e.project
+        if (project != null) {
+            PluginConfig.changeState(project) { it.showRiverpodInlay = state }
+            val element = e.getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
+            if (element != null) {
+                DaemonCodeAnalyzer.getInstance(project).restart(element.containingFile)
             }
+        }
+
     }
 
     override fun update(e: AnActionEvent) {

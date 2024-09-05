@@ -65,6 +65,8 @@
                     class="shop.itbug.fluttercheckversionx.actions.ApiCopyPathAction"/>
             <action id="ApiCopyAll"
                     class="shop.itbug.fluttercheckversionx.actions.ApiCopyAll"/>
+            <action class="shop.itbug.fluttercheckversionx.actions.dio.DioJsonCopyToClipboard"
+                    id="DioJsonCopyToClipboard"/>
             <separator/>
             <action id="DioWindowViewHeadersAction"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>

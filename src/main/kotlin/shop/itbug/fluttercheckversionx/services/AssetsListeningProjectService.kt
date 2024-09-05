@@ -187,7 +187,8 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
                 override fun actionPerformed(e: AnActionEvent) {
-                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/master/docs/releases/Hotfixes-to-the-Stable-Channel.md")
+                    val version = release.version.replace(".", "")
+                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/master/CHANGELOG.md#$version")
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {
