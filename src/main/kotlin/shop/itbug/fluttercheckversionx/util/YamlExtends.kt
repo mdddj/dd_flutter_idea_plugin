@@ -33,11 +33,7 @@ val DartPluginVersionName.versionType: DartVersionType
     }
 val DartPluginVersionName.finalVersionText get() = version.removePrefix("^")
 
-class DartPluginVersionName(val name: String, val version: String) {
-    override fun toString(): String {
-        return "插件名:$name,版本:$version,插件类型:$versionType"
-    }
-}
+data class DartPluginVersionName(val name: String, val version: String)
 
 
 /**

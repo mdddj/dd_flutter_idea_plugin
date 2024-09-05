@@ -35,6 +35,7 @@ class DartPartAutoCompletion : CompletionContributor() {
             val project = parameters.editor.project!!
             val partService = UserDartLibService.getInstance(project)
             val file = parameters.editor.virtualFile
+
             partService.getLibraryNames().forEach { name ->
                 val psi = createElement(name, project) { this }
                 result.addElement(psi)
@@ -44,7 +45,6 @@ class DartPartAutoCompletion : CompletionContributor() {
                     this.withTypeText(model.libName)
                 })
             }
-
         }
 
         private fun createElement(

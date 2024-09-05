@@ -24,6 +24,8 @@ import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.DartPluginsPanel
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
@@ -63,7 +65,8 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
     private var checkLabel: HyperlinkLabel = createActionLabel(PluginBundle.get("check.flutter.plugin")) {
-        checkNewVersions()
+//        checkNewVersions()
+        DartPluginsPanel.showInCenter(project)
     }
 
     init {
@@ -81,6 +84,7 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
         ///重新索引
         val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
             doReIndex()
+            DartPackageCheckService.getInstance(project).resetIndex()
         }
         myLinksPanel.add(reIndexLabel)
 

@@ -26,13 +26,18 @@ class PubspecService(val project: Project) : Disposable {
 
     private var dependenciesNames = listOf<String>()
 
+
     fun getAllDependencies(): List<String> = dependenciesNames
 
+    /**
+     * 读取项目使用了哪些包?
+     */
     fun startCheck() {
         runReadAction {
             dependenciesNames = MyPsiElementUtil.getAllPluginsString(project)
         }
     }
+
 
     /**
      * 项目是否引入 riverpod 包
@@ -49,6 +54,9 @@ class PubspecService(val project: Project) : Disposable {
     }
 
 
+    /**
+     * 检测依赖是否使用了[pluginName]这个包
+     */
     private fun hasDependencies(pluginName: String): Boolean {
         return dependenciesNames.contains(pluginName)
     }
