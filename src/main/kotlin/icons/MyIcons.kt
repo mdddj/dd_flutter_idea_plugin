@@ -6,13 +6,14 @@ import javax.swing.Icon
 object MyImages {
 
     @JvmField
-    val wx : Icon = load("/images/wx.png")
+    val wx: Icon = load("/images/wx.png")
 
     @JvmField
-    val test : Icon = load("/images/test.png")
+    val test: Icon = load("/images/test.png")
 
 
-
+    @JvmField
+    val ignore: Icon = load("/icons/ignore.svg")
 
 
     @JvmStatic

@@ -24,6 +24,7 @@ import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
@@ -92,6 +93,12 @@ class YamlFileNotificationPanel(private val fileEditor: FileEditor, val project:
 
         myLinksPanel.add(openPrivacyWindowLabel)
 
+
+        ///管理忽略的包
+        val igPackageLabel = createActionLabel("Ignore packages") {
+            IgPluginPubspecConfigList.showInPopup(project)
+        }
+        myLinksPanel.add(igPackageLabel)
     }
 
     ///打开隐私扫描工具窗口
