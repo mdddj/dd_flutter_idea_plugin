@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.nio.file.Path
 import javax.swing.SwingUtilities
 
 
@@ -28,67 +29,74 @@ fun VirtualFile.fileNameWith(folderName: String): String {
     return this.path.substring(indexOf)
 }
 
-class MyFileUtil {
+object MyFileUtil {
 
 
-    companion object {
-
-        /**
-         * 遍历文件夹目录内所有的文件
-         * @param folderName 项目文件夹目录
-         * @param handle 处理遍历到的文件
-         */
-        fun onFolderEachWithProject(project: Project, folderName: String, handle: HandleVirtualFile) {
-            val path = project.basePath + "/$folderName"
-            val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path)
-            findFileByPath?.apply {
-                virtualFileHandle(this, handle)
-            }
+    /**
+     * 遍历文件夹目录内所有的文件
+     * @param folderName 项目文件夹目录
+     * @param handle 处理遍历到的文件
+     */
+    fun onFolderEachWithProject(project: Project, folderName: String, handle: HandleVirtualFile) {
+        val path = project.basePath + "/$folderName"
+        val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path)
+        findFileByPath?.apply {
+            virtualFileHandle(this, handle)
         }
+    }
 
-        /**
-         *
-         */
-        private fun virtualFileHandle(file: VirtualFile, handle: HandleVirtualFile) {
-            if (file.isDirectory) {
-                val cs = file.children.toList()
-                cs.forEach { f ->
-                    if (f.isDirectory) {
-                        virtualFileHandle(f, handle)
-                    } else {
-                        handle.invoke(f)
-                    }
+    /**
+     *
+     */
+    private fun virtualFileHandle(file: VirtualFile, handle: HandleVirtualFile) {
+        if (file.isDirectory) {
+            val cs = file.children.toList()
+            cs.forEach { f ->
+                if (f.isDirectory) {
+                    virtualFileHandle(f, handle)
+                } else {
+                    handle.invoke(f)
                 }
             }
         }
+    }
 
-        fun saveTextToTempFile(project: Project, text: String, fileName: String) {
-            try {
+    fun saveTextToTempFile(project: Project, text: String, fileName: String) {
+        try {
 
 
-                // 获取项目的基路径
-                val projectBasePath = project.basePath
+            // 获取项目的基路径
+            val projectBasePath = project.basePath
 
-                // 定义临时文件夹路径
-                val tempDirPath = (projectBasePath + File.separator) + "temp"
+            // 定义临时文件夹路径
+            val tempDirPath = (projectBasePath + File.separator) + "temp"
 
-                // 创建临时文件夹
-                val tempDir: File = File(tempDirPath)
-                if (!tempDir.exists()) {
-                    tempDir.mkdir()
-                }
-
-                // 定义文件路径
-                val tempFile = File(tempDir, fileName)
-
-                // 写入文本内容
-                val writer = FileWriter(tempFile)
-                writer.write(text)
-                writer.close()
-                VirtualFileManager.getInstance().syncRefresh()
-            } catch (e: IOException) {
-                e.printStackTrace()
+            // 创建临时文件夹
+            val tempDir: File = File(tempDirPath)
+            if (!tempDir.exists()) {
+                tempDir.mkdir()
             }
+
+            // 定义文件路径
+            val tempFile = File(tempDir, fileName)
+
+            // 写入文本内容
+            val writer = FileWriter(tempFile)
+            writer.write(text)
+            writer.close()
+            VirtualFileManager.getInstance().syncRefresh()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
+    }
+
+    fun fileIsExists(path: String): Boolean {
+        val vf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(path)) ?: return false
+        return LocalFileSystem.getInstance().exists(vf)
+    }
+
+    fun pathIsExists(path: Path): Boolean {
+        val vf = VirtualFileManager.getInstance().findFileByNioPath(path) ?: return false
+        return LocalFileSystem.getInstance().exists(vf)
     }
 }

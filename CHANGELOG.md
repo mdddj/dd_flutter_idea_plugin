@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-## [4.9.4] - 2024-09-05
+## [4.9.5] - 2024-09-13
+
+- Fix:[#52](https://github.com/mdddj/dd_flutter_idea_plugin/issues/52)
+- Fix:[#51](https://github.com/mdddj/dd_flutter_idea_plugin/issues/51)
+- New: open with tool
+  ![](https://minio.itbug.shop/blog/simple-file/Snipaste_2024-09-13_14-47-33___1726210071283___.png)
+
+### [4.9.4] - 2024-09-05
 
 - 更新: 修改flutter新版本,whats new的跳转链接
 - 新增: dio api 接口信息拷贝,支持自定义 key

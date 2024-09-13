@@ -7,7 +7,9 @@ import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.setting.AppConfig
+import shop.itbug.fluttercheckversionx.tools.FlutterProjectUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 
 
@@ -112,3 +114,82 @@ class OpenSettingAction : AnAction() {
     }
 }
 
+
+// 在Android studio 打开项目目录
+class OpenAndroidProjectOnASAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        e.project?.let {
+            FlutterProjectUtil(it).openAndroidStudioWithDirectory()
+        }
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = e.project != null
+        e.project?.let {
+            val tool = FlutterProjectUtil(it)
+            e.presentation.isVisible = tool.androidDirIsExist
+            e.presentation.isEnabled = tool.isAndroidStudioInstalled
+        }
+        e.presentation.icon = MyIcons.androidStudio
+        e.presentation.text = "Open android project"
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+}
+
+
+/**
+ * 在xcode打开ios目录
+ */
+class OpenIosProjectInXcodeAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        e.project?.let {
+            val tool = FlutterProjectUtil(it)
+            tool.openIosInXCode()
+        }
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.project?.let {
+            val tool = FlutterProjectUtil(it)
+            e.presentation.isVisible = e.project != null && tool.isMacos && tool.iosDirIsExist
+        }
+        e.presentation.text = "Open ios project"
+        e.presentation.icon = MyIcons.xcode
+        super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
+}
+
+/**
+ * 在xcode打开macos目录
+ */
+class OpenMacosProjectInXcodeAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        e.project?.let {
+            val tool = FlutterProjectUtil(it)
+            tool.openMacosInXCode()
+        }
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.project?.let {
+            val tool = FlutterProjectUtil(it)
+            e.presentation.isVisible = e.project != null && tool.isMacos && tool.macosDirIsExist
+        }
+        e.presentation.text = "Open macos project"
+        e.presentation.icon = MyIcons.xcode
+        super.update(e)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
+}

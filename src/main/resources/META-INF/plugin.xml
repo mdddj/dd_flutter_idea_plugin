@@ -333,6 +333,12 @@
         />
         <action id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"
                 class="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction" text="Json to Dart Macro"/>
+        <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenAndroidProjectOnASAction"
+                id="OpenAndroidProjectOnASAction"/>
+        <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenIosProjectInXcodeAction"
+                id="OpenIosProjectInXcodeAction"/>
+        <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenMacosProjectInXcodeAction"
+                id="OpenMacosProjectInXcodeAction"/>
         <group id="status_bar_actions">
             <reference id="SearchPubPluginAction"/>
             <reference id="FlutterRunBuilderCommandAction"/>
@@ -344,6 +350,10 @@
             <reference id="GoToDocumentAction"/>
             <separator/>
             <reference id="StatusBarOpenSettingAction"/>
+            <separator text="Open With"/>
+            <reference id="OpenAndroidProjectOnASAction"/>
+            <reference id="OpenIosProjectInXcodeAction"/>
+            <reference id="OpenMacosProjectInXcodeAction"/>
         </group>
         <!--    status bar widgets  end   -->
         <action id="SimpleClassToFreezedAction"
