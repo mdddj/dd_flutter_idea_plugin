@@ -123,7 +123,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
     }
 
     companion object {
-        @JvmStatic
         fun getInstance() = service<AppService>()
     }
 

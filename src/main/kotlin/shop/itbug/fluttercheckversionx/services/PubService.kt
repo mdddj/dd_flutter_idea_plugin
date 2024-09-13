@@ -21,7 +21,7 @@ object PubService {
         val url = "https://pub.dartlang.org/api/packages/$plugName"
         try {
             val resposne = HttpRequests.request(url).readString()
-            return Gson().fromJson(resposne, PubVersionDataModel::class.java)
+            return Gson().fromJson(resposne, PubVersionDataModel::class.java).copy(jsonText = resposne)
         } catch (e: Exception) {
             println("获取插件信息失败${plugName} url:$url  ${e.localizedMessage}")
             return null

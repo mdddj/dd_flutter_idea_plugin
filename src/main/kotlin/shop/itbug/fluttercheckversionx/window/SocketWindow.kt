@@ -73,6 +73,10 @@ class SocketWindow : ToolWindowFactory {
             false
         )
         toolWindow.contentManager.addContent(privacyContent)
+//
+//        val depsWindow = MyDartPackageTree.createPanel(project)
+//        val depsContent = instance.createContent(depsWindow, "Deps", false)
+//        toolWindow.contentManager.addContent(depsContent)
     }
 
 }

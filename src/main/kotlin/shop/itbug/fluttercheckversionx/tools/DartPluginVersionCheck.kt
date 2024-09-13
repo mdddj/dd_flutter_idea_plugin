@@ -13,10 +13,9 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
-import shop.itbug.fluttercheckversionx.services.MyDartPackage
+import shop.itbug.fluttercheckversionx.services.PubPackage
 import shop.itbug.fluttercheckversionx.util.MyYamlPsiElementFactory
 import javax.swing.Icon
 
@@ -24,7 +23,7 @@ import javax.swing.Icon
  * 插件新版本检测
  */
 class DartPluginVersionCheck :
-    ExternalAnnotator<DartPackageCheckService, List<Pair<MyDartPackage, PubVersionDataModel>>>(),
+    ExternalAnnotator<DartPackageCheckService, List<PubPackage>>(),
     DumbAware {
 
     override fun collectInformation(file: PsiFile): DartPackageCheckService {
@@ -32,31 +31,31 @@ class DartPluginVersionCheck :
     }
 
     //执行长时间操作
-    override fun doAnnotate(service: DartPackageCheckService): List<Pair<MyDartPackage, PubVersionDataModel>> {
+    override fun doAnnotate(service: DartPackageCheckService): List<PubPackage> {
         val details = service.details
         if (details.isEmpty()) return emptyList()
         val hasNewVersionItems = details.filter { service.hasNew(it) }.toList()
         if (hasNewVersionItems.isEmpty()) return emptyList()
-        val elements = hasNewVersionItems.filter { it.second != null }.map { Pair(it.first, it.second!!) }
+        val elements = hasNewVersionItems.filter { it.second != null }.map { PubPackage(it.first, it.second!!) }
         return elements
     }
 
 
     override fun apply(
         file: PsiFile,
-        annotationResult: List<Pair<MyDartPackage, PubVersionDataModel>>?,
+        annotationResult: List<PubPackage>,
         holder: AnnotationHolder
     ) {
-        annotationResult?.forEach {
+        annotationResult.forEach {
             val first = it.first
             val second = it.second
-            val lastVersion = second.getLastVersionText(first.getDartPluginVersionName()) ?: ""
+            val lastVersion = second?.getLastVersionText(first.getDartPluginVersionName()) ?: ""
 
             val fixText = PluginBundle.get("version.tip.3") + lastVersion
             holder.newAnnotation(
                 HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${lastVersion}"
             )
-                .tooltip(PluginBundle.get("dart.fix.version.time.tip.title") + second.lastVersionUpdateTimeString)
+                .tooltip(PluginBundle.get("dart.fix.version.time.tip.title") + second?.lastVersionUpdateTimeString)
                 .newFix(object : PsiElementBaseIntentionAction(), Iconable, DumbAware {
                     override fun getFamilyName() = fixText
                     override fun getText() = fixText

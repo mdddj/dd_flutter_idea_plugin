@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.util
 
+import shop.itbug.fluttercheckversionx.services.PluginStateService
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
@@ -11,36 +12,34 @@ object DateUtils {
     fun timeAgo(
         timeString: String,
         format: String = "yyyy-MM-dd HH:mm:ss",
-        locale: Locale = Locale.getDefault()
     ): String {
-        // Define the date-time formatter with the given format
         val formatter = DateTimeFormatter.ofPattern(format)
-
-        // Parse the time string into LocalDateTime
         val pastTime = LocalDateTime.parse(timeString, formatter)
-
-        // Convert LocalDateTime to Instant
         val pastInstant = pastTime.atZone(ZoneId.systemDefault()).toInstant()
-
-        // Calculate the duration between the given time and now
         val now = Instant.now()
         val duration = Duration.between(pastInstant, now)
 
-        // Format the duration into a human-readable string
-        return when {
-            duration.toMinutes() < 1 -> "${duration.seconds} seconds ago"
-            duration.toHours() < 1 -> "${duration.toMinutes()} minutes ago"
-            duration.toDays() < 1 -> "${duration.toHours()} hours ago"
-            duration.toDays() < 30 -> "${duration.toDays()} days ago"
-            duration.toDays() < 365 -> "${duration.toDays() / 30} months ago"
-            else -> "${duration.toDays() / 365} years ago"
-        }.let {
-            // Localize the string if necessary
-            localizeTimeAgo(it, locale)
+        var text = when {
+            duration.toMinutes() < 1 -> "seconds ago"
+            duration.toHours() < 1 -> "minutes ago"
+            duration.toDays() < 1 -> "hours ago"
+            duration.toDays() < 30 -> "days ago"
+            duration.toDays() < 365 -> "months ago"
+            else -> "years ago"
+        }.trim()
+        text = localizeTimeAgo(text, PluginStateService.getInstance().state?.getSettingLocale() ?: Locale.US)
+        val time = when {
+            duration.toMinutes() < 1 -> "${duration.seconds}"
+            duration.toHours() < 1 -> "${duration.toMinutes()}"
+            duration.toDays() < 1 -> "${duration.toHours()}"
+            duration.toDays() < 30 -> "${duration.toDays()}"
+            duration.toDays() < 365 -> "${duration.toDays() / 30}"
+            else -> "${duration.toDays() / 365}"
         }
+        return "$time$text"
     }
 
-    fun localizeTimeAgo(text: String, locale: Locale): String {
+    private fun localizeTimeAgo(text: String, locale: Locale): String {
         return when (locale.language) {
             "en" -> text
             "es" -> translateToSpanish(text)
@@ -52,7 +51,7 @@ object DateUtils {
         }
     }
 
-    fun translateToSpanish(text: String): String {
+    private fun translateToSpanish(text: String): String {
         return when (text) {
             "seconds ago" -> "hace segundos"
             "minutes ago" -> "hace minutos"
@@ -64,7 +63,7 @@ object DateUtils {
         }
     }
 
-    fun translateToChinese(text: String, locale: Locale): String {
+    private fun translateToChinese(text: String, locale: Locale): String {
         return when (text) {
             "seconds ago" -> if (locale.country == "CN") "秒前" else "秒前" // Simplified and Traditional are the same in this case
             "minutes ago" -> if (locale.country == "CN") "分钟前" else "分鐘前"
@@ -76,7 +75,7 @@ object DateUtils {
         }
     }
 
-    fun translateToKorean(text: String): String {
+    private fun translateToKorean(text: String): String {
         return when (text) {
             "seconds ago" -> "초 전"
             "minutes ago" -> "분 전"
@@ -88,7 +87,7 @@ object DateUtils {
         }
     }
 
-    fun translateToJapanese(text: String): String {
+    private fun translateToJapanese(text: String): String {
         return when (text) {
             "seconds ago" -> "秒前"
             "minutes ago" -> "分前"

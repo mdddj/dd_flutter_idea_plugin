@@ -5,15 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="添加riverpod tool inlay设置">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartPackageCheckService.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DateUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/autoCompletion/DartPartAutoCompletion.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/autoCompletion/DartPartAutoCompletion.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/editor/PubspecYamlFileEditor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/actions/ProjectFilter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/actions/ProjectFilter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/i18n/DynamicPluginBundle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/i18n/DynamicPluginBundle.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubVersionDataModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubVersionDataModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/PubPluginVersionCheckNotification.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/PubPluginVersionCheckNotification.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubspecService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubspecService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartPackageCheckService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartPackageCheckService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PluginStateService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PluginStateService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/IgPluginPubspecConfigList.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/IgPluginPubspecConfigList.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/AppService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/AppService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/DartPluginVersionCheck.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/DartPluginVersionCheck.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/ExtensionsUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/ExtensionsUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DateUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DateUtils.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/YamlExtends.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/YamlExtends.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +69,12 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
@@ -289,7 +309,7 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.3448553",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "http.proxy",
+    "settings.editor.selected.configurable": "setting.flutterx",
     "show.migrate.to.gradle.popup": "false",
     "vue.rearranger.settings.migration": "true"
   },
@@ -1439,7 +1459,15 @@
       <workItem from="1725502538295" duration="295000" />
       <workItem from="1725502843854" duration="2000" />
       <workItem from="1725515900270" duration="723000" />
-      <workItem from="1725516637418" duration="12421000" />
+      <workItem from="1725516637418" duration="12611000" />
+      <workItem from="1725584622472" duration="6046000" />
+      <workItem from="1725593515390" duration="2372000" />
+      <workItem from="1725601249206" duration="7850000" />
+      <workItem from="1725609285457" duration="38000" />
+      <workItem from="1725610731675" duration="5458000" />
+      <workItem from="1725678601958" duration="1023000" />
+      <workItem from="1725692513178" duration="6985000" />
+      <workItem from="1726195654846" duration="3534000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -1882,11 +1910,6 @@
         <PinnedItemInfo parentTag="com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl" memberName="myNode" />
       </pinned-members>
     </pin-to-top-manager>
-    <watches-manager>
-      <configuration name="GradleRunConfiguration">
-        <watch expression="package shop.itbug.fluttercheckversionx.widget&#10;&#10;import com.intellij.openapi.application.runWriteAction&#10;import com.intellij.openapi.project.Project&#10;import com.intellij.openapi.ui.DialogPanel&#10;import com.intellij.ui.components.JBScrollPane&#10;import com.intellij.ui.dsl.builder.bindSelected&#10;import com.intellij.ui.dsl.builder.bindText&#10;import com.intellij.ui.dsl.builder.panel&#10;import com.intellij.util.ui.components.BorderLayoutPanel&#10;import shop.itbug.fluttercheckversionx.i18n.PluginBundle&#10;import shop.itbug.fluttercheckversionx.model.FreezedCovertModel&#10;import shop.itbug.fluttercheckversionx.model.getPropertiesString&#10;import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil&#10;import javax.swing.BorderFactory&#10;import javax.swing.SwingUtilities&#10;&#10;&#10;///freezed编辑区域&#10;class FreezedCovertModelWidget(var model: FreezedCovertModel, val project: Project) : BorderLayoutPanel() {&#10;    private val editView = DartEditorTextPanel(project)&#10;&#10;    private val editor = JBScrollPane(editView.component).apply {&#10;        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)&#10;    }&#10;&#10;    init {&#10;        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)&#10;        addToCenter(editor)&#10;        addToBottom(getSettingPanel())&#10;        SwingUtilities.invokeLater {&#10;            generateFreezedModel()&#10;        }&#10;    }&#10;&#10;    /**&#10;     * 生成freezed类&#10;     */&#10;    private fun generateFreezedModel() {&#10;        val genFreezedClass = MyDartPsiElementUtil.genFreezedClass(&#10;            project, model.className, model.getPropertiesString(), model.addConstructorFun, model.addFromJson&#10;        )&#10;        changeText(genFreezedClass.text)&#10;    }&#10;&#10;&#10;    private fun changeText(value: String) {&#10;        runWriteAction {&#10;            editView.text = value&#10;        }&#10;    }&#10;&#10;    private fun changeModel(newModel: FreezedCovertModel) {&#10;        val genFreezedClass = MyDartPsiElementUtil.genFreezedClass(&#10;            project, newModel.className, newModel.getPropertiesString(), model.addConstructorFun, model.addFromJson&#10;        )&#10;        changeText(genFreezedClass.text)&#10;    }&#10;&#10;&#10;    private fun getSettingPanel(): DialogPanel {&#10;        return freezedCovertModelSetting(model) { changeModel(model) }&#10;    }&#10;&#10;&#10;    val code: String get() = editView.text&#10;&#10;}&#10;&#10;fun freezedCovertModelSetting(&#10;    model: FreezedCovertModel, submit: () -&gt; Unit&#10;): DialogPanel {&#10;    lateinit var p: DialogPanel&#10;    p = panel {&#10;&#10;        row(PluginBundle.get(&quot;rename&quot;)) {&#10;            textField().bindText(model::className)&#10;        }&#10;&#10;        row(PluginBundle.get(&quot;hump.variable&quot;)) {&#10;            checkBox(PluginBundle.get(&quot;variable.is.named.with.hump&quot;)).bindSelected(model::upperCamelStyle)&#10;        }&#10;&#10;        row(PluginBundle.get(&quot;default.value&quot;)) {&#10;            checkBox(PluginBundle.get(&quot;default.value.tip&quot;)).bindSelected(model::useDefaultValueIfNull)&#10;        }&#10;&#10;        row(PluginBundle.get(&quot;addConstructorFun&quot;)) {&#10;            checkBox(PluginBundle.get(&quot;addConstructorFun&quot;)).bindSelected(model::addConstructorFun)&#10;        }&#10;&#10;        row(PluginBundle.get(&quot;addFromJson&quot;)) {&#10;            checkBox(PluginBundle.get(&quot;addFromJson&quot;)).bindSelected(model::addFromJson)&#10;        }&#10;&#10;        row {&#10;            button(PluginBundle.get(&quot;save.and.refresh&quot;)) {&#10;                p.apply()&#10;                submit.invoke()&#10;            }&#10;        }&#10;    }&#10;    return p.apply {&#10;        border = null&#10;    }&#10;}" language="JAVA" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

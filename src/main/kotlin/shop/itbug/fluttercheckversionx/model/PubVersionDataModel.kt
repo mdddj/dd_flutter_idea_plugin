@@ -41,7 +41,7 @@ fun PubVersionDataModel.getLastVersionText(model: DartPluginVersionName): String
 
 
 data class PubVersionDataModel(
-    val name: String, val latest: Latest, val versions: List<Version>
+    val name: String, val latest: Latest, val versions: List<Version>, val jsonText: String
 ) {
 
     /**

@@ -9,6 +9,7 @@ import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
+import shop.itbug.fluttercheckversionx.services.MyDartPackage
 
 
 private val devPattern = Regex("""\bdev\b""")
@@ -74,8 +75,26 @@ class YamlExtends(val element: PsiElement) {
      *  ```
      *  @return true
      */
-    fun isSpecifyVersion(): Boolean =
+    private fun isSpecifyVersion(): Boolean =
         (element is YAMLKeyValueImpl) && PsiTreeUtil.findChildOfType(element, YAMLBlockMappingImpl::class.java) != null
+
+
+    /**
+     * 解析获取包模型
+     */
+    fun getMyDartPackageModel(): MyDartPackage? {
+        val info: DartPluginVersionName = getDartPluginNameAndVersion() ?: return null
+        if (!isSpecifyVersion()) {
+            val lastTextElement = PsiTreeUtil.findChildOfType(element, YAMLPlainTextImpl::class.java)
+            if (lastTextElement != null) {
+                val item = MyDartPackage(
+                    info.name, element as YAMLKeyValueImpl, info, lastTextElement
+                )
+                return item
+            }
+        }
+        return null
+    }
 
 }
 

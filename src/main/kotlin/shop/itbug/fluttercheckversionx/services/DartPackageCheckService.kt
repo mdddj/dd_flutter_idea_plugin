@@ -1,37 +1,35 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.table.JBTable
-import com.intellij.util.ui.components.BorderLayoutPanel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import com.intellij.util.messages.Topic
+import kotlinx.coroutines.*
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
 import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.YamlExtends
-import java.awt.Dimension
-import javax.swing.JComponent
 import javax.swing.table.DefaultTableModel
 
 
@@ -41,23 +39,64 @@ class DartPackageCheckActivity : ProjectActivity {
     }
 }
 
+/**
+ * 包类型
+ */
+enum class MyPackageGroup(val baseName: String) {
+    Dependencies("dependencies"), DevDependencies("dev_dependencies"), DependencyOverrides("dependency_overrides");
+
+    override fun toString(): String {
+        return baseName
+    }
+}
+
+
+data class PubPackage(
+    val first: MyDartPackage,
+    val second: PubVersionDataModel?,
+) {
+
+    override fun toString(): String {
+        return first.packageName
+    }
+
+    /**
+     * 是否可以升级
+     */
+    fun hasNew(): Boolean {
+        val packageName = first.getDartPluginVersionName()
+        val second = second ?: return false
+        return second.getLastVersionText(packageName) != null
+    }
+
+    /**
+     * 获取最后更新时间
+     */
+    fun getLastUpdateTime(project: Project): String {
+        val time = second?.lastVersionUpdateTimeString ?: return ""
+        return DateUtils.timeAgo(time)
+    }
+}
+
 data class MyDartPackage(
     var packageName: String,
     val element: YAMLKeyValueImpl,
     val detail: DartPluginVersionName,
     val versionElement: YAMLPlainTextImpl,
     val error: String? = null,
-    val service: DartPackageCheckService? = null
+    val service: DartPackageCheckService? = null,
+    val group: MyPackageGroup = MyPackageGroup.Dependencies
+
 ) {
     /**
      * 通过 api来向 pub加载插件的数据
      */
-    fun getDetailApi(): Pair<MyDartPackage, PubVersionDataModel?> {
+    fun getDetailApi(): PubPackage {
         try {
             val r = PubService.callPluginDetails(packageName)
-            return Pair(this, r)
+            return PubPackage(this, r)
         } catch (e: Exception) {
-            return Pair(this.copy(error = e.localizedMessage), null)
+            return PubPackage(this.copy(error = e.localizedMessage), null)
         }
     }
 
@@ -88,52 +127,64 @@ data class MyDartPackage(
 @Service(Service.Level.PROJECT)
 class DartPackageCheckService(val project: Project) {
     private val ignoreManager = DartPluginIgnoreConfig.getInstance(project)
-    var details: MutableList<Pair<MyDartPackage, PubVersionDataModel?>> = mutableListOf()///从服务器获取的数据
-
+    private var pubspecFile: YAMLFile? = null
+    var details: MutableList<PubPackage> = mutableListOf()///从服务器获取的数据
+    var projectName: String = "Flutter App"
 
     /**
      * 读取项目的包文件,pubspec.yaml
      */
     private fun getPubspecFile(): YAMLFile? {
+        if (pubspecFile != null) {
+            return pubspecFile
+        }
         val projectDir = project.guessProjectDir() ?: return null
         val pubspecFile = projectDir.findChild("pubspec.yaml") ?: return null
         val file = ApplicationManager.getApplication().runReadAction(Computable<PsiFile?> {
             PsiManager.getInstance(project).findFile(pubspecFile)
-        })
-        return file as YAMLFile
+        }) as YAMLFile
+        this.pubspecFile = file
+        val nameElement = runReadAction { YAMLUtil.getQualifiedKeyInFile(file, "name") }
+        if (nameElement != null) {
+            this.projectName = nameElement.valueText
+        }
+        return file
     }
 
     /**
      * 解析插件列表,不要在这里执行耗时的操作
      */
     private fun getPackageInfos(): List<MyDartPackage> {
-        val list = mutableListOf<MyDartPackage>()
         val pubspecFile = getPubspecFile() ?: return emptyList()
-        val dependenciesElement =
-            runReadAction { YAMLUtil.getQualifiedKeyInFile(pubspecFile, "dependencies") } ?: return emptyList()
-        val block = dependenciesElement.value as? YAMLBlockMappingImpl ?: return emptyList()
-        val packageElements = runReadAction { PsiTreeUtil.findChildrenOfType(block, YAMLKeyValueImpl::class.java) }
-
-        packageElements.forEach { element ->
-            runReadAction {
-                val ext = YamlExtends(element)
-                val info: DartPluginVersionName? = ext.getDartPluginNameAndVersion()
-                if (info != null) {
-                    if (ignoreManager.isIg(info.name).not() && !ext.isSpecifyVersion()) {
-                        val lastTextElement = PsiTreeUtil.findChildOfType(element, YAMLPlainTextImpl::class.java)
-                        if (lastTextElement != null) {
-                            val item = MyDartPackage(
-                                info.name, element as YAMLKeyValueImpl, info, lastTextElement, service = this
-                            )
-                            list.add(item)
-                        }
-                    }
+        val r = runBlocking {
+            MyPackageGroup.entries.map {
+                async {
+                    collectDependencies(it, pubspecFile)
                 }
-            }
+            }.awaitAll()
         }
-        return list
+        return r.flatten()
     }
 
+
+    /**
+     * 收集包并分组
+     */
+    private fun collectDependencies(group: MyPackageGroup, file: YAMLFile): List<MyDartPackage> {
+        val deps = runReadAction { YAMLUtil.getQualifiedKeyInFile(file, group.baseName) } ?: return emptyList()
+        val block = deps.value as? YAMLBlockMappingImpl ?: return emptyList()
+        val packageElements = runReadAction { PsiTreeUtil.findChildrenOfType(block, YAMLKeyValueImpl::class.java) }
+        val r = runBlocking {
+            packageElements.map {
+                async(Dispatchers.EDT) {
+                    YamlExtends(it).getMyDartPackageModel()?.copy(
+                        service = this@DartPackageCheckService, group = group
+                    )
+                }
+            }.awaitAll()
+        }
+        return r.filterNotNull()
+    }
 
     /**
      * 开始检测包,然后远程检测包的新版本信息
@@ -144,25 +195,43 @@ class DartPackageCheckService(val project: Project) {
             list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
         }
         this.details = results.toMutableList()
+        project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun startWithAsync() {
+        val startTime = System.currentTimeMillis()  // 获取起始时间
+        this.details.clear()
+        val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
+        val results = GlobalScope.async {
+            list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
+        }.await()
+        this.details = results.toMutableList()
+        val endTime = System.currentTimeMillis()  // 获取结束时间
+        GlobalScope.launch(Dispatchers.Main) {
+            project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
+            getNotificationGroup()?.createNotification(
+                PluginBundle.get("refresh_success") + ", ${PluginBundle.get("package_size_is")}:${details.size} (${endTime - startTime}ms)",
+                NotificationType.INFORMATION
+            )?.notify(project)
+        }
+
     }
 
 
     /**
      * 判断是否有新版本
      */
-    fun hasNew(item: Pair<MyDartPackage, PubVersionDataModel?>): Boolean {
-        val packageName = item.first.getDartPluginVersionName()
-        val second = item.second ?: return false
-        return second.getLastVersionText(packageName) != null
+    fun hasNew(item: PubPackage): Boolean {
+        return item.hasNew()
     }
 
 
     /**
      * 重新索引
      */
-    fun resetIndex() {
-        details = mutableListOf()
-        start()
+    suspend fun resetIndex() {
+        startWithAsync()
     }
 
 
@@ -171,81 +240,56 @@ class DartPackageCheckService(val project: Project) {
             val date = it.second?.lastVersionUpdateTimeString ?: ""
             val timeAgo = if (date.isBlank()) "-" else DateUtils.timeAgo(date)
             arrayOf(
-                it.first.packageName,
-                it.first.detail.version,
-                it.second?.latest?.version ?: "-",
-                "$date ($timeAgo)"
+                it.first.packageName, it.first.detail.version, it.second?.latest?.version ?: "-", "$date ($timeAgo)"
             )
         }
     }
 
+
+    /**
+     * 包数据加载完成事件
+     */
+    interface FetchDartPackageFinish {
+        fun finish(details: List<PubPackage>)
+    }
+
     companion object {
+
+
+        val FetchDartPackageFinishTopic: Topic<FetchDartPackageFinish> =
+            Topic.create("FetchDartPackageFinishTopic", FetchDartPackageFinish::class.java)
+
         /**
          * 读取项目包操作模块的实例
          */
         fun getInstance(project: Project): DartPackageCheckService {
             return project.service<DartPackageCheckService>()
         }
-    }
-}
 
-
-///dart包详情面板
-class DartPluginsPanel(val project: Project) : DialogWrapper(project) {
-
-    private val table = JBTable()
-
-    init {
-        super.init()
-        changeTableData()
-    }
-
-
-    override fun getSize(): Dimension {
-        return preferredSize
-    }
-
-    override fun getPreferredSize(): Dimension {
-        return Dimension(1000, 600)
-    }
-
-    override fun createCenterPanel(): JComponent {
-        return BorderLayoutPanel().apply {
-            addToCenter(JBScrollPane(table).apply {
-                this.preferredSize = this@DartPluginsPanel.preferredSize
-            })
-        }
-    }
-
-    /**
-     * 显示数据
-     */
-    private fun changeTableData() {
-        val packageService = DartPackageCheckService.getInstance(project)
-        table.model =
-            DefaultTableModel(
-                arrayOf("Name", "Current Version(in file)", "Last Version(Pub.dev)", "Last Update"),
-                0
-            ).apply {
-                packageService.getTableRows().forEach { arr ->
-                    this.addRow(arr)
-                }
-            }
-        table.columnModel.let {
-            it.getColumn(0).minWidth = 250
-            it.getColumn(1).minWidth = 200
-            it.getColumn(2).minWidth = 200
-            it.getColumn(3).minWidth = 300
-        }
-    }
-
-    companion object {
         /**
-         * 展示数据
+         * 获取表格的列
          */
-        fun showInCenter(project: Project) {
-            DartPluginsPanel(project).show()
+        fun getTableColumns(): Array<String> {
+            return arrayOf("Name", "Current Version(in file)", "Last Version(Pub.dev)", "Last Update")
+        }
+
+        /**
+         * 设置表格的列宽度
+         */
+        fun setColumnWidth(table: JBTable) {
+            table.model = DefaultTableModel(getTableColumns(), 0)
+            table.columnModel.let {
+                it.getColumn(0).minWidth = 250
+                it.getColumn(1).minWidth = 200
+                it.getColumn(2).minWidth = 200
+                it.getColumn(3).minWidth = 300
+            }
+        }
+
+        fun getNotificationGroup(): NotificationGroup? {
+            val id = "dart_package_check_service"
+            return NotificationGroupManager.getInstance().getNotificationGroup(id)
         }
     }
-
 }
+

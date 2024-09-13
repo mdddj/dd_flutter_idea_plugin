@@ -1,11 +1,13 @@
 package shop.itbug.fluttercheckversionx.setting
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
+import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import javax.swing.DefaultListModel
 import javax.swing.SwingUtilities
 
@@ -21,6 +23,10 @@ class IgPluginPubspecConfigList(val project: Project) : BorderLayoutPanel() {
         this.setRemoveAction {
             manager.remove(list.selectedValue)
             refresh()
+            project.getPubspecYAMLFile()?.let {
+                DaemonCodeAnalyzer.getInstance(project).restart(it)
+            }
+
         }
         this.disableUpDownActions()
     }

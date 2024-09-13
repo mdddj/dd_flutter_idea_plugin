@@ -13,7 +13,7 @@ val type: String by project
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 plugins {
     idea
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
     id("org.jetbrains.intellij.platform") version "2.0.1"
     id("org.jetbrains.changelog") version "2.2.0"
 }

@@ -4,12 +4,13 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import java.util.*
 
 @State(
     name = "flutter-check-x",
     storages = [Storage("flutter-check-x.xml")]
 )
-class PluginStateService private constructor(): PersistentStateComponent<AppStateModel> {
+class PluginStateService private constructor() : PersistentStateComponent<AppStateModel> {
 
     private var model = AppStateModel()
 
@@ -28,6 +29,7 @@ class PluginStateService private constructor(): PersistentStateComponent<AppStat
             return service<PluginStateService>()
         }
 
+
         val appSetting: AppStateModel get() = getInstance().state ?: AppStateModel()
     }
 }
@@ -43,9 +45,6 @@ data class AppStateModel(
     //监听到新接口,显示一个提醒
     var apiInToolwindowTop: Boolean = true,
 
-    //选择的房间
-//    @OptionTag(converter = ResourceCategoryCovert::class)
-//    var selectRoom: ResourceCategory? = null
     ///路径自动补全的触发关键字
     var assetCompilationTriggerString: String = "ass",
 
@@ -54,4 +53,19 @@ data class AppStateModel(
 
     ///路径自动补全扫描目录
     var assetScanFolderName: String = "assets"
-)
+) {
+    /**
+     * 获取 flutterx 设置的地区
+     */
+    fun getSettingLocale(): Locale {
+        return when (lang) {
+            "System" -> Locale.getDefault()
+            "English" -> Locale.US
+            "繁體" -> Locale.TRADITIONAL_CHINESE
+            "中文" -> Locale.CHINA
+            "한국어" -> Locale.KOREA
+            "日本語" -> Locale.JAPAN
+            else -> Locale.getDefault()
+        }
+    }
+}
