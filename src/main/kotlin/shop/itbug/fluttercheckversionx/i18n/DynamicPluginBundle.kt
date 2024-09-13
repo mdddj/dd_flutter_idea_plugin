@@ -6,7 +6,9 @@ import java.lang.invoke.MethodHandles
 import java.lang.reflect.Method
 import java.util.*
 
-///抽象类，支持加载与安装的语言包匹配的本地化消息。
+/**
+ * 抽象类，支持加载与安装的语言包匹配的本地化消息。
+ */
 open class DynamicPluginBundle(pathToBundle: String) : AbstractBundle(pathToBundle) {
     override fun findBundle(
         pathToBundle: String,

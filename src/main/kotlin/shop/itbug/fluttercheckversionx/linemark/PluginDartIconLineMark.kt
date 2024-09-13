@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
+import icons.MyImages
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -26,10 +27,13 @@ class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
         if (element.isDartPluginElement()) {
+            val packageName = element.getPluginName()
+            val igManager = DartPluginIgnoreConfig.getInstance(element.project)
+            val isIgnored = igManager.isIg(packageName)
             return LineMarkerInfo(
                 element.firstChild,
                 element.firstChild.textRange,
-                MyIcons.dartPackageIcon,
+                if (isIgnored) MyImages.ignore else MyIcons.dartPackageIcon,
                 { element.text },
                 PluginDartIconLineMarkNavHandler(element),
                 GutterIconRenderer.Alignment.LEFT
@@ -43,7 +47,7 @@ class PluginDartIconLineMark : LineMarkerProvider {
 class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavigationHandler<PsiElement> {
     override fun navigate(e: MouseEvent?, elt: PsiElement?) {
         if ((e != null) && (e.clickCount == 1)) {
-            JBPopupFactory.getInstance().createListPopup(PluginDartIconActioinMenuList(element = element))
+            JBPopupFactory.getInstance().createListPopup(PluginDartIconActionMenuList(element = element))
                 .show(RelativePoint(e.locationOnScreen))
         }
     }
@@ -51,8 +55,13 @@ class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavi
 
 data class PluginDartIconActionMenuItem(val title: String, val type: String, val icon: Icon)
 
-class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
+class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
 
+    private val removeIgnoreText = PluginBundle.get("ignore_remove")
+    private val addIgnoreText = PluginBundle.get("ig.version.check")
+    private val igManager = DartPluginIgnoreConfig.getInstance(element.project)
+    private val pluginName = element.getPluginName()
+    private val isIgnored = igManager.isIg(pluginName)
 
     private val menus
         get() = listOf(
@@ -61,7 +70,11 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
                 type = "navToPub",
                 icon = AllIcons.Toolwindows.WebToolWindow
             ),
-            PluginDartIconActionMenuItem(PluginBundle.get("ig.version.check"), "ig-check", icon = AllIcons.General.Beta)
+            PluginDartIconActionMenuItem(
+                if (isIgnored) removeIgnoreText else addIgnoreText,
+                "ig-check",
+                icon = MyImages.ignore
+            )
         )
 
     init {
@@ -76,11 +89,16 @@ class PluginDartIconActioinMenuList(val element: PsiElement) : BaseListPopupStep
     override fun onChosen(selectedValue: PluginDartIconActionMenuItem?, finalChoice: Boolean): PopupStep<*>? {
         when (selectedValue?.type) {
             menus[0].type -> {
-                BrowserUtil.browse("$PUB_URL${element.getPluginName()}")
+                BrowserUtil.browse("$PUB_URL${pluginName}")
             }
 
-            menus[2].type -> {
-                DartPluginIgnoreConfig.getInstance(element.project).add(element.getPluginName())
+            menus[1].type -> {
+                if (isIgnored) {
+                    DartPluginIgnoreConfig.getInstance(element.project).remove(pluginName)
+                } else {
+                    DartPluginIgnoreConfig.getInstance(element.project).add(pluginName)
+                }
+
                 element.project.restartAnalyzer()
             }
         }

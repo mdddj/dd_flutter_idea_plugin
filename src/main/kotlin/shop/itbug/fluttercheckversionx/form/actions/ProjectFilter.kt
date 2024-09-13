@@ -18,20 +18,17 @@ import shop.itbug.fluttercheckversionx.widget.MyComboActionNew
 class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
 
-    private val appService = AppService.getInstance()
-
-
     override val reGetActions: Boolean
         get() = true
 
 
     override val availableOptions: MutableList<String>
-        get() = appService.flutterProjects.keys.filterNotNull().toMutableList()
+        get() = AppService.getInstance().flutterProjects.keys.toList().toMutableList()
 
 
     ///
     override var value: String
-        get() = appService.currentSelectName.get() ?: ""
+        get() = AppService.getInstance().currentSelectName.get() ?: ""
         set(v) {
             println(v)
         }
@@ -39,7 +36,7 @@ class ProjectFilter : MyComboActionNew.ComboBoxSettingAction<String>() {
 
     override fun update(e: AnActionEvent) {
         super.update(e)
-        if (appService.flutterProjects.keys.isEmpty()) {
+        if (AppService.getInstance().flutterProjects.keys.isEmpty()) {
             e.presentation.isEnabled = false
             e.presentation.text = PluginBundle.get("empty")
         }

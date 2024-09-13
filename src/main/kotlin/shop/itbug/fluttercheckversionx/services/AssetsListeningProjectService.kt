@@ -56,10 +56,11 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
     }
 
     override fun dispose() {
-        println("generate dispose.....")
-        checkFlutterVersionTask.onCancel()
         if (DioListingUiConfig.setting.checkFlutterVersion) {
-            checkFlutterVersionTask.onCancel()
+            if (checkFlutterVersionTask.indication?.isRunning == true) {
+                checkFlutterVersionTask.indication?.cancel()
+            }
+
         }
         connect.dispose()
     }
@@ -69,8 +70,6 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
         if (DioListingUiConfig.setting.checkFlutterVersion) {
             ProgressManager.getInstance().run(checkFlutterVersionTask)
         }
-// 通知测试
-//        checkFlutterVersionTask.showTestTip(project)
         checkAssetsChange()
     }
 
@@ -112,7 +111,9 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
 
     ///检测flutter新版本弹出
     private inner class CheckFlutterVersionTask : Task.Backgroundable(project, "Detecting Flutter version...") {
+        var indication: ProgressIndicator? = null
         override fun run(indicator: ProgressIndicator) {
+            this.indication = indicator
             val flutterChannel = Util.getFlutterChannel()
             val currentFlutterVersion = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
             if (flutterChannel == null) {
@@ -187,7 +188,8 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
                 override fun actionPerformed(e: AnActionEvent) {
-                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/master/docs/releases/Hotfixes-to-the-Stable-Channel.md")
+                    val version = release.version.replace(".", "")
+                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/master/CHANGELOG.md#$version")
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {

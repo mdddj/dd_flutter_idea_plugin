@@ -1,0 +1,34 @@
+Index: build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    id(\"java\")\n    id(\"org.jetbrains.kotlin.jvm\") version \"1.7.20\"\n    id(\"org.jetbrains.intellij\") version \"1.12.0\"\n}\ngroup = \"shop.itbug\"\nversion = \"2.1.5-as\"\nrepositories {\n    mavenCentral()\n    google()\n    maven { url = uri(\"https://maven.pkg.jetbrains.space/public/p/compose/dev\") }\n    maven {\n        url = uri(\"https://plugins.gradle.org/m2/\")\n    }\n}\njava{\n    sourceCompatibility = JavaVersion.VERSION_11\n}\n\nintellij {\n    version.set(\"2022.1.1.19\")\n    type.set(\"AI\")\n    plugins.set(\n        listOf(\n            \"yaml\",\n            \"Dart:221.6096\",\n            \"io.flutter:71.2.4\",\n            \"org.intellij.plugins.markdown:221.5787.39\",\n            \"terminal\",\"java\"\n        )\n    )\n}\n\ndependencies {\n    implementation(\"com.squareup.retrofit2:retrofit:2.9.0\")\n    implementation(\"com.squareup.retrofit2:converter-gson:2.9.0\")\n    implementation (\"com.squareup.retrofit2:converter-scalars:2.9.0\")\n    implementation(\"com.github.ben-manes.caffeine:caffeine:3.1.2\")\n    implementation(\"cn.hutool:hutool-all:5.8.11\")\n    implementation(\"org.smartboot.socket:aio-core:1.6.1\")\n    implementation(\"com.alibaba.fastjson2:fastjson2:2.0.22\")\n    implementation(\"com.alibaba.fastjson2:fastjson2-kotlin:2.0.22\")\n    implementation(\"org.apache.commons:commons-lang3:3.12.0\")\n    implementation(\"com.google.code.gson:gson:2.10.1\")\n    implementation(\"com.fasterxml.jackson.core:jackson-databind:2.14.0\")\n    implementation(\"org.hildan.krossbow:krossbow-stomp-core:5.0.0\")\n    implementation(\"org.hildan.krossbow:krossbow-websocket-okhttp:5.0.0\")\n    implementation(\"com.google.guava:guava:31.1-jre\")\n}\n\n\nvar javaVersion = \"11\"\ntasks {\n    withType<JavaCompile> {\n        sourceCompatibility = javaVersion\n        targetCompatibility = javaVersion\n    }\n    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {\n        kotlinOptions.jvmTarget = javaVersion\n    }\n\n    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {\n        kotlinOptions.freeCompilerArgs += \"-opt-in=kotlin.RequiresOptIn\"\n    }\n\n    listProductsReleases {\n    }\n\n    patchPluginXml {\n        sinceBuild.set(\"221.6008.13\")\n        untilBuild.set(\"221.6008.13\")\n        changeNotes.set(\"\"\"\n            \n            <div>\n                <h1>2023-01-15 (2.1.5-as)</h1>\n            </div>\n            <ul>\n                <li>Adapt to Android studio</li>\n                <li>Some details are optimized</>\n            </ul>\n            <div>\n                <h1>2023-01-07 (2.1.5)</h1>\n            </div>\n            <ul>\n                <li>Add the function of automatically generating asset file objects</li>\n            </ul>\n            \n            <div>\n                <h1>2023-01-06</h1>\n            </div>\n            <ul>\n                <li>Fix the problem that some dio interfaces cannot listen</li>\n                <li>Optimize the asset file pop-up mechanism</li>\n            <ul>\n        \"\"\".trimIndent())\n    }\n\n    signPlugin {\n        certificateChain.set(System.getenv(\"CERTIFICATE_CHAIN\"))\n        privateKey.set(System.getenv(\"PRIVATE_KEY\"))\n        password.set(System.getenv(\"PRIVATE_KEY_PASSWORD\"))\n    }\n\n    publishPlugin {\n        token.set(System.getenv(\"PUBLISH_TOKEN\"))\n    }\n\n    runIde {\n        autoReloadPlugins.set(true)\n    }\n\n\n    buildSearchableOptions {\n        enabled = false\n    }\n\n    compileKotlin {\n        kotlinOptions.jvmTarget = javaVersion\n    }\n\n    compileTestKotlin {\n        kotlinOptions.jvmTarget = javaVersion\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle.kts b/build.gradle.kts
+--- a/build.gradle.kts	
++++ b/build.gradle.kts	
+@@ -4,7 +4,7 @@
+     id("org.jetbrains.intellij") version "1.12.0"
+ }
+ group = "shop.itbug"
+-version = "2.1.5-as"
++version = "2.2.2-as"
+ repositories {
+     mavenCentral()
+     google()
+@@ -71,6 +71,14 @@
+         untilBuild.set("221.6008.13")
+         changeNotes.set("""
+             
++            <div>
++                <h1>2023-02-02 (2.2.2-as)</h1>
++                <ul>
++                    <li>Add the function of converting json to freezed model</li>
++                    <li>Optimize the details</li> 
++                </ul>
++            </div>
++            
+             <div>
+                 <h1>2023-01-15 (2.1.5-as)</h1>
+             </div>

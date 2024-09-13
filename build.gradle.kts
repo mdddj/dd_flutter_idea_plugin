@@ -12,8 +12,9 @@ val type: String by project
 
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 plugins {
-    kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.0.0-rc1"
+    idea
+    kotlin("jvm") version "2.0.20"
+    id("org.jetbrains.intellij.platform") version "2.0.1"
     id("org.jetbrains.changelog") version "2.2.0"
 }
 
@@ -25,7 +26,6 @@ repositories {
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     maven { url = uri("https://plugins.gradle.org/m2/") }
-    //新增
     intellijPlatform {
         defaultRepositories()
         releases()
@@ -50,7 +50,15 @@ dependencies {
         pluginVerifier()
         zipSigner()
         instrumentationTools()
+    }
+}
 
+
+intellijPlatform {
+    pluginVerification {
+        ides {
+            local(file("/Applications/Android Studio.app"))
+        }
     }
 }
 
@@ -63,8 +71,6 @@ tasks {
                 .withEmptySections(false), Changelog.OutputType.HTML
         )
     }
-
-    printBundledPlugins {}
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
@@ -84,10 +90,6 @@ tasks {
 
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
-    }
-
-    buildSearchableOptions {
-        enabled = false
     }
 
     compileKotlin {
@@ -120,4 +122,11 @@ changelog {
     version = pluginVersion.removeSuffix(".")
     path = file("CHANGELOG.md").canonicalPath
     groups.empty()
+}
+
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
 }

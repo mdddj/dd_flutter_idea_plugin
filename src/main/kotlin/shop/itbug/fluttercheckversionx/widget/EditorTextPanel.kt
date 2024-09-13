@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import com.intellij.json.JsonLanguage
+import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
@@ -14,10 +15,30 @@ import com.jetbrains.lang.dart.DartLanguage
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import java.awt.Font
 
+private fun LanguageTextField.format(lang: Language) {
+
+    fun createPsiFile(project: Project, text: String): PsiFile {
+        val fileName = "tempFile.${lang.id}"
+        val psiFileFactory = PsiFileFactory.getInstance(project)
+        return psiFileFactory.createFileFromText(fileName, DartLanguage.INSTANCE, text, false, true)
+    }
+
+    fun formatCode() {
+        val psiFile = createPsiFile(project, text)
+        val codeStyleManager = CodeStyleManager.getInstance(project)
+        val formattedCode = codeStyleManager.reformat(psiFile)
+        text = formattedCode.text
+    }
+    formatCode()
+}
 
 open class JsonEditorTextPanel(project: Project, initText: String = "") :
     LanguageTextField(JsonLanguage.INSTANCE, project, initText, false) {
 
+    init {
+        text = initText
+        this.format(JsonLanguage.INSTANCE)
+    }
 
     override fun createEditor(): EditorEx {
         return myCreateEditor(super.createEditor())
@@ -28,6 +49,7 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
             editor?.scrollingModel?.scrollVertically(0)
         }
     }
+
 
     override fun getFont(): Font {
         return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
@@ -51,41 +73,25 @@ class DartEditorTextPanel(project: Project, text: String = "", initFormat: Boole
     }
 
     private fun reformat() {
-        formatCode()
+        this.format(DartLanguage.INSTANCE)
     }
 
     override fun getFont(): Font {
         return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
     }
 
-    private fun formatCode() {
 
-        // Create a PsiFile from the text
-        val psiFile = createPsiFile(project, text)
-
-        // Get CodeStyleManager instance
-        val codeStyleManager = CodeStyleManager.getInstance(project)
-
-        // Reformat the code
-        val formattedCode = codeStyleManager.reformat(psiFile)
-
-        // Update the text field with the formatted code
-        text = formattedCode.text
-    }
-
-    private fun createPsiFile(project: Project, text: String): PsiFile {
-        val fileName = "tempFile.${DartLanguage.INSTANCE.id}"
-        val psiFileFactory = PsiFileFactory.getInstance(project)
-        return psiFileFactory.createFileFromText(fileName, DartLanguage.INSTANCE, text, false, true)
-    }
 }
 
 
+typealias MyCreateEditor = (ex: EditorEx) -> Unit
+
 ///创建编辑器
-private fun myCreateEditor(ex: EditorEx): EditorEx {
+private fun myCreateEditor(ex: EditorEx, init: MyCreateEditor? = null): EditorEx {
     ex.setVerticalScrollbarVisible(true)
     ex.setHorizontalScrollbarVisible(true)
     ex.setBorder(null)
+    init?.invoke(ex)
     val settings = ex.settings
     settings.isLineNumbersShown = true
     settings.isAutoCodeFoldingEnabled = true

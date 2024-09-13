@@ -29,7 +29,7 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
     override val key: SettingsKey<AddPartInlaySetting>
         get() = SettingsKey("Part action inlay")
     override val name: String
-        get() = "Part action"
+        get() = "PartAction"
     override val previewText: String
         get() = """
             part of "test.dart"
