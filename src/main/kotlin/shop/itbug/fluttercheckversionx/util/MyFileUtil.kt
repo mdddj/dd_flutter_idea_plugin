@@ -8,7 +8,10 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.util.indexing.FileBasedIndex
+import com.jetbrains.lang.dart.DartFileType
 import org.jetbrains.yaml.psi.YAMLFile
 import java.io.File
 import java.nio.file.Path
@@ -100,5 +103,17 @@ object MyFileUtil {
         getPubspecVirtualFile(project)?.let { virtualFile ->
             FileBasedIndex.getInstance().requestReindex(virtualFile)
         }
+    }
+
+    /**
+     * 获取项目所有的dart文件
+     */
+    fun findAllProjectFiles(project: Project): List<VirtualFile> {
+        val lib: VirtualFile =
+            LocalFileSystem.getInstance().findFileByPath("${project.basePath}" + File.separator + "lib")
+                ?: return emptyList()
+        val scope = GlobalSearchScopes.directoryScope(project, lib, true)
+        val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope)
+        return files.toList()
     }
 }

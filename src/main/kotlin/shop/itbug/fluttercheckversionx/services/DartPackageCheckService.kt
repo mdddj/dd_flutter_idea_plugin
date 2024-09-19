@@ -156,7 +156,7 @@ class DartPackageCheckService(val project: Project) {
     /**
      * 解析插件列表,不要在这里执行耗时的操作
      */
-    private fun getPackageInfos(): List<MyDartPackage> {
+    fun getPackageInfos(): List<MyDartPackage> {
         val pubspecFile = getPubspecFile() ?: return emptyList()
         val r = runBlocking {
             MyPackageGroup.entries.map {

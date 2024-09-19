@@ -1,27 +1,23 @@
 package shop.itbug.fluttercheckversionx.services
 
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.lang.dart.DartFileType
 import com.jetbrains.lang.dart.psi.impl.DartLibraryStatementImpl
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.File
+import kotlinx.coroutines.*
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 
 data class DartPartLibModel(var file: VirtualFile, val libName: String)
 data class DartPartPath(var libName: String, var path: String)
+private data class FileAndElement(val file: VirtualFile, val element: DartLibraryStatementImpl)
 
 @Service(Service.Level.PROJECT)
 class UserDartLibService(val project: Project) : DumbAware {
@@ -61,25 +57,31 @@ class UserDartLibService(val project: Project) : DumbAware {
         libraryNames = hashSetOf()
         virtualFiles = hashSetOf()
         GlobalScope.launch {
-            readAction {
-                val lib: VirtualFile =
-                    LocalFileSystem.getInstance().findFileByPath("${project.basePath}" + File.separator + "lib")
-                        ?: return@readAction
-                val scope = GlobalSearchScopes.directoryScope(project, lib, true)
-                val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope)
-                if (files.isNotEmpty()) {
-                    files.forEach { file ->
-                        val findFile = PsiManager.getInstance(project).findFile(file)
-                        val libPsiElement = PsiTreeUtil.findChildOfType(findFile, DartLibraryStatementImpl::class.java)
-                        libPsiElement?.libraryNameElement?.text?.let { libName ->
-                            if (libName.isNotEmpty()) {
-                                libraryNames.add(libName)
-                                virtualFiles.add(DartPartLibModel(file, libName))
-                            }
+            val files = readAction { MyFileUtil.findAllProjectFiles(project) }
+            val result: List<FileAndElement> = files.map {
+                async {
+                    readAction {
+                        val file = PsiManager.getInstance(project).findFile(it) ?: return@readAction null
+                        val element = PsiTreeUtil.findChildOfType(
+                            file, DartLibraryStatementImpl::class.java
+                        ) ?: return@readAction null
+                        FileAndElement(file.virtualFile, element)
+                    }
+                }
+            }.awaitAll().toList().filterNotNull()
+            result.forEach { (file, element) ->
+                runReadAction {
+                    element.libraryNameElement?.text?.let { libName ->
+                        if (libName.isNotEmpty()) {
+                            libraryNames.add(libName)
+                            virtualFiles.add(
+                                DartPartLibModel(file, libName)
+                            )
                         }
                     }
                 }
             }
+
         }
     }
 

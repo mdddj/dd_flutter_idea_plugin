@@ -1,12 +1,10 @@
 package shop.itbug.fluttercheckversionx.notif
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
@@ -22,11 +20,11 @@ import shop.itbug.fluttercheckversionx.editor.MyDartPackageTree
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.tools.showInCenterOfPopup
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import java.util.function.Function
 import javax.swing.JComponent
@@ -46,7 +44,6 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider, DumbAware 
             pubFile =
                 ApplicationManager.getApplication().executeOnPooledThread(Callable { project.getPubspecYAMLFile() })
                     .get()
-            println("file is $pubFile")
             if (it.component.parent != null && pubFile != null) {
                 EditorNotifications.getInstance(project).updateNotifications(pubFile!!.virtualFile)
             }
@@ -99,6 +96,12 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
             IgPluginPubspecConfigList.showInPopup(project)
         }
         myLinksPanel.add(igPackageLabel)
+
+        ///检查没有被使用的包
+        val noUsedCheck = createActionLabel(PluginBundle.get("check_un_used_package")) {
+            DartNoUsedCheckService.getInstance(project).checkUnUsedPackaged()
+        }
+        myLinksPanel.add(noUsedCheck)
     }
 
     ///打开隐私扫描工具窗口
@@ -112,21 +115,6 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
                 }
             }
         }
-    }
-
-    ///重新索引
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun doReIndex() {
-        GlobalScope.launch {
-            MyPsiElementUtil.getPubSpecYamlFile(project)?.let { _ ->
-                run {
-                    WriteCommandAction.runWriteCommandAction(project) {
-                        VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
-                    }
-                }
-            }
-        }
-
     }
 
     private fun search() {

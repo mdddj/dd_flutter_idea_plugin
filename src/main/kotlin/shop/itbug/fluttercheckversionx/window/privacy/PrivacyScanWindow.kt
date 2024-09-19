@@ -99,7 +99,9 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
     }
 
 
-    ///扫描第三方依赖包
+    /**
+     * 扫描第三方依赖包
+     */
     private fun scanPackages() {
         pathList.model = ListModel(emptyList())
         val list = mutableListOf<VirtualFile>()
