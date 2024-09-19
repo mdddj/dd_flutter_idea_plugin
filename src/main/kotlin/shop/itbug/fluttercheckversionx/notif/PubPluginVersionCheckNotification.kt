@@ -25,6 +25,7 @@ import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.tools.showInCenterOfPopup
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import java.util.function.Function
@@ -78,8 +79,8 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
 
         ///重新索引
         val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
-            doReIndex()
             GlobalScope.launch { DartPackageCheckService.getInstance(project).resetIndex() }
+            MyFileUtil.reIndexPubspecFile(project)
         }
         myLinksPanel.add(reIndexLabel)
 

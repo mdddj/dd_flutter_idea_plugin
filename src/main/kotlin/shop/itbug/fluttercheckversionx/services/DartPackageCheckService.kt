@@ -29,6 +29,7 @@ import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
 import shop.itbug.fluttercheckversionx.util.DateUtils
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import javax.swing.table.DefaultTableModel
 
@@ -131,6 +132,7 @@ class DartPackageCheckService(val project: Project) {
     var details: MutableList<PubPackage> = mutableListOf()///从服务器获取的数据
     var projectName: String = "Flutter App"
 
+
     /**
      * 读取项目的包文件,pubspec.yaml
      */
@@ -195,7 +197,8 @@ class DartPackageCheckService(val project: Project) {
             list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
         }
         this.details = results.toMutableList()
-        project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
+        project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)//发送加载完成通知
+        MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -215,7 +218,7 @@ class DartPackageCheckService(val project: Project) {
                 NotificationType.INFORMATION
             )?.notify(project)
         }
-
+        MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
 
 
