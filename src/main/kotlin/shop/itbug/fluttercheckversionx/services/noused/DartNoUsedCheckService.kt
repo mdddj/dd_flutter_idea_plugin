@@ -26,29 +26,48 @@ import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.MyDartPackage
 import shop.itbug.fluttercheckversionx.services.MyPackageGroup
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
+import shop.itbug.fluttercheckversionx.widget.DartNoUsedResultModel
 import java.io.File
 import java.nio.file.Path
 
 private data class PathModel(
-    val virtualFile: VirtualFile, val infos: List<DartServerData.DartNavigationRegion>,
+    val virtualFile: VirtualFile, val packageFile: VirtualFile?,
     val element: DartImportStatementImpl
+)
+
+/**
+ * 扫描结果模型
+ */
+data class DartNoUsedCheckResultModel(
+    /**
+     * 本地包数量
+     */
+    val localPackageSize: Int,
+
+    /**
+     * 项目中所有导入节点数量
+     */
+    val importAllSize: Int,
+
+    /**
+     * 项目中引用第三方包的导入
+     */
+    val packageImportSize: Int,
+
+    /**
+     * 没有被使用的包
+     */
+    val noUsedPackageList: List<MyDartPackage>
 )
 
 /**
  * 获取导入的路径
  */
 private fun PathModel.getPath(): String? {
-    val first = infos.lastOrNull()?.targets?.firstOrNull()
-    if (first != null) {
-        val f = first.findFile()
-        if (f != null) {
-            val path = f.path
-            return path
-        }
-    }
-    return null
+    return packageFile?.path
 }
 
 /**
@@ -73,6 +92,8 @@ class DartNoUsedCheckService(val project: Project) {
     private var usedPackages: Set<DartNoUsedModel> = hashSetOf()//已经使用的包
     private var collectImportPsiElementJobs: List<Deferred<MutableCollection<DartImportStatementImpl>?>>? = null
     private var analysisJobs: List<Deferred<PathModel>>? = null
+
+    private var resultModel: DartNoUsedCheckResultModel? = null
 
     /**
      * 开始检测
@@ -140,6 +161,7 @@ class DartNoUsedCheckService(val project: Project) {
      */
     fun checkUnUsedPackaged() {
         packages = emptyList()
+        resultModel = null
         val task = object : com.intellij.openapi.progress.Task.Backgroundable(project, "Analyzing", true) {
             override fun run(indicator: ProgressIndicator) {
                 startCheck(indicator)
@@ -159,6 +181,16 @@ class DartNoUsedCheckService(val project: Project) {
                     }
                 }
             }
+
+            override fun onSuccess() {
+                super.onSuccess()
+                if (resultModel != null) {
+                    DartNoUsedResultModel(project, resultModel!!).show()
+                }
+
+
+            }
+
         }
         task.queue()
     }
@@ -169,22 +201,31 @@ class DartNoUsedCheckService(val project: Project) {
      */
     private fun analysisImportElement(imps: List<DartImportStatementImpl>, indicator: ProgressIndicator? = null) {
         println("开始分析:${imps.size}")
-        val service = DartAnalysisServerService.getInstance(project)
-        indicator?.text = "Analyzing:${imps.size}"
+
+
+        var filterSize = imps.size
         val r = runBlocking {
-            val jobs: List<Deferred<PathModel>> = imps.map {
+            ///过滤掉 ../开头的,只要package导入的
+            val finalImps = imps.filter {
+                val uriText = readAction { it.uriElement.text }.removePrefix("\"").removePrefix("\'").removeSuffix("\"")
+                    .removeSuffix("\'")
+                uriText.startsWith("package:")
+            }.toList()
+            filterSize = finalImps.size
+
+            indicator?.text = "Analyzing:${finalImps.size}"
+            println("过滤掉后:${finalImps.size}")
+            val jobs: List<Deferred<PathModel>> = finalImps.map {
                 async {
                     val vf = readAction { it.originalElement.containingFile.virtualFile }
+
                     val model: PathModel = readAction {
-                        val infos = service.analysis_getNavigation(
-                            vf,
-                            it.startOffset,
-                            it.endOffset - it.startOffset,
-                        )
+                        val packageFile =
+                            it.uriElement.navigationElement.reference?.resolve()?.containingFile?.virtualFile
                         PathModel(
                             element = it,
                             virtualFile = vf,
-                            infos = infos ?: emptyList()
+                            packageFile = packageFile
                         )
                     }
                     model
@@ -192,7 +233,7 @@ class DartNoUsedCheckService(val project: Project) {
             }
             analysisJobs = jobs
             jobs.awaitAll()
-        }.filter { it.infos.isNotEmpty() }
+        }.filter { it.packageFile != null }
         analysisJobs = null
         usedPackages = runBlocking {
             r.map {
@@ -208,6 +249,15 @@ class DartNoUsedCheckService(val project: Project) {
                 .filter { it.group == MyPackageGroup.Dependencies }
         val unUsePackage =
             allPackages.filter { !(usedPackages.map { u -> u.packageName }.contains(it.packageName)) }
+
+        resultModel = DartNoUsedCheckResultModel(
+            localPackageSize = packages.size,
+            importAllSize = imps.size,
+            packageImportSize = filterSize,
+            noUsedPackageList = unUsePackage
+        )
+
+
         showNotification(unUsePackage.joinToString(",") { it.packageName })
 
     }
@@ -229,18 +279,29 @@ class DartNoUsedCheckService(val project: Project) {
      * 判断文件是否在目录下
      */
     private fun isFileInDirectory(filePath: String, directoryPath: String): Boolean {
-
         val file = File(filePath)
         val directory = File(directoryPath)
+
         if (!file.exists() || !directory.exists()) {
             return false
         }
+
         val directoryCanonicalPath = directory.canonicalPath
         val fileCanonicalPath = file.canonicalPath
-        val r = fileCanonicalPath.startsWith(directoryCanonicalPath)
-        return r
+
+        // 提取包名（去除版本号部分），假设格式是 `包名-版本号`
+        val directoryPackageName = getPackageName(directoryCanonicalPath)
+        val filePackageName = getPackageName(fileCanonicalPath)
+
+        // 比较包名，不比较版本号
+        return filePackageName == directoryPackageName
     }
 
+    // 提取路径中的包名，去掉版本号
+    private fun getPackageName(path: String): String {
+        val segments = path.split("/").filter { it.contains("-") }
+        return segments.lastOrNull()?.substringBeforeLast("-") ?: path
+    }
 
     private fun showNotification(msg: String) {
         NotificationsManager.getNotificationsManager().showNotification(
