@@ -68,7 +68,11 @@ data class Latest(
     val pubspec: Pubspec,
     @SerialName("archive_url") val archiveURL: String,
     val published: String
-)
+) {
+    override fun toString(): String {
+        return version
+    }
+}
 
 data class Pubspec(
     val name: String, val version: String, val homepage: String?, val description: String

@@ -158,7 +158,7 @@ private class TreeRender(val project: Project) : NodeRenderer() {
         }
 
         val updateDate = when (obj) {
-            is PubPackage -> obj.getLastUpdateTime(project)
+            is PubPackage -> obj.getLastUpdateTime()
             else -> null
         }
         icon = myIcon

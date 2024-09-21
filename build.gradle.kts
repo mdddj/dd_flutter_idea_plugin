@@ -15,7 +15,7 @@ plugins {
     idea
     kotlin("jvm") version "2.0.20"
     id("org.jetbrains.intellij.platform") version "2.0.1"
-    id("org.jetbrains.changelog") version "2.2.0"
+    id("org.jetbrains.changelog") version "2.2.1"
 }
 
 group = "shop.itbug"
@@ -44,7 +44,8 @@ val pluginList = mutableListOf(
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-        intellijIdeaCommunity(ideaVersion)
+        local("/Applications/Android Studio.app")
+//        intellijIdeaCommunity(ideaVersion)
         bundledPlugins("org.jetbrains.plugins.terminal", "org.jetbrains.plugins.yaml", "org.intellij.plugins.markdown")
         plugins("Dart:$dartVersion")
         pluginVerifier()

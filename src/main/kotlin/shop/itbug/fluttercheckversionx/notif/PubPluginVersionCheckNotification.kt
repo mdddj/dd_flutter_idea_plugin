@@ -16,16 +16,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
-import shop.itbug.fluttercheckversionx.editor.MyDartPackageTree
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
-import shop.itbug.fluttercheckversionx.tools.showInCenterOfPopup
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
+import shop.itbug.fluttercheckversionx.widget.DartPackageTable
 import java.util.function.Function
 import javax.swing.JComponent
 
@@ -59,7 +58,8 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
     private var checkLabel: HyperlinkLabel = createActionLabel(PluginBundle.get("check.flutter.plugin")) {
-        MyDartPackageTree.createPanel(project).showInCenterOfPopup(project)
+//        MyDartPackageTree.createPanel(project).showInCenterOfPopup(project)
+        DartPackageTable(project).show()
     }
 
     init {

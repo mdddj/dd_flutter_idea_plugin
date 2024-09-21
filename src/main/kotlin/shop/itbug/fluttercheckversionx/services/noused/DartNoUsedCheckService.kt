@@ -56,7 +56,7 @@ private fun PathModel.getPath(): String? {
  */
 class DartNoUsedCheckServiceActivity : ProjectActivity {
     override suspend fun execute(project: Project) {
-        // todo 暂时去掉
+        // todo 暂时去掉, 开始检查的时机不太对,导致结果不准确
         // DartNoUsedCheckService.getInstance(project).startCheck()
     }
 }
@@ -229,6 +229,7 @@ class DartNoUsedCheckService(val project: Project) {
      * 判断文件是否在目录下
      */
     private fun isFileInDirectory(filePath: String, directoryPath: String): Boolean {
+
         val file = File(filePath)
         val directory = File(directoryPath)
         if (!file.exists() || !directory.exists()) {
@@ -236,7 +237,8 @@ class DartNoUsedCheckService(val project: Project) {
         }
         val directoryCanonicalPath = directory.canonicalPath
         val fileCanonicalPath = file.canonicalPath
-        return fileCanonicalPath.startsWith(directoryCanonicalPath)
+        val r = fileCanonicalPath.startsWith(directoryCanonicalPath)
+        return r
     }
 
 
