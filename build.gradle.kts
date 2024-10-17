@@ -5,16 +5,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
-val ideaVersion: String by project
-val ideaType: String by project
 val pluginVersion: String by project
 val type: String by project
 
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 plugins {
     idea
-    kotlin("jvm") version "2.0.20"
-    id("org.jetbrains.intellij.platform") version "2.0.1"
+    kotlin("jvm") version "2.0.21"
+    id("org.jetbrains.intellij.platform") version "2.1.0"
     id("org.jetbrains.changelog") version "2.2.1"
 }
 
@@ -33,13 +31,6 @@ repositories {
     }
 }
 
-
-val pluginList = mutableListOf(
-    "yaml",
-    "Dart:$dartVersion",
-    "org.intellij.plugins.markdown",
-    "terminal",
-)
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
@@ -91,6 +82,9 @@ tasks {
 
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
+        jvmArgumentProviders += CommandLineArgumentProvider {
+            listOf("-Didea.kotlin.plugin.use.k2=true")
+        }
     }
 
     compileKotlin {

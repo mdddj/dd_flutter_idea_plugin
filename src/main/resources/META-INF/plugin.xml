@@ -51,6 +51,10 @@
     <depends>org.jetbrains.plugins.terminal</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true"/>
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <!--        <intentionAction>-->
         <!--            <language>Dart</language>-->

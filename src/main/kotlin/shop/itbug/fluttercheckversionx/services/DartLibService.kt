@@ -39,7 +39,7 @@ class UserDartLibService(val project: Project) : DumbAware {
             try {
                 val path = file.parent.toNioPath().relativize(it.file.toNioPath()).normalize().toString()
                 return@map DartPartPath(it.libName, path)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 return@map null
             }
         }.filterNotNull().toHashSet()
@@ -71,14 +71,9 @@ class UserDartLibService(val project: Project) : DumbAware {
             }.awaitAll().toList().filterNotNull()
             result.forEach { (file, element) ->
                 runReadAction {
-                    element.libraryNameElement?.text?.let { libName ->
-                        if (libName.isNotEmpty()) {
-                            libraryNames.add(libName)
-                            virtualFiles.add(
-                                DartPartLibModel(file, libName)
-                            )
-                        }
-                    }
+                    val libName = element.libraryNameElement?.text ?: ""
+                    libraryNames.add(libName)
+                    virtualFiles.add(DartPartLibModel(file, libName))
                 }
             }
 

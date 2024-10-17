@@ -2,7 +2,20 @@
 
 ## Unreleased
 
-## [4.9.5] - 2024-09-13
+## [4.9.8] - 2024-10-09
+
+- Adaptation android studio 2024.2.1
+- Support `k2` mode
+
+### [4.9.7] - 2024-09-21
+
+- Fix:[#54](https://github.com/mdddj/dd_flutter_idea_plugin/issues/54)
+- New: Added detection of unused packages in the project.
+- Update: Added detection for the bottom toolbar icons; the entry point will not be displayed for non-Flutter projects.
+
+![](https://minio.itbug.shop/blog/simple-file/Snipaste_2024-09-21_11-41-38___1726890133117___.png)
+
+### [4.9.5] - 2024-09-13
 
 - Fix:[#52](https://github.com/mdddj/dd_flutter_idea_plugin/issues/52)
 - Fix:[#51](https://github.com/mdddj/dd_flutter_idea_plugin/issues/51)
