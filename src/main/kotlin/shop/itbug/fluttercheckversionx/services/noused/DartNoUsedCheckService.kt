@@ -9,6 +9,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
@@ -17,10 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
-import com.jetbrains.lang.dart.analyzer.DartServerData
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
 import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -103,7 +100,6 @@ class DartNoUsedCheckService(val project: Project) {
         runBlocking {
             getAllDartPackages(indicator)
         }
-        println("本地packages:${packages.size}")
         startCheckAllDartFile(indicator)
     }
 
@@ -267,10 +263,17 @@ class DartNoUsedCheckService(val project: Project) {
      * 在文件浏览器中打开
      */
     fun openInBrowser(packageName: String) {
-        val find = packages.find { it.packageName == packageName }
-        if (find != null) {
-            BrowserUtil.browse(Path.of(find.packageDirectory))
+        val task = object : Task.Backgroundable(project, "Opening in browser", true) {
+            override fun run(indicator: ProgressIndicator) {
+                getAllDartPackages(indicator)
+                val find = packages.find { it.packageName == packageName }
+                if (find != null) {
+                    BrowserUtil.browse(Path.of(find.packageDirectory))
+                }
+            }
         }
+
+        task.queue()
 
     }
 
