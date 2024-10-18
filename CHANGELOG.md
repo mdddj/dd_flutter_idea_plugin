@@ -2,7 +2,16 @@
 
 ## Unreleased
 
-## [4.9.9] - 2024-10-17
+## [5.0.0] - 2024-10-18
+
+- Fix: dio api copy data to image action if null will null exception
+- Fix: If the flutter command does not exist, an error pop-up will
+  appear,[(#56)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/56)
+- Fix: Fixed the issue of method font misalignment in the Dio api in zoom mode
+- New: Set the JSON editor and Dart editor to follow the idea for scaling
+- New: Optimize JSON viewer format
+
+### [4.9.9] - 2024-10-17
 
 - Fix: `flutter_lint: 5.0` `part of` auto-completion action not show
 - Fix: `pubspec.yaml` left icon menu `open directory` not working bug
