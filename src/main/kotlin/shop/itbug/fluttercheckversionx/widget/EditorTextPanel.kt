@@ -36,7 +36,10 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
 
     init {
         text = initText
-        this.format(JsonLanguage.INSTANCE)
+        ApplicationManager.getApplication().invokeLater {
+            this.format(JsonLanguage.INSTANCE)
+        }
+
     }
 
     override fun createEditor(): EditorEx {
