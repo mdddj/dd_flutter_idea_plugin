@@ -3,12 +3,17 @@ package shop.itbug.fluttercheckversionx.util
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.GlobalSearchScopes
+import com.intellij.util.indexing.FileBasedIndex
+import com.jetbrains.lang.dart.DartFileType
+import org.jetbrains.yaml.psi.YAMLFile
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 import java.nio.file.Path
 import javax.swing.SwingUtilities
 
@@ -61,35 +66,6 @@ object MyFileUtil {
         }
     }
 
-    fun saveTextToTempFile(project: Project, text: String, fileName: String) {
-        try {
-
-
-            // 获取项目的基路径
-            val projectBasePath = project.basePath
-
-            // 定义临时文件夹路径
-            val tempDirPath = (projectBasePath + File.separator) + "temp"
-
-            // 创建临时文件夹
-            val tempDir: File = File(tempDirPath)
-            if (!tempDir.exists()) {
-                tempDir.mkdir()
-            }
-
-            // 定义文件路径
-            val tempFile = File(tempDir, fileName)
-
-            // 写入文本内容
-            val writer = FileWriter(tempFile)
-            writer.write(text)
-            writer.close()
-            VirtualFileManager.getInstance().syncRefresh()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
     fun fileIsExists(path: String): Boolean {
         val vf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(path)) ?: return false
         return LocalFileSystem.getInstance().exists(vf)
@@ -98,5 +74,46 @@ object MyFileUtil {
     fun pathIsExists(path: Path): Boolean {
         val vf = VirtualFileManager.getInstance().findFileByNioPath(path) ?: return false
         return LocalFileSystem.getInstance().exists(vf)
+    }
+
+
+    /**
+     * 获取flutter项目的pubspec.yaml 文件
+     */
+    fun getPubspecVirtualFile(project: Project): VirtualFile? {
+        val dir = project.guessProjectDir() ?: return null
+        val filePath = dir.path + File.separator + "pubspec.yaml"
+        val file = VirtualFileManager.getInstance().findFileByNioPath(Path.of(filePath)) ?: return null
+        return file
+    }
+
+    /**
+     * 获取flutter项目的pubspec.yaml psi文件
+     */
+    fun getPubspecFile(project: Project): YAMLFile? {
+        val file = getPubspecVirtualFile(project) ?: return null
+        return PsiManager.getInstance(project).findFile(file) as? YAMLFile
+    }
+
+
+    /**
+     * 重新索引pubspec文件
+     */
+    fun reIndexPubspecFile(project: Project) {
+        getPubspecVirtualFile(project)?.let { virtualFile ->
+            FileBasedIndex.getInstance().requestReindex(virtualFile)
+        }
+    }
+
+    /**
+     * 获取项目所有的dart文件
+     */
+    fun findAllProjectFiles(project: Project): List<VirtualFile> {
+        val lib: VirtualFile =
+            LocalFileSystem.getInstance().findFileByPath("${project.basePath}" + File.separator + "lib")
+                ?: return emptyList()
+        val scope = GlobalSearchScopes.directoryScope(project, lib, true)
+        val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope)
+        return files.toList()
     }
 }

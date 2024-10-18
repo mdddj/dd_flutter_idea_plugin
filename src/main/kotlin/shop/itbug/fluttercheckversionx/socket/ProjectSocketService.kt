@@ -46,7 +46,7 @@ class ProjectSocketService {
      */
     class SocketResponseModel(
         ///服务器返回谁
-        val data: Any = emptyMap<String, Any>(),
+        val data: Any? = null,
         ///请求类型
         val method: String? = "",
         /// get 查询参数
@@ -89,7 +89,7 @@ class ProjectSocketService {
                     return "0"
                 }
                 return formatSize(data.toString().toByteArray().size.toLong())
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 return "0"
             }
         }

@@ -8,6 +8,7 @@ import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DioRequestUIStyle
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.util.MyFontUtil
 import java.awt.Dimension
 import java.net.URI
 import java.util.regex.Pattern
@@ -53,15 +54,6 @@ fun Request.formatUrl(setting: DoxListeningSetting): String {
     return string
 }
 
-//fun Request.getMethodColor(): Color? {
-//    return when (method?.uppercase(Locale.getDefault())) {
-//        "POST" -> JBColor.BLUE
-//        "GET" -> JBColor.GREEN
-//        "PUT" -> JBColor.CYAN
-//        "DELETE" -> JBColor.RED
-//        else -> null
-//    }
-//}
 
 /**
  * 新版的请求UI
@@ -83,7 +75,7 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
             ).visible(setting.uiStyle == DioRequestUIStyle.CompactStyle && setting.showMethod).component.apply {
                 font = JBFont.small()
                 foreground = color
-                minimumSize = Dimension(30, minimumSize.height)
+                minimumSize = Dimension(MyFontUtil.getRequestLayoutRenderMethodMinWidth(), minimumSize.height)
 //                background = request.getMethodColor()
 //                isOpaque = true
             }

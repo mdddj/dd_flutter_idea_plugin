@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.util
 import com.google.common.base.CaseFormat
 import com.google.gson.GsonBuilder
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.ProcessNotCreatedException
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
@@ -23,10 +24,6 @@ import java.net.SocketException
 import java.nio.charset.Charset
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -117,11 +114,8 @@ class Util {
             fun findChannelNameWithStar(lines: List<String>): Pair<Int, String>? {
                 lines.forEachIndexed { index, line ->
                     if (line.contains("*")) {
-                        // 去掉行尾的括号内容，只保留星号前面的部分
                         val cleanedLine = line.substringBeforeLast(" (")
-                        // 再次检查是否包含星号，避免误判（如果括号内也有星号）
                         if (cleanedLine.contains("*")) {
-                            // 获取星号前的文字，即通道名称
                             val channelName = cleanedLine.substringAfterLast(" ", "").substringBefore("*").trim()
                             return Pair(index + 1, channelName) // 返回行号（索引+1，因为索引是从0开始的）和通道名称
                         }
@@ -131,45 +125,25 @@ class Util {
             }
 
             val cmd = GeneralCommandLine("flutter", "channel")
-            val output = ExecUtil.execAndGetOutput(cmd)
-            if (output.exitCode == 0) {
-                val stderrLines = output.stdoutLines
-                val result = findChannelNameWithStar(stderrLines)
-                if (result != null) {
-                    val version = result.second
-                    return version
+            try {
+                val output = ExecUtil.execAndGetOutput(cmd)
+                if (output.exitCode == 0) {
+                    val stderrLines = output.stdoutLines
+                    val result = findChannelNameWithStar(stderrLines)
+                    if (result != null) {
+                        val version = result.second
+                        return version
+                    }
                 }
+            } catch (_: ProcessNotCreatedException) {
+                println("无法运行flutter命令.")
+                return null
             }
             return null
         }
 
         fun toHexFromColor(color: Color): String {
             return UIUtil.colorToHex(color)
-        }
-
-
-        ///格式化 dart 版本时间
-        fun getDateFormat(dateString: String): String {
-
-            // 解析日期时间字符串
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ")
-            val dateTime = LocalDateTime.parse(dateString, formatter)
-
-            // 获取当前时间
-            val now = LocalDateTime.now(ZoneOffset.UTC)
-
-            // 计算时间差
-            val duration = Duration.between(dateTime, now)
-
-            // 转换成“几天前”、“几小时前”的格式
-            val days = duration.toDays()
-            val hours = duration.toHours() % 24
-
-            return when {
-                days > 0 -> "$days 天前"
-                hours > 0 -> "$hours 小时前"
-                else -> dateString
-            }
         }
 
 

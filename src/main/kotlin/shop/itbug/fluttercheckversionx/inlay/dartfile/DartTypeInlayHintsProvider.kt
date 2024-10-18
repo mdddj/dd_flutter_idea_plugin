@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.psi.impl.DartPatternFieldImpl
 import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarAccessDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
@@ -52,7 +53,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                     if (dartVar != null) {
                         val comName = dartVar.componentName
                         val type = dartVar.type
-                        if(type!=null){
+                        if (type != null) {
                             return true //如果有类型就不显示了
                         }
                         val result = DartAnalysisServerService.getInstance(file.project)
@@ -75,13 +76,13 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                     }
                 }
 
-                if(element is DartSimpleFormalParameterImpl){
-                    if(element.type == null) {
+                if (element is DartSimpleFormalParameterImpl) {
+                    if (element.type == null) {
                         val result = DartAnalysisServerService.getInstance(file.project)
                             .analysis_getHover(file.virtualFile, element.textOffset)
-                        if(result.isNotEmpty()){
+                        if (result.isNotEmpty()) {
                             val staticType = result[0].staticType
-                            if(staticType != null){
+                            if (staticType != null) {
                                 val ins =
                                     hintsInlayPresentationFactory.simpleText("$staticType: ", staticType) { _, _ ->
                                         val ss = StringSelection(staticType)
@@ -91,6 +92,25 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                                 sink.addInlineElement(
                                     element.startOffset, false, ins, false
                                 )
+                            }
+                        }
+                    }
+                }
+
+                if (element is DartPatternFieldImpl) {
+                    val hasType = element.variablePattern != null
+                    val field = element.constantPattern
+                    if (!hasType && field != null) {
+                        //添加类型
+                        val result = DartAnalysisServerService.getInstance(file.project)
+                            .analysis_getHover(file.virtualFile, field.textOffset)
+                        if (result.isNotEmpty()) {
+                            val staticType = result[0].staticType
+                            if (staticType != null) {
+                                val ins = hintsInlayPresentationFactory.simpleText(staticType, staticType) { _, _ ->
+
+                                }
+                                sink.addInlineElement(file.startOffset, false, ins, false)
                             }
                         }
                     }

@@ -51,6 +51,10 @@
     <depends>org.jetbrains.plugins.terminal</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true"/>
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <!--        <intentionAction>-->
         <!--            <language>Dart</language>-->
@@ -70,6 +74,7 @@
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
         <notificationGroup displayType="BALLOON" id="json_to_freezed_tooltip"/>
         <notificationGroup displayType="BALLOON" id="dart_package_check_service"/>
+        <notificationGroup displayType="BALLOON" id="flutterx_check_unused_package"/>
 
         <fileDocumentSynchronizationVetoer
                 implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
@@ -180,6 +185,8 @@
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.UserDartLibServiceInit"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.DartPackageCheckActivity"/>
+        <postStartupActivity
+                implementation="shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckServiceActivity"/>
         <!--        错误处理-->
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
 

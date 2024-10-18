@@ -98,13 +98,11 @@ class FlutterProjectUtil(val project: Project) {
                 arrayOf(androidPath)
             androidCommandLineTool.withParameters(*openProjectCommandArgs)
             ExecUtil.execAndReadLine(androidCommandLineTool)
-            ExecUtil.setupNoTtyExecution(androidCommandLineTool)
         } else if (SystemInfo.isWindows) {//macos
             val openProjectCommandArgs =
                 arrayOf(androidPath)
             androidCommandLineTool.withParameters(*openProjectCommandArgs)
             ExecUtil.execAndReadLine(androidCommandLineTool)
-            ExecUtil.setupNoTtyExecution(androidCommandLineTool)
         }
     }
 
@@ -116,7 +114,6 @@ class FlutterProjectUtil(val project: Project) {
         val args = arrayOf("-a", "Xcode", iosPath)
         comTool.withParameters(*args)
         ExecUtil.execAndReadLine(comTool)
-        ExecUtil.setupNoTtyExecution(comTool)
     }
 
 
@@ -128,7 +125,6 @@ class FlutterProjectUtil(val project: Project) {
         val args = arrayOf("-a", "Xcode", macosPath)
         comTool.withParameters(*args)
         ExecUtil.execAndReadLine(comTool)
-        ExecUtil.setupNoTtyExecution(comTool)
     }
 
 }

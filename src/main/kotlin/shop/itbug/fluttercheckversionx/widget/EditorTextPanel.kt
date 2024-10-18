@@ -3,8 +3,6 @@ package shop.itbug.fluttercheckversionx.widget
 import com.intellij.json.JsonLanguage
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -13,6 +11,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
+import shop.itbug.fluttercheckversionx.util.MyFontUtil
 import java.awt.Font
 
 private fun LanguageTextField.format(lang: Language) {
@@ -37,7 +36,10 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
 
     init {
         text = initText
-        this.format(JsonLanguage.INSTANCE)
+        ApplicationManager.getApplication().invokeLater {
+            this.format(JsonLanguage.INSTANCE)
+        }
+
     }
 
     override fun createEditor(): EditorEx {
@@ -51,10 +53,12 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
     }
 
 
-    override fun getFont(): Font {
-        return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
-    }
+    override fun getFont(): Font = getEditorFont()
+
 }
+
+private fun getEditorFont(): Font = MyFontUtil.getDefaultFont()
+
 
 class DartEditorTextPanel(project: Project, text: String = "", initFormat: Boolean = true) :
     LanguageTextField(DartLanguage.INSTANCE, project, "", false) {
@@ -76,10 +80,7 @@ class DartEditorTextPanel(project: Project, text: String = "", initFormat: Boole
         this.format(DartLanguage.INSTANCE)
     }
 
-    override fun getFont(): Font {
-        return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
-    }
-
+    override fun getFont(): Font = getEditorFont()
 
 }
 

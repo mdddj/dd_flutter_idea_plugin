@@ -16,6 +16,7 @@ import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 import shop.itbug.fluttercheckversionx.util.restartAnalyzer
@@ -74,6 +75,11 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
                 if (isIgnored) removeIgnoreText else addIgnoreText,
                 "ig-check",
                 icon = MyImages.ignore
+            ),
+            PluginDartIconActionMenuItem(
+                "Open Directory",
+                "open-directory",
+                icon = AllIcons.General.OpenDisk
             )
         )
 
@@ -100,6 +106,10 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
                 }
 
                 element.project.restartAnalyzer()
+            }
+
+            menus[2].type -> {
+                DartNoUsedCheckService.getInstance(element.project).openInBrowser(pluginName)
             }
         }
         return super.onChosen(selectedValue, finalChoice)

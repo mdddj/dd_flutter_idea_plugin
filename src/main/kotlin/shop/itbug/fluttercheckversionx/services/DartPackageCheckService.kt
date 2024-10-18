@@ -29,6 +29,7 @@ import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
 import shop.itbug.fluttercheckversionx.util.DateUtils
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import javax.swing.table.DefaultTableModel
 
@@ -72,9 +73,16 @@ data class PubPackage(
     /**
      * 获取最后更新时间
      */
-    fun getLastUpdateTime(project: Project): String {
+    fun getLastUpdateTime(): String {
         val time = second?.lastVersionUpdateTimeString ?: return ""
         return DateUtils.timeAgo(time)
+    }
+
+    /**
+     * 读取表格行数据
+     */
+    fun getTableRowData(): Array<Any> {
+        return arrayOf(first.packageName, first.detail.version, this, getLastUpdateTime())
     }
 }
 
@@ -131,6 +139,7 @@ class DartPackageCheckService(val project: Project) {
     var details: MutableList<PubPackage> = mutableListOf()///从服务器获取的数据
     var projectName: String = "Flutter App"
 
+
     /**
      * 读取项目的包文件,pubspec.yaml
      */
@@ -154,7 +163,7 @@ class DartPackageCheckService(val project: Project) {
     /**
      * 解析插件列表,不要在这里执行耗时的操作
      */
-    private fun getPackageInfos(): List<MyDartPackage> {
+    fun getPackageInfos(): List<MyDartPackage> {
         val pubspecFile = getPubspecFile() ?: return emptyList()
         val r = runBlocking {
             MyPackageGroup.entries.map {
@@ -195,7 +204,8 @@ class DartPackageCheckService(val project: Project) {
             list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
         }
         this.details = results.toMutableList()
-        project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
+        project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)//发送加载完成通知
+        MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -215,7 +225,7 @@ class DartPackageCheckService(val project: Project) {
                 NotificationType.INFORMATION
             )?.notify(project)
         }
-
+        MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
 
 
@@ -277,13 +287,25 @@ class DartPackageCheckService(val project: Project) {
          * 设置表格的列宽度
          */
         fun setColumnWidth(table: JBTable) {
-            table.model = DefaultTableModel(getTableColumns(), 0)
             table.columnModel.let {
                 it.getColumn(0).minWidth = 250
                 it.getColumn(1).minWidth = 200
                 it.getColumn(2).minWidth = 200
                 it.getColumn(3).minWidth = 300
             }
+        }
+
+
+        /**
+         * 设置表格数据
+         */
+        fun setJBTableData(table: JBTable, project: Project) {
+            val model = DefaultTableModel(getTableColumns(), 0)
+            val service = getInstance(project)
+            service.details.map {
+                model.addRow(it.getTableRowData())
+            }
+            table.model = model
         }
 
         fun getNotificationGroup(): NotificationGroup? {

@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.services
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
@@ -16,6 +17,7 @@ import com.intellij.ui.awt.RelativePoint
 import shop.itbug.fluttercheckversionx.actions.bar.getStatusBarActionGroup
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.Icon
@@ -33,7 +35,8 @@ class MyUserBarFactory : StatusBarWidgetFactory {
     }
 
     override fun isAvailable(project: Project): Boolean {
-        return true
+        val yamlFile = runReadAction { MyFileUtil.getPubspecFile(project) }
+        return yamlFile != null
     }
 
     override fun createWidget(project: Project): StatusBarWidget {
