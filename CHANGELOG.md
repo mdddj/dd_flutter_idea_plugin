@@ -2,7 +2,13 @@
 
 ## Unreleased
 
-## [4.9.8] - 2024-10-09
+## [4.9.9] - 2024-10-17
+
+- Fix: `flutter_lint: 5.0` `part of` auto-completion action not show
+- Fix: `pubspec.yaml` left icon menu `open directory` not working bug
+- New: Support monitoring of `Dio` `FormData` API, need upgrade to `dd_check_plugin:3.2.5`
+
+### [4.9.8] - 2024-10-09
 
 - Adaptation android studio 2024.2.1
 - Support `k2` mode

@@ -7,14 +7,17 @@ import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 
-fun Request.getDataJson(): Any {
+fun Request.getDataJson(): Any? {
+    if (data == null) {
+        return null
+    }
     if (data is Map<*, *>) {
         return data
     }
-    if (data is String) {
+    if (data is String && data.isNotBlank()) {
         return try {
             Gson().fromJson(data, Map::class.java)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             data
         }
     }
