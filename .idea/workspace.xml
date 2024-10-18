@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release4.9.5">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioResponseHeadersViewJsonAction.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFontUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFontUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowViewHeadersAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowViewHeadersAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/actions.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/actions.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,8 +70,8 @@
         <option value="Action" />
         <option value="Dart File" />
         <option value="InspectionDescription" />
-        <option value="Kotlin Class" />
         <option value="Kotlin Object" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -1456,7 +1456,7 @@
       <workItem from="1729239594316" duration="3328000" />
       <workItem from="1729242997308" duration="358000" />
       <workItem from="1729243416606" duration="43000" />
-      <workItem from="1729243890957" duration="505000" />
+      <workItem from="1729243890957" duration="1000000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>

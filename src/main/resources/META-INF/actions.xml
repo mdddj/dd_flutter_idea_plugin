@@ -70,6 +70,8 @@
             <separator/>
             <action id="DioWindowViewHeadersAction"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
+            <action id="DioViewResponseHeadersAction"
+                    class="shop.itbug.fluttercheckversionx.actions.dio.DioResponseHeadersViewJsonAction"/>
             <action id="dio-window-view-GET"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
             />
