@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.widget
 
+import com.intellij.ide.ui.UISettingsUtils
 import com.intellij.json.JsonLanguage
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
@@ -14,6 +15,7 @@ import com.intellij.ui.LanguageTextField
 import com.jetbrains.lang.dart.DartLanguage
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import java.awt.Font
+import kotlin.math.roundToInt
 
 private fun LanguageTextField.format(lang: Language) {
 
@@ -51,9 +53,16 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
     }
 
 
-    override fun getFont(): Font {
-        return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
-    }
+    override fun getFont(): Font = getEditorFont()
+
+}
+
+private fun getEditorFont(): Font {
+    val scheme = EditorColorsManager.getInstance().globalScheme
+    var font = scheme.getFont(EditorFontType.PLAIN)
+    val scale = UISettingsUtils.getInstance().currentIdeScale
+    font = Font(font.name, font.style, (scale * font.size).roundToInt())
+    return font
 }
 
 class DartEditorTextPanel(project: Project, text: String = "", initFormat: Boolean = true) :
@@ -76,10 +85,7 @@ class DartEditorTextPanel(project: Project, text: String = "", initFormat: Boole
         this.format(DartLanguage.INSTANCE)
     }
 
-    override fun getFont(): Font {
-        return EditorColorsManager.getInstance().globalScheme.getFont(EditorFontType.PLAIN)
-    }
-
+    override fun getFont(): Font = getEditorFont()
 
 }
 
