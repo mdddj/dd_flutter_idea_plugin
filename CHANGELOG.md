@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.0.0] - 2024-10-18
+## [5.0.0] - 2024-10-22
 
 - Fix: dio api copy data to image action if null will null exception
 - Fix: If the flutter command does not exist, an error pop-up will
@@ -12,6 +12,7 @@
 - New: Optimize JSON viewer format
 - New: Add the function of returning the request body header from the right-click menu of `Dio`
 - New: Open the flutter (android,ios,macos) directory and add settings options, (ide setting->flutterx)
+- New: Add local asset preview to the editor (image type)
 
 ### [4.9.9] - 2024-10-17
 
