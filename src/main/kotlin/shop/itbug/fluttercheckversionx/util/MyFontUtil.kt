@@ -30,7 +30,7 @@ object MyFontUtil {
      * 获取dio接口紧凑模式下method标签的宽度
      */
     fun getRequestLayoutRenderMethodMinWidth(): Int {
-        return 30 * getScale().roundToInt()
+        return 48 * getScale().roundToInt()
     }
 
 }

@@ -12,13 +12,12 @@ import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclaration
 fun AnActionEvent.getFactoryPsiElement(): DartFactoryConstructorDeclarationImpl? {
     val psiElement = getData(CommonDataKeys.PSI_ELEMENT)
     val isFactoryName = psiElement?.parent is DartFactoryConstructorDeclarationImpl
-    return if (isFactoryName) psiElement?.parent as DartFactoryConstructorDeclarationImpl else null
+    return if (isFactoryName) psiElement.parent as DartFactoryConstructorDeclarationImpl else null
 }
 
 
 ///给属性设置默认值
 class FreezedFactoryAddDefaultValue : AnAction() {
-
 
     override fun actionPerformed(e: AnActionEvent) {
         val manager = DartFactoryConstructorDeclarationImplManager(e.getFactoryPsiElement()!!)

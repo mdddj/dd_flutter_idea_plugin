@@ -2,6 +2,9 @@ package shop.itbug.fluttercheckversionx.tools
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
+import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.SystemInfo
@@ -19,7 +22,7 @@ class FlutterProjectUtil(val project: Project) {
     /**
      * 读取项目路径
      */
-    private fun projectPath(dir: String): String = "${project.guessProjectDir()?.path}" + File.separator + "$dir"
+    private fun projectPath(dir: String): String = "${project.guessProjectDir()?.path}" + File.separator + dir
 
     /**
      * 项目的安卓目录路径
@@ -73,6 +76,8 @@ class FlutterProjectUtil(val project: Project) {
      */
     val isMacos: Boolean = SystemInfo.isMac
 
+    private val openCommand: GeneralCommandLine get() = GeneralCommandLine("open")
+
     /**
      * 获取默认查找路径
      */
@@ -97,12 +102,20 @@ class FlutterProjectUtil(val project: Project) {
             val openProjectCommandArgs =
                 arrayOf(androidPath)
             androidCommandLineTool.withParameters(*openProjectCommandArgs)
-            ExecUtil.execAndReadLine(androidCommandLineTool)
+            try {
+                ExecUtil.execAndReadLine(androidCommandLineTool)
+            } catch (e: Exception) {
+                openFailed(e.localizedMessage)
+            }
         } else if (SystemInfo.isWindows) {//macos
             val openProjectCommandArgs =
                 arrayOf(androidPath)
             androidCommandLineTool.withParameters(*openProjectCommandArgs)
-            ExecUtil.execAndReadLine(androidCommandLineTool)
+            try {
+                ExecUtil.execAndReadLine(androidCommandLineTool)
+            } catch (e: Exception) {
+                openFailed(e.localizedMessage)
+            }
         }
     }
 
@@ -110,10 +123,13 @@ class FlutterProjectUtil(val project: Project) {
      * 在xcode中打开ios目录
      */
     fun openIosInXCode() {
-        val comTool = GeneralCommandLine("open")
         val args = arrayOf("-a", "Xcode", iosPath)
-        comTool.withParameters(*args)
-        ExecUtil.execAndReadLine(comTool)
+        openCommand.withParameters(*args)
+        try {
+            ExecUtil.execAndReadLine(openCommand)
+        } catch (e: Exception) {
+            openFailed(e.localizedMessage)
+        }
     }
 
 
@@ -124,7 +140,25 @@ class FlutterProjectUtil(val project: Project) {
         val comTool = GeneralCommandLine("open")
         val args = arrayOf("-a", "Xcode", macosPath)
         comTool.withParameters(*args)
-        ExecUtil.execAndReadLine(comTool)
+        try {
+            ExecUtil.execAndReadLine(comTool)
+        } catch (e: Exception) {
+            openFailed(e.localizedMessage)
+        }
+    }
+
+    private fun openFailed(msg: String) {
+        showMessage("Open failed:${msg}")
+    }
+
+    private fun showMessage(msg: String) {
+        val id = "open_flutter_project_in_ide"
+        val notification = NotificationGroupManager.getInstance().getNotificationGroup(id).createNotification(
+            msg, NotificationType.ERROR,
+        )
+        NotificationsManager.getNotificationsManager().showNotification(
+            notification, project
+        )
     }
 
 }

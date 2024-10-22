@@ -20,7 +20,6 @@ class DocumentParseTool(val element: PsiElement) {
 
     ///获取参数.
     fun getParams(): String? {
-        println("节点:" + element::class.java)
         return when (element) {
 
             is DartNamedConstructorDeclarationImpl -> {

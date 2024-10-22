@@ -29,7 +29,6 @@ import javax.swing.SwingUtilities
 
 ///json转freezed对象的弹出
 class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWrapper(project, true) {
-
     private val objects: List<MyChildObject> = MyJsonParseTool.parseJson(jsonString).filterIsInstance<MyChildObject>()
         .mapIndexed { index, t -> t.copy(index = index) }
     private val tabs = JBTabbedPane()

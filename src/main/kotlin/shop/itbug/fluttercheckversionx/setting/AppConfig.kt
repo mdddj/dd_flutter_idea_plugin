@@ -7,12 +7,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
+import com.intellij.ui.dsl.builder.bindIntText
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState
@@ -23,10 +25,9 @@ import javax.swing.JComponent
 
 class AppConfig(val project: Project) : Configurable, Disposable, SearchableConfigurable {
 
-
     var model = PluginStateService.getInstance().state ?: AppStateModel()
 
-    val pluginConfig = PluginConfig.getState(project)
+    val pluginConfig: PluginSetting = PluginConfig.getState(project)
 
     private var dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
     private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
@@ -49,6 +50,25 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
             group("Riverpod Class Tool") {
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showRiverpodInlay)
+                }
+            }
+            group("Open Project in Ide") {
+                row("Open the android directory in Android Studio") {
+                    checkBox("Enable").bindSelected(pluginConfig::openAndroidDirectoryInAS)
+                }
+                row("Open the ios directory in Xcode") {
+                    checkBox("Enable").bindSelected(pluginConfig::openIosDirectoryInXcode)
+                }
+                row("Open the macos directory in Xcode") {
+                    checkBox("Enable").bindSelected(pluginConfig::openMacosDirectoryInXcode)
+                }
+            }
+            group("Assets Icon") {
+                row(PluginBundle.get("assets_icon_enable_in_editor")) {
+                    checkBox("Enable").bindSelected(pluginConfig::showAssetsIconInEditor)
+                }
+                row(PluginBundle.get("assets_icon_scale_size")) {
+                    intTextField().bindIntText(pluginConfig::assetsIconSize)
                 }
             }
         }

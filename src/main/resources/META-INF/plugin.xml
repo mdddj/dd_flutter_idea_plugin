@@ -75,6 +75,7 @@
         <notificationGroup displayType="BALLOON" id="json_to_freezed_tooltip"/>
         <notificationGroup displayType="BALLOON" id="dart_package_check_service"/>
         <notificationGroup displayType="BALLOON" id="flutterx_check_unused_package"/>
+        <notificationGroup displayType="BALLOON" id="open_flutter_project_in_ide"/>
 
         <fileDocumentSynchronizationVetoer
                 implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
@@ -133,6 +134,10 @@
         <!--   part 自动导入-->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
                                    language="Dart"/>
+
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"
+                language="Dart"/>
 
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioListingUiConfig"/>

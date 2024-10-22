@@ -1,22 +1,21 @@
-package shop.itbug.fluttercheckversionx.actions
+package shop.itbug.fluttercheckversionx.actions.dio
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
-import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
-/**
- * 查看请求头操作
- */
-class DioWindowViewHeadersAction : AnAction() {
+
+class DioResponseHeadersViewJsonAction : AnAction() {
+
     override fun actionPerformed(e: AnActionEvent) {
-        e.api()?.headers?.apply { SimpleJsonViewDialog.show(this, e.project!!) }
+        e.api()?.responseHeaders?.apply { SimpleJsonViewDialog.show(this, e.project!!) }
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.project != null && e.api()?.headers?.isNotEmpty() == true
-        e.presentation.text = PluginBundle.get("view.request.headers")
+        e.presentation.isEnabled = e.project != null && e.api()?.responseHeaders?.isNotEmpty() == true
+        e.presentation.text = "View Response Headers"
         super.update(e)
     }
 
