@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.util
 
 import java.awt.*
+import java.io.File
+import javax.imageio.ImageIO
 import javax.swing.Icon
 import javax.swing.ImageIcon
 
@@ -74,4 +76,15 @@ object SwingUtil {
         }
     }
 
+    /**
+     * 文件转icon
+     */
+    fun fileToIcon(file: File): Icon? {
+        try {
+            val buf = ImageIO.read(file)
+            return ImageIcon(buf)
+        } catch (e: Exception) {
+            return null
+        }
+    }
 }

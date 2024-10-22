@@ -19,7 +19,6 @@ fun AnActionEvent.getFactoryPsiElement(): DartFactoryConstructorDeclarationImpl?
 ///给属性设置默认值
 class FreezedFactoryAddDefaultValue : AnAction() {
 
-
     override fun actionPerformed(e: AnActionEvent) {
         val manager = DartFactoryConstructorDeclarationImplManager(e.getFactoryPsiElement()!!)
         manager.setAllPropertiesToDefaultValue()

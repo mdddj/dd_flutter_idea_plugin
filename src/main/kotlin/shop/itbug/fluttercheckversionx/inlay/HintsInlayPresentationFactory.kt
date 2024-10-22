@@ -12,14 +12,16 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.util.ImageLoader
+import com.intellij.util.ui.JBImageIcon
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
+import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import java.awt.Image
 import java.awt.Point
 import java.awt.event.MouseEvent
 import java.io.File
 import javax.swing.Icon
-import javax.swing.ImageIcon
 
 
 /**
@@ -160,15 +162,27 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
         MyPluginMenusActionPopup(actionMenus, itemSelected)
 
 
-    fun getImageWithPath(path: String, basePath: String): InlayPresentation? {
+    fun getImageWithPath(path: String, basePath: String, setting: PluginSetting): InlayPresentation? {
         return try {
-            if (!File(path).exists()) {
+            val file = File(path)
+
+            // 检查文件是否存在且非空
+            if (!file.exists() || file.length() == 0L) {
                 return null
             }
-            val i = ImageIcon(path).image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)
-            val imageIcon: Icon = ImageIcon(i)
-            return factory.icon(imageIcon).addTip(basePath)
-        } catch (e: Exception) {
+
+            // 使用 ImageIcon 读取图片并缩放
+            var image: Image = ImageLoader.loadCustomIcon(file) ?: return null
+
+            // 确保图片的宽度和高度是正值
+            if (image.getWidth(null) <= 0 || image.getHeight(null) <= 0) {
+                return null
+            }
+            image = ImageLoader.scaleImage(image, setting.assetsIconSize, setting.assetsIconSize)
+            val scaledIcon = JBImageIcon(image)
+            // 返回图标并添加提示
+            return factory.icon(scaledIcon).addTip(basePath)
+        } catch (_: Exception) {
             null
         }
     }

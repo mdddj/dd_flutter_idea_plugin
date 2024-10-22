@@ -135,6 +135,10 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
                                    language="Dart"/>
 
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"
+                language="Dart"/>
+
         <!--   插件socket服务     -->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
