@@ -5,6 +5,7 @@ import com.intellij.ui.components.JBScrollPane
 import kotlinx.serialization.json.JsonElement
 import shop.itbug.fluttercheckversionx.dialog.freezed.StringToFreezedDialog
 import shop.itbug.fluttercheckversionx.util.toastWithError
+import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 
@@ -12,7 +13,9 @@ import javax.swing.JComponent
  * 设置为滚动面板
  */
 fun JComponent.scroll(): JBScrollPane {
-    return JBScrollPane(this)
+    return JBScrollPane(this).apply {
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+    }
 }
 
 ///json转 freezed 通用函数

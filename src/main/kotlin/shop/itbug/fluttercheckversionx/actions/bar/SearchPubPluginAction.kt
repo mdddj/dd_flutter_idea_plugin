@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.actions.bar
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.options.ShowSettingsUtil
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
@@ -124,7 +125,15 @@ class OpenAndroidProjectOnASAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.project != null
+
+
+        e.presentation.isEnabledAndVisible = e.project != null
+        e.project?.let {
+            val config = PluginConfig.getInstance(it).state
+            e.presentation.isVisible = config.openAndroidDirectoryInAS
+        }
+
+
         e.project?.let {
             val tool = FlutterProjectUtil(it)
             e.presentation.isVisible = tool.androidDirIsExist
@@ -154,7 +163,9 @@ class OpenIosProjectInXcodeAction : AnAction() {
     override fun update(e: AnActionEvent) {
         e.project?.let {
             val tool = FlutterProjectUtil(it)
-            e.presentation.isVisible = e.project != null && tool.isMacos && tool.iosDirIsExist
+            val config = PluginConfig.getInstance(it).state
+            e.presentation.isVisible =
+                e.project != null && tool.isMacos && tool.iosDirIsExist && config.openIosDirectoryInXcode
         }
         e.presentation.text = "Open ios project"
         e.presentation.icon = MyIcons.xcode
@@ -181,7 +192,9 @@ class OpenMacosProjectInXcodeAction : AnAction() {
     override fun update(e: AnActionEvent) {
         e.project?.let {
             val tool = FlutterProjectUtil(it)
-            e.presentation.isVisible = e.project != null && tool.isMacos && tool.macosDirIsExist
+            val config = PluginConfig.getInstance(it).state
+            e.presentation.isVisible =
+                e.project != null && tool.isMacos && tool.macosDirIsExist && config.openMacosDirectoryInXcode
         }
         e.presentation.text = "Open macos project"
         e.presentation.icon = MyIcons.xcode

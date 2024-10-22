@@ -10,6 +10,7 @@
 - Fix: Fixed the issue of method font misalignment in the Dio api in zoom mode
 - New: Set the JSON editor and Dart editor to follow the idea for scaling
 - New: Optimize JSON viewer format
+- New: Add the function of returning the request body header from the right-click menu of `Dio`
 
 ### [4.9.9] - 2024-10-17
 

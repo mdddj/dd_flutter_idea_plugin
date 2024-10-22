@@ -5,21 +5,19 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
-import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
 import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
+import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import java.awt.Dimension
 import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
-import javax.swing.JButton
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
@@ -27,23 +25,21 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
     DioApiService.NativeMessageProcessing {
 
 
-    val button = JButton("获取所有Key")
     private val left = SpWindowLeft()
     private val right = SpWindowRight(project)
+    private val emptyBorder = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 
-
-    val content = OnePixelSplitter().apply {
-        firstComponent = JBScrollPane(left)
-        secondComponent = right
-        this.splitterProportionKey = "sp-window-key"
-        border = BorderFactory.createEmptyBorder(1, 0, 1, 0)
-    }
 
     init {
         register()
         getAllKeys()
         addToTop(createToolbar().component)
-        addToCenter(content)
+        addToCenter(OnePixelSplitter().apply {
+            firstComponent = left.scroll()
+            secondComponent = right.scroll()
+            this.splitterProportionKey = "sp-window-key"
+            border = emptyBorder
+        })
     }
 
     private fun getAllKeys() {
@@ -97,7 +93,7 @@ class SpWindowRight(project: Project) : BorderLayoutPanel() {
         SpManagerListen.listen(null) {
             jsonView.changeValue(it?.value)
         }
-        border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
     }
 
 
@@ -113,7 +109,7 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
             }
         }, valueHandle = null)
         addListSelectionListener(this)
-        border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
+        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
     }
 
 

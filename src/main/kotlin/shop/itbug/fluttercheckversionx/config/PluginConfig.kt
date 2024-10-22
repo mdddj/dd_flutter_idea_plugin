@@ -5,8 +5,14 @@ import com.intellij.openapi.project.Project
 
 data class PluginSetting(
 
-    ///是否显示操作工具
-    var showRiverpodInlay: Boolean = true
+    //是否显示操作工具
+    var showRiverpodInlay: Boolean = true,
+    //在Android studio中打开android目录
+    var openAndroidDirectoryInAS: Boolean = true,
+    //在xcode中打开ios目录
+    var openIosDirectoryInXcode: Boolean = true,
+    //在xcode中打开macos目录
+    var openMacosDirectoryInXcode: Boolean = true,
 ) : BaseState()
 
 @Service(Service.Level.PROJECT)

@@ -23,7 +23,6 @@ import javax.swing.JComponent
 
 class AppConfig(val project: Project) : Configurable, Disposable, SearchableConfigurable {
 
-
     var model = PluginStateService.getInstance().state ?: AppStateModel()
 
     val pluginConfig = PluginConfig.getState(project)
@@ -49,6 +48,17 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
             group("Riverpod Class Tool") {
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showRiverpodInlay)
+                }
+            }
+            group("Open Project in Ide") {
+                row("Open the android directory in Android Studio") {
+                    checkBox("Enable").bindSelected(pluginConfig::openAndroidDirectoryInAS)
+                }
+                row("Open the ios directory in Xcode") {
+                    checkBox("Enable").bindSelected(pluginConfig::openIosDirectoryInXcode)
+                }
+                row("Open the macos directory in Xcode") {
+                    checkBox("Enable").bindSelected(pluginConfig::openMacosDirectoryInXcode)
                 }
             }
         }
