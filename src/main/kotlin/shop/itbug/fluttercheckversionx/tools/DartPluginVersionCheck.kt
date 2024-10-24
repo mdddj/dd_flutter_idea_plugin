@@ -16,7 +16,9 @@ import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.services.PubPackage
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.MyYamlPsiElementFactory
+import shop.itbug.fluttercheckversionx.util.restartAnalyzer
 import javax.swing.Icon
 
 /**
@@ -73,6 +75,8 @@ class DartPluginVersionCheck :
                         if (newElement != null) {
                             newElement = first.versionElement.replace(newElement) as YAMLPlainTextImpl
                             first.replaced(lastVersion, newElement)
+                            project.restartAnalyzer()
+                            MyFileUtil.reIndexFile(project, file.virtualFile)
                         }
                     }
 

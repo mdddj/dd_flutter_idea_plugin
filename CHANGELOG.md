@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-## [5.0.0] - 2024-10-22
+## [5.0.1] - 2024-10-24
+
+- Fix: Analyze the issue of inaccurate location after file changes (
+  `pubspec.yaml`) [(#59)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/59)
+- New: Do not analyze files other than `pubspec.yaml`
+- Other details updated
+
+### [5.0.0] - 2024-10-22
 
 - Fix: dio api copy data to image action if null will null exception
 - Fix: If the flutter command does not exist, an error pop-up will
