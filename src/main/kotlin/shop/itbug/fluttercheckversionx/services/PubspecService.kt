@@ -10,6 +10,9 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 
@@ -68,13 +71,18 @@ class PubspecService(val project: Project) : Disposable {
     }
 
     override fun dispose() {
+        println("-----dispose--------PubspecService")
         dependenciesNames = emptyList()
     }
 
 }
 
 
+/**
+ * 监听pubspec.yaml文件被修改,重新索引它
+ */
 class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
+    @OptIn(DelicateCoroutinesApi::class)
     override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
         if (project.isDisposed) {
             return null
@@ -87,7 +95,8 @@ class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
                 events.forEach {
                     val filename = it.file?.name
                     if (filename != null && filename == "pubspec.yaml") {
-                        project.service<PubspecService>().startCheck()
+                        println("文件发生变化::::::::::${filename}")
+                        GlobalScope.launch { DartPackageCheckService.getInstance(project).resetIndex(false) }
                     }
                 }
 

@@ -209,7 +209,7 @@ class DartPackageCheckService(val project: Project) {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun startWithAsync() {
+    suspend fun startWithAsync(showNotification: Boolean = true) {
         val startTime = System.currentTimeMillis()  // 获取起始时间
         this.details.clear()
         val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
@@ -220,10 +220,13 @@ class DartPackageCheckService(val project: Project) {
         val endTime = System.currentTimeMillis()  // 获取结束时间
         GlobalScope.launch(Dispatchers.Main) {
             project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
-            getNotificationGroup()?.createNotification(
-                PluginBundle.get("refresh_success") + ", ${PluginBundle.get("package_size_is")}:${details.size} (${endTime - startTime}ms)",
-                NotificationType.INFORMATION
-            )?.notify(project)
+            if (showNotification) {
+                getNotificationGroup()?.createNotification(
+                    PluginBundle.get("refresh_success") + ", ${PluginBundle.get("package_size_is")}:${details.size} (${endTime - startTime}ms)",
+                    NotificationType.INFORMATION
+                )?.notify(project)
+            }
+
         }
         MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
@@ -240,8 +243,8 @@ class DartPackageCheckService(val project: Project) {
     /**
      * 重新索引
      */
-    suspend fun resetIndex() {
-        startWithAsync()
+    suspend fun resetIndex(showNotification: Boolean = true) {
+        startWithAsync(showNotification)
     }
 
 
