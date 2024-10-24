@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
@@ -21,6 +22,7 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.services.DartPackageTaskParam
+import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.getPluginName
@@ -71,28 +73,42 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
     private val igManager = DartPluginIgnoreConfig.getInstance(project)
     private val pluginName = element.getPluginName()
     private val isIgnored = igManager.isIg(pluginName)
+    private val detail = DartPackageCheckService.getInstance(project).findPackageInfoByName(pluginName)
 
-    private val menus
-        get() = listOf(
-            PluginDartIconActionMenuItem(
-                title = "${PluginBundle.get("nav.to")} pub.dev",
-                type = "navToPub",
-                icon = AllIcons.Toolwindows.WebToolWindow
-            ),
-            PluginDartIconActionMenuItem(
-                if (isIgnored) removeIgnoreText else addIgnoreText,
-                "ig-check",
-                icon = MyImages.ignore
-            ),
-            PluginDartIconActionMenuItem(
-                "Open Directory",
-                "open-directory",
-                icon = AllIcons.General.OpenDisk
+    private val menus: MutableList<PluginDartIconActionMenuItem>
+        get() {
+            val arr = mutableListOf<PluginDartIconActionMenuItem>(
+                PluginDartIconActionMenuItem(
+                    title = "${PluginBundle.get("nav.to")} pub.dev",
+                    type = "navToPub",
+                    icon = AllIcons.Toolwindows.WebToolWindow
+                ),
+                PluginDartIconActionMenuItem(
+                    if (isIgnored) removeIgnoreText else addIgnoreText,
+                    "ig-check",
+                    icon = MyImages.ignore
+                ),
+                PluginDartIconActionMenuItem(
+                    "Open Directory",
+                    "open-directory",
+                    icon = AllIcons.General.OpenDisk
+                ),
+                PluginDartIconActionMenuItem(
+                    "Show Json Data",
+                    "open-json-text",
+                    icon = AllIcons.FileTypes.Json
+                ),
+                PluginDartIconActionMenuItem(
+                    "Open Api in browser",
+                    "open-api-in-browser",
+                    icon = AllIcons.Toolwindows.WebToolWindow
+                )
             )
-        )
+            return arr
+        }
 
     init {
-        super.init(element.text, menus, menus.map { it.icon })
+        super.init(pluginName, menus, menus.map { it.icon })
     }
 
 
@@ -132,6 +148,23 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
 
             menus[2].type -> {
                 DartNoUsedCheckService.getInstance(project).openInBrowser(pluginName)
+            }
+
+            menus[3].type -> {
+                //打开json文件
+                ApplicationManager.getApplication().invokeLater {
+                    val jsonText = detail?.second?.jsonText
+                    if (jsonText != null) {
+                        MyFileUtil.createVirtualFileByJsonText(jsonText, "${pluginName}.json") { file, tool ->
+                            tool.openInEditor(file, project)
+                            tool.reformatVirtualFile(file, project)
+                        }
+                    }
+                }
+            }
+
+            menus[4].type -> {
+                BrowserUtil.browse(PubService.getApiUrl(pluginName))
             }
         }
         return super.onChosen(selectedValue, finalChoice)

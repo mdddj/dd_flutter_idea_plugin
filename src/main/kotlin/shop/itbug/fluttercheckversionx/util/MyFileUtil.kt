@@ -1,7 +1,13 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.json.JsonFileType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -9,14 +15,18 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScopes
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.lang.dart.DartFileType
 import org.jetbrains.yaml.psi.YAMLFile
 import java.io.File
 import java.nio.file.Path
+import java.util.concurrent.Callable
 import javax.swing.SwingUtilities
 
 
@@ -105,11 +115,26 @@ object MyFileUtil {
         getPubspecVirtualFile(project)?.let { virtualFile ->
             StartupManager.getInstance(project).runAfterOpened {
                 DumbService.getInstance(project).runWhenSmart {
-                    println("reindex pubspec.yaml")
-                    FileBasedIndex.getInstance().requestReindex(virtualFile)
+                    if (checkFileIsIndex(project, virtualFile)) {
+                        println("reindex pubspec.yaml")
+                        FileBasedIndex.getInstance().requestReindex(virtualFile)
+                    }
                 }
             }
         }
+    }
+
+
+    fun checkFileIsIndex(project: Project, file: VirtualFile): Boolean {
+        try {
+            val file = ApplicationManager.getApplication().runWriteIntentReadAction<PsiFile?, Exception> {
+                PsiManager.getInstance(project).findFile(file)
+            }
+            return file != null
+        } catch (_: Exception) {
+            return false
+        }
+        return false
     }
 
     /**
@@ -118,7 +143,11 @@ object MyFileUtil {
     fun reIndexFile(project: Project, file: VirtualFile) {
         StartupManager.getInstance(project).runAfterOpened {
             DumbService.getInstance(project).runWhenSmart {
-                FileBasedIndex.getInstance().requestReindex(file)
+                if (checkFileIsIndex(project, file)) {
+                    println("reindex = ${file.name}")
+                    FileBasedIndex.getInstance().requestReindex(file)
+                }
+
             }
         }
     }
@@ -133,5 +162,47 @@ object MyFileUtil {
         val scope = GlobalSearchScopes.directoryScope(project, lib, true)
         val files = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope)
         return files.toList()
+    }
+
+    /**
+     * 创建一个json的虚拟文件
+     */
+    fun createVirtualFileByJsonText(
+        text: String,
+        filename: String,
+        action: (file: VirtualFile, tool: MyFileUtil) -> Unit
+    ): VirtualFile {
+        val vf = LightVirtualFile(filename, JsonFileType.INSTANCE, text)
+        action.invoke(vf, this)
+        return vf
+    }
+
+    /**
+     * 打开某个文件
+     */
+    fun openInEditor(file: VirtualFile, project: Project) {
+        FileEditorManager.getInstance(project).openFile(file, true)
+    }
+
+    /**
+     * 格式化文件
+     */
+    fun reformatVirtualFile(file: VirtualFile, project: Project) {
+        val vf = ApplicationManager.getApplication().executeOnPooledThread(object : Callable<PsiFile?> {
+            override fun call(): PsiFile? {
+                return PsiManager.getInstance(project).findFile(file)
+            }
+        }).get()
+        if (vf != null) {
+            val task = object : Task.Backgroundable(project, "Reformat ${file.name}", false) {
+                override fun run(p0: ProgressIndicator) {
+                    WriteCommandAction.runWriteCommandAction(project) {
+                        CodeStyleManager.getInstance(project).reformat(vf)
+                    }
+                }
+            }
+            task.queue()
+
+        }
     }
 }

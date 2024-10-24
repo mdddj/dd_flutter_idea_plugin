@@ -61,9 +61,10 @@ class DartPluginVersionCheck :
 
             val fixText = PluginBundle.get("version.tip.3") + lastVersion
             holder.newAnnotation(
-                HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${lastVersion}"
+                HighlightSeverity.WARNING,
+                "${PluginBundle.get("version.tip.1")}:${lastVersion}"
             )
-                .tooltip(PluginBundle.get("dart.fix.version.time.tip.title") + second?.lastVersionUpdateTimeString)
+                .tooltip(PluginBundle.get("dart.fix.version.time.tip.title") + "  (${it.getLastUpdateTime()})  " + second?.lastVersionUpdateTimeString)
                 .newFix(object : PsiElementBaseIntentionAction(), Iconable, DumbAware {
                     override fun getFamilyName() = fixText
                     override fun getText() = fixText
@@ -75,6 +76,7 @@ class DartPluginVersionCheck :
                         if (newElement != null) {
                             newElement = first.versionElement.replace(newElement) as YAMLPlainTextImpl
                             first.replaced(lastVersion, newElement)
+                            DartPackageCheckService.getInstance(project).removeItemByPluginName(first.packageName)
                             project.restartAnalyzer()
                             MyFileUtil.reIndexFile(project, file.virtualFile)
                         }

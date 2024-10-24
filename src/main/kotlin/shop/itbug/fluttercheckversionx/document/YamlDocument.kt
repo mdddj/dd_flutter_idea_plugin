@@ -2,17 +2,14 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
-import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
-import shop.itbug.fluttercheckversionx.services.PubService
+import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
-import java.util.concurrent.Callable
 
 
 /**
@@ -27,40 +24,35 @@ class YamlDocument : DocumentationProvider {
 
 
         element?.let {
+            val project = element.project
             val isPluginElement = element.isDartPluginElement()
             originalElement?.let {
-
                 var pluginName = ""
 
-                if (element is YAMLKeyValueImpl && isPluginElement) {
+                if (element is YAMLKeyValueImpl) {
                     pluginName = element.keyText
                 }
                 if (element is LeafPsiElement && element.parent is YAMLKeyValueImpl) {
                     pluginName = element.text
                 }
-                if (pluginName.isNotEmpty()) {
+                if (pluginName.isNotEmpty() && isPluginElement) {
 
-                    val future = ApplicationManager.getApplication()
-                        .executeOnPooledThread(Callable<PubVersionDataModel?> { PubService.callPluginDetails(pluginName) })
-                    try {
-                        val detail: PubVersionDataModel? = future.get()
+                    DartPackageCheckService.getInstance(project).findPackageInfoByName(pluginName)?.let { packageInfo ->
+                        val detail = packageInfo.second
                         if (detail != null) {
                             return renderFullDoc(
                                 pluginName = detail.name,
                                 lastVersion = detail.latest.version,
                                 githubUrl = detail.latest.pubspec.homepage,
                                 desc = detail.latest.pubspec.description,
-                                lastUpdate = detail.latest.published
+                                lastUpdate = packageInfo.getLastUpdateTime()
                             )
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
-
                 }
             }
         }
-        return super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "无法识别插件")
+        return super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "")
     }
 
     /**

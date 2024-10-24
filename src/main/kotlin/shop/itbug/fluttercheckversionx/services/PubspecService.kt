@@ -92,11 +92,13 @@ class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
                     return
                 }
                 events.forEach {
-                    val filename = it.file?.name
-                    if (filename != null && filename == "pubspec.yaml") {
-                        println("文件发生变化::::::::::${filename}")
-                        it.file?.let { file -> MyFileUtil.reIndexFile(project, file) }
+                    it.file?.let { file ->
+                        val filename = file.name
+                        if (filename == "pubspec.yaml") {
+                            MyFileUtil.reIndexFile(project, file)
+                        }
                     }
+
                 }
 
             }

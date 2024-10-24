@@ -8,6 +8,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.startup.ProjectActivity
@@ -34,7 +35,7 @@ import shop.itbug.fluttercheckversionx.util.YamlExtends
 import javax.swing.table.DefaultTableModel
 
 
-class DartPackageCheckActivity : ProjectActivity {
+class DartPackageCheckActivity : ProjectActivity, DumbAware {
     override suspend fun execute(project: Project) {
         DartPackageCheckService.getInstance(project).start()
     }
@@ -265,6 +266,10 @@ class DartPackageCheckService(val project: Project) {
         startWithAsync(param)
     }
 
+
+    fun findPackageInfoByName(pluginName: String): PubPackage? {
+        return details.find { it.first.packageName == pluginName }
+    }
 
     fun getTableRows(): List<Array<String>> {
         return details.map {
