@@ -11,8 +11,7 @@ import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 
@@ -96,7 +95,7 @@ class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
                     val filename = it.file?.name
                     if (filename != null && filename == "pubspec.yaml") {
                         println("文件发生变化::::::::::${filename}")
-                        GlobalScope.launch { DartPackageCheckService.getInstance(project).resetIndex(false) }
+                        it.file?.let { file -> MyFileUtil.reIndexFile(file) }
                     }
                 }
 

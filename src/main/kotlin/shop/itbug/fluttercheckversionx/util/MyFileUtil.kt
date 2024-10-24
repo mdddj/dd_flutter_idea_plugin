@@ -106,6 +106,13 @@ object MyFileUtil {
     }
 
     /**
+     * 重新索引指定文件
+     */
+    fun reIndexFile(file: VirtualFile) {
+        FileBasedIndex.getInstance().requestReindex(file)
+    }
+
+    /**
      * 获取项目所有的dart文件
      */
     fun findAllProjectFiles(project: Project): List<VirtualFile> {

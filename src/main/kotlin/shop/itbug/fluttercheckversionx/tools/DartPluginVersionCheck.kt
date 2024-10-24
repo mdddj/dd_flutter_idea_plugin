@@ -23,15 +23,21 @@ import javax.swing.Icon
  * 插件新版本检测
  */
 class DartPluginVersionCheck :
-    ExternalAnnotator<DartPackageCheckService, List<PubPackage>>(),
+    ExternalAnnotator<DartPackageCheckService?, List<PubPackage>>(),
     DumbAware {
 
-    override fun collectInformation(file: PsiFile): DartPackageCheckService {
+    override fun collectInformation(file: PsiFile): DartPackageCheckService? {
+        if (file.name != "pubspec.yaml") {
+            return null
+        }
         return DartPackageCheckService.getInstance(file.project)
     }
 
     //执行长时间操作
-    override fun doAnnotate(service: DartPackageCheckService): List<PubPackage> {
+    override fun doAnnotate(service: DartPackageCheckService?): List<PubPackage> {
+        if (service == null) {
+            return emptyList()
+        }
         val details = service.details
         if (details.isEmpty()) return emptyList()
         val hasNewVersionItems = details.filter { service.hasNew(it) }.toList()
