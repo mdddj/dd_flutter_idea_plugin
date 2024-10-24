@@ -125,6 +125,9 @@ object MyFileUtil {
     }
 
 
+    /**
+     * 检查文件是否被索引?
+     */
     fun checkFileIsIndex(project: Project, file: VirtualFile): Boolean {
         try {
             val file = ApplicationManager.getApplication().runWriteIntentReadAction<PsiFile?, Exception> {
@@ -205,4 +208,5 @@ object MyFileUtil {
 
         }
     }
+
 }

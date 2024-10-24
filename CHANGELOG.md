@@ -7,7 +7,7 @@
 - Fix: Analyze the issue of inaccurate location after file changes (
   `pubspec.yaml`) [(#59)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/59)
 - New: Do not analyze files other than `pubspec.yaml`
-- Other details updated
+- New: `pubspec.yaml` New menu for drainage ditch (*Open package api in browser*,*Show Json Data*)
 
 ### [5.0.0] - 2024-10-22
 

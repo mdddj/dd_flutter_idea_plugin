@@ -99,7 +99,7 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
                     icon = AllIcons.FileTypes.Json
                 ),
                 PluginDartIconActionMenuItem(
-                    "Open Api in browser",
+                    "Open package api in browser",
                     "open-api-in-browser",
                     icon = AllIcons.Toolwindows.WebToolWindow
                 )
