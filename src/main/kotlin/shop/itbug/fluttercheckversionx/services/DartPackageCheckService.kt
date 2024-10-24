@@ -129,6 +129,13 @@ data class MyDartPackage(
     }
 }
 
+typealias DartCheckTaskComplete = () -> Unit
+
+data class DartPackageTaskParam(
+    val showNotification: Boolean = true,
+    val complete: DartCheckTaskComplete? = null
+)
+
 /**
  * 项目包检测的服务类
  */
@@ -208,8 +215,9 @@ class DartPackageCheckService(val project: Project) {
         MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
 
+
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun startWithAsync(showNotification: Boolean = true) {
+    suspend fun startWithAsync(param: DartPackageTaskParam = DartPackageTaskParam()) {
         val startTime = System.currentTimeMillis()  // 获取起始时间
         this.details.clear()
         val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
@@ -220,13 +228,13 @@ class DartPackageCheckService(val project: Project) {
         val endTime = System.currentTimeMillis()  // 获取结束时间
         GlobalScope.launch(Dispatchers.Main) {
             project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
-            if (showNotification) {
+            if (param.showNotification) {
                 getNotificationGroup()?.createNotification(
                     PluginBundle.get("refresh_success") + ", ${PluginBundle.get("package_size_is")}:${details.size} (${endTime - startTime}ms)",
                     NotificationType.INFORMATION
                 )?.notify(project)
             }
-
+            param.complete?.invoke()
         }
         MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
@@ -241,10 +249,20 @@ class DartPackageCheckService(val project: Project) {
 
 
     /**
+     * 删除某一个项目
+     */
+    fun removeItemByPluginName(name: String) {
+        val find = details.find { it.first.packageName == name }
+        if (find != null) {
+            details.remove(find)
+        }
+    }
+
+    /**
      * 重新索引
      */
-    suspend fun resetIndex(showNotification: Boolean = true) {
-        startWithAsync(showNotification)
+    suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
+        startWithAsync(param)
     }
 
 

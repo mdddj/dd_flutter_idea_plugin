@@ -2,8 +2,10 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -101,15 +103,24 @@ object MyFileUtil {
      */
     fun reIndexPubspecFile(project: Project) {
         getPubspecVirtualFile(project)?.let { virtualFile ->
-            FileBasedIndex.getInstance().requestReindex(virtualFile)
+            StartupManager.getInstance(project).runAfterOpened {
+                DumbService.getInstance(project).runWhenSmart {
+                    println("reindex pubspec.yaml")
+                    FileBasedIndex.getInstance().requestReindex(virtualFile)
+                }
+            }
         }
     }
 
     /**
      * 重新索引指定文件
      */
-    fun reIndexFile(file: VirtualFile) {
-        FileBasedIndex.getInstance().requestReindex(file)
+    fun reIndexFile(project: Project, file: VirtualFile) {
+        StartupManager.getInstance(project).runAfterOpened {
+            DumbService.getInstance(project).runWhenSmart {
+                FileBasedIndex.getInstance().requestReindex(file)
+            }
+        }
     }
 
     /**

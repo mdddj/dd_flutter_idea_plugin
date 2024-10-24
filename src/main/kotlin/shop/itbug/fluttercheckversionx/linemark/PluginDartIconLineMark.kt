@@ -12,11 +12,17 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import icons.MyImages
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.DartPackageTaskParam
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 import shop.itbug.fluttercheckversionx.util.restartAnalyzer
@@ -58,9 +64,11 @@ data class PluginDartIconActionMenuItem(val title: String, val type: String, val
 
 class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
 
+    private val project = element.project
+    private val virtualFile = element.containingFile.virtualFile
     private val removeIgnoreText = PluginBundle.get("ignore_remove")
     private val addIgnoreText = PluginBundle.get("ig.version.check")
-    private val igManager = DartPluginIgnoreConfig.getInstance(element.project)
+    private val igManager = DartPluginIgnoreConfig.getInstance(project)
     private val pluginName = element.getPluginName()
     private val isIgnored = igManager.isIg(pluginName)
 
@@ -92,6 +100,12 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
         return value?.title ?: "未知选项"
     }
 
+    fun reIndexFile() {
+        project.restartAnalyzer()
+        MyFileUtil.reIndexFile(project, virtualFile)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onChosen(selectedValue: PluginDartIconActionMenuItem?, finalChoice: Boolean): PopupStep<*>? {
         when (selectedValue?.type) {
             menus[0].type -> {
@@ -100,16 +114,24 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
 
             menus[1].type -> {
                 if (isIgnored) {
-                    DartPluginIgnoreConfig.getInstance(element.project).remove(pluginName)
+                    DartPluginIgnoreConfig.getInstance(project).remove(pluginName)
+
+                    GlobalScope.launch {
+                        DartPackageCheckService.getInstance(project).resetIndex(DartPackageTaskParam(false) {
+                            reIndexFile()
+                        })
+                    }
                 } else {
-                    DartPluginIgnoreConfig.getInstance(element.project).add(pluginName)
+                    DartPluginIgnoreConfig.getInstance(project).add(pluginName)
+                    DartPackageCheckService.getInstance(project).removeItemByPluginName(pluginName)
+                    reIndexFile()
                 }
 
-                element.project.restartAnalyzer()
+
             }
 
             menus[2].type -> {
-                DartNoUsedCheckService.getInstance(element.project).openInBrowser(pluginName)
+                DartNoUsedCheckService.getInstance(project).openInBrowser(pluginName)
             }
         }
         return super.onChosen(selectedValue, finalChoice)
