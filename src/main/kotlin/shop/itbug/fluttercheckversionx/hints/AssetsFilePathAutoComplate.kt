@@ -13,6 +13,9 @@ import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.services.FlutterAssetsService
 import shop.itbug.fluttercheckversionx.services.PluginStateService
+import shop.itbug.fluttercheckversionx.socket.formatSize
+import shop.itbug.fluttercheckversionx.util.SwingUtil
+import java.io.File
 
 
 class FlutterAssetsStartHandle : ProjectActivity, DumbAware {
@@ -22,7 +25,10 @@ class FlutterAssetsStartHandle : ProjectActivity, DumbAware {
             return
         }
         val setting: AppStateModel = PluginStateService.getInstance().state ?: AppStateModel()
-        FlutterAssetsService.getInstance(project).init(setting.assetScanFolderName)
+        if (setting.assetsScanEnable) {
+            FlutterAssetsService.getInstance(project).init(setting.assetScanFolderName)
+        }
+
     }
 }
 
@@ -33,13 +39,12 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
     private var setting: AppStateModel = PluginStateService.getInstance().state ?: AppStateModel()
 
     init {
-        println(setting)
+        //PlatformPatterns.string().startsWith(setting.assetCompilationTriggerString)
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
                 .withLanguage(DartLanguage.INSTANCE)
-                .withParents(DartStringLiteralExpressionImpl::class.java)
-                .withText(PlatformPatterns.string().startsWith(setting.assetCompilationTriggerString)),
+                .withParents(DartStringLiteralExpressionImpl::class.java),
             AssetsFilePathAutoCompleteProvider(setting)
         )
     }
@@ -58,9 +63,20 @@ class AssetsFilePathAutoCompleteProvider(val setting: AppStateModel) : Completio
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        parameters.editor.project?.let {
-            FlutterAssetsService.getInstance(it).allAssets().forEach { filePath ->
-                result.addElement(LookupElementBuilder.create(filePath).withIcon(MyIcons.flutter))
+        val element = parameters.originalPosition
+        val project = parameters.editor.project
+        val text = element?.text ?: ""
+        if (text.startsWith(setting.assetCompilationTriggerString)) {
+            project?.let {
+                FlutterAssetsService.getInstance(it).allAssets().forEach { filePath ->
+                    result
+                        .addElement(
+                            LookupElementBuilder.create(filePath.text)
+                                .withIcon(
+                                    SwingUtil.fileToIcon(File(filePath.file.path)) ?: MyIcons.flutter
+                                ).withTypeText(formatSize(filePath.file.length))
+                        )
+                }
             }
         }
     }

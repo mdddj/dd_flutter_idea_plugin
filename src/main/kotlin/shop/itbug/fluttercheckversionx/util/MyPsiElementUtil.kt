@@ -42,6 +42,7 @@ class MyDartPsiElementUtil {
 
     companion object {
 
+
         /**
          * @param referenceResolve 引用节点
          */

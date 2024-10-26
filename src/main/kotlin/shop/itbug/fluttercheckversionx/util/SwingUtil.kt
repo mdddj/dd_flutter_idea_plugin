@@ -1,10 +1,12 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.util.ImageLoader
+import com.intellij.util.ui.JBImageIcon
 import java.awt.*
 import java.io.File
-import javax.imageio.ImageIO
 import javax.swing.Icon
 import javax.swing.ImageIcon
+import kotlin.math.roundToInt
 
 
 object SwingUtil {
@@ -79,12 +81,30 @@ object SwingUtil {
     /**
      * 文件转icon
      */
-    fun fileToIcon(file: File): Icon? {
-        try {
-            val buf = ImageIO.read(file)
-            return ImageIcon(buf)
-        } catch (e: Exception) {
+    fun fileToIcon(file: File, scaleSize: Int = 16): JBImageIcon? {
+
+        val isFile = DartPsiElementHelper.isImageFile(file)
+        if (!isFile) return null
+
+        // 使用 ImageIcon 读取图片并缩放
+        var image: Image = ImageLoader.loadCustomIcon(file) ?: return null
+
+        // 确保图片的宽度和高度是正值
+        if (image.getWidth(null) <= 0 || image.getHeight(null) <= 0) {
             return null
         }
+
+        var width = image.getWidth(null)
+        var height = image.getHeight(null)
+        val maxSize = width.coerceAtLeast(height)
+        if (maxSize > scaleSize) {
+            val scale = scaleSize.toDouble() / maxSize.toDouble()
+            height = (height * scale).roundToInt()
+            width = (width * scale).roundToInt()
+        }
+
+        image = ImageLoader.scaleImage(image, width, height)
+        val scaledIcon = JBImageIcon(image)
+        return scaledIcon
     }
 }

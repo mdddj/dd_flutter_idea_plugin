@@ -76,6 +76,9 @@ fun settingPanel(
         }
 
         group(PluginBundle.get("ass.setting.title")) {
+            row("Enable") {
+                checkBox("Enable").bindSelected(model::assetsScanEnable)
+            }
             row(PluginBundle.get("ass.1")) {
                 textField().bindText(model::assetCompilationTriggerString)
             }
