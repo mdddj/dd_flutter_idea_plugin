@@ -23,6 +23,7 @@ import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.DartPackageTaskParam
 import shop.itbug.fluttercheckversionx.services.MyDartPackage
 import shop.itbug.fluttercheckversionx.services.MyPackageGroup
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
@@ -96,6 +97,12 @@ class DartNoUsedCheckService(val project: Project) {
      * 开始检测
      */
     fun startCheck(indicator: ProgressIndicator? = null) {
+
+        //获取包信息
+        runBlocking {
+            DartPackageCheckService.getInstance(project).resetIndex(DartPackageTaskParam(showNotification = false))
+        }
+
         packages = emptyList()
         runBlocking {
             getAllDartPackages(indicator)
@@ -134,7 +141,7 @@ class DartNoUsedCheckService(val project: Project) {
         indicator?.text = PluginBundle.get("collect_all_import_files")
         val allImportElement: List<DartImportStatementImpl> = runBlocking(Dispatchers.EDT) {
             val allDartFiles = readAction { MyFileUtil.findAllProjectFiles(project) }//项目所有dart文件
-            val jobs: List<Deferred<MutableCollection<DartImportStatementImpl>?>> = allDartFiles.map { file ->
+            val jobs = allDartFiles.map { file ->
                 async {
                     indicator?.text2 = file.name
                     readAction {
@@ -158,14 +165,13 @@ class DartNoUsedCheckService(val project: Project) {
     fun checkUnUsedPackaged() {
         packages = emptyList()
         resultModel = null
-        val task = object : com.intellij.openapi.progress.Task.Backgroundable(project, "Analyzing", true) {
+        val task = object : Task.Backgroundable(project, "Analyzing", true) {
             override fun run(indicator: ProgressIndicator) {
                 startCheck(indicator)
             }
 
             override fun onCancel() {
                 super.onCancel()
-                println("关闭任务")
                 collectImportPsiElementJobs?.forEach {
                     if (it.isActive) {
                         it.cancel()
@@ -196,8 +202,6 @@ class DartNoUsedCheckService(val project: Project) {
      * 分析导入用了哪个包
      */
     private fun analysisImportElement(imps: List<DartImportStatementImpl>, indicator: ProgressIndicator? = null) {
-        println("开始分析:${imps.size}")
-
 
         var filterSize = imps.size
         val r = runBlocking {
@@ -208,13 +212,10 @@ class DartNoUsedCheckService(val project: Project) {
                 uriText.startsWith("package:")
             }.toList()
             filterSize = finalImps.size
-
             indicator?.text = "Analyzing:${finalImps.size}"
-            println("过滤掉后:${finalImps.size}")
             val jobs: List<Deferred<PathModel>> = finalImps.map {
                 async {
                     val vf = readAction { it.originalElement.containingFile.virtualFile }
-
                     val model: PathModel = readAction {
                         val packageFile =
                             it.uriElement.navigationElement.reference?.resolve()?.containingFile?.virtualFile
@@ -252,10 +253,7 @@ class DartNoUsedCheckService(val project: Project) {
             packageImportSize = filterSize,
             noUsedPackageList = unUsePackage
         )
-
-
         showNotification(unUsePackage.joinToString(",") { it.packageName })
-
     }
 
 
@@ -280,11 +278,11 @@ class DartNoUsedCheckService(val project: Project) {
 
     /**
      * 判断文件是否在目录下
+     * true: 包含,已被使用
      */
     private fun isFileInDirectory(filePath: String, directoryPath: String): Boolean {
         val file = File(filePath)
         val directory = File(directoryPath)
-
         if (!file.exists() || !directory.exists()) {
             return false
         }
@@ -295,6 +293,10 @@ class DartNoUsedCheckService(val project: Project) {
         // 提取包名（去除版本号部分），假设格式是 `包名-版本号`
         val directoryPackageName = getPackageName(directoryCanonicalPath)
         val filePackageName = getPackageName(fileCanonicalPath)
+
+        if (filePath.contains("slidable") && directoryPath.contains("slidable")) {
+            println("===$directoryPackageName   <>  $filePackageName  ${filePackageName == directoryPackageName}")
+        }
 
         // 比较包名，不比较版本号
         return filePackageName == directoryPackageName

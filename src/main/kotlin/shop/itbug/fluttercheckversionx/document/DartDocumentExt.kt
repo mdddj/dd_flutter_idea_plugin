@@ -19,6 +19,7 @@ class DartDocumentExt : AbstractDocumentationProvider() {
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String {
+
         val reference = element.parent?.parent?.reference?.resolve()
         val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
             element.containingFile.virtualFile,
@@ -148,7 +149,6 @@ class DartDocumentExt : AbstractDocumentationProvider() {
                 val simpleText = "```dart\n" +
                         (eleText) + "\n```\n"
                 Helper.addKeyValueHeader(sb)
-                println(simpleText)
                 sb.appendTag(
                     MyMarkdownDocRenderObject(text = simpleText, project = project),
                     PluginBundle.get("element")

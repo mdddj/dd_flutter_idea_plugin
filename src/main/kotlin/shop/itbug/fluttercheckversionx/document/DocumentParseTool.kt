@@ -36,12 +36,6 @@ class DocumentParseTool(val element: PsiElement) {
 
             is DartFactoryConstructorDeclarationImpl -> {
                 val manager = MyDartConstructorManager(element)
-                val fields = element.myManager.getRequiredFields
-                println("--field-")
-                println(fields)
-                println("--field-")
-                println(element.myManager.getNamedFields)
-                println("---")
                 return manager.generateDocument()
             }
 
@@ -73,7 +67,6 @@ fun generateClassByNames(
     optionalParams: List<MyDartFieldModel>
 ): String {
     val sb = StringBuilder()
-    println("className: $className")
     sb.append(className)
     sb.append(" ")
     if (componentNames.size == 2) {
@@ -177,7 +170,7 @@ class MyDartConstructorManager(private val dartConstructorPsiElement: DartFactor
         val rf = manager.getRequiredFields
         val of = manager.getNamedFields
         val names = manager.componentNameList
-        return generateClassByNames(className ?: name ?: "", names, rf, of)
+        return generateClassByNames(className ?: name, names, rf, of)
     }
 
 

@@ -2,12 +2,15 @@
 
 ## Unreleased
 
-## [5.0.1] - 2024-10-24
+## [5.0.1] - 2024-10-25
 
 - Fix: Analyze the issue of inaccurate location after file changes (
   `pubspec.yaml`) [(#59)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/59)
 - New: Do not analyze files other than `pubspec.yaml`
 - New: `pubspec.yaml` New menu for drainage ditch (*Open package api in browser*,*Show Json Data*)
+- New: *riverpod widget to ConsumerWidget*: Automatically add import statements
+- New: Support local asset image preview
+  ![img.png](https://minio.itbug.shop/blog/simple-file/img___1729914650363___.png)
 
 ### [5.0.0] - 2024-10-22
 

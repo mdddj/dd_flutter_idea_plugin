@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.json.JsonFileType
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -15,7 +14,6 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.FileTypeIndex
@@ -26,7 +24,6 @@ import com.jetbrains.lang.dart.DartFileType
 import org.jetbrains.yaml.psi.YAMLFile
 import java.io.File
 import java.nio.file.Path
-import java.util.concurrent.Callable
 import javax.swing.SwingUtilities
 
 
@@ -113,13 +110,9 @@ object MyFileUtil {
      */
     fun reIndexPubspecFile(project: Project) {
         getPubspecVirtualFile(project)?.let { virtualFile ->
-            StartupManager.getInstance(project).runAfterOpened {
-                DumbService.getInstance(project).runWhenSmart {
-                    if (checkFileIsIndex(project, virtualFile)) {
-                        println("reindex pubspec.yaml")
-                        FileBasedIndex.getInstance().requestReindex(virtualFile)
-                    }
-                }
+            if (checkFileIsIndex(project, virtualFile)) {
+                println("reindex pubspec.yaml")
+                FileBasedIndex.getInstance().requestReindex(virtualFile)
             }
         }
     }
@@ -130,9 +123,7 @@ object MyFileUtil {
      */
     fun checkFileIsIndex(project: Project, file: VirtualFile): Boolean {
         try {
-            val file = ApplicationManager.getApplication().runWriteIntentReadAction<PsiFile?, Exception> {
-                PsiManager.getInstance(project).findFile(file)
-            }
+            val file = runReadAction { PsiManager.getInstance(project).findFile(file) }
             return file != null
         } catch (_: Exception) {
             return false
@@ -191,11 +182,7 @@ object MyFileUtil {
      * 格式化文件
      */
     fun reformatVirtualFile(file: VirtualFile, project: Project) {
-        val vf = ApplicationManager.getApplication().executeOnPooledThread(object : Callable<PsiFile?> {
-            override fun call(): PsiFile? {
-                return PsiManager.getInstance(project).findFile(file)
-            }
-        }).get()
+        val vf = runReadAction { PsiManager.getInstance(project).findFile(file) }
         if (vf != null) {
             val task = object : Task.Backgroundable(project, "Reformat ${file.name}", false) {
                 override fun run(p0: ProgressIndicator) {

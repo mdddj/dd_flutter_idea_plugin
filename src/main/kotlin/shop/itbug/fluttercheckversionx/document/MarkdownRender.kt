@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil.appendStyledSpan
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartLanguage
@@ -45,13 +46,6 @@ class MarkdownRender {
             if (tag != null) {
                 appendSection(title) {
                     val m = markdownToHtml(tag)
-                    println(
-                        """
-
-$m
-
-                    """.trimIndent()
-                    )
                     append(m)
                 }
             }
@@ -143,7 +137,6 @@ fun MarkdownNode.toHtml(project: Project): String {
             nodeText = nodeText.replace("{@end-tool}", "</p>")
         }
 
-        println(nodeType)
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
             MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
@@ -219,7 +212,8 @@ fun MarkdownNode.toHtml(project: Project): String {
                 val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml(project)
                 val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                 if (label != null && destination != null) {
-                    sb.append("<a href=\"$destination\">$label</a>")
+                    val atag = HtmlChunk.tag("a").attr("href", destination).addText(label).toString()
+                    sb.append(atag)
                 } else {
                     sb.append(node.text)
                 }

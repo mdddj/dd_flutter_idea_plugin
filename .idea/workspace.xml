@@ -5,14 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.0.0">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DartImageDocumentProvider.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DartPsiElementHelper.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/riverpod/StatefulToConsumerAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/riverpod/StatefulToConsumerAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/riverpod/StatelessToConsumer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/riverpod/StatelessToConsumer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/freezed/FreezedInlay.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/freezed/FreezedInlay.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/linemark/PluginDartIconLineMark.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/linemark/PluginDartIconLineMark.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DartDocumentExt.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DartDocumentExt.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DocumentParseTool.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DocumentParseTool.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/MarkdownRender.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/MarkdownRender.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/dartfile/DartStringIconShowInlay.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/dartfile/DartStringIconShowInlay.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartLibService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartLibService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/noused/DartNoUsedCheckService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/noused/DartNoUsedCheckService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyPsiElementUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyPsiElementUtil.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -81,8 +85,8 @@
         <option value="Action" />
         <option value="Dart File" />
         <option value="InspectionDescription" />
-        <option value="Kotlin Object" />
         <option value="Kotlin Class" />
+        <option value="Kotlin Object" />
       </list>
     </option>
   </component>
@@ -92,7 +96,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="4.9.7" />
+        <entry key="$PROJECT_DIR$" value="5.0.0" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -190,6 +194,7 @@
     <setting file="file://$PROJECT_DIR$/../intellij-community/platform/editor-ui-api/src/com/intellij/openapi/editor/HighlighterColors.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../intellij-community/platform/ide-core/src/com/intellij/openapi/ui/popup/JBPopup.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../intellij-community/platform/platform-api/src/com/intellij/ui/ToolbarDecorator.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIU/242.23726.103/b0181d01d53cb45c4da37643b034ec8b2982bbd5/ideaIU-242.23726.103-sources.jar!/org/intellij/images/fileTypes/ImageDocumentationProvider.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
@@ -272,7 +277,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4": "",
     "dart.analysis.tool.window.visible": "false",
     "full.screen.before.presentation.mode": "false",
-    "git-widget-placeholder": "5.0.0",
+    "git-widget-placeholder": "5.0.1",
     "ignore.preview.features.used": "true",
     "jdk.selected.JAVA_MODULE": "jbrsdk_jcef-17",
     "kotlin-language-version-configured": "true",
@@ -288,9 +293,9 @@
     "org.rust.first.attach.projects": "true",
     "project.structure.last.edited": "模块",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.5427783",
+    "project.structure.side.proportion": "0.2945874",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "setting.flutterx",
+    "settings.editor.selected.configurable": "LDDBlog",
     "show.migrate.to.gradle.popup": "false",
     "vue.rearranger.settings.migration": "true"
   },
@@ -1452,7 +1457,15 @@
       <workItem from="1729731580765" duration="3636000" />
       <workItem from="1729735368856" duration="3429000" />
       <workItem from="1729738819918" duration="58000" />
-      <workItem from="1729739399724" duration="9952000" />
+      <workItem from="1729739399724" duration="10148000" />
+      <workItem from="1729752717720" duration="10000" />
+      <workItem from="1729752770741" duration="299000" />
+      <workItem from="1729764523990" duration="60000" />
+      <workItem from="1729819343027" duration="4596000" />
+      <workItem from="1729824337740" duration="108000" />
+      <workItem from="1729824739541" duration="1893000" />
+      <workItem from="1729906834666" duration="909000" />
+      <workItem from="1729907753691" duration="7040000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>

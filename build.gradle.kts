@@ -35,7 +35,7 @@ repositories {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-        local("/Applications/Android Studio.app")
+        local("/Applications/IntelliJ IDEA Ultimate.app")
 //        intellijIdeaCommunity(ideaVersion)
         bundledPlugins("org.jetbrains.plugins.terminal", "org.jetbrains.plugins.yaml", "org.intellij.plugins.markdown")
         plugins("Dart:$dartVersion")

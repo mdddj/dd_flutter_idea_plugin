@@ -9,20 +9,14 @@ import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.codeInsight.hints.NoSettings
 import com.intellij.codeInsight.hints.SettingsKey
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.guessProjectDir
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
 import com.intellij.ui.dsl.builder.panel
-import com.jetbrains.lang.dart.psi.impl.DartArgumentListImpl
-import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
-import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
-import com.jetbrains.lang.dart.psi.impl.DartVarInitImpl
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
+import shop.itbug.fluttercheckversionx.util.DartPsiElementHelper
 import java.io.File
-import java.net.URLConnection
 import javax.swing.JComponent
 
 /**
@@ -61,7 +55,7 @@ class DartStringIconShowInlay : InlayHintsProvider<NoSettings> {
                 if (setting.showAssetsIconInEditor.not()) {
                     return true
                 }
-                val file = element.checkHasFile() ?: return true
+                val file = DartPsiElementHelper.checkHasFile(element) ?: return true
                 val inlay = myInlayFactory.getImageWithPath(file.full, file.basePath, setting) ?: return true
                 sink.addInlineElement(element.startOffset, false, inlay, false)
                 return true
@@ -73,43 +67,4 @@ class DartStringIconShowInlay : InlayHintsProvider<NoSettings> {
         val file: File, val basePath: String, val full: String
     )
 
-    ///检测是否有本地文件引用
-    private fun PsiElement.checkHasFile(): FileResult? {
-        fun findFileResult(ele: DartStringLiteralExpressionImpl): FileResult? {
-            val dir = ele.project.guessProjectDir() ?: return null
-            val url = ele.text.replace("\'", "").replace("\"", "")
-            val filePath = dir.path + File.separator + url
-            val file = File(filePath)
-            if (file.exists() && isImageFile(file)) {
-                return FileResult(file, url, filePath)
-            }
-            return null
-        }
-        if (this is DartStringLiteralExpressionImpl) {
-            return findFileResult(this)
-        } else if (reference != null && reference?.resolve() != null && (parent is DartArgumentListImpl || parent is DartVarInitImpl)) {
-            val resolvePsi = reference!!.resolve()!!
-            if (resolvePsi is DartComponentNameImpl) {
-                val findDartStringLiteralInParent = findDartStringLiteralInParent(resolvePsi)
-                if (findDartStringLiteralInParent != null) {
-                    return findFileResult(findDartStringLiteralInParent)
-                }
-            }
-        }
-        return null
-    }
-
-
-    fun isImageFile(file: File): Boolean {
-        if (!file.exists() || !file.isFile) {
-            return false
-        }
-        val mimeType = URLConnection.guessContentTypeFromName(file.name)
-        return mimeType?.startsWith("image") == true
-    }
-
-    fun findDartStringLiteralInParent(element: PsiElement): DartStringLiteralExpressionImpl? {
-        val secondParent = element.parent?.parent ?: return null
-        return PsiTreeUtil.findChildOfType(secondParent, DartStringLiteralExpressionImpl::class.java)
-    }
 }
