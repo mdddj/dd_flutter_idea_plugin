@@ -11,7 +11,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression
 import com.jetbrains.lang.dart.psi.impl.DartArgumentListImpl
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
-import com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarInitImpl
 import org.intellij.images.index.ImageInfoIndex
@@ -50,24 +49,25 @@ object DartPsiElementHelper {
 
 
         //获取指向
-        fun PsiElement.getRf(): DartStringLiteralExpressionImpl? {
-            if (this is LeafPsiElement && this.parent.parent is DartReferenceExpressionImpl) {
-                val ref = this.parent.parent as DartReferenceExpressionImpl
-                val resolvePsi = ref.resolve() ?: return null
-                if (resolvePsi is DartComponentNameImpl) {
-                    val findDartStringLiteralInParent = findDartStringLiteralInParent(resolvePsi)
-                    return findDartStringLiteralInParent
-                }
-            }
-            return null
-        }
+//        fun PsiElement.getRf(): DartStringLiteralExpressionImpl? {
+//            if (this is LeafPsiElement && this.parent.parent is DartReferenceExpressionImpl) {
+//                val ref = this.parent.parent as DartReferenceExpressionImpl
+//                val resolvePsi = ref.resolve() ?: return null
+//                if (resolvePsi is DartComponentNameImpl) {
+//                    val findDartStringLiteralInParent = findDartStringLiteralInParent(resolvePsi)
+//                    return findDartStringLiteralInParent
+//                }
+//            }
+//            return null
+//        }
 
         val first = element.getTarget()
         if (first != null) {
             return first
         }
 
-        return element.getRf()
+//        return element.getRf()
+        return null
     }
 
     fun isImageFile(file: File): Boolean {

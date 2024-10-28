@@ -23,7 +23,8 @@ class DocumentParseTool(val element: PsiElement) {
         return when (element) {
 
             is DartNamedConstructorDeclarationImpl -> {
-                element.getClassText
+                val c = element.getClassText
+                return c
             }
 
             is DartMethodDeclarationImpl -> {
@@ -182,7 +183,8 @@ class MyDartConstructorManager(private val dartConstructorPsiElement: DartFactor
 val DartClassDefinitionImpl.getDefinition: String
     get() {
         val bodyText = children.find { it is DartClassBodyImpl }?.text ?: ""
-        return text.replace(bodyText, "")
+        val t = text.replace(bodyText, "")
+        return t
     }
 
 ///函数类型的定义

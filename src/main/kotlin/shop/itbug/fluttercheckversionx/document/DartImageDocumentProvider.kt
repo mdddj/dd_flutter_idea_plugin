@@ -5,7 +5,6 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.ExternalDocumentationHandler
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -22,6 +21,7 @@ class DartImageDocumentProvider : AbstractDocumentationProvider(), ExternalDocum
 
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
         element ?: return null
+        originalElement ?: return null
         return DartPsiElementHelper.generateLocalImageDocument(element)
     }
 

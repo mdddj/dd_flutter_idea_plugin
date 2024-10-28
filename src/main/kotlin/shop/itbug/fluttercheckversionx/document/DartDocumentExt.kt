@@ -2,8 +2,10 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
@@ -18,11 +20,13 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 class DartDocumentExt : AbstractDocumentationProvider() {
 
 
-    override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String {
+    override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
 
         val reference = element.parent?.parent?.reference?.resolve()
-        val result = DartAnalysisServerService.getInstance(element.project).analysis_getHover(
-            element.containingFile.virtualFile,
+        val file = element.containingFile.virtualFile ?: return null
+        val project = element.project
+        val result = DartAnalysisServerService.getInstance(project).analysis_getHover(
+            file,
             element.textOffset
         )
         if (result.isEmpty()) return "Document not found"
@@ -31,13 +35,12 @@ class DartDocumentExt : AbstractDocumentationProvider() {
             reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
         return renderView(
             docInfo,
-            element.project,
+            project,
             if (dartFormalParameterList.isEmpty()) null else dartFormalParameterList.first(),
             element
         )
 
     }
-
 
     data class DartParams(
         val key: String,
@@ -88,7 +91,7 @@ class DartDocumentExt : AbstractDocumentationProvider() {
             return dartNormalElementHandle(normal.first(), isRequired, true)
         }
 
-        val paramsArr = arrayListOf<DartParams>()
+        val paramsArr = mutableListOf<DartParams>()
 
 
         //获取必填参数节点,不是{}里面声明的, fun(String str){}
@@ -146,7 +149,7 @@ class DartDocumentExt : AbstractDocumentationProvider() {
                 eleText = params
             }
             if (eleText != null) {
-                val simpleText = "```dart\n" +
+                var simpleText = "```dart\n" +
                         (eleText) + "\n```\n"
                 Helper.addKeyValueHeader(sb)
                 sb.appendTag(
@@ -175,9 +178,18 @@ class DartDocumentExt : AbstractDocumentationProvider() {
             )
             sb.appendTag(obj, PluginBundle.get("doc"))
         }
-
         Helper.addKeyValueFoot(sb)
         return sb.toString()
     }
 
+
+    override fun getCustomDocumentationElement(
+        editor: Editor,
+        file: PsiFile,
+        contextElement: PsiElement?,
+        targetOffset: Int
+    ): PsiElement? {
+        println("get custom contextElement.")
+        return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset)
+    }
 }

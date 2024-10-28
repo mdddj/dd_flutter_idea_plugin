@@ -334,6 +334,8 @@
         <action id="GoToDiscordAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDiscordAction"
         />
+        <action id="GoToQQGroupAction"
+                class="shop.itbug.fluttercheckversionx.actions.bar.GoToQQGroupAction"/>
         <action id="GoToDocumentAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDocumentAction"
         />
@@ -352,6 +354,7 @@
             <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>
             <reference id="StatusBarJsonToFreezedClass"/>
             <separator/>
+            <reference id="GoToQQGroupAction"/>
             <reference id="GoToDiscordAction"/>
             <reference id="GoToDocumentAction"/>
             <separator/>

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.setting
 
+import com.intellij.ide.starters.shared.hyperLink
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
@@ -15,6 +16,7 @@ import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.config.PluginSetting
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState
@@ -51,7 +53,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showRiverpodInlay)
                 }
-            }
+            }.hyperLink("Document", Links.riverpod)
             group("Open Project in Ide") {
                 row("Open the android directory in Android Studio") {
                     checkBox("Enable").bindSelected(pluginConfig::openAndroidDirectoryInAS)
@@ -62,7 +64,16 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row("Open the macos directory in Xcode") {
                     checkBox("Enable").bindSelected(pluginConfig::openMacosDirectoryInXcode)
                 }
-            }
+            }.hyperLink("Document", Links.openIn)
+
+            group(PluginBundle.get("foot_bar_links_title")) {
+                row("Show Discord Link Action") {
+                    checkBox("Enable").bindSelected(pluginConfig::showDiscord)
+                }
+                row("Show QQ Group Link Action") {
+                    checkBox("Enable").bindSelected(pluginConfig::showQQGroup)
+                }
+            }.hyperLink("Document", Links.link)
             group("Assets Icon") {
                 row(PluginBundle.get("assets_icon_enable_in_editor")) {
                     checkBox("Enable").bindSelected(pluginConfig::showAssetsIconInEditor)
@@ -70,7 +81,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row(PluginBundle.get("assets_icon_scale_size")) {
                     intTextField().bindIntText(pluginConfig::assetsIconSize)
                 }
-            }
+            }.hyperLink("Document", Links.icons)
         }
         return JBTabbedPane().apply {
             add(PluginBundle.get("basic"), panel)

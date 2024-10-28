@@ -5,7 +5,6 @@ sealed class AppConfig {
     data class FlutterIgScanPlugins(val igPlugins: List<String>) : AppConfig()
 }
 
-val qqGroup = AppConfig.QQGroup("706438100")//QQ群号
 var igFlutterPlugin = AppConfig.FlutterIgScanPlugins(
     listOf(
         "flutter",
