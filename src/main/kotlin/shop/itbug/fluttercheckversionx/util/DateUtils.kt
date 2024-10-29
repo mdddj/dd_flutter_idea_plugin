@@ -36,7 +36,7 @@ object DateUtils {
             duration.toDays() < 365 -> "${duration.toDays() / 30}"
             else -> "${duration.toDays() / 365}"
         }
-        return "$time$text"
+        return "$time $text"
     }
 
     private fun localizeTimeAgo(text: String, locale: Locale): String {

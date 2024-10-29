@@ -47,8 +47,11 @@ class PubspecService(val project: Project) : Disposable {
      * 项目是否引入 riverpod 包
      */
     fun hasRiverpod(): Boolean {
-        return hasDependencies("hooks_riverpod")
+        return hasDependencies("hooks_riverpod") || hasDependencies("riverpod_annotation") || hasDependencies("riverpod_annotation") || hasDependencies(
+            "riverpod_generator"
+        )
     }
+
 
     /**
      * 项目是否使用 provider 包

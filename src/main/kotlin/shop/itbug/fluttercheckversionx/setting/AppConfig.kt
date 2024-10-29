@@ -37,7 +37,9 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
     private var generaAssetsSettingPanelModelIs = false
     private var dartFileSaveSettingPanelModelIs = false
     private var generateSettingPanel =
-        GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
+        GeneraAssetsSettingPanel(
+            settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig
+        ) {
             generaAssetsSettingPanelModelIs = it
         }
 
@@ -53,7 +55,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showRiverpodInlay)
                 }
-            }.hyperLink("Document", Links.riverpod)
+            }.hyperLink(PluginBundle.doc, Links.riverpod)
             group("Open Project in Ide") {
                 row("Open the android directory in Android Studio") {
                     checkBox("Enable").bindSelected(pluginConfig::openAndroidDirectoryInAS)
@@ -64,16 +66,16 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row("Open the macos directory in Xcode") {
                     checkBox("Enable").bindSelected(pluginConfig::openMacosDirectoryInXcode)
                 }
-            }.hyperLink("Document", Links.openIn)
+            }.hyperLink(PluginBundle.doc, Links.openIn)
 
             group(PluginBundle.get("foot_bar_links_title")) {
-                row("Show Discord Link Action") {
+                row(PluginBundle.get("setting_show_discord_action")) {
                     checkBox("Enable").bindSelected(pluginConfig::showDiscord)
                 }
-                row("Show QQ Group Link Action") {
+                row(PluginBundle.get("setting_show_qq_group_action")) {
                     checkBox("Enable").bindSelected(pluginConfig::showQQGroup)
                 }
-            }.hyperLink("Document", Links.link)
+            }.hyperLink(PluginBundle.doc, Links.link)
             group("Assets Icon") {
                 row(PluginBundle.get("assets_icon_enable_in_editor")) {
                     checkBox("Enable").bindSelected(pluginConfig::showAssetsIconInEditor)
@@ -81,7 +83,15 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row(PluginBundle.get("assets_icon_scale_size")) {
                     intTextField().bindIntText(pluginConfig::assetsIconSize)
                 }
-            }.hyperLink("Document", Links.icons)
+            }.hyperLink(PluginBundle.doc, Links.icons)
+
+            //显示打赏action
+            group(PluginBundle.get("reward")) {
+                row("Enable") {
+                    checkBox(PluginBundle.get("setting_show_reward_action")).bindSelected(pluginConfig::showRewardAction)
+                        .comment(PluginBundle.get("setting_show_reward_action_tip"))
+                }
+            }
         }
         return JBTabbedPane().apply {
             add(PluginBundle.get("basic"), panel)

@@ -98,7 +98,6 @@ class GeneraAssetsSettingPanel(
             }
 
         },
-        WidgetUtil.getMoneyAnAction()
     )
 
 

@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
@@ -60,11 +61,18 @@ class DartPluginVersionCheck :
             val lastVersion = second?.getLastVersionText(first.getDartPluginVersionName()) ?: ""
 
             val fixText = PluginBundle.get("version.tip.3") + lastVersion
+            val toolTip = HtmlChunk
+                .div().addText(PluginBundle.get("dart.fix.version.time.tip.title")).children(
+                    HtmlChunk.nbsp(),
+                    HtmlChunk.tag("span").addText(second?.lastVersionUpdateTimeString ?: ""),
+                    HtmlChunk.nbsp(),
+                    HtmlChunk.tag("strong").addText("(${it.getLastUpdateTime()})"),
+                ).toString()
             holder.newAnnotation(
                 HighlightSeverity.WARNING,
                 "${PluginBundle.get("version.tip.1")}:${lastVersion}"
             )
-                .tooltip(PluginBundle.get("dart.fix.version.time.tip.title") + "  (${it.getLastUpdateTime()})  " + second?.lastVersionUpdateTimeString)
+                .tooltip(toolTip)
                 .newFix(object : PsiElementBaseIntentionAction(), Iconable, DumbAware {
                     override fun getFamilyName() = fixText
                     override fun getText() = fixText

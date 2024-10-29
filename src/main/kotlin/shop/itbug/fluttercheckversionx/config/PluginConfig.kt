@@ -24,7 +24,11 @@ data class PluginSetting(
     var showDiscord: Boolean = true,
     //显示qq群
     var showQQGroup: Boolean = true,
-) : BaseState()
+
+    //显示打赏action
+    var showRewardAction: Boolean = true,
+
+    ) : BaseState()
 
 @Service(Service.Level.PROJECT)
 @State(name = "FlutterxFullConfig", storages = [Storage("FlutterxFullConfig.xml")])

@@ -14,6 +14,8 @@ import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarInitImpl
 import org.intellij.images.index.ImageInfoIndex
+import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay.FileResult
 import shop.itbug.fluttercheckversionx.socket.formatSize
 import java.io.File
@@ -149,7 +151,10 @@ object DartPsiElementHelper {
                 )
             )
             addKeyValue("Length", formatSize(len))
-            addLink("打赏", "https://itbug.shop/static/ds.68eb4cac.jpg", "请梁典典喝杯咖啡")
+            if (PluginConfig.getState(element.project).showRewardAction) {
+                addLink(PluginBundle.get("reward"), "https://itbug.shop/static/ds.68eb4cac.jpg", "❤️投喂梁典典咖啡")
+            }
+               
         }
 
         val html = HtmlBuilder()
