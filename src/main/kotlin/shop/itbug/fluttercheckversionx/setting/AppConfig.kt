@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.setting
 
+import com.intellij.ide.starters.shared.hyperLink
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
@@ -15,6 +16,7 @@ import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.config.PluginSetting
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState
@@ -35,7 +37,9 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
     private var generaAssetsSettingPanelModelIs = false
     private var dartFileSaveSettingPanelModelIs = false
     private var generateSettingPanel =
-        GeneraAssetsSettingPanel(settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig) {
+        GeneraAssetsSettingPanel(
+            settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig
+        ) {
             generaAssetsSettingPanelModelIs = it
         }
 
@@ -51,7 +55,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showRiverpodInlay)
                 }
-            }
+            }.hyperLink(PluginBundle.doc, Links.riverpod)
             group("Open Project in Ide") {
                 row("Open the android directory in Android Studio") {
                     checkBox("Enable").bindSelected(pluginConfig::openAndroidDirectoryInAS)
@@ -62,13 +66,30 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row("Open the macos directory in Xcode") {
                     checkBox("Enable").bindSelected(pluginConfig::openMacosDirectoryInXcode)
                 }
-            }
+            }.hyperLink(PluginBundle.doc, Links.openIn)
+
+            group(PluginBundle.get("foot_bar_links_title")) {
+                row(PluginBundle.get("setting_show_discord_action")) {
+                    checkBox("Enable").bindSelected(pluginConfig::showDiscord)
+                }
+                row(PluginBundle.get("setting_show_qq_group_action")) {
+                    checkBox("Enable").bindSelected(pluginConfig::showQQGroup)
+                }
+            }.hyperLink(PluginBundle.doc, Links.link)
             group("Assets Icon") {
                 row(PluginBundle.get("assets_icon_enable_in_editor")) {
                     checkBox("Enable").bindSelected(pluginConfig::showAssetsIconInEditor)
                 }
                 row(PluginBundle.get("assets_icon_scale_size")) {
                     intTextField().bindIntText(pluginConfig::assetsIconSize)
+                }
+            }.hyperLink(PluginBundle.doc, Links.icons)
+
+            //显示打赏action
+            group(PluginBundle.get("reward")) {
+                row("Enable") {
+                    checkBox(PluginBundle.get("setting_show_reward_action")).bindSelected(pluginConfig::showRewardAction)
+                        .comment(PluginBundle.get("setting_show_reward_action_tip"))
                 }
             }
         }

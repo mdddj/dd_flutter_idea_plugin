@@ -52,7 +52,10 @@ data class AppStateModel(
     var assetCompilationTriggerLen: Int = 3,
 
     ///路径自动补全扫描目录
-    var assetScanFolderName: String = "assets"
+    var assetScanFolderName: String = "assets",
+
+    ///是否启用资产自动补全功能
+    var assetsScanEnable: Boolean = true,
 ) {
     /**
      * 获取 flutterx 设置的地区

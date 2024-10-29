@@ -8,6 +8,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.startup.ProjectActivity
@@ -34,7 +35,7 @@ import shop.itbug.fluttercheckversionx.util.YamlExtends
 import javax.swing.table.DefaultTableModel
 
 
-class DartPackageCheckActivity : ProjectActivity {
+class DartPackageCheckActivity : ProjectActivity, DumbAware {
     override suspend fun execute(project: Project) {
         DartPackageCheckService.getInstance(project).start()
     }
@@ -129,6 +130,13 @@ data class MyDartPackage(
     }
 }
 
+typealias DartCheckTaskComplete = () -> Unit
+
+data class DartPackageTaskParam(
+    val showNotification: Boolean = true,
+    val complete: DartCheckTaskComplete? = null
+)
+
 /**
  * 项目包检测的服务类
  */
@@ -208,8 +216,9 @@ class DartPackageCheckService(val project: Project) {
         MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
 
+
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun startWithAsync() {
+    suspend fun startWithAsync(param: DartPackageTaskParam = DartPackageTaskParam()) {
         val startTime = System.currentTimeMillis()  // 获取起始时间
         this.details.clear()
         val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
@@ -220,10 +229,13 @@ class DartPackageCheckService(val project: Project) {
         val endTime = System.currentTimeMillis()  // 获取结束时间
         GlobalScope.launch(Dispatchers.Main) {
             project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
-            getNotificationGroup()?.createNotification(
-                PluginBundle.get("refresh_success") + ", ${PluginBundle.get("package_size_is")}:${details.size} (${endTime - startTime}ms)",
-                NotificationType.INFORMATION
-            )?.notify(project)
+            if (param.showNotification) {
+                getNotificationGroup()?.createNotification(
+                    PluginBundle.get("refresh_success") + ", ${PluginBundle.get("package_size_is")}:${details.size} (${endTime - startTime}ms)",
+                    NotificationType.INFORMATION
+                )?.notify(project)
+            }
+            param.complete?.invoke()
         }
         MyFileUtil.reIndexPubspecFile(project)//重新索引
     }
@@ -238,12 +250,26 @@ class DartPackageCheckService(val project: Project) {
 
 
     /**
-     * 重新索引
+     * 删除某一个项目
      */
-    suspend fun resetIndex() {
-        startWithAsync()
+    fun removeItemByPluginName(name: String) {
+        val find = details.find { it.first.packageName == name }
+        if (find != null) {
+            details.remove(find)
+        }
     }
 
+    /**
+     * 重新索引
+     */
+    suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
+        startWithAsync(param)
+    }
+
+
+    fun findPackageInfoByName(pluginName: String): PubPackage? {
+        return details.find { it.first.packageName == pluginName }
+    }
 
     fun getTableRows(): List<Array<String>> {
         return details.map {

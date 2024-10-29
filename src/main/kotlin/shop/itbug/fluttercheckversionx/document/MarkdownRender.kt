@@ -10,8 +10,8 @@ import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil.appendStyledSpan
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -21,7 +21,6 @@ import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.intellij.markdown.parser.MarkdownParser
-import shop.itbug.fluttercheckversionx.util.toHexString
 
 /**
  * markdown节点
@@ -45,13 +44,6 @@ class MarkdownRender {
             if (tag != null) {
                 appendSection(title) {
                     val m = markdownToHtml(tag)
-                    println(
-                        """
-
-$m
-
-                    """.trimIndent()
-                    )
                     append(m)
                 }
             }
@@ -137,13 +129,12 @@ fun MarkdownNode.toHtml(project: Project): String {
 
 
         if (nodeText.contains("{@tool snippet}")) {
-            nodeText = nodeText.replace("{@tool snippet}", "<p>")
+            nodeText = nodeText.replace("{@tool snippet}", "<pre>")
         }
         if (nodeText.contains("{@end-tool}")) {
-            nodeText = nodeText.replace("{@end-tool}", "</p>")
+            nodeText = nodeText.replace("{@end-tool}", "</pre>")
         }
 
-        println(nodeType)
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
             MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
@@ -167,26 +158,15 @@ fun MarkdownNode.toHtml(project: Project): String {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append(
-                        "<code style='display:block;background-color: #${
-                            UIUtil.getEditorPaneBackground().toHexString()
-                        };border: 1px solid blue;padding:4px;' >$text</code>"
-                    )
+                    sb.append(HtmlChunk.tag("code").addText(text))
                 } else {
-                    sb.append(
-                        "<code style='display:block;background-color: #${
-                            UIUtil.getEditorPaneBackground().toHexString()
-                        };border: 1px solid blue;padding:4px;' >$nodeText</code>"
-                    )
+                    sb.append(HtmlChunk.tag("code").addText(nodeText))
                 }
             }
 
             MarkdownElementTypes.CODE_BLOCK,
             MarkdownElementTypes.CODE_FENCE -> {
-                val color = UIUtil.getEditorPaneBackground().toHexString()
-                sb.append(
-                    "<div style='background-color:#$color;'>"
-                )
+                sb.append("<div>")
                 processChildren()
                 sb.append("</div>")
             }
@@ -219,7 +199,8 @@ fun MarkdownNode.toHtml(project: Project): String {
                 val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml(project)
                 val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                 if (label != null && destination != null) {
-                    sb.append("<a href=\"$destination\">$label</a>")
+                    val atag = HtmlChunk.tag("a").attr("href", destination).addText(label).toString()
+                    sb.append(atag)
                 } else {
                     sb.append(node.text)
                 }

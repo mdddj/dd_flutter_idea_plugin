@@ -19,6 +19,7 @@ import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
 import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
@@ -166,11 +167,13 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
                 BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/dio.md")
             }
             appendText(PluginBundle.get("split.symbol"))
-            appendText(
-                PluginBundle.get("reward"),
-                SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED, JBUI.CurrentTheme.Link.Foreground.ENABLED)
-            ) {
-                RewardDialog(project).show()
+            if (PluginConfig.getState(project).showRewardAction) {
+                appendText(
+                    PluginBundle.get("reward"),
+                    SimpleTextAttributes(SimpleTextAttributes.STYLE_HOVERED, JBUI.CurrentTheme.Link.Foreground.ENABLED)
+                ) {
+                    RewardDialog(project).show()
+                }
             }
             appendText(PluginBundle.get("split.symbol"))
             appendText(

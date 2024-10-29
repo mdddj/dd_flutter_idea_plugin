@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
@@ -84,8 +85,10 @@ class UserDartLibService(val project: Project) : DumbAware {
 
 class UserDartLibServiceInit : ProjectActivity {
     override suspend fun execute(project: Project) {
-        DumbService.getInstance(project).runWhenSmart {
-            UserDartLibService.getInstance(project).collectPartOf()
+        StartupManager.getInstance(project).runAfterOpened {
+            DumbService.getInstance(project).runWhenSmart {
+                UserDartLibService.getInstance(project).collectPartOf()
+            }
         }
     }
 }

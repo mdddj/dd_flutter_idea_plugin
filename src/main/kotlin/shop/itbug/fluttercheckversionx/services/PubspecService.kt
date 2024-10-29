@@ -10,6 +10,10 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 
@@ -43,8 +47,11 @@ class PubspecService(val project: Project) : Disposable {
      * 项目是否引入 riverpod 包
      */
     fun hasRiverpod(): Boolean {
-        return hasDependencies("hooks_riverpod")
+        return hasDependencies("hooks_riverpod") || hasDependencies("riverpod_annotation") || hasDependencies("riverpod_annotation") || hasDependencies(
+            "riverpod_generator"
+        )
     }
+
 
     /**
      * 项目是否使用 provider 包
@@ -68,13 +75,18 @@ class PubspecService(val project: Project) : Disposable {
     }
 
     override fun dispose() {
+        println("-----dispose--------PubspecService")
         dependenciesNames = emptyList()
     }
 
 }
 
 
+/**
+ * 监听pubspec.yaml文件被修改,重新索引它
+ */
 class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
+    @OptIn(DelicateCoroutinesApi::class)
     override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
         if (project.isDisposed) {
             return null
@@ -85,10 +97,18 @@ class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
                     return
                 }
                 events.forEach {
-                    val filename = it.file?.name
-                    if (filename != null && filename == "pubspec.yaml") {
-                        project.service<PubspecService>().startCheck()
+                    it.file?.let { file ->
+                        val filename = file.name
+                        if (filename == "pubspec.yaml") {
+                            MyFileUtil.reIndexFile(project, file)
+                            println("保存中,重新索引....")
+                            GlobalScope.launch {
+                                DartPackageCheckService.getInstance(project)
+                                    .resetIndex(DartPackageTaskParam(showNotification = false))
+                            }
+                        }
                     }
+
                 }
 
             }

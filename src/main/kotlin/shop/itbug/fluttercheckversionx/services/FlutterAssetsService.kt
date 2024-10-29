@@ -5,9 +5,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import java.io.File
 
 private typealias HandleVirtualFile = (virtualFile: VirtualFile) -> Unit
 
+data class AssetsModel(
+    val text: String,
+    val file: VirtualFile,
+)
 
 // assets
 @Service(Service.Level.PROJECT)
@@ -18,20 +23,20 @@ class FlutterAssetsService(val project: Project) {
         fun getInstance(project: Project): FlutterAssetsService = project.getService(FlutterAssetsService::class.java)
     }
 
-    private var assets: MutableList<String> = mutableListOf()
+    private var assets: MutableList<AssetsModel> = mutableListOf()
 
-    fun allAssets(): MutableList<String> = assets
+    fun allAssets(): MutableList<AssetsModel> = assets
 
     fun init(folderName: String) {
         assets.clear()
         onFolderEachWithProject(folderName) {
-            assets.add(it.fileNameWith(folderName))
+            assets.add(AssetsModel(it.fileNameWith(folderName), it))
         }
     }
 
 
     private fun onFolderEachWithProject(folderName: String, handle: HandleVirtualFile) {
-        val path = project.basePath + "/$folderName"
+        val path = project.basePath + "${File.separator}$folderName"
         val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path)
         findFileByPath?.apply {
             virtualFileHandle(this, handle)

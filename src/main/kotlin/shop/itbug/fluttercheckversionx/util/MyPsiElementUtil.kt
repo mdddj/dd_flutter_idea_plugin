@@ -1,11 +1,13 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
@@ -16,6 +18,7 @@ import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.*
 import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
@@ -38,6 +41,7 @@ fun Project.reformat(element: PsiElement) {
 class MyDartPsiElementUtil {
 
     companion object {
+
 
         /**
          * @param referenceResolve 引用节点
@@ -430,6 +434,67 @@ class MyDartPsiElementUtil {
             return PsiTreeUtil.getChildOfType(createDummyFile, DartPartStatementImpl::class.java)
         }
 
+
+        /**
+         * dart文件:
+         * 检查import语句是否存在
+         * @param importText 例子: package:flutter/cupertino.dart
+         */
+        fun checkImportIsExist(psiFile: PsiFile, importText: String): Boolean {
+            if (psiFile !is DartFile) return false
+            val importElements =
+                runReadAction { PsiTreeUtil.findChildrenOfType(psiFile, DartImportStatementImpl::class.java) }
+            if (importElements.isEmpty()) return false
+            val find = importElements.find { it.uriElement.text.replace("\"", "").replace("\'", "") == importText }
+            return find != null
+        }
+
+        /**
+         * 创建一个导入语句
+         * @param importText 例子: package:flutter/cupertino.dart
+         */
+        fun createImportStatement(importText: String, project: Project): DartImportStatementImpl {
+            val createDummyFile = DartElementGenerator.createDummyFile(project, "import \'$importText\';")
+            return runReadAction { PsiTreeUtil.findChildOfType(createDummyFile, DartImportStatementImpl::class.java)!! }
+        }
+
+
+        /**
+         * 向dart文件中插入一条导入语句
+         */
+        fun insertImportStatement(project: Project, psiFile: PsiFile, importText: String) {
+            commitPsiFile(psiFile, project)
+            val createPsiElement = createImportStatement(importText, project)
+            WriteCommandAction.runWriteCommandAction(project) {
+                psiFile.addBefore(createPsiElement, psiFile.firstChild)
+            }
+        }
+
+
+        /**
+         * 保存文档
+         */
+        fun commitPsiFile(psiFile: PsiFile, project: Project) {
+            val document = PsiDocumentManager.getInstance(project).getDocument(psiFile)
+            document?.let { PsiDocumentManager.getInstance(project).commitDocument(it) }
+        }
+
+        /**
+         * 添加riverpod hooks 语句
+         */
+        fun addRiverpodHookImport(psiFile: PsiFile, project: Project) {
+            val exist = checkImportIsExist(
+                psiFile,
+                "package:hooks_riverpod/hooks_riverpod.dart"
+            )
+            if (exist.not()) {
+                insertImportStatement(
+                    project,
+                    psiFile,
+                    "package:hooks_riverpod/hooks_riverpod.dart"
+                )
+            }
+        }
 
     }
 

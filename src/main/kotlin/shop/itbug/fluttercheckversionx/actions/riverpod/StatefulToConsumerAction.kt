@@ -14,6 +14,7 @@ import com.jetbrains.lang.dart.psi.impl.DartReturnTypeImpl
 import com.jetbrains.lang.dart.psi.impl.DartSuperclassImpl
 import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.constance.MyKeys
+import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 
 
 private fun AnActionEvent.getEditClassPsi(): DartClassDefinitionImpl? {
@@ -64,13 +65,13 @@ class StatefulToConsumerAction : AnAction() {
 
         val psi = e.getData(CommonDataKeys.EDITOR)?.getUserData(MyKeys.DartClassKey)
         val isClass = psi is DartClassDefinitionImpl
-
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
         val dartClassName =
-            if (isClass) (psi as DartClassDefinitionImpl).componentName else e.getData(CommonDataKeys.PSI_ELEMENT) as DartComponentNameImpl
+            if (isClass) psi.componentName else e.getData(CommonDataKeys.PSI_ELEMENT) as DartComponentNameImpl
         val classDefinition =
-            if (isClass) psi as DartClassDefinitionImpl else dartClassName.parent as DartClassDefinitionImpl
+            if (isClass) psi else dartClassName.parent as DartClassDefinitionImpl
 
-        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
+
         e.project?.let { project ->
             val className = dartClassName.name
             WriteCommandAction.runWriteCommandAction(project) {
@@ -92,15 +93,14 @@ class StatefulToConsumerAction : AnAction() {
             }
 
             //3.替换 state
-            if (psiFile != null) {
-                val dartFile = psiFile as DartFile
-                val dartClassList = PsiTreeUtil.findChildrenOfType(dartFile, DartClassDefinitionImpl::class.java)
-                val findStateClass = dartClassList.find { it.superclass?.type?.text == "State<${className}>" }
-                WriteCommandAction.runWriteCommandAction(project) {
-                    findStateClass?.superclass?.replace(project.createSuperclass(superClassName = "ConsumerState<$className>"))
-                }
-
+            val dartFile = psiFile as DartFile
+            val dartClassList = PsiTreeUtil.findChildrenOfType(dartFile, DartClassDefinitionImpl::class.java)
+            val findStateClass = dartClassList.find { it.superclass?.type?.text == "State<${className}>" }
+            WriteCommandAction.runWriteCommandAction(project) {
+                findStateClass?.superclass?.replace(project.createSuperclass(superClassName = "ConsumerState<$className>"))
             }
+            //添加导入语句
+            MyDartPsiElementUtil.addRiverpodHookImport(psiFile, project)
         }
 
 

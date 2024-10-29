@@ -12,12 +12,10 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.util.ImageLoader
-import com.intellij.util.ui.JBImageIcon
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import java.awt.Image
+import shop.itbug.fluttercheckversionx.util.SwingUtil
 import java.awt.Point
 import java.awt.event.MouseEvent
 import java.io.File
@@ -170,16 +168,7 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
             if (!file.exists() || file.length() == 0L) {
                 return null
             }
-
-            // 使用 ImageIcon 读取图片并缩放
-            var image: Image = ImageLoader.loadCustomIcon(file) ?: return null
-
-            // 确保图片的宽度和高度是正值
-            if (image.getWidth(null) <= 0 || image.getHeight(null) <= 0) {
-                return null
-            }
-            image = ImageLoader.scaleImage(image, setting.assetsIconSize, setting.assetsIconSize)
-            val scaledIcon = JBImageIcon(image)
+            val scaledIcon = SwingUtil.fileToIcon(file, setting.assetsIconSize) ?: return null
             // 返回图标并添加提示
             return factory.icon(scaledIcon).addTip(basePath)
         } catch (_: Exception) {

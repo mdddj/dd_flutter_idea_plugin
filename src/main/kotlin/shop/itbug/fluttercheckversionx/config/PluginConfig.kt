@@ -18,7 +18,17 @@ data class PluginSetting(
     var showAssetsIconInEditor: Boolean = true,
     //缩放大小
     var assetsIconSize: Int = 16,
-) : BaseState()
+
+
+    //显示discord
+    var showDiscord: Boolean = true,
+    //显示qq群
+    var showQQGroup: Boolean = true,
+
+    //显示打赏action
+    var showRewardAction: Boolean = true,
+
+    ) : BaseState()
 
 @Service(Service.Level.PROJECT)
 @State(name = "FlutterxFullConfig", storages = [Storage("FlutterxFullConfig.xml")])

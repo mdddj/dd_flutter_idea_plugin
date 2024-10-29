@@ -84,23 +84,18 @@
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
 
-
         <!--    plugin版本自动联想功能    -->
         <completion.contributor language="yaml"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
                                 order="first"/>
-
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPartAutoCompletion"/>
-
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
-        <!--   项目被打开回调事件     -->
-        <!--        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.activity.FlutterProjectOpenActivity"/>-->
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
                             order="first"/>
         <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
@@ -149,6 +144,10 @@
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument"
                                     language="yaml" order="first"/>
 
+        <lang.documentationProvider language="Dart"
+                                    implementationClass="shop.itbug.fluttercheckversionx.document.DartImageDocumentProvider"
+                                    order="first"/>
+
         <!--    dart文档的HTML实现    -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
                                     language="Dart"
@@ -184,9 +183,7 @@
 
 
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
-
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubspecStartActivity"/>
-
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.UserDartLibServiceInit"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.DartPackageCheckActivity"/>
@@ -194,9 +191,6 @@
                 implementation="shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckServiceActivity"/>
         <!--        错误处理-->
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
-
-        <!--        <vfs.asyncListener implementation="shop.itbug.fluttercheckversionx.services.PubspecFileChangeListenAsync"/>-->
-
         <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
     </extensions>
@@ -340,6 +334,8 @@
         <action id="GoToDiscordAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDiscordAction"
         />
+        <action id="GoToQQGroupAction"
+                class="shop.itbug.fluttercheckversionx.actions.bar.GoToQQGroupAction"/>
         <action id="GoToDocumentAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDocumentAction"
         />
@@ -358,6 +354,7 @@
             <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>
             <reference id="StatusBarJsonToFreezedClass"/>
             <separator/>
+            <reference id="GoToQQGroupAction"/>
             <reference id="GoToDiscordAction"/>
             <reference id="GoToDocumentAction"/>
             <separator/>

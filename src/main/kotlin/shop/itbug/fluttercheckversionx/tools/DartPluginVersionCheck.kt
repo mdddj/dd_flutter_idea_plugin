@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
@@ -16,22 +17,30 @@ import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.services.PubPackage
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.MyYamlPsiElementFactory
+import shop.itbug.fluttercheckversionx.util.restartAnalyzer
 import javax.swing.Icon
 
 /**
  * 插件新版本检测
  */
 class DartPluginVersionCheck :
-    ExternalAnnotator<DartPackageCheckService, List<PubPackage>>(),
+    ExternalAnnotator<DartPackageCheckService?, List<PubPackage>>(),
     DumbAware {
 
-    override fun collectInformation(file: PsiFile): DartPackageCheckService {
+    override fun collectInformation(file: PsiFile): DartPackageCheckService? {
+        if (file.name != "pubspec.yaml") {
+            return null
+        }
         return DartPackageCheckService.getInstance(file.project)
     }
 
     //执行长时间操作
-    override fun doAnnotate(service: DartPackageCheckService): List<PubPackage> {
+    override fun doAnnotate(service: DartPackageCheckService?): List<PubPackage> {
+        if (service == null) {
+            return emptyList()
+        }
         val details = service.details
         if (details.isEmpty()) return emptyList()
         val hasNewVersionItems = details.filter { service.hasNew(it) }.toList()
@@ -52,10 +61,18 @@ class DartPluginVersionCheck :
             val lastVersion = second?.getLastVersionText(first.getDartPluginVersionName()) ?: ""
 
             val fixText = PluginBundle.get("version.tip.3") + lastVersion
+            val toolTip = HtmlChunk
+                .div().addText(PluginBundle.get("dart.fix.version.time.tip.title")).children(
+                    HtmlChunk.nbsp(),
+                    HtmlChunk.tag("span").addText(second?.lastVersionUpdateTimeString ?: ""),
+                    HtmlChunk.nbsp(),
+                    HtmlChunk.tag("strong").addText("(${it.getLastUpdateTime()})"),
+                ).toString()
             holder.newAnnotation(
-                HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${lastVersion}"
+                HighlightSeverity.WARNING,
+                "${PluginBundle.get("version.tip.1")}:${lastVersion}"
             )
-                .tooltip(PluginBundle.get("dart.fix.version.time.tip.title") + second?.lastVersionUpdateTimeString)
+                .tooltip(toolTip)
                 .newFix(object : PsiElementBaseIntentionAction(), Iconable, DumbAware {
                     override fun getFamilyName() = fixText
                     override fun getText() = fixText
@@ -67,6 +84,9 @@ class DartPluginVersionCheck :
                         if (newElement != null) {
                             newElement = first.versionElement.replace(newElement) as YAMLPlainTextImpl
                             first.replaced(lastVersion, newElement)
+                            DartPackageCheckService.getInstance(project).removeItemByPluginName(first.packageName)
+                            project.restartAnalyzer()
+                            MyFileUtil.reIndexFile(project, file.virtualFile)
                         }
                     }
 

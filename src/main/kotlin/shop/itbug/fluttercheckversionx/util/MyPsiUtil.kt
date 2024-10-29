@@ -35,7 +35,7 @@ class MyPsiElementUtil {
         /**
          * 插入节点到pubspec文件
          */
-        suspend fun insertPluginToPubspecFile(
+        fun insertPluginToPubspecFile(
             project: Project,
             pluginName: String,
             version: String = "any",
@@ -43,11 +43,14 @@ class MyPsiElementUtil {
         ) {
             val psiFile = getPubSpecYamlFile(project)
             if (psiFile != null) {
-                val qualifiedKeyInFile = YAMLUtil.getQualifiedKeyInFile(psiFile as YAMLFile, type.type)
+                val qualifiedKeyInFile =
+                    runReadAction { YAMLUtil.getQualifiedKeyInFile(psiFile as YAMLFile, type.type) }
                 val insetVersion = "^$version"
-                val blockElement = YAMLElementGenerator.getInstance(project)
-                    .createYamlKeyValue(pluginName, insetVersion)
-                val eolElement = YAMLElementGenerator.getInstance(project).createEol()
+                val blockElement = runReadAction {
+                    YAMLElementGenerator.getInstance(project)
+                        .createYamlKeyValue(pluginName, insetVersion)
+                }
+                val eolElement = runReadAction { YAMLElementGenerator.getInstance(project).createEol() }
                 WriteCommandAction.runWriteCommandAction(project) {
                     try {
                         qualifiedKeyInFile?.add(eolElement)

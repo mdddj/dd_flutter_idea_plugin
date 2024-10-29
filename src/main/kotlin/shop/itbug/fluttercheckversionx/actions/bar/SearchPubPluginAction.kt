@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.options.ShowSettingsUtil
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.constance.discordUrl
+import shop.itbug.fluttercheckversionx.constance.qqGroup
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -78,7 +79,29 @@ class GoToDiscordAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.project != null
+        e.project?.let {
+            e.presentation.isVisible = PluginConfig.getState(it).showDiscord
+        }
         e.presentation.text = "Discord"
+    }
+}
+
+// open setting
+class GoToQQGroupAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        BrowserUtil.browse(qqGroup)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = e.project != null
+        e.project?.let {
+            e.presentation.isVisible = PluginConfig.getState(it).showQQGroup
+        }
+        e.presentation.text = "QQ Group"
     }
 }
 

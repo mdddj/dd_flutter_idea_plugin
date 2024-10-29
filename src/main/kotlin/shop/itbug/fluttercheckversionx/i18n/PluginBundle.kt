@@ -10,6 +10,8 @@ object PluginBundle : DynamicPluginBundle(pathToBundleKey) {
     fun get(key: String, vararg params: Any): String {
         return getMessage(key.trim(), params)
     }
+
+    val doc: String get() = get("doc")
 }
 
 fun String.i18n(): String {

@@ -25,19 +25,18 @@ class IPCompletionProvider : CompletionProvider<CompletionParameters>() {
         element?.apply {
             val text = element.parent.parent.firstChild.text
             if (text.equals("initHost")) {
-                Util.resolveLocalAddresses().
-                    stream()
-                    .filter { it.hostAddress!= "127.0.0.1" }
+                Util.resolveLocalAddresses().stream()
+                    .filter { it.hostAddress != "127.0.0.1" }
                     .forEach {
-                    result.addElement(
-                        LookupElementBuilder.create(it.hostAddress).withIcon(MyIcons.diandianLogoIcon)
-                            .withItemTextForeground(
-                                UIUtil.getLabelInfoForeground()
-                            ).withItemTextItalic(true)
-                            .withItemTextUnderlined(true)
-                            .appendTailText("  梁典典: dart连接IDEA Diox监听的IP地址",true)
-                    )
-                }
+                        result.addElement(
+                            LookupElementBuilder.create(it.hostAddress).withIcon(MyIcons.diandianLogoIcon)
+                                .withItemTextForeground(
+                                    UIUtil.getLabelInfoForeground()
+                                ).withItemTextItalic(true)
+                                .withItemTextUnderlined(true)
+                                .appendTailText("  FlutterX", true)
+                        )
+                    }
             }
         }
     }

@@ -36,9 +36,12 @@ private fun AnActionEvent.isEnable(): Boolean {
 
 ///将组件转换成
 class StatelessToConsumer : AnAction() {
+
     override fun actionPerformed(e: AnActionEvent) {
         val classElement = e.getEditorClass()
         val namePsi = classElement?.componentName ?: e.getData(CommonDataKeys.PSI_ELEMENT)
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
+
 
         val project = e.project
         if (namePsi is DartComponentNameImpl && namePsi.parent is DartClassDefinitionImpl
@@ -60,10 +63,8 @@ class StatelessToConsumer : AnAction() {
                                         val context =
                                             params.find { it.simpleFormalParameter?.type?.text == "BuildContext" }
                                         context?.let { _ ->
-
                                             method.formalParameterList.replace(newPsi)
                                         }
-
                                         ///替换继承
                                         parent.superclass?.type?.exByModifyPsiElementText("ConsumerWidget")
                                     }
@@ -72,6 +73,8 @@ class StatelessToConsumer : AnAction() {
                                     println("已经有了")
                                 }
 
+                                //添加导入语句
+                                MyDartPsiElementUtil.addRiverpodHookImport(psiFile, project)
                             }
                         }
                     }

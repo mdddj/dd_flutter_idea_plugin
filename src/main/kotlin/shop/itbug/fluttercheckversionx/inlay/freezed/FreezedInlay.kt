@@ -67,7 +67,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
         val isFreezedClass = element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()
         if (isFreezedClass) {
-            val manager = DartClassManager(psiElement = element as DartClassDefinitionImpl)
+            val manager = DartClassManager(psiElement = element)
             val freezedElement = manager.findFreezedMetadata()
             freezedElement?.let {
                 sink.addInlineElement(
