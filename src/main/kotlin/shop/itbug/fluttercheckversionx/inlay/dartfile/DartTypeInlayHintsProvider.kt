@@ -5,8 +5,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.endOffset
-import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.DartPatternFieldImpl
 import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl
@@ -69,7 +67,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                                         clipboard.setContents(ss, null)
                                     }
                                 sink.addInlineElement(
-                                    comName.endOffset, false, ins, false
+                                    comName.textRange.endOffset, false, ins, false
                                 )
                             }
                         }
@@ -90,7 +88,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                                         clipboard.setContents(ss, null)
                                     }
                                 sink.addInlineElement(
-                                    element.startOffset, false, ins, false
+                                    element.textRange.startOffset, false, ins, false
                                 )
                             }
                         }
@@ -110,7 +108,7 @@ class DartTypeInlayHintsProvider : InlayHintsProvider<GenerateAssetsClassConfigM
                                 val ins = hintsInlayPresentationFactory.simpleText(staticType, staticType) { _, _ ->
 
                                 }
-                                sink.addInlineElement(file.startOffset, false, ins, false)
+                                sink.addInlineElement(file.textRange.startOffset, false, ins, false)
                             }
                         }
                     }

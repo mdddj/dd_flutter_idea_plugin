@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.startOffset
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
@@ -66,7 +65,7 @@ class PsiElementEditorPopupMenuInlay : InlayHintsProvider<NoSettings> {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 if (element.needHandler()) {
                     sink.addBlockElement(
-                        element.startOffset,
+                        element.textRange.startOffset,
                         true,
                         showAbove = true,
                         priority = 1,

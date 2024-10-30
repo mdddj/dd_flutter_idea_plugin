@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.0.1] - 2024-10-25
+## [5.0.1] - 2024-10-29
 
 - Fix: Analyze the issue of inaccurate location after file changes (
   `pubspec.yaml`) [(#59)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/59)

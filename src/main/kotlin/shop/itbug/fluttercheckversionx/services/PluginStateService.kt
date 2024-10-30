@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.services
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
@@ -10,6 +11,7 @@ import java.util.*
     name = "flutter-check-x",
     storages = [Storage("flutter-check-x.xml")]
 )
+@Service(Service.Level.APP)
 class PluginStateService private constructor() : PersistentStateComponent<AppStateModel> {
 
     private var model = AppStateModel()

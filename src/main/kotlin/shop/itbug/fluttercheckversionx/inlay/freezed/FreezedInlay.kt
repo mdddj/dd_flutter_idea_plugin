@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.endOffset
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.*
@@ -71,7 +70,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
             val freezedElement = manager.findFreezedMetadata()
             freezedElement?.let {
                 sink.addInlineElement(
-                    it.endOffset,
+                    it.textRange.endOffset,
                     true,
                     inlayFactory.iconRoundClick(AllIcons.General.ChevronDown) { mouseEvent, _ ->
                         showFreezedActionMenu(
@@ -107,7 +106,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
                 override fun actionPerformed(e: AnActionEvent) {
                     WidgetUtil.getTextEditorPopup(
                         PluginBundle.get("create_a_new_class_name"),
-                        className,
+                        className, className,
                         { it.show(RelativePoint.fromScreen(mouseEvent.locationOnScreen)) }) {
                         val project = psiElement.project
                         val newClassName = it

@@ -23,6 +23,7 @@ import com.jetbrains.lang.dart.psi.impl.*
 import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import java.io.File
 
 typealias CreatePsiFileSuccess = (psiFile: PsiFile) -> Unit
@@ -483,15 +484,17 @@ class MyDartPsiElementUtil {
          * 添加riverpod hooks 语句
          */
         fun addRiverpodHookImport(psiFile: PsiFile, project: Project) {
+            val config = PluginConfig.getState(project)
+            val packageText = config.autoImportRiverpodText
             val exist = checkImportIsExist(
                 psiFile,
-                "package:hooks_riverpod/hooks_riverpod.dart"
+                packageText
             )
             if (exist.not()) {
                 insertImportStatement(
                     project,
                     psiFile,
-                    "package:hooks_riverpod/hooks_riverpod.dart"
+                    packageText
                 )
             }
         }

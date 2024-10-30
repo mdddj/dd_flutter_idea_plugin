@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
@@ -208,8 +207,9 @@ fun PsiElement.getDartElementDocument(): String? {
 
 ///获取dart的信息(来自分析服务器)
 fun PsiElement.getDartInfo(): HoverInformation? {
+    val file = containingFile.virtualFile ?: return null
     val r =
-        DartAnalysisServerService.getInstance(project).analysis_getHover(containingFile.virtualFile, this.startOffset)
+        DartAnalysisServerService.getInstance(project).analysis_getHover(file, this.textRange.startOffset)
     if (r.isEmpty()) {
         return null
     }

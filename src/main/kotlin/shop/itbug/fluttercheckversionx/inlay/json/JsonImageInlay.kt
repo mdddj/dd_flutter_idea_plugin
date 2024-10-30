@@ -5,7 +5,6 @@ import com.intellij.json.psi.impl.JsonStringLiteralImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.endOffset
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import java.util.regex.Pattern
 import javax.swing.JComponent
@@ -42,9 +41,9 @@ class JsonImageInlay : InlayHintsProvider<JsonImageInlay.Setting> {
                     val isAImageUrl = isImgUrl(imageUrl)
                     if (isAImageUrl) {
                         sink.addInlineElement(
-                            element.endOffset,
+                            element.textRange.endOffset,
                             false,
-                            hintsInlayPresentationFactory.simpleText("图片", "鼠标移动到链接上面即可预览",null),
+                            hintsInlayPresentationFactory.simpleText("图片", "鼠标移动到链接上面即可预览", null),
                             false
                         )
                     }
@@ -83,9 +82,9 @@ class JsonImageInlay : InlayHintsProvider<JsonImageInlay.Setting> {
 
 }
 
-class DefaulImmediateConfigurable: ImmediateConfigurable {
+class DefaulImmediateConfigurable : ImmediateConfigurable {
     override fun createComponent(listener: ChangeListener): JComponent {
-        return  JLabel("nothing")
+        return JLabel("nothing")
     }
 
 }

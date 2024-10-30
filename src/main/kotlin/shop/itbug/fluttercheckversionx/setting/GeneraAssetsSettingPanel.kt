@@ -67,7 +67,7 @@ class GeneraAssetsSettingPanel(
     private fun createActions(): Array<AnAction> = arrayOf(
         object : DumbAwareAction(AllIcons.General.Add) {
             override fun actionPerformed(e: AnActionEvent) {
-                WidgetUtil.getTextEditorPopup(PluginBundle.get("g.13"), "", {
+                WidgetUtil.getTextEditorPopup(PluginBundle.get("g.13"), "", null, {
                     it.show(RelativePoint.fromScreen(igFilesWidget.locationOnScreen))
                 }) {
                     this@GeneraAssetsSettingPanel.igFilesWidget.addItemString(it)

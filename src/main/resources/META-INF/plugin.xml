@@ -49,6 +49,7 @@
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
+    <depends>com.intellij.modules.java</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -96,10 +97,6 @@
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
-                            order="first"/>
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
-
 
         <!--    插件检测忽略配置     -->
         <!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
@@ -134,8 +131,6 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"
                 language="Dart"/>
 
-        <!--   插件socket服务     -->
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioListingUiConfig"/>
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -373,6 +368,10 @@
         <!--            <add-to-group group-id="RunTab.TopToolbar" anchor="after" relative-to-action="Stop"/>-->
         <!--        </action>-->
 
+        <action id="RiverpodAutoImportTextConfig"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.RiverpodAutoImportTextConfig">
+            <add-to-group group-id="WidgetToRiverpod" anchor="after" relative-to-action="RiverpodActionsSetting"/>
+        </action>
     </actions>
 
     <!--Git.MainMenu.FileActions-->

@@ -1,5 +1,7 @@
 package shop.itbug.fluttercheckversionx.constance
 
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+
 
 const val discordUrl = "https://discord.gg/ethKNxKRcZ"
 const val qqGroup = "https://qm.qq.com/q/3zYRrSC7zW"
@@ -12,4 +14,8 @@ object Links {
 
     const val link = "https://flutterx.itbug.shop/links.html"
     const val icons = "https://flutterx.itbug.shop/%E5%86%85%E8%81%94%E8%B5%84%E4%BA%A7%E6%98%BE%E7%A4%BA.html"
+
+    fun generateDocCommit(link: String): String {
+        return "<a href='$link'>${PluginBundle.doc}</a>"
+    }
 }

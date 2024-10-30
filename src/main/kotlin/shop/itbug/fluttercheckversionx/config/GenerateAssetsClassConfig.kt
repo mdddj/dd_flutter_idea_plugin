@@ -1,16 +1,16 @@
 package shop.itbug.fluttercheckversionx.config
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 
-
 data class GenerateAssetsClassConfigModel(
     //类型
-    var className: String = "R",
+    var className: String = "Assets",
     //文件名
-    var fileName: String = "R",
+    var fileName: String = "assets",
     //保存路径
     var path: String = "lib",
     //不再提醒
@@ -37,6 +37,7 @@ data class GenerateAssetsClassConfigModel(
 )
 
 @State(name = "DDGenerateAssetsClassConfig", storages = [Storage("DDGenerateAssetsClassConfig.xml")])
+@Service(Service.Level.APP)
 class GenerateAssetsClassConfig private constructor() : PersistentStateComponent<GenerateAssetsClassConfigModel> {
     private var model = GenerateAssetsClassConfigModel()
     override fun getState(): GenerateAssetsClassConfigModel {
@@ -46,7 +47,6 @@ class GenerateAssetsClassConfig private constructor() : PersistentStateComponent
     override fun loadState(state: GenerateAssetsClassConfigModel) {
         model = state
     }
-
 
     companion object {
         fun getInstance(): GenerateAssetsClassConfig {

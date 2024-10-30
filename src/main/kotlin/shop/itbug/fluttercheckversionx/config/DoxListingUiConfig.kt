@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.config
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
@@ -76,6 +77,7 @@ data class DoxListeningSetting(
  * dio的功能设置
  */
 @State(name = "DoxListingUiConfig", storages = [Storage("DoxListingUiConfig.xml")])
+@Service(Service.Level.APP)
 class DioListingUiConfig private constructor() : PersistentStateComponent<DoxListeningSetting> {
     private var config = DoxListeningSetting()
     override fun getState(): DoxListeningSetting {
