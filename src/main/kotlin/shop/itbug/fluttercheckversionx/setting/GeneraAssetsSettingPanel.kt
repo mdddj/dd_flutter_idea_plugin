@@ -16,6 +16,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import javax.swing.BorderFactory
@@ -118,6 +119,11 @@ fun getGeneraAssetsPanel(
 
 
     val p: DialogPanel = panel {
+
+        row {
+            comment(Links.generateDocCommit(Links.assets))
+        }
+
         row(PluginBundle.get("g.1")) {
             textField().bindText({ settingModel.className }, {
                 GenerateAssetsClassConfig.getGenerateAssetsSetting().className = it

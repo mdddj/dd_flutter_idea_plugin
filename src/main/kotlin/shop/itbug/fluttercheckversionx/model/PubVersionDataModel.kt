@@ -49,15 +49,7 @@ data class PubVersionDataModel(
      *
      */
     private fun getLastUpdateTime(): String {
-        var timeString = latest.published
-        val toCharArray = timeString.toCharArray()
-        val tChat = toCharArray[10]
-        if (tChat == 'T') {
-            timeString = timeString.replace("T", " ")
-        }
-        val dotIndex = timeString.lastIndexOf(".")
-        timeString = timeString.substring(0, dotIndex)
-        return timeString
+        return DateUtils.parseDate(latest.published)
     }
 
     val lastVersionUpdateTimeString get() = getLastUpdateTime()

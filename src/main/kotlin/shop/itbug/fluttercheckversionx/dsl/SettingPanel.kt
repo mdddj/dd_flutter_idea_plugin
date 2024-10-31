@@ -6,6 +6,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.Alarm
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
+import shop.itbug.fluttercheckversionx.constance.Links
+import shop.itbug.fluttercheckversionx.constance.documentCommentRow
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import javax.swing.SwingUtilities
@@ -36,6 +38,7 @@ fun settingPanel(
             row {
                 checkBox(PluginBundle.get("open")).bindSelected(dioxSetting::checkFlutterVersion)
             }.comment(PluginBundle.get("check_flutter_version_comment"))
+            documentCommentRow(Links.checkFlutterVersion)
         }
 
 
@@ -73,6 +76,10 @@ fun settingPanel(
                     checkBox(PluginBundle.get("dio.setting.show.data.size")).bindSelected(dioxSetting::showDataSize)
                 }
             }
+
+            row {
+                comment(Links.generateDocCommit(Links.dio))
+            }
         }
 
         group(PluginBundle.get("ass.setting.title")) {
@@ -87,6 +94,9 @@ fun settingPanel(
             }
             row(PluginBundle.get("ass.5")) {
                 textField().bindText(model::assetScanFolderName)
+            }
+            row {
+                comment(Links.generateDocCommit(Links.accetsIcons))
             }
         }
 
@@ -118,6 +128,9 @@ fun settingPanel(
             }
             row("timestamp") {
                 textField().bindText(dioxSetting.copyKeys::timestamp)
+            }
+            row {
+                comment(Links.generateDocCommit(Links.dioImage))
             }
         }
     }

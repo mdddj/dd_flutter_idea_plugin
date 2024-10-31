@@ -7,7 +7,6 @@ import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 
-
 /**
  * 配置自动导入
  */

@@ -72,6 +72,17 @@ object WidgetUtil {
     }
 
     /**
+     * 文档操作
+     */
+    fun getDocAnAction(link: String): AnAction {
+        return object : MyDumbAwareAction(AllIcons.Actions.Help) {
+            override fun actionPerformed(e: AnActionEvent) {
+                BrowserUtil.browse(link)
+            }
+        }
+    }
+
+    /**
      * 获取复制文本组件
      * @param copyText 要复制的文本
      */

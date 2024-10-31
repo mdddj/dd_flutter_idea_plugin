@@ -14,6 +14,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -23,9 +24,11 @@ import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.tools.MyFlutterVersion
+import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.Util
@@ -133,30 +136,42 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                 }
             }
         }
-//
-//        fun showTestTip(project: Project) {
-//            println("show test tips")
-//            showTip(testRelease, project, MyFlutterVersion("3.22.0"), "stable")
-//        }
+
+        //
+        fun showTestTip(project: Project) {
+            println("show test tips")
+            showTip(testRelease, project, MyFlutterVersion("3.22.0"), "stable")
+        }
 
         /**
          * 弹出通知
          */
         fun showTip(release: Release, project: Project, currentVersion: MyFlutterVersion, channel: String) {
+            val html = HtmlChunk.div().addText("Flutter ${PluginBundle.get("flutter_has_new_version")}")
+                .children(
+                    HtmlChunk.nbsp(2),
+                    HtmlChunk
+                        .tag("strong")
+                        .bold()
+                        .addText(release.version),
+                    HtmlChunk.div().children(
+                        HtmlChunk.span().addText(PluginBundle.get("flutter_has_new_version_date")),
+                        HtmlChunk.nbsp(2),
+                        HtmlChunk.span().addText(
+                            DateUtils.timeAgo(
+                                DateUtils.parseDate(release.releaseDate)
+                            )
+                        ).bold()
+                    )
+                )
+                .toString()
             val createNotification =
                 NotificationGroupManager.getInstance().getNotificationGroup("flutter_version_check").createNotification(
-                    "The new Flutter version is ready",
-                    """
-                    Update to the latest version: ${release.version}  (dart:${release.dartSDKVersion})
-                    <br/>
-                    <br/>
-                    Current version: ${currentVersion.version}
-                    Channel:$channel
-                    """.trimIndent(),
+                    html,
                     NotificationType.INFORMATION,
                 )
-            createNotification.setIcon(MyIcons.flutter)
-
+            createNotification.icon = MyIcons.flutter
+            createNotification.setTitle("FlutterX")
 
             ///执行命令
             createNotification.addAction(
@@ -164,6 +179,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     override fun actionPerformed(p0: AnActionEvent) {
                         RunUtil.runCommand(project, "flutter upgrade", "flutter upgrade")
                         createNotification.hideBalloon()
+                        createNotification.expire()
                     }
 
                     override fun update(e: AnActionEvent) {
@@ -208,7 +224,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     return ActionUpdateThread.BGT
                 }
             })
-            createNotification.setSuggestionType(true)
+            createNotification.isSuggestionType = true
             createNotification.notify(project)
         }
     }

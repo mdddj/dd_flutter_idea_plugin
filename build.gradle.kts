@@ -35,14 +35,14 @@ repositories {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-        intellijIdeaCommunity("243.21155.17")
+//        intellijIdeaCommunity("243.21155.17")
 //        intellijIdeaCommunity("2024.1.7")
-//        local("/Applications/IntelliJ IDEA Ultimate.app")
+        local("/Applications/IntelliJ IDEA Ultimate.app")
         bundledPlugins(
             "org.jetbrains.plugins.terminal",
             "org.jetbrains.plugins.yaml",
             "org.intellij.plugins.markdown",
-            "com.intellij.modules.json"
+//            "com.intellij.modules.json"
         )
         plugins("Dart:$dartVersion")
         pluginVerifier()
