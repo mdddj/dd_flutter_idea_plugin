@@ -105,6 +105,14 @@
         <!--                                              language="yaml" nameKey="flutterX-Dart-Plugin-Ignore"-->
         <!--                                              providerId="flutterX-Dart-Plugin-Ignore"/>-->
 
+        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
+                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
+                                              isEnabledByDefault="true"
+                                              language="yaml"
+                                              nameKey="lastupdate_date_time"
+                                              providerId="flutterxWithPubspecUpdateTime"/>
+
+
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
                                    language="Dart"/>
 
@@ -130,6 +138,7 @@
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"
                 language="Dart"/>
+
 
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"

@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.model
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
+import com.intellij.openapi.util.text.HtmlChunk
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -58,7 +59,7 @@ data class PubVersionDataModel(
 data class Latest(
     val version: String,
     val pubspec: Pubspec,
-    @SerialName("archive_url") val archiveURL: String,
+    @SerializedName("archive_url") val archiveURL: String,
     val published: String
 ) {
     override fun toString(): String {
@@ -67,8 +68,46 @@ data class Latest(
 }
 
 data class Pubspec(
-    val name: String, val version: String, val homepage: String?, val description: String
-)
+    val name: String,
+    val version: String,
+    val homepage: String?,
+    val description: String,
+    val environment: Any?,
+    val dependencies: Any?,
+    @SerializedName("dev_dependencies")
+    val devDependencies: Any?,
+) {
+    fun generateDependenciesHtml(deps: List<String>): String {
+        val html = HtmlChunk.div()
+        val child = mutableListOf<HtmlChunk>()
+        for (dependency in deps) {
+            child.add(
+                HtmlChunk.tag("a").attr("href", "https://pub.dev/packages/${dependency}").addText(dependency)
+                    .italic()
+            )
+            child.add(HtmlChunk.nbsp(2))
+        }
+        val htmlText = html.children(child).toString()
+        return htmlText
+    }
+}
+
+val Pubspec.filteredDependenciesString: List<String>
+    get() {
+        if (dependencies is Map<*, *>) {
+            return dependencies.keys.filterIsInstance<String>().filter { it != "flutter" }.toList()
+        }
+        return emptyList()
+    }
+
+val Pubspec.filteredDevDependenciesString: List<String>
+    get() {
+        println("devs: $devDependencies")
+        if (devDependencies is Map<*, *>) {
+            return devDependencies.keys.filterIsInstance<String>().toList()
+        }
+        return emptyList()
+    }
 
 val Pubspec.dartPluginModel get() = DartPluginVersionName(name, version)
 
