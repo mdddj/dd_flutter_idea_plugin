@@ -5,6 +5,8 @@
 ## [5.0.2] - 2024-11-01
 
 - Fix known issues
+- Supplementary functional documentation
+-
 
 ### [5.0.1] - 2024-10-29
 

@@ -1,9 +1,11 @@
 package shop.itbug.fluttercheckversionx.document
 
+import com.intellij.codeInsight.documentation.DocumentationHtmlUtil
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
@@ -149,7 +151,7 @@ class DartDocumentExt : AbstractDocumentationProvider() {
                 eleText = params
             }
             if (eleText != null) {
-                var simpleText = "```dart\n" +
+                val simpleText = "```dart\n" +
                         (eleText) + "\n```\n"
                 Helper.addKeyValueHeader(sb)
                 sb.appendTag(
@@ -179,7 +181,12 @@ class DartDocumentExt : AbstractDocumentationProvider() {
             sb.appendTag(obj, PluginBundle.get("doc"))
         }
         Helper.addKeyValueFoot(sb)
-        return sb.toString()
+
+        val fullHtml = HtmlChunk.html().attr("width", "${DocumentationHtmlUtil.docPopupPreferredMaxWidth}px")
+            .addRaw(sb.toString())
+            .toString()
+        println("\n$fullHtml\n")
+        return fullHtml
     }
 
 

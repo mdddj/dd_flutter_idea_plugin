@@ -9,11 +9,16 @@ val untilBuildVersion: String by project
 val pluginVersion: String by project
 
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
+
+
 plugins {
+
     idea
     kotlin("jvm") version "2.0.21"
     id("org.jetbrains.intellij.platform") version "2.1.0"
     id("org.jetbrains.changelog") version "2.2.1"
+    id("maven-publish")
+    id("ldd-idea-publisher-plugin")
 }
 
 group = "shop.itbug"
@@ -125,9 +130,11 @@ tasks {
 
     }
 
+    pingIdeaPublisherServer {
+        url.set("http://127.0.0.1:5800")
+    }
 
 }
-
 
 changelog {
     version = pluginVersion.removeSuffix(".")
@@ -141,3 +148,31 @@ idea {
         isDownloadSources = true
     }
 }
+
+
+try {
+    val userName = System.getenv("maven_username")
+    val passWord = System.getenv("maven_password")
+    afterEvaluate {
+        publishing {
+            repositories {
+                maven {
+                    name = "sonatype"
+                    url = uri("https://package.itbug.shop/nexus/repository/idea-plugin/")
+                    credentials {
+                        username = userName
+                        password = passWord
+                    }
+                }
+                publications {
+                    create<MavenPublication>("release") {
+                        artifact("${layout.buildDirectory}/distributions/FlutterX-${project.version}.zip")
+                    }
+                }
+            }
+        }
+    }
+} catch (e: Exception) {
+    println("上传插件到私服失败:${e}")
+}
+
