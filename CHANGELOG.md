@@ -2,8 +2,10 @@
 
 ## Unreleased
 
-## [5.0.2] - 2024-11-01
+## [5.0.2] - 2024-11-02
 
+- New: pubspec.yaml add package last update time
+- New: pubspec.yaml package document add more details
 - Fix known issues
 - Supplementary functional documentation
 

@@ -37,8 +37,25 @@ object Links {
     const val checkFlutterVersion =
         "https://flutterx.itbug.shop/flutter%E6%96%B0%E7%89%88%E6%9C%AC%E6%A3%80%E6%B5%8B.html"
 
+
+    //flutter版本信息
+    const val defaultFlutterInfosUrl =
+        "https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json"
+
+    //中国区镜像
+    const val defaultFlutterInfosUrlByCN =
+        "https://storage.flutter-io.cn/flutter_infra_release/releases/releases_macos.json"
+
+
+    //pub服务器地址
+    const val pubServerUrl = "https://pub.dartlang.org"
+
     fun generateDocCommit(link: String): String {
         return "<a href='$link'>${PluginBundle.doc}</a>"
+    }
+
+    fun generateDocCommit(link: String, text: String): String {
+        return "<a href='$link'>${text}</a>"
     }
 }
 

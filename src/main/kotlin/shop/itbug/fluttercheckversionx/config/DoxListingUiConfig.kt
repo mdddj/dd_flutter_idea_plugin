@@ -1,12 +1,9 @@
 package shop.itbug.fluttercheckversionx.config
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.*
 import com.intellij.util.messages.Topic
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 
@@ -68,7 +65,13 @@ data class DoxListeningSetting(
     var showDataSize: Boolean = true,
 
     ///拷贝的key
-    var copyKeys: DioCopyAllKey = DioCopyAllKey()
+    var copyKeys: DioCopyAllKey = DioCopyAllKey(),
+
+    ///检查链接
+    var checkFlutterVersionUrl: String = Links.defaultFlutterInfosUrl,
+
+    /// pubspec服务器地址
+    var pubServerUrl: String = Links.pubServerUrl
 
 )
 

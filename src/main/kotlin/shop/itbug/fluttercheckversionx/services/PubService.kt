@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.services
 
 import PluginVersionModel
 import com.intellij.util.io.HttpRequests
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.model.PubSearchResult
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
@@ -13,15 +14,16 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
  */
 object PubService {
 
+
     fun getApiUrl(pluginName: String): String {
-        return "https://pub.dartlang.org/api/packages/$pluginName"
+        return "${DioListingUiConfig.setting.pubServerUrl}/api/packages/$pluginName"
     }
 
     /**
      * 获取插件的相关数据
      */
     fun callPluginDetails(plugName: String): PubVersionDataModel? {
-        val url = "https://pub.dartlang.org/api/packages/$plugName"
+        val url = "${DioListingUiConfig.setting.pubServerUrl}/api/packages/$plugName"
         try {
             val resposne = HttpRequests.request(url).readString()
             return DioApiService.getInstance().gson.fromJson(resposne, PubVersionDataModel::class.java)
@@ -36,7 +38,7 @@ object PubService {
      * 获取包的版本列表
      */
     fun getPackageVersions(pluginName: String): PluginVersionModel? {
-        val url = "https://pub.dartlang.org/packages/$pluginName.json"
+        val url = "${DioListingUiConfig.setting.pubServerUrl}/packages/$pluginName.json"
         try {
             val resposne = HttpRequests.request(url).readString()
             return DioApiService.getInstance().gson.fromJson(resposne, PluginVersionModel::class.java)
@@ -49,7 +51,7 @@ object PubService {
      * 搜索包
      */
     fun search(pluginName: String): PubSearchResult? {
-        val url = "https://pub.dartlang.org/api/search?q=$pluginName"
+        val url = "${DioListingUiConfig.setting.pubServerUrl}/api/search?q=$pluginName"
         try {
             val resposne = HttpRequests.request(url).readString()
             return DioApiService.getInstance().gson.fromJson(resposne, PubSearchResult::class.java)
