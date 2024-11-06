@@ -44,7 +44,7 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
-    <depends optional="true" config-file="actions.xml">Dart</depends>
+    <depends config-file="actions.xml">Dart</depends>
     <depends>Dart</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
@@ -98,13 +98,6 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
 
-        <!--    插件检测忽略配置     -->
-        <!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
-        <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"-->
-        <!--                                              isEnabledByDefault='true'-->
-        <!--                                              language="yaml" nameKey="flutterX-Dart-Plugin-Ignore"-->
-        <!--                                              providerId="flutterX-Dart-Plugin-Ignore"/>-->
-
         <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
                                               implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
                                               isEnabledByDefault="true"
@@ -126,10 +119,15 @@
 
 
         <!--   dart变量的内联显示     -->
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
-                language="Dart"/>
+        <!--        <codeInsight.inlayProvider-->
+        <!--                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"-->
+        <!--                language="Dart"/>-->
 
+        <codeInsight.declarativeInlayProvider group="TYPES_GROUP"
+                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayProvider"
+                                              isEnabledByDefault="true"
+                                              language="Dart"
+                                              nameKey="dart_type_params_show_name_key" providerId="DartTypeShow"/>
 
         <!--   part 自动导入-->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
