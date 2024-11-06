@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.document
 
-import com.intellij.codeInsight.documentation.DocumentationHtmlUtil
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.openapi.application.ApplicationManager
@@ -129,9 +128,9 @@ class YamlDocument : DocumentationProvider {
         sb.append(DocumentationMarkup.SECTIONS_END)
 
 
-
+        //DocumentationHtmlUtil.docPopupPreferredMaxWidth}
         return HtmlChunk.html().child(
-            HtmlChunk.div().attr("width", "${DocumentationHtmlUtil.docPopupPreferredMaxWidth}px").addRaw(sb.toString())
+            HtmlChunk.div().attr("width", "500px").addRaw(sb.toString())
         ).toString()
     }
 

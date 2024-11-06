@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.document
 
-import com.intellij.codeInsight.documentation.DocumentationHtmlUtil
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Editor
@@ -182,7 +181,7 @@ class DartDocumentExt : AbstractDocumentationProvider() {
         }
         Helper.addKeyValueFoot(sb)
 
-        val fullHtml = HtmlChunk.html().attr("width", "${DocumentationHtmlUtil.docPopupPreferredMaxWidth}px")
+        val fullHtml = HtmlChunk.html().attr("width", "500px")
             .addRaw(sb.toString())
             .toString()
         println("\n$fullHtml\n")
