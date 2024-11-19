@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.window.logger
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
@@ -28,7 +29,7 @@ object LogKeys {
 }
 
 ///日志窗口
-class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionListener {
+class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionListener, Disposable {
 
 
     ///日志列表
@@ -57,7 +58,7 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
 
     init {
         addToCenter(sp)
-        MyLoggerEvent.listen {
+        MyLoggerEvent.listen(this) {
             addLog(it)
         }
         initUi()
@@ -114,6 +115,10 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
                 refreshSelectLogs()
             }
         }
+    }
+
+    override fun dispose() {
+        println("log window disposed")
     }
 
 

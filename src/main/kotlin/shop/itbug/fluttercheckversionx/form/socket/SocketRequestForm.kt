@@ -61,7 +61,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
 
     ///接口列表
-    private val apiPanel = ApiListPanel(project)
+    val apiPanel = ApiListPanel(project)
 
 
     private val leftPanel = LeftPanel()

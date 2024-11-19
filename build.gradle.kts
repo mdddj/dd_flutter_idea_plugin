@@ -42,7 +42,8 @@ dependencies {
     intellijPlatform {
 //        intellijIdeaCommunity("243.21155.17")
 //        intellijIdeaCommunity("2024.1.7")
-        local("/Applications/IntelliJ IDEA Ultimate.app")
+//        local("/Applications/IntelliJ IDEA Ultimate.app")
+        local("/Applications/Android Studio.app")
         bundledPlugins(
             "org.jetbrains.plugins.terminal",
             "org.jetbrains.plugins.yaml",
@@ -105,7 +106,7 @@ tasks {
 
     compileKotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
+            jvmTarget.set(JvmTarget.JVM_21)
             languageVersion.set(KotlinVersion.KOTLIN_2_0)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
@@ -116,11 +117,6 @@ tasks {
         untilBuild.set(untilBuildVersion)
     }
 
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
-    }
 
     test {
         useJUnitPlatform()
@@ -134,6 +130,10 @@ tasks {
         url.set("http://127.0.0.1:5800")
     }
 
+
+    buildSearchableOptions {
+        enabled = false
+    }
 }
 
 changelog {

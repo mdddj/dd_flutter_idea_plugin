@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.project.DumbAware
 import shop.itbug.fluttercheckversionx.common.MyToggleAction
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
@@ -21,7 +20,7 @@ class DioWindowAutoScrollToMaxAction : MyToggleAction(PluginBundle.getLazyMessag
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-        val panel = e.getData<ApiListPanel>(DataKey.create(ApiListPanel.PANEL))
+        val panel = e.getData<ApiListPanel?>(ApiListPanel.PANEL_DATA_KEY)
         panel?.let {
             it.autoscrolls = state
         }

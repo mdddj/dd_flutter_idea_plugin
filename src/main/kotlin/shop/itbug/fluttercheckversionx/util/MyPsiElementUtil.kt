@@ -1,17 +1,14 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.google.common.base.CaseFormat
+import com.intellij.ide.util.gotoByName.GotoClassModel2
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
@@ -42,6 +39,22 @@ fun Project.reformat(element: PsiElement) {
 class MyDartPsiElementUtil {
 
     companion object {
+
+        /**
+         * 根据文本来搜索类
+         */
+        fun searchClassByText(project: Project, text: String): DartComponentNameImpl? {
+
+            //去除可空类型
+            val search = if (text.endsWith("?")) {
+                text.removeSuffix("?")
+            } else {
+                text
+            }
+            val gotoClassModel2 = GotoClassModel2(project)
+            val elements = gotoClassModel2.getElementsByName(search, true, search)
+            return elements.firstOrNull() as? DartComponentNameImpl
+        }
 
 
         /**

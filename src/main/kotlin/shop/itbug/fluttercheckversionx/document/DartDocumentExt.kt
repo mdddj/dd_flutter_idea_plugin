@@ -1,12 +1,13 @@
 package shop.itbug.fluttercheckversionx.document
 
+import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.documentation.AbstractDocumentationProvider
+import com.intellij.lang.documentation.ExternalDocumentationHandler
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
@@ -18,7 +19,7 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
  * dart 文件的文档注释扩展
  */
 
-class DartDocumentExt : AbstractDocumentationProvider() {
+class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHandler {
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
@@ -163,7 +164,10 @@ class DartDocumentExt : AbstractDocumentationProvider() {
 
         Helper.addKeyValueHeader(sb)
         if (info.staticType != null) {
-            Helper.addKeyValueSection(PluginBundle.get("type"), info.staticType, sb)
+            val t = info.staticType
+            val tsb = StringBuilder()
+            DocumentationManagerUtil.createHyperlink(tsb, t, t, false, false)
+            Helper.addKeyValueSection(PluginBundle.get("type"), tsb.toString(), sb)
         }
         if (referenceElement != null) {
             Helper.addKeyValueSection(
@@ -188,14 +192,48 @@ class DartDocumentExt : AbstractDocumentationProvider() {
         return fullHtml
     }
 
-
-    override fun getCustomDocumentationElement(
-        editor: Editor,
-        file: PsiFile,
-        contextElement: PsiElement?,
-        targetOffset: Int
+    override fun getDocumentationElementForLink(
+        psiManager: PsiManager?,
+        link: String?,
+        context: PsiElement?
     ): PsiElement? {
-        println("get custom contextElement.")
-        return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset)
+        context ?: return null
+        psiManager ?: return null
+        link ?: return null
+        println("getDocumentationElementForLink: $link  ${context.text} ")
+        return MyDartPsiElementUtil.searchClassByText(context.project, link)
+    }
+
+
+    override fun handleExternalLink(psiManager: PsiManager?, link: String?, context: PsiElement?): Boolean {
+        println("handleExternalLink: $link  $context")
+        return super.handleExternalLink(psiManager, link, context)
+    }
+
+    override fun fetchExternalDocumentation(link: String, element: PsiElement?): String {
+        println("fetchExternalDocumentation($link)  $element")
+        return super.fetchExternalDocumentation(link, element)
+    }
+
+
+    override fun extractRefFromLink(link: String): String? {
+        println("extractRefFromLink($link)")
+        return super.extractRefFromLink(link)
+    }
+
+
+    override fun handleExternal(element: PsiElement?, originalElement: PsiElement?): Boolean {
+        println("handleExternal($element)  $originalElement")
+        return super.handleExternal(element, originalElement)
+    }
+
+    override fun canHandleExternal(element: PsiElement?, originalElement: PsiElement?): Boolean {
+        println("canHandleExternal($element)  $originalElement")
+        return super.canHandleExternal(element, originalElement)
+    }
+
+    override fun canFetchDocumentationLink(link: String?): Boolean {
+        println("canFetchDocumentationLink($link)")
+        return super.canFetchDocumentationLink(link)
     }
 }

@@ -2,25 +2,25 @@ package shop.itbug.fluttercheckversionx.form.components
 
 import com.google.gson.Gson
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionGroup
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.ui.PopupHandler
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.TreeUIHelper
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.ListUiUtil
 import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
+import shop.itbug.fluttercheckversionx.dsl.formatUrl
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -36,9 +36,6 @@ import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.util.Util
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
 import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
-import java.awt.Point
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.DefaultListModel
 import javax.swing.SwingUtilities
 import javax.swing.event.HyperlinkEvent
@@ -49,49 +46,36 @@ import javax.swing.event.ListSelectionListener
 /**
  * api列表
  */
-class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, DataProvider,
-    DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent {
+class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, UiDataProvider,
+    DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent, Disposable {
 
     private val appService = AppService.getInstance()
     private fun listModel(): ItemModel = model as ItemModel
 
 
-    fun createPopupMenu(): ListPopup {
-        return JBPopupFactory.getInstance().createActionGroupPopup(
-            null, myActionGroup, DataManager.getInstance().getDataContext(this), true, { }, 10
-        )
-    }
-
-
     init {
         register()
-        connectFlutterProjectChangeEvent()
+        connectFlutterProjectChangeEvent(this)
         model = ItemModel(mutableListOf())
         cellRenderer = MyCustomItemRender()
         setApiListEmptyText()
         addListSelectionListener(this)
-        addRightPopupMenuClick()
         border = emptyBorder()
-        DioWindowApiSearchBus.listing { doSearch(it) }
-        DioWindowCleanRequests.listening { listModel().clear() }
-        DioSettingChangeEvent.listen { _, _ ->
+        DioWindowApiSearchBus.listing(this) { doSearch(it) }
+        DioWindowCleanRequests.listening(this) { listModel().clear() }
+        DioSettingChangeEvent.listen(this) { _, _ ->
             refreshUi()
         }
         SwingUtilities.invokeLater {
             appService.refreshProjectRequest(project)
         }
-        // test
-//        model = ItemModel(mutableListOf(ProjectSocketService.getTestApi()))
-    }
-
-
-    override fun setDataProvider(provider: DataProvider) {
-        super.setDataProvider { s ->
-            {
-                if (s == SELECT_KEY) {
-                    this.selectedValue
-                }
-            }
+        ListUiUtil.Selection.installSelectionOnFocus(this)
+        ListUiUtil.Selection.installSelectionOnRightClick(this)
+        PopupHandler.installPopupMenu(this, myActionGroup, "Dio Menu")
+        TreeUIHelper.getInstance().installListSpeedSearch(this) { o ->
+            o.formatUrl(
+                DioListingUiConfig.setting
+            )
         }
     }
 
@@ -99,25 +83,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     ///重新构建一下 UI
     private fun refreshUi() {
         model = ItemModel(listModel().list)
-    }
-
-    /**
-     * 右键菜单监听
-     */
-    private fun addRightPopupMenuClick() {
-        this.addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent?) {
-                super.mouseClicked(e)
-                if (e != null && SwingUtilities.isRightMouseButton(e)) {
-                    val index = this@ApiListPanel.locationToIndex(e.point)
-                    selectedIndex = index
-                    appService.currentSelectRequest = selectedValue
-                    SwingUtilities.invokeLater {
-                        createPopupMenu().show(RelativePoint(Point(e.locationOnScreen)))
-                    }
-                }
-            }
-        })
     }
 
 
@@ -156,7 +121,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     ///添加帮助性文档
     private fun setApiListEmptyText() {
         setEmptyText(PluginBundle.get("empty"))
-
         emptyText.apply {
             appendLine("")
             appendLine(
@@ -190,11 +154,12 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
             ) {
                 BrowserUtil.open(SiteDocument.Dio.url)
             }
-            appendLine("IP:${
-                Util.resolveLocalAddresses()
-                    .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
-                    .map { it.hostAddress }
-            }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
+            appendLine(
+                "IP:${
+                    Util.resolveLocalAddresses()
+                        .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
+                        .map { it.hostAddress }
+                }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
 
         }
     }
@@ -203,26 +168,20 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         if (e != null && !project.isDisposed) {
             if (!e.valueIsAdjusting && selectedValue != null) {
                 FlutterApiClickBus.fire(selectedValue)
-                appService.currentSelectRequest = selectedValue
             }
         }
     }
 
 
     companion object {
-        const val SELECT_KEY = "select-api"
-        const val PANEL = "panel"
+        val PANEL_DATA_KEY = DataKey.create<ApiListPanel>("panel")
+        val SELECT_ITEM = DataKey.create<Request>("select-api")
     }
-
-    override fun getData(p0: String): Any? {
-        if (p0 == PANEL) {
-            return this
-        }
-        return null
-    }
-
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+        if (project.isDisposed) {
+            return
+        }
         try {
             MyLoggerEvent.fire(MyLogInfo(message = Gson().toJson(model), key = LogKeys.dioLog))
         } catch (_: Exception) {
@@ -234,6 +193,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
 
     private fun showNewApiTips(req: Request) {
+
         val config = PluginStateService.getInstance().state
         val manager = ToolWindowManager.getInstance(project)
         val windowId = MyToolWindowTools.windowId
@@ -267,4 +227,15 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     override fun changeProject(projectName: String, project: Project?) {
         changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
     }
+
+    override fun uiDataSnapshot(sink: DataSink) {
+        sink[SELECT_ITEM] = selectedValue
+        sink[PANEL_DATA_KEY] = this
+    }
+
+    override fun dispose() {
+        println("api list panel dispose....")
+    }
+
+
 }

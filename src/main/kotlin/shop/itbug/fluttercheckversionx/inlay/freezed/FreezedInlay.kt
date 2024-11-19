@@ -33,7 +33,7 @@ import javax.swing.JComponent
 
 class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
     override val key: SettingsKey<DoxListeningSetting>
-        get() = SettingsKey("freezed inlay")
+        get() = SettingsKey("FreezedInlay")
     override val name: String
         get() = "FreezedInlay"
     override val previewText: String
@@ -64,8 +64,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
 
     private val inlayFactory = HintsInlayPresentationFactory(factory)
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-        val isFreezedClass = element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()
-        if (isFreezedClass) {
+        if (element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()) {
             val manager = DartClassManager(psiElement = element)
             val freezedElement = manager.findFreezedMetadata()
             freezedElement?.let {
@@ -155,10 +154,6 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
                                 true
                             }
                         }
-//                        replaceTextInSubElement(dartClassElement, DartNamedElementImpl::class.java, className, newCom)
-//                        dartClassElement.exByModifyAllPsiElementText("_$$it", "_$$className")
-//                        dartClassElement.exByModifyAllPsiElementText("_$it", "_$className")
-//                        dartClassElement.exByModifyAllPsiElementText("_$$it" + "FromJson", "_$$className" + "FromJson")
                     }
 
                 }

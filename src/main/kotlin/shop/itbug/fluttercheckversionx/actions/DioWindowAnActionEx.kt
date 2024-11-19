@@ -2,9 +2,8 @@ package shop.itbug.fluttercheckversionx.actions
 
 import com.google.gson.Gson
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.components.service
+import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.socket.Request
-import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 
 fun Request.getDataJson(): Any? {
@@ -26,5 +25,5 @@ fun Request.getDataJson(): Any? {
 
 ///获取当前选中的项目
 fun AnActionEvent.api(): Request? {
-    return service<AppService>().currentSelectRequest
+    return getData(ApiListPanel.SELECT_ITEM)
 }

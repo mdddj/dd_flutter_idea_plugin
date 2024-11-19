@@ -17,14 +17,12 @@ import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.constance.MyKeys
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.services.PubspecService
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 
 private fun PsiElement.needHandler(): Boolean {
     val setting = PluginConfig.getState(project)
-    val config: List<String> = MyPsiElementUtil.getAllPlugins(project)
     val hasRiverpod = PubspecService.getInstance(project).hasRiverpod()
     val element = this
     return setting.showRiverpodInlay && element is DartClassDefinitionImpl && hasRiverpod && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")

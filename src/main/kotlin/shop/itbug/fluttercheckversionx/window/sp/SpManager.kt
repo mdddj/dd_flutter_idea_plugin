@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
 import com.google.gson.Gson
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
 
@@ -73,8 +74,8 @@ interface SpManagerListen {
             bus.syncPublisher(topic).handleValue(model)
         }
 
-        fun listen(modelHandel: SPKeysHandle?, valueHandle: SPValueHandle?) {
-            bus.connect().subscribe(topic, object : SpManagerListen {
+        fun listen(parentDisposable: Disposable, modelHandel: SPKeysHandle?, valueHandle: SPValueHandle?) {
+            bus.connect(parentDisposable).subscribe(topic, object : SpManagerListen {
                 override fun handle(model: SPKeysModel) {
                     modelHandel?.invoke(model)
                 }

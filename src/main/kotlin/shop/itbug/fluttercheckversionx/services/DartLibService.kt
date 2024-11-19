@@ -16,7 +16,7 @@ import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 
 data class DartPartLibModel(var file: VirtualFile, val libName: String)
-data class DartPartPath(var libName: String, var path: String)
+data class DartPartPath(var libName: String, var path: String, val file: VirtualFile)
 private data class FileAndElement(val file: VirtualFile, val element: DartLibraryStatementImpl)
 
 @Service(Service.Level.PROJECT)
@@ -38,7 +38,7 @@ class UserDartLibService(val project: Project) : DumbAware {
         val strs = virtualFiles.map {
             try {
                 val path = file.parent.toNioPath().relativize(it.file.toNioPath()).normalize().toString()
-                return@map DartPartPath(it.libName, path)
+                return@map DartPartPath(it.libName, path, it.file)
             } catch (_: Exception) {
                 return@map null
             }

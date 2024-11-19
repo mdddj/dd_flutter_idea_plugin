@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.config
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.util.messages.Topic
@@ -124,12 +125,13 @@ interface DioSettingChangeEvent {
         }
 
         ///监听更改事件
-        fun listen(call: DioSettingChangeEventChangeFun) {
-            ApplicationManager.getApplication().messageBus.connect().subscribe(TOPIC, object : DioSettingChangeEvent {
-                override fun doChange(old: DoxListeningSetting, setting: DoxListeningSetting) {
-                    call.invoke(old, setting)
-                }
-            })
+        fun listen(parentDisposable: Disposable, call: DioSettingChangeEventChangeFun) {
+            ApplicationManager.getApplication().messageBus.connect(parentDisposable)
+                .subscribe(TOPIC, object : DioSettingChangeEvent {
+                    override fun doChange(old: DoxListeningSetting, setting: DoxListeningSetting) {
+                        call.invoke(old, setting)
+                    }
+                })
         }
     }
 }

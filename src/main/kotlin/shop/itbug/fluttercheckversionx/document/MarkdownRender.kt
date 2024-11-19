@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.document
 
+import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.DocumentationSettings
@@ -117,6 +118,7 @@ fun MarkdownNode.toHtml(project: Project): String {
     val sb = StringBuilder()
     visit { node, processChildren ->
 
+
         fun wrapChildren(tag: String, newline: Boolean = false) {
             sb.append("<$tag>")
             processChildren()
@@ -134,6 +136,8 @@ fun MarkdownNode.toHtml(project: Project): String {
         if (nodeText.contains("{@end-tool}")) {
             nodeText = nodeText.replace("{@end-tool}", "</pre>")
         }
+
+        println("\nnode text: $nodeText   ✅NodeType=$nodeType \n")
 
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
@@ -176,7 +180,15 @@ fun MarkdownNode.toHtml(project: Project): String {
 //                sb.append("<div style='position:relative;right:12;top:12;' >$nodeText</div>")
             }
 
-            MarkdownElementTypes.SHORT_REFERENCE_LINK,
+            MarkdownElementTypes.SHORT_REFERENCE_LINK -> {
+                if (node.text.startsWith("[") && node.text.endsWith("]")) {
+                    val r = node.text.removeSuffix("]").removePrefix("[")
+                    DocumentationManagerUtil.createHyperlink(sb, r, r, false, false)
+                } else {
+                    sb.append(node.text)
+                }
+            }
+
             MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                 val linkLabelNode = node.child(MarkdownElementTypes.LINK_LABEL)
                 val linkLabelContent = linkLabelNode?.children
