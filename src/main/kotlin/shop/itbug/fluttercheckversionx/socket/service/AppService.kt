@@ -26,9 +26,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
 
-    //右键选中的项目
-    var currentSelectRequest: Request? = null
-
 
     ///接口列表
     private var requestsList = mutableListOf<Request>()

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.hive.component
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
@@ -7,7 +8,7 @@ import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 
 ///显示 json
-class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.NativeMessageProcessing {
+class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.NativeMessageProcessing, Disposable {
 
 
     private val jsonEditor = JsonValueRender(p = project)
@@ -29,5 +30,9 @@ class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.
                 changeJsonValue(get("data"))
             }
         }
+    }
+
+    override fun dispose() {
+        removeMessageProcess()
     }
 }

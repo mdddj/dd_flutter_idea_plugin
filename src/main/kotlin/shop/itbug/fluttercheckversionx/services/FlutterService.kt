@@ -4,13 +4,14 @@ package shop.itbug.fluttercheckversionx.services
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.intellij.util.io.HttpRequests
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 
 class FlutterVersionCheckException(message: String) : Exception(message)
 
 object FlutterService {
     fun getVersion(): FlutterVersions {
         try {
-            val url = " https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json"
+            val url = DioListingUiConfig.setting.checkFlutterVersionUrl
             val get: String = HttpRequests.request(url).readString()
             return Gson().fromJson(get, FlutterVersions::class.java)
         } catch (e: Exception) {
@@ -60,3 +61,6 @@ data class Release(
 )
 
 
+val testRelease = Release(
+    "", "3.25.0", "3.5.4", "2024-10-24T17:38:00.719363Z", "", ""
+)

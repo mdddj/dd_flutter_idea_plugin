@@ -106,7 +106,7 @@ class MyPsiElementUtil {
             yamlFile?.let { file ->
                 val deps = YAMLUtil.getQualifiedKeyInFile(file, key)
                 if (deps != null) {
-                    return deps.children.first().children.map { (it as YAMLKeyValueImpl).keyText }
+                    return deps.children.first().children.mapNotNull { (it as? YAMLKeyValueImpl)?.keyText }
                 }
             }
             return emptyList()

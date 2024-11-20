@@ -1,11 +1,10 @@
 package shop.itbug.fluttercheckversionx.config
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.*
 import com.intellij.util.messages.Topic
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 
@@ -67,7 +66,13 @@ data class DoxListeningSetting(
     var showDataSize: Boolean = true,
 
     ///拷贝的key
-    var copyKeys: DioCopyAllKey = DioCopyAllKey()
+    var copyKeys: DioCopyAllKey = DioCopyAllKey(),
+
+    ///检查链接
+    var checkFlutterVersionUrl: String = Links.defaultFlutterInfosUrl,
+
+    /// pubspec服务器地址
+    var pubServerUrl: String = Links.pubServerUrl
 
 )
 
@@ -76,6 +81,7 @@ data class DoxListeningSetting(
  * dio的功能设置
  */
 @State(name = "DoxListingUiConfig", storages = [Storage("DoxListingUiConfig.xml")])
+@Service(Service.Level.APP)
 class DioListingUiConfig private constructor() : PersistentStateComponent<DoxListeningSetting> {
     private var config = DoxListeningSetting()
     override fun getState(): DoxListeningSetting {
@@ -119,12 +125,13 @@ interface DioSettingChangeEvent {
         }
 
         ///监听更改事件
-        fun listen(call: DioSettingChangeEventChangeFun) {
-            ApplicationManager.getApplication().messageBus.connect().subscribe(TOPIC, object : DioSettingChangeEvent {
-                override fun doChange(old: DoxListeningSetting, setting: DoxListeningSetting) {
-                    call.invoke(old, setting)
-                }
-            })
+        fun listen(parentDisposable: Disposable, call: DioSettingChangeEventChangeFun) {
+            ApplicationManager.getApplication().messageBus.connect(parentDisposable)
+                .subscribe(TOPIC, object : DioSettingChangeEvent {
+                    override fun doChange(old: DoxListeningSetting, setting: DoxListeningSetting) {
+                        call.invoke(old, setting)
+                    }
+                })
         }
     }
 }

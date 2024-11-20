@@ -36,14 +36,24 @@ class DartPartAutoCompletion : CompletionContributor() {
             val partService = UserDartLibService.getInstance(project)
             val file = parameters.editor.virtualFile
 
-            partService.getLibraryNames().forEach { name ->
+            val libNames = partService.getLibraryNames()
+
+            libNames.forEach { name ->
                 val psi = createElement(name, project) { this }
                 result.addElement(psi)
             }
-            partService.calcRelativelyPath(file).forEach { model ->
+            val rf = partService.calcRelativelyPath(file)
+            rf.forEach { model ->
+                println("path =>${model.path}  <>${model.libName}")
                 result.addElement(createElement("'${model.path}'", project) {
-                    this.withTypeText(model.libName)
+                    if (model.libName.isNotBlank()) {
+                        this.withTypeText(model.libName)
+                    } else {
+                        this.withTypeText(model.file.path, false)
+                    }
+                    this
                 })
+
             }
         }
 

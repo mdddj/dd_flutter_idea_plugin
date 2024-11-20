@@ -8,7 +8,6 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
@@ -17,7 +16,7 @@ import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 
 data class DartPartLibModel(var file: VirtualFile, val libName: String)
-data class DartPartPath(var libName: String, var path: String)
+data class DartPartPath(var libName: String, var path: String, val file: VirtualFile)
 private data class FileAndElement(val file: VirtualFile, val element: DartLibraryStatementImpl)
 
 @Service(Service.Level.PROJECT)
@@ -39,7 +38,7 @@ class UserDartLibService(val project: Project) : DumbAware {
         val strs = virtualFiles.map {
             try {
                 val path = file.parent.toNioPath().relativize(it.file.toNioPath()).normalize().toString()
-                return@map DartPartPath(it.libName, path)
+                return@map DartPartPath(it.libName, path, it.file)
             } catch (_: Exception) {
                 return@map null
             }
@@ -85,10 +84,8 @@ class UserDartLibService(val project: Project) : DumbAware {
 
 class UserDartLibServiceInit : ProjectActivity {
     override suspend fun execute(project: Project) {
-        StartupManager.getInstance(project).runAfterOpened {
-            DumbService.getInstance(project).runWhenSmart {
-                UserDartLibService.getInstance(project).collectPartOf()
-            }
+        DumbService.getInstance(project).runWhenSmart {
+            UserDartLibService.getInstance(project).collectPartOf()
         }
     }
 }

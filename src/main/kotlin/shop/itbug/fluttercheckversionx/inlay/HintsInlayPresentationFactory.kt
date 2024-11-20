@@ -29,6 +29,13 @@ import javax.swing.Icon
 typealias InlayPresentationClickHandle = (MouseEvent, Point) -> Unit
 
 
+fun Editor.getLine(element: PsiElement): Int {
+    val offset = element.textRange.startOffset
+    val line = document.getLineNumber(offset)
+    return line
+}
+
+
 fun Editor.getLineStart(element: PsiElement): Int {
     val offset = element.textRange.startOffset
     val line = document.getLineNumber(offset)

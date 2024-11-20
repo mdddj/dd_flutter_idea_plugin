@@ -151,7 +151,7 @@ class ProjectSocketService {
 
 
 fun LocalDateTime.formatDate(): String {
-    val f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
     return this.format(f)
 }
 

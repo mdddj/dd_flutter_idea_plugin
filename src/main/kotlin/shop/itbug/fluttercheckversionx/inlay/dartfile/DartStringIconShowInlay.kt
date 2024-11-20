@@ -11,7 +11,6 @@ import com.intellij.codeInsight.hints.SettingsKey
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.startOffset
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
@@ -57,7 +56,7 @@ class DartStringIconShowInlay : InlayHintsProvider<NoSettings> {
                 }
                 val file = DartPsiElementHelper.checkHasFile(element) ?: return true
                 val inlay = myInlayFactory.getImageWithPath(file.full, file.basePath, setting) ?: return true
-                sink.addInlineElement(element.startOffset, false, inlay, false)
+                sink.addInlineElement(element.textRange.startOffset, false, inlay, false)
                 return true
             }
         }

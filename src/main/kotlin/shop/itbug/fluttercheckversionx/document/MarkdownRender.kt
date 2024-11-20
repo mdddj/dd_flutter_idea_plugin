@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.document
 
+import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.DocumentationSettings
@@ -117,6 +118,7 @@ fun MarkdownNode.toHtml(project: Project): String {
     val sb = StringBuilder()
     visit { node, processChildren ->
 
+
         fun wrapChildren(tag: String, newline: Boolean = false) {
             sb.append("<$tag>")
             processChildren()
@@ -134,6 +136,8 @@ fun MarkdownNode.toHtml(project: Project): String {
         if (nodeText.contains("{@end-tool}")) {
             nodeText = nodeText.replace("{@end-tool}", "</pre>")
         }
+
+        println("\nnode text: $nodeText   ✅NodeType=$nodeType \n")
 
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
@@ -176,7 +180,15 @@ fun MarkdownNode.toHtml(project: Project): String {
 //                sb.append("<div style='position:relative;right:12;top:12;' >$nodeText</div>")
             }
 
-            MarkdownElementTypes.SHORT_REFERENCE_LINK,
+            MarkdownElementTypes.SHORT_REFERENCE_LINK -> {
+                if (node.text.startsWith("[") && node.text.endsWith("]")) {
+                    val r = node.text.removeSuffix("]").removePrefix("[")
+                    DocumentationManagerUtil.createHyperlink(sb, r, r, false, false)
+                } else {
+                    sb.append(node.text)
+                }
+            }
+
             MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                 val linkLabelNode = node.child(MarkdownElementTypes.LINK_LABEL)
                 val linkLabelContent = linkLabelNode?.children
@@ -198,12 +210,18 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.INLINE_LINK -> {
                 val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml(project)
                 val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
-                if (label != null && destination != null) {
-                    val atag = HtmlChunk.tag("a").attr("href", destination).addText(label).toString()
-                    sb.append(atag)
+                val videoHtmlText = generateFlutterMp4Preview(destination ?: "")
+                if (videoHtmlText != null) {
+                    sb.append(videoHtmlText)
                 } else {
-                    sb.append(node.text)
+                    if (label != null && destination != null) {
+                        val atag = HtmlChunk.tag("a").attr("href", destination).addText(label).toString()
+                        sb.append(atag)
+                    } else {
+                        sb.append(node.text)
+                    }
                 }
+
             }
 
             MarkdownTokenTypes.TEXT,
@@ -306,7 +324,17 @@ fun MarkdownNode.toHtml(project: Project): String {
             }
         }
     }
-    return sb.toString().trimEnd()
+    val fullHtml = sb.toString().trimEnd()
+    return fullHtml
+}
+
+///解析mp4链接
+fun generateFlutterMp4Preview(url: String): String? {
+    if (url.endsWith(".mp4") && url.startsWith("https://flutter.github.io")) {
+        val html = HtmlChunk.div().child(HtmlChunk.tag("a").attr("href", url).addText(url)).toString()
+        return html
+    }
+    return null
 }
 
 /**

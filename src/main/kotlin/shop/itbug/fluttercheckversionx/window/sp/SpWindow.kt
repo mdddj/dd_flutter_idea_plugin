@@ -1,9 +1,11 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
@@ -22,7 +24,7 @@ import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLayoutPanel(),
-    DioApiService.NativeMessageProcessing {
+    DioApiService.NativeMessageProcessing, Disposable {
 
 
     private val left = SpWindowLeft()
@@ -40,6 +42,8 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
             this.splitterProportionKey = "sp-window-key"
             border = emptyBorder
         })
+        Disposer.register(this, right)
+        Disposer.register(this, left)
     }
 
     private fun getAllKeys() {
@@ -67,6 +71,11 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 
     }
 
+    override fun dispose() {
+        println("sp window disposed")
+        removeMessageProcess()
+    }
+
 }
 
 
@@ -83,14 +92,17 @@ class SpRefreshAction : DumbAwareAction(AllIcons.Actions.Refresh) {
 }
 
 ///数据展示区域
-class SpWindowRight(project: Project) : BorderLayoutPanel() {
+private class SpWindowRight(project: Project) : BorderLayoutPanel(), Disposable {
     private var jsonView: JsonValueRender = JsonValueRender(p = project)
+    override fun dispose() {
+        println("dispose sp window right disposed")
+    }
 
     init {
         addToCenter(JBScrollPane(jsonView).apply {
             this.border = BorderFactory.createEmptyBorder()
         })
-        SpManagerListen.listen(null) {
+        SpManagerListen.listen(this, null) {
             jsonView.changeValue(it?.value)
         }
         border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
@@ -101,9 +113,9 @@ class SpWindowRight(project: Project) : BorderLayoutPanel() {
 
 
 /// keys 列表
-class SpWindowLeft : JBList<String>(), ListSelectionListener {
+private class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable {
     init {
-        SpManagerListen.listen(modelHandel = {
+        SpManagerListen.listen(this, modelHandel = {
             this.model = DefaultListModel<String>().apply {
                 this.addAll(it.keys)
             }
@@ -127,6 +139,10 @@ class SpWindowLeft : JBList<String>(), ListSelectionListener {
 
     override fun getMinimumSize(): Dimension {
         return preferredSize
+    }
+
+    override fun dispose() {
+        println("sp window left disposed")
     }
 
 }

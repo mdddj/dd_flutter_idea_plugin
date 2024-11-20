@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.endOffset
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.*
@@ -34,7 +33,7 @@ import javax.swing.JComponent
 
 class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
     override val key: SettingsKey<DoxListeningSetting>
-        get() = SettingsKey("freezed inlay")
+        get() = SettingsKey("FreezedInlay")
     override val name: String
         get() = "FreezedInlay"
     override val previewText: String
@@ -65,13 +64,12 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
 
     private val inlayFactory = HintsInlayPresentationFactory(factory)
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-        val isFreezedClass = element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()
-        if (isFreezedClass) {
+        if (element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()) {
             val manager = DartClassManager(psiElement = element)
             val freezedElement = manager.findFreezedMetadata()
             freezedElement?.let {
                 sink.addInlineElement(
-                    it.endOffset,
+                    it.textRange.endOffset,
                     true,
                     inlayFactory.iconRoundClick(AllIcons.General.ChevronDown) { mouseEvent, _ ->
                         showFreezedActionMenu(
@@ -107,7 +105,7 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
                 override fun actionPerformed(e: AnActionEvent) {
                     WidgetUtil.getTextEditorPopup(
                         PluginBundle.get("create_a_new_class_name"),
-                        className,
+                        className, className,
                         { it.show(RelativePoint.fromScreen(mouseEvent.locationOnScreen)) }) {
                         val project = psiElement.project
                         val newClassName = it
@@ -156,10 +154,6 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
                                 true
                             }
                         }
-//                        replaceTextInSubElement(dartClassElement, DartNamedElementImpl::class.java, className, newCom)
-//                        dartClassElement.exByModifyAllPsiElementText("_$$it", "_$$className")
-//                        dartClassElement.exByModifyAllPsiElementText("_$it", "_$className")
-//                        dartClassElement.exByModifyAllPsiElementText("_$$it" + "FromJson", "_$$className" + "FromJson")
                     }
 
                 }

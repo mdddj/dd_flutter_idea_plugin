@@ -2,7 +2,21 @@
 
 ## Unreleased
 
-## [5.0.1] - 2024-10-25
+## [5.0.3] - 2024-11-20
+
+- Fix: freezed name save error
+- Fix: Dio windows memory leak
+- Optimize: Faster display of dart type and support cmd click to jump
+- Optimize: Optimized dart document markdown render panel
+
+### [5.0.2] - 2024-11-04
+
+- New: pubspec.yaml add package last update time
+- New: pubspec.yaml package document add more details
+- Fix known issues
+- Supplementary functional documentation
+
+### [5.0.1] - 2024-10-29
 
 - Fix: Analyze the issue of inaccurate location after file changes (
   `pubspec.yaml`) [(#59)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/59)

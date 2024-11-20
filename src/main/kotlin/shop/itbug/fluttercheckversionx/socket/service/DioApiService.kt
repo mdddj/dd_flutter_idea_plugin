@@ -34,6 +34,11 @@ class DioApiService {
         messageProcessor.addHandle(processor)
     }
 
+    ///移除消息处理程序
+    fun removeHandle(processor: NativeMessageProcessing) {
+        messageProcessor.removeHandle(processor)
+    }
+
     fun addSession(session: AioSession?) {
         session?.let { sessions.add(it) }
     }
@@ -66,6 +71,10 @@ class DioApiService {
 
         fun register() {
             getInstance().addHandle(this)
+        }
+
+        fun removeMessageProcess() {
+            getInstance().removeHandle(this)
         }
 
         /**
@@ -130,6 +139,10 @@ object MyMessageProcessor : AbstractMessageProcessor<String>() {
 
     fun addHandle(processor: DioApiService.NativeMessageProcessing) {
         handle = handle.plus(processor)
+    }
+
+    fun removeHandle(processor: DioApiService.NativeMessageProcessing) {
+        handle = handle.minus(processor)
     }
 
 

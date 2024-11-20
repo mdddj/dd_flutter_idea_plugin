@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.startOffset
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
@@ -18,14 +17,12 @@ import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.constance.MyKeys
 import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.services.PubspecService
-import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
 
 
 private fun PsiElement.needHandler(): Boolean {
     val setting = PluginConfig.getState(project)
-    val config: List<String> = MyPsiElementUtil.getAllPlugins(project)
     val hasRiverpod = PubspecService.getInstance(project).hasRiverpod()
     val element = this
     return setting.showRiverpodInlay && element is DartClassDefinitionImpl && hasRiverpod && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
@@ -66,7 +63,7 @@ class PsiElementEditorPopupMenuInlay : InlayHintsProvider<NoSettings> {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 if (element.needHandler()) {
                     sink.addBlockElement(
-                        element.startOffset,
+                        element.textRange.startOffset,
                         true,
                         showAbove = true,
                         priority = 1,

@@ -13,30 +13,48 @@ object DateUtils {
         timeString: String,
         format: String = "yyyy-MM-dd HH:mm:ss",
     ): String {
-        val formatter = DateTimeFormatter.ofPattern(format)
-        val pastTime = LocalDateTime.parse(timeString, formatter)
-        val pastInstant = pastTime.atZone(ZoneId.systemDefault()).toInstant()
-        val now = Instant.now()
-        val duration = Duration.between(pastInstant, now)
+        try {
+            val formatter = DateTimeFormatter.ofPattern(format)
+            val pastTime = LocalDateTime.parse(timeString, formatter)
+            val pastInstant = pastTime.atZone(ZoneId.systemDefault()).toInstant()
+            val now = Instant.now()
+            val duration = Duration.between(pastInstant, now)
 
-        var text = when {
-            duration.toMinutes() < 1 -> "seconds ago"
-            duration.toHours() < 1 -> "minutes ago"
-            duration.toDays() < 1 -> "hours ago"
-            duration.toDays() < 30 -> "days ago"
-            duration.toDays() < 365 -> "months ago"
-            else -> "years ago"
-        }.trim()
-        text = localizeTimeAgo(text, PluginStateService.getInstance().state?.getSettingLocale() ?: Locale.US)
-        val time = when {
-            duration.toMinutes() < 1 -> "${duration.seconds}"
-            duration.toHours() < 1 -> "${duration.toMinutes()}"
-            duration.toDays() < 1 -> "${duration.toHours()}"
-            duration.toDays() < 30 -> "${duration.toDays()}"
-            duration.toDays() < 365 -> "${duration.toDays() / 30}"
-            else -> "${duration.toDays() / 365}"
+            var text = when {
+                duration.toMinutes() < 1 -> "seconds ago"
+                duration.toHours() < 1 -> "minutes ago"
+                duration.toDays() < 1 -> "hours ago"
+                duration.toDays() < 30 -> "days ago"
+                duration.toDays() < 365 -> "months ago"
+                else -> "years ago"
+            }.trim()
+            text = localizeTimeAgo(text, PluginStateService.getInstance().state?.getSettingLocale() ?: Locale.US)
+            val time = when {
+                duration.toMinutes() < 1 -> "${duration.seconds}"
+                duration.toHours() < 1 -> "${duration.toMinutes()}"
+                duration.toDays() < 1 -> "${duration.toHours()}"
+                duration.toDays() < 30 -> "${duration.toDays()}"
+                duration.toDays() < 365 -> "${duration.toDays() / 30}"
+                else -> "${duration.toDays() / 365}"
+            }
+            return "$time $text"
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return timeString
         }
-        return "$time $text"
+    }
+
+
+    fun parseDate(timeString: String): String {
+        var date = timeString
+        val toCharArray = date.toCharArray()
+        val tChat = toCharArray[10]
+        if (tChat == 'T') {
+            date = date.replace("T", " ")
+        }
+        val dotIndex = date.lastIndexOf(".")
+        date = date.substring(0, dotIndex)
+        return date
     }
 
     private fun localizeTimeAgo(text: String, locale: Locale): String {

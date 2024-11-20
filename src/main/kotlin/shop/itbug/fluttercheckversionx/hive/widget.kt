@@ -1,8 +1,10 @@
 package shop.itbug.fluttercheckversionx.hive
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
@@ -14,7 +16,7 @@ import shop.itbug.fluttercheckversionx.hive.component.HiveBoxListComponent
 import shop.itbug.fluttercheckversionx.hive.component.HiveValueComponent
 
 ///hive工具窗口
-class HiveWidget(project: Project, toolWindow: ToolWindow) : BorderLayoutPanel() {
+class HiveWidget(project: Project, toolWindow: ToolWindow) : BorderLayoutPanel(), Disposable {
 
 
     private val boxAndKeys = HiveBoxListComponent()
@@ -42,9 +44,15 @@ class HiveWidget(project: Project, toolWindow: ToolWindow) : BorderLayoutPanel()
         targetComponent = toolWindow.component
     }
 
+    override fun dispose() {
+        println("hive widget disposed")
+    }
+
     init {
         addToTop(toolbar.component)
         addToCenter(mainPanel)
+        Disposer.register(this, boxAndKeys)
+        Disposer.register(this, jsonRender)
     }
 
 

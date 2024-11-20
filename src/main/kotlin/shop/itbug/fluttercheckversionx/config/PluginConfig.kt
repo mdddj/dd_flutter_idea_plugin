@@ -7,6 +7,10 @@ data class PluginSetting(
 
     //是否显示操作工具
     var showRiverpodInlay: Boolean = true,
+
+    //自动导包的定义
+    var autoImportRiverpodText: String = "package:hooks_riverpod/hooks_riverpod.dart",
+
     //在Android studio中打开android目录
     var openAndroidDirectoryInAS: Boolean = true,
     //在xcode中打开ios目录

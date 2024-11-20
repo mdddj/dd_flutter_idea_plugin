@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.hive.component
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
@@ -23,7 +25,7 @@ import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 ///盒子列表
-class HiveBoxListComponent : OnePixelSplitter() {
+class HiveBoxListComponent : OnePixelSplitter(), Disposable {
 
 
     private val hiveBoxList = HiveBoxList()
@@ -53,11 +55,18 @@ class HiveBoxListComponent : OnePixelSplitter() {
             border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
         }
         splitterProportionKey = "hive-box-and-list"
+        Disposer.register(this, keysList)
+        Disposer.register(this, hiveBoxList)
+    }
+
+    override fun dispose() {
+        println("hive box list component disposed")
+        super.dispose()
     }
 }
 
 ///盒子列表
-class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, ListSelectionListener {
+class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, ListSelectionListener, Disposable {
 
     init {
         DioApiService.getInstance().addHandle(this)
@@ -105,13 +114,18 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
         }
     }
 
+    override fun dispose() {
+        DioApiService.getInstance().removeHandle(this)
+        println("hive box list disposed")
+    }
+
 }
 
 
 ///盒子里面的 key 列表
-class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioApiService.NativeMessageProcessing,
-    ListSelectionListener {
-
+private class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(),
+    DioApiService.NativeMessageProcessing,
+    ListSelectionListener, Disposable {
 
     init {
         cellRenderer = ItemRender()
@@ -162,6 +176,10 @@ class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(), DioA
 
     fun clean() {
         model = ItemModel(emptyList())
+    }
+
+    override fun dispose() {
+        removeMessageProcess()
     }
 
 }

@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.suggested.endOffset
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.lang.dart.psi.impl.DartPartOfStatementImpl
@@ -82,7 +81,7 @@ class AddPartInlay : InlayHintsProvider<AddPartInlay.AddPartInlaySetting> {
                                             }
                                         }
                                     }
-                                    sink.addInlineElement(element.endOffset, true, inlayPresentation, true)
+                                    sink.addInlineElement(element.textRange.endOffset, true, inlayPresentation, true)
                                 }
                             }
                         }

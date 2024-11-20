@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
@@ -72,9 +73,24 @@ data class PubPackage(
     }
 
     /**
+     * 获取最新版本
+     */
+    fun serverLastVersion(): String? {
+        return second?.getLastVersionText(first.getDartPluginVersionName())
+    }
+
+    /**
      * 获取最后更新时间
      */
     fun getLastUpdateTime(): String {
+        val time = second?.lastVersionUpdateTimeString ?: return ""
+        return DateUtils.timeAgo(time)
+    }
+
+    /**
+     * 获取最后更新时间
+     */
+    fun getLastUpdateTimeFormatString(): String {
         val time = second?.lastVersionUpdateTimeString ?: return ""
         return DateUtils.timeAgo(time)
     }
@@ -267,6 +283,18 @@ class DartPackageCheckService(val project: Project) {
     }
 
 
+    /**
+     * 从api请求插件信息
+     */
+    fun fetchPluginDateFromApi(element: PsiElement, packageName: String): PubPackage? {
+        val packInfo = runReadAction { YamlExtends(element).getMyDartPackageModel() } ?: return null
+        val r = PubService.callPluginDetails(packageName)
+        return PubPackage(packInfo.copy(service = this), r)
+    }
+
+    /**
+     * 插件名查找已经获取到包信息
+     */
     fun findPackageInfoByName(pluginName: String): PubPackage? {
         return details.find { it.first.packageName == pluginName }
     }

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.listeners
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
 import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
@@ -18,8 +19,8 @@ interface MyLoggerEvent {
         }
 
         ///监听
-        fun listen(onLog: (logger: MyLogInfo) -> Unit) {
-            bus.connect().subscribe(topic, object : MyLoggerEvent {
+        fun listen(parentDisposer: Disposable, onLog: (logger: MyLogInfo) -> Unit) {
+            bus.connect(parentDisposer).subscribe(topic, object : MyLoggerEvent {
                 override fun addLog(log: MyLogInfo) {
                     onLog(log)
                 }

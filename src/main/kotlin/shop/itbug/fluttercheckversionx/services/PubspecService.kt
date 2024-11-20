@@ -100,9 +100,9 @@ class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
                     it.file?.let { file ->
                         val filename = file.name
                         if (filename == "pubspec.yaml") {
-                            MyFileUtil.reIndexFile(project, file)
-                            println("保存中,重新索引....")
+                            println("(pubspec.yaml)保存中,重新索引....")
                             GlobalScope.launch {
+                                MyFileUtil.reIndexFileByXc(project, file)
                                 DartPackageCheckService.getInstance(project)
                                     .resetIndex(DartPackageTaskParam(showNotification = false))
                             }

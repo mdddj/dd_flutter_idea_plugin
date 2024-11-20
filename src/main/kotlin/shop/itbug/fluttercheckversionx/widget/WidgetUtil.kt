@@ -28,15 +28,17 @@ object WidgetUtil {
     fun getTextEditorPopup(
         title: String,
         placeholder: String,
+        initValue: String? = null,
         show: (popup: JBPopup) -> Unit,
         onSubmit: MySimpleTextFieldSubmit,
     ) {
         lateinit var popup: JBPopup
         popup =
-            JBPopupFactory.getInstance().createComponentPopupBuilder(MySimpleTextField(placeholder = placeholder) {
-                onSubmit.invoke(it)
-                popup.cancel()
-            }, null)
+            JBPopupFactory.getInstance()
+                .createComponentPopupBuilder(MySimpleTextField(placeholder = placeholder, initValue) {
+                    onSubmit.invoke(it)
+                    popup.cancel()
+                }, null)
                 .setRequestFocus(true)
                 .setTitle(title)
                 .setCancelKeyEnabled(true)
@@ -70,6 +72,17 @@ object WidgetUtil {
     }
 
     /**
+     * 文档操作
+     */
+    fun getDocAnAction(link: String): AnAction {
+        return object : MyDumbAwareAction(AllIcons.Actions.Help) {
+            override fun actionPerformed(e: AnActionEvent) {
+                BrowserUtil.browse(link)
+            }
+        }
+    }
+
+    /**
      * 获取复制文本组件
      * @param copyText 要复制的文本
      */
@@ -88,7 +101,7 @@ object WidgetUtil {
     /**
      * 反馈论坛
      */
-    fun getDiscordAction() :AnAction {
+    fun getDiscordAction(): AnAction {
         return object : MyDumbAwareAction(MyIcons.discord) {
             override fun actionPerformed(p0: AnActionEvent) {
                 BrowserUtil.browse(discordUrl)

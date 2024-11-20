@@ -1,4 +1,5 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -6,18 +7,22 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val pluginVersion: String by project
-val type: String by project
 
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
+
+
 plugins {
+
     idea
     kotlin("jvm") version "2.0.21"
     id("org.jetbrains.intellij.platform") version "2.1.0"
     id("org.jetbrains.changelog") version "2.2.1"
+    id("maven-publish")
+    id("ldd-idea-publisher-plugin")
 }
 
 group = "shop.itbug"
-version = pluginVersion + type
+version = pluginVersion + sinceBuildVersion
 
 repositories {
     mavenCentral()
@@ -35,23 +40,35 @@ repositories {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-        local("/Applications/IntelliJ IDEA Ultimate.app")
-//        intellijIdeaCommunity(ideaVersion)
-        bundledPlugins("org.jetbrains.plugins.terminal", "org.jetbrains.plugins.yaml", "org.intellij.plugins.markdown")
+//        intellijIdeaCommunity("243.21155.17")
+//        intellijIdeaCommunity("2024.1.7")
+//        local("/Applications/IntelliJ IDEA Ultimate.app")
+        local("/Applications/Android Studio.app")
+        bundledPlugins(
+            "org.jetbrains.plugins.terminal",
+            "org.jetbrains.plugins.yaml",
+            "org.intellij.plugins.markdown",
+//            "com.intellij.modules.json"
+        )
         plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
         instrumentationTools()
     }
+
 }
 
 
 intellijPlatform {
     pluginVerification {
         ides {
-            local(file("/Applications/Android Studio.app"))
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "243.21155.17")
+//            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.1.7")
+//            local("/Applications/IntelliJ IDEA Ultimate.app")
         }
     }
+
+
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
@@ -89,18 +106,17 @@ tasks {
 
     compileKotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
+            jvmTarget.set(JvmTarget.JVM_21)
             languageVersion.set(KotlinVersion.KOTLIN_2_0)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
 
-
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
+    printProductsReleases {
+        sinceBuild.set(sinceBuildVersion)
+        untilBuild.set(untilBuildVersion)
     }
+
 
     test {
         useJUnitPlatform()
@@ -110,8 +126,15 @@ tasks {
 
     }
 
-}
+    pingIdeaPublisherServer {
+        url.set("http://127.0.0.1:5800")
+    }
 
+
+    buildSearchableOptions {
+        enabled = false
+    }
+}
 
 changelog {
     version = pluginVersion.removeSuffix(".")
@@ -125,3 +148,31 @@ idea {
         isDownloadSources = true
     }
 }
+
+
+try {
+    val userName = System.getenv("maven_username")
+    val passWord = System.getenv("maven_password")
+    afterEvaluate {
+        publishing {
+            repositories {
+                maven {
+                    name = "sonatype"
+                    url = uri("https://package.itbug.shop/nexus/repository/idea-plugin/")
+                    credentials {
+                        username = userName
+                        password = passWord
+                    }
+                }
+                publications {
+                    create<MavenPublication>("release") {
+                        artifact("${layout.buildDirectory}/distributions/FlutterX-${project.version}.zip")
+                    }
+                }
+            }
+        }
+    }
+} catch (e: Exception) {
+    println("上传插件到私服失败:${e}")
+}
+

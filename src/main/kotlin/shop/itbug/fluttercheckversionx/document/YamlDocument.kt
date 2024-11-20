@@ -2,13 +2,21 @@ package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.documentation.DocumentationProvider
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
+import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
+import shop.itbug.fluttercheckversionx.model.filteredDependenciesString
+import shop.itbug.fluttercheckversionx.model.filteredDevDependenciesString
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.PubPackage
+import shop.itbug.fluttercheckversionx.util.YamlExtends
+import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
 
 
@@ -21,36 +29,30 @@ class YamlDocument : DocumentationProvider {
      * 生成插件版本的提示
      */
     override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String {
-
-
         element?.let {
-            val project = element.project
-            val isPluginElement = element.isDartPluginElement()
-            originalElement?.let {
-                var pluginName = ""
-
-                if (element is YAMLKeyValueImpl) {
-                    pluginName = element.keyText
-                }
-                if (element is LeafPsiElement && element.parent is YAMLKeyValueImpl) {
-                    pluginName = element.text
-                }
-                if (pluginName.isNotEmpty() && isPluginElement) {
-
-                    DartPackageCheckService.getInstance(project).findPackageInfoByName(pluginName)?.let { packageInfo ->
-                        val detail = packageInfo.second
-                        if (detail != null) {
-                            return renderFullDoc(
-                                pluginName = detail.name,
-                                lastVersion = detail.latest.version,
-                                githubUrl = detail.latest.pubspec.homepage,
-                                desc = detail.latest.pubspec.description,
-                                lastUpdate = packageInfo.getLastUpdateTime()
-                            )
-                        }
+            val packEle = YamlExtends(element).getMyDartPackageModel()
+            if (packEle != null) {
+                val project = element.project
+                val packageInfo: PubPackage? =
+                    ApplicationManager.getApplication().executeOnPooledThread<PubPackage?> {
+                        DartPackageCheckService.getInstance(project)
+                            .fetchPluginDateFromApi(element, packEle.packageName)
+                    }.get()
+                if (packageInfo != null) {
+                    val detail = packageInfo.second
+                    if (detail != null) {
+                        return renderFullDoc(
+                            pluginName = detail.name,
+                            lastVersion = detail.latest.version,
+                            githubUrl = detail.latest.pubspec.homepage,
+                            desc = detail.latest.pubspec.description,
+                            lastUpdate = packageInfo.getLastUpdateTime(),
+                            model = detail
+                        )
                     }
                 }
             }
+
         }
         return super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "")
     }
@@ -65,6 +67,9 @@ class YamlDocument : DocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
         if (contextElement != null) {
+            if (contextElement is LeafPsiElement && contextElement.parent is YAMLKeyValueImpl && contextElement.parent.isDartPluginElement()) {
+                return contextElement.parent
+            }
             val isDartPluginElement = contextElement.isDartPluginElement()
             if (isDartPluginElement) {
                 return contextElement
@@ -82,8 +87,10 @@ class YamlDocument : DocumentationProvider {
         lastVersion: String,
         githubUrl: String?,
         desc: String,
-        lastUpdate: String
+        lastUpdate: String,
+        model: PubVersionDataModel
     ): String {
+        val pubspec = model.latest.pubspec
         val sb = StringBuilder()
         sb.append(DocumentationMarkup.DEFINITION_START)
         sb.append("Plugin detail")
@@ -103,8 +110,33 @@ class YamlDocument : DocumentationProvider {
             sb
         )
         addKeyValueSection("LastUpdate:", lastUpdate, sb)
+        if (pubspec.environment is Map<*, *>) {
+            addKeyValueSection(
+                "Environment:",
+                pubspec.environment.map { "${it.key.toString().firstChatToUpper()} : ${it.value}" }
+                    .joinToString(" , "),
+                sb
+            )
+        }
+        if (pubspec.filteredDependenciesString.isNotEmpty()) {
+            addKeyValueSection("Dependencies", pubspec.generateDependenciesHtml(pubspec.filteredDependenciesString), sb)
+        }
+
+        if (pubspec.filteredDevDependenciesString.isNotEmpty()) {
+            addKeyValueSection(
+                "Dev dependencies",
+                pubspec.generateDependenciesHtml(pubspec.filteredDevDependenciesString),
+                sb
+            )
+        }
+
         sb.append(DocumentationMarkup.SECTIONS_END)
-        return sb.toString()
+
+
+        //DocumentationHtmlUtil.docPopupPreferredMaxWidth}
+        return HtmlChunk.html().child(
+            HtmlChunk.div().attr("width", "500px").addRaw(sb.toString())
+        ).toString()
     }
 
 

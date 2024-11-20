@@ -2,15 +2,14 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.json.JsonFileType
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -132,17 +131,33 @@ object MyFileUtil {
     }
 
     /**
+     * 检查文件是否被索引,协程版本
+     */
+    suspend fun checkFileIsIndexByXc(project: Project, file: VirtualFile): Boolean {
+        try {
+            val file = readAction { PsiManager.getInstance(project).findFile(file) }
+            return file != null
+        } catch (_: Exception) {
+            return false
+        }
+        return false
+    }
+
+    /**
      * 重新索引指定文件
      */
     fun reIndexFile(project: Project, file: VirtualFile) {
-        StartupManager.getInstance(project).runAfterOpened {
-            DumbService.getInstance(project).runWhenSmart {
-                if (checkFileIsIndex(project, file)) {
-                    println("reindex = ${file.name}")
-                    FileBasedIndex.getInstance().requestReindex(file)
-                }
+        if (checkFileIsIndex(project, file)) {
+            FileBasedIndex.getInstance().requestReindex(file)
+        }
+    }
 
-            }
+    /**
+     * 重新索引指定文件,协程版本
+     */
+    suspend fun reIndexFileByXc(project: Project, file: VirtualFile) {
+        if (checkFileIsIndexByXc(project, file)) {
+            FileBasedIndex.getInstance().requestReindex(file)
         }
     }
 

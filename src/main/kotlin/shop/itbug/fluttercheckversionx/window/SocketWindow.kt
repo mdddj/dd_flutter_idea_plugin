@@ -26,10 +26,13 @@ import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 class SocketWindow : ToolWindowFactory {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val socketRequestForm = SocketRequestForm(project, toolWindow)
         val instance = ContentFactory.getInstance()
+        val socketRequestForm = SocketRequestForm(project, toolWindow)
         val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
+        createContent.setDisposer(socketRequestForm.apiPanel) //销毁监听
+
         toolWindow.contentManager.addContent(createContent)
+
         val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
         if (AppService.getInstance().dioIsStart.not()) {
             toolWindow.activate {
@@ -49,6 +52,7 @@ class SocketWindow : ToolWindowFactory {
         val spWindow = SpWindow(project, toolWindow)
         val spContent = instance.createContent(spWindow, "Shared Preferences ${PluginBundle.get("tool")}", false)
         toolWindow.contentManager.addContent(spContent)
+        spContent.setDisposer(spWindow)//销毁监听
 
 
         //hive 工具 开发中
@@ -56,6 +60,7 @@ class SocketWindow : ToolWindowFactory {
         val hiveContent = instance.createContent(hiveWindow, "Hive ${PluginBundle.get("tool")}", false)
         hiveContent.icon = AllIcons.General.Beta
         toolWindow.contentManager.addContent(hiveContent)
+        hiveContent.setDisposer(hiveWindow)
 
 
         //logo 窗口
@@ -63,6 +68,7 @@ class SocketWindow : ToolWindowFactory {
 
         val logContent = instance.createContent(logWindow, "Log", false)
         toolWindow.contentManager.addContent(logContent)
+        logContent.setDisposer(logWindow)
 
 
         //隐私扫描工具窗口

@@ -44,11 +44,12 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
-    <depends optional="true" config-file="actions.xml">Dart</depends>
+    <!--    <depends config-file="actions.xml">Dart</depends>-->
     <depends>Dart</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
+    <depends>com.intellij.modules.java</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -88,6 +89,8 @@
         <completion.contributor language="yaml"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
                                 order="first"/>
+        <!--        <completion.contributor language="yaml"-->
+        <!--                                implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPackageAutoCompletion"/>-->
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
         <completion.contributor language="Dart"
@@ -96,17 +99,14 @@
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.services.PluginStateService"
-                            order="first"/>
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig"/>
 
+        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
+                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
+                                              isEnabledByDefault="true"
+                                              language="yaml"
+                                              nameKey="lastupdate_date_time"
+                                              providerId="flutterxWithPubspecUpdateTime"/>
 
-        <!--    插件检测忽略配置     -->
-        <!--        <codeInsight.declarativeInlayProvider bundle="messages.pluginBundle" group="OTHER_GROUP"-->
-        <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.PluginInlayHintsProvider"-->
-        <!--                                              isEnabledByDefault='true'-->
-        <!--                                              language="yaml" nameKey="flutterX-Dart-Plugin-Ignore"-->
-        <!--                                              providerId="flutterX-Dart-Plugin-Ignore"/>-->
 
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
                                    language="Dart"/>
@@ -121,10 +121,18 @@
 
 
         <!--   dart变量的内联显示     -->
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"
-                language="Dart"/>
+        <!--        <codeInsight.inlayProvider-->
+        <!--                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"-->
+        <!--                language="Dart"/>-->
 
+        <codeInsight.declarativeInlayProvider group="TYPES_GROUP"
+                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayProvider"
+                                              isEnabledByDefault="true"
+                                              language="Dart"
+                                              nameKey="dart_type_params_show_name_key" providerId="DartTypeShow"/>
+
+        <codeInsight.inlayActionHandler handlerId="dartTypeInlayProviderId"
+                                        implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeClickActionHandle"/>
 
         <!--   part 自动导入-->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
@@ -134,8 +142,7 @@
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"
                 language="Dart"/>
 
-        <!--   插件socket服务     -->
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.config.DioListingUiConfig"/>
+
         <!--   Json编辑器悬停显示预览图片     -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
@@ -193,6 +200,8 @@
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
         <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
+
+        <!--        <navbar implementation="shop.itbug.fluttercheckversionx.navbar.DartStructureAwareNavbar"/>-->
     </extensions>
 
     <projectListeners>
@@ -373,8 +382,77 @@
         <!--            <add-to-group group-id="RunTab.TopToolbar" anchor="after" relative-to-action="Stop"/>-->
         <!--        </action>-->
 
+        <action id="RiverpodAutoImportTextConfig"
+                class="shop.itbug.fluttercheckversionx.actions.riverpod.RiverpodAutoImportTextConfig">
+            <add-to-group group-id="WidgetToRiverpod" anchor="after" relative-to-action="RiverpodActionsSetting"/>
+        </action>
     </actions>
 
-    <!--Git.MainMenu.FileActions-->
+    <actions>
+        <!--    dio 请求里面的清空按钮    -->
+        <group id="DioTool.CleanService">
+            <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService"
+                    icon="AllIcons.Actions.GC"
+                    id="DioWindow.Clean"
+                    text="清空全部"/>
+            <separator/>
+        </group>
+        <group id="Yaml.Search">
+            <action class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
+                    icon="AllIcons.Actions.Search"
+                    id="Yaml.Search.Icon" text="搜索Pub Dart 包"
+            />
+        </group>
+    </actions>
+    <actions>
+        <group id="dart-file-actions" text="FlutterX Tools" popup="true" icon="/icons/flutter.svg">
+            <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
+                    text="Add Comments to Functions">
+                <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
+            </action>
+            <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
+                    text="Model to Freezed">
+            </action>
+            <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
+                    text="Function Params To Freezed"/>
+            <reference ref="FreezedFactoryAddDefaultValue"/>
+            <reference ref="FreezedClassToSimpleClass"/>
+            <reference ref="SimpleClassToFreezedAction"/>
+            <separator/>
+            <reference id="StatelessToConsumer"/>
+            <reference id="StatefulToConsumer"/>
+            <add-to-group group-id="EditorPopupMenu"/>
+            <reference id="RiverpodActionsSetting"/>
+        </group>
+    </actions>
+    <actions>
+        <group id="dio-window-view-params">
+            <action id="DioWindowShowDetailPanel"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowAutoScrollToMaxAction"/>
+            <separator/>
+            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"
+                    icon="/icons/copy.svg"/>
+            <action id="ApiCopyPathAction"
+                    class="shop.itbug.fluttercheckversionx.actions.ApiCopyPathAction"/>
+            <action id="ApiCopyAll"
+                    class="shop.itbug.fluttercheckversionx.actions.ApiCopyAll"/>
+            <action class="shop.itbug.fluttercheckversionx.actions.dio.DioJsonCopyToClipboard"
+                    id="DioJsonCopyToClipboard"/>
+            <separator/>
+            <action id="DioWindowViewHeadersAction"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
+            <action id="DioViewResponseHeadersAction"
+                    class="shop.itbug.fluttercheckversionx.actions.dio.DioResponseHeadersViewJsonAction"/>
+            <action id="dio-window-view-GET"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"
+            />
+            <action id="DioWindowViewPostParamsAction"
+                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
+            <separator/>
+            <reference id="DioRequestBodyToFreezedAction"/>
+            <reference id="JsonToDartMacroRightMenuAction"/>
+        </group>
+    </actions>
+
 </idea-plugin>
 

@@ -16,6 +16,8 @@ class MyCustomItemRender : ColoredListCellRenderer<Request>() {
         selected: Boolean,
         hasFocus: Boolean
     ) {
+
+
     }
 
     override fun getListCellRendererComponent(
@@ -28,7 +30,9 @@ class MyCustomItemRender : ColoredListCellRenderer<Request>() {
         if (value == null) {
             return JBLabel()
         }
-        return requestDetailLayout(value, selected)
+
+        val dialog = requestDetailLayout(value, selected)
+        return dialog
     }
 }
 
