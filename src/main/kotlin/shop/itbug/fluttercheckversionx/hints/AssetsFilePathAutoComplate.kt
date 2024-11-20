@@ -39,12 +39,10 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
     private var setting: AppStateModel = PluginStateService.getInstance().state ?: AppStateModel()
 
     init {
-        //PlatformPatterns.string().startsWith(setting.assetCompilationTriggerString)
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement()
-                .withLanguage(DartLanguage.INSTANCE)
-                .withParents(DartStringLiteralExpressionImpl::class.java),
+            PlatformPatterns.psiElement(DartStringLiteralExpressionImpl::class.java)
+                .withLanguage(DartLanguage.INSTANCE),
             AssetsFilePathAutoCompleteProvider(setting)
         )
     }

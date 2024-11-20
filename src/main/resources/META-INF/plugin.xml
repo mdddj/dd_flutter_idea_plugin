@@ -89,6 +89,8 @@
         <completion.contributor language="yaml"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
                                 order="first"/>
+        <!--        <completion.contributor language="yaml"-->
+        <!--                                implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPackageAutoCompletion"/>-->
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
         <completion.contributor language="Dart"
@@ -198,6 +200,8 @@
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.error.CustomErrorHandle"/>-->
         <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
+
+        <!--        <navbar implementation="shop.itbug.fluttercheckversionx.navbar.DartStructureAwareNavbar"/>-->
     </extensions>
 
     <projectListeners>

@@ -52,6 +52,7 @@ object PubService {
      */
     fun search(pluginName: String): PubSearchResult? {
         val url = "${DioListingUiConfig.setting.pubServerUrl}/api/search?q=$pluginName"
+        println("url:$url")
         try {
             val resposne = HttpRequests.request(url).readString()
             return DioApiService.getInstance().gson.fromJson(resposne, PubSearchResult::class.java)

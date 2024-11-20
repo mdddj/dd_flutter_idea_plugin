@@ -1,10 +1,13 @@
 package shop.itbug.fluttercheckversionx.model
 
-data class PubSearchResult (
+data class PubSearchResult(
     val packages: List<Package>,
     val next: String
 )
 
-data class Package (
+data class Package(
     val `package`: String
 )
+
+
+fun Package.psiElementString(): String = "${`package`}: any"

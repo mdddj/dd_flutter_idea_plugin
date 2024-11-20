@@ -7,6 +7,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSection
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.filteredDependenciesString
@@ -65,6 +67,9 @@ class YamlDocument : DocumentationProvider {
         targetOffset: Int
     ): PsiElement? {
         if (contextElement != null) {
+            if (contextElement is LeafPsiElement && contextElement.parent is YAMLKeyValueImpl && contextElement.parent.isDartPluginElement()) {
+                return contextElement.parent
+            }
             val isDartPluginElement = contextElement.isDartPluginElement()
             if (isDartPluginElement) {
                 return contextElement
