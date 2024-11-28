@@ -1,5 +1,4 @@
 import org.jetbrains.changelog.Changelog
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -61,7 +60,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "243.21155.17")
+//            ide(IntelliJPlatformType.IntellijIdeaCommunity, "243.21155.17")
 //            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.1.7")
 //            local("/Applications/IntelliJ IDEA Ultimate.app")
         }
@@ -82,7 +81,7 @@ tasks {
         sinceBuild.set(sinceBuildVersion)
         untilBuild.set(untilBuildVersion)
         changeNotes.set(myChangeLog)
-        description = file("插件介绍.md").readText().trim()
+        pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
 
     signPlugin {

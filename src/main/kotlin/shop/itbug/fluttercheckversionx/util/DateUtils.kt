@@ -13,6 +13,7 @@ object DateUtils {
         timeString: String,
         format: String = "yyyy-MM-dd HH:mm:ss",
     ): String {
+        if (timeString.isEmpty()) return ""
         try {
             val formatter = DateTimeFormatter.ofPattern(format)
             val pastTime = LocalDateTime.parse(timeString, formatter)
@@ -46,6 +47,7 @@ object DateUtils {
 
 
     fun parseDate(timeString: String): String {
+        if (timeString.isBlank()) return ""
         var date = timeString
         val toCharArray = date.toCharArray()
         val tChat = toCharArray[10]

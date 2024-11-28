@@ -40,13 +40,14 @@ class YamlDocument : DocumentationProvider {
                     }.get()
                 if (packageInfo != null) {
                     val detail = packageInfo.second
+                    val lastTime = packageInfo.getLastUpdateTime()
                     if (detail != null) {
                         return renderFullDoc(
                             pluginName = detail.name,
                             lastVersion = detail.latest.version,
                             githubUrl = detail.latest.pubspec.homepage,
                             desc = detail.latest.pubspec.description,
-                            lastUpdate = packageInfo.getLastUpdateTime(),
+                            lastUpdate = lastTime,
                             model = detail
                         )
                     }

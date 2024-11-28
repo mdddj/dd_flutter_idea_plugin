@@ -20,6 +20,7 @@ class DartTypeClickActionHandle : InlayActionHandler {
             }
 
             is StringInlayActionPayload -> {}
+//            is SymbolPointerInlayActionPayload -> {}
             is SymbolPointerInlayActionPayload -> {}
         }
     }
