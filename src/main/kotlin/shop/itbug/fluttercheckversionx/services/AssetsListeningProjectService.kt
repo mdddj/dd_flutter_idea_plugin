@@ -228,5 +228,4 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             createNotification.notify(project)
         }
     }
-
 }

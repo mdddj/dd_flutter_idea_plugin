@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.0.3] - 2024-11-20
+## [5.0.3] - 2024-11-26
 
 - Fix: freezed name save error
 - Fix: Dio windows memory leak
