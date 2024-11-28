@@ -11,6 +11,7 @@ import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.constance.documentCommentRow
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
+import shop.itbug.fluttercheckversionx.setting.PubDevMirrorImageSetting
 import javax.swing.SwingUtilities
 
 /**
@@ -27,8 +28,6 @@ fun settingPanel(
     val languageList = listOf("System", "中文", "繁體", "English", "한국어", "日本語")
     lateinit var urlInput: Cell<JBTextField>
     val myPanel: DialogPanel = panel {
-
-
         buttonsGroup(PluginBundle.get("basic")) {
             row(PluginBundle.get("setting.language")) {
                 for (lan in languageList)
@@ -52,9 +51,10 @@ fun settingPanel(
                     urlInput.component.text = Links.defaultFlutterInfosUrlByCN
                 }
             }.comment(Links.generateDocCommit(urlInput.component.text, "View"))
-            row("pub.dev host") {
-                textField().bindText(dioxSetting::pubServerUrl).align(Align.FILL)
-            }
+//            row("pub.dev host") {
+//                textField().bindText(dioxSetting::pubServerUrl).align(Align.FILL)
+//            }
+            PubDevMirrorImageSetting.createPanel(this, dioxSetting)
             documentCommentRow(Links.checkFlutterVersion)
         }
 

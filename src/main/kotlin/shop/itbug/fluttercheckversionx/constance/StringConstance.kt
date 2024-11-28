@@ -50,6 +50,15 @@ object Links {
     //pub服务器地址
     const val pubServerUrl = "https://pub.dartlang.org"
 
+    //中国区
+    const val pubCFUG = "https://pub.flutter-io.cn"
+
+    //上海交通大学
+    const val shangHaiPubServerUrl = "https://mirror.sjtu.edu.cn/dart-pub"
+
+    //清华大学 TUNA 协会
+    const val qingHuaPubServerUrl = "https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
+
     fun generateDocCommit(link: String): String {
         return "<a href='$link'>${PluginBundle.doc}</a>"
     }

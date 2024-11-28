@@ -21,6 +21,8 @@ object MyIcons {
     var freezed = IconLoader.getIcon("/icons/freezed.svg", MyIcons::class.java)
     var money = IconLoader.getIcon("/icons/money.svg", MyIcons::class.java)
 
+    val score = IconLoader.getIcon("/icons/score.svg", MyIcons::class.java)
+
     //收藏图标(未选中)
     var collectUn = IconLoader.getIcon("/icons/collect-un.svg", MyIcons::class.java)
 

@@ -1,5 +1,4 @@
 import org.jetbrains.changelog.Changelog
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -12,7 +11,6 @@ val pluginVersion: String by project
 
 
 plugins {
-
     idea
     kotlin("jvm") version "2.0.21"
     id("org.jetbrains.intellij.platform") version "2.1.0"
@@ -42,13 +40,13 @@ dependencies {
     intellijPlatform {
 //        intellijIdeaCommunity("243.21155.17")
 //        intellijIdeaCommunity("2024.1.7")
-//        local("/Applications/IntelliJ IDEA Ultimate.app")
-        local("/Applications/Android Studio.app")
+        intellijIdeaUltimate("2024.3")
+//        local("/Applications/Android Studio.app")
         bundledPlugins(
             "org.jetbrains.plugins.terminal",
             "org.jetbrains.plugins.yaml",
             "org.intellij.plugins.markdown",
-//            "com.intellij.modules.json"
+            "com.intellij.modules.json"
         )
         plugins("Dart:$dartVersion")
         pluginVerifier()
@@ -62,13 +60,11 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "243.21155.17")
+//            ide(IntelliJPlatformType.IntellijIdeaCommunity, "243.21155.17")
 //            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.1.7")
 //            local("/Applications/IntelliJ IDEA Ultimate.app")
         }
     }
-
-
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
@@ -85,6 +81,7 @@ tasks {
         sinceBuild.set(sinceBuildVersion)
         untilBuild.set(untilBuildVersion)
         changeNotes.set(myChangeLog)
+        pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
 
     signPlugin {

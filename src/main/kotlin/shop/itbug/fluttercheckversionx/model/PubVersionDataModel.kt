@@ -20,8 +20,8 @@ private fun handleCaret(v: String?): String? {
 /// @return true 有新版本
 fun PubVersionDataModel.hasNewVersion(model: DartPluginVersionName): Boolean {
     return when (model.versionType) {
-        DartVersionType.Dev -> lastDevVersion?.finalVersionText?.equals(model.finalVersionText)?.not() ?: false
-        DartVersionType.Beta -> lastBetaVersion?.finalVersionText?.equals(model.finalVersionText)?.not() ?: false
+        DartVersionType.Dev -> lastDevVersion?.finalVersionText?.equals(model.finalVersionText)?.not() == true
+        DartVersionType.Beta -> lastBetaVersion?.finalVersionText?.equals(model.finalVersionText)?.not() == true
         DartVersionType.Base -> (latest.version.removePrefix("^") == model.finalVersionText).not()
     }
 }
@@ -50,7 +50,11 @@ data class PubVersionDataModel(
      *
      */
     private fun getLastUpdateTime(): String {
-        return DateUtils.parseDate(latest.published)
+        return DateUtils.parseDate(latest.getPublishedString())
+    }
+
+    fun formatTime(): String {
+        return DateUtils.timeAgo(lastVersionUpdateTimeString)
     }
 
     val lastVersionUpdateTimeString get() = getLastUpdateTime()
@@ -60,10 +64,15 @@ data class Latest(
     val version: String,
     val pubspec: Pubspec,
     @SerializedName("archive_url") val archiveURL: String,
-    val published: String
+    private var published: String? = null
 ) {
     override fun toString(): String {
         return version
+    }
+
+    fun getPublishedString(): String {
+        published ?: return ""
+        return published ?: ""
     }
 }
 
@@ -102,7 +111,6 @@ val Pubspec.filteredDependenciesString: List<String>
 
 val Pubspec.filteredDevDependenciesString: List<String>
     get() {
-        println("devs: $devDependencies")
         if (devDependencies is Map<*, *>) {
             return devDependencies.keys.filterIsInstance<String>().toList()
         }

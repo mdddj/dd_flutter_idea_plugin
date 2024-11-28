@@ -2,7 +2,16 @@
 
 ## Unreleased
 
-## [5.0.3] - 2024-11-20
+## [5.0.4] - 2024-11-28
+
+- Fix: autocomplete failure problem (Assets)
+- Fix: Bugs caused by lack of release time (dart package)
+- New: package autocomplete
+- ![1.gif](https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at15.03.38___1732777496374___.gif)
+- New: Add optional configuration of pub.dev image in China region (pub.dev)
+- ![2.png](https://minio.itbug.shop/blog/simple-file/img___1732782302206___.png)
+
+### [5.0.3] - 2024-11-26
 
 - Fix: freezed name save error
 - Fix: Dio windows memory leak

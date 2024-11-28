@@ -6,6 +6,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.patterns.PlatformPatterns
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ProcessingContext
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
@@ -41,7 +42,8 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
     init {
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement(DartStringLiteralExpressionImpl::class.java)
+            PlatformPatterns.psiElement(LeafPsiElement::class.java)
+                .withParent(DartStringLiteralExpressionImpl::class.java)
                 .withLanguage(DartLanguage.INSTANCE),
             AssetsFilePathAutoCompleteProvider(setting)
         )
