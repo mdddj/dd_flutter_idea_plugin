@@ -82,6 +82,7 @@ tasks {
         sinceBuild.set(sinceBuildVersion)
         untilBuild.set(untilBuildVersion)
         changeNotes.set(myChangeLog)
+        description = file("插件介绍.md").readText().trim()
     }
 
     signPlugin {

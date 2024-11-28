@@ -23,21 +23,16 @@ class IPCompletionProvider : CompletionProvider<CompletionParameters>() {
         val file = parameters.originalFile
         val element = file.findElementAt(offset)
         element?.apply {
-            val text = element.parent.parent.firstChild.text
-            if (text.equals("initHost")) {
-                Util.resolveLocalAddresses().stream()
-                    .filter { it.hostAddress != "127.0.0.1" }
-                    .forEach {
-                        result.addElement(
-                            LookupElementBuilder.create(it.hostAddress).withIcon(MyIcons.diandianLogoIcon)
-                                .withItemTextForeground(
-                                    UIUtil.getLabelInfoForeground()
-                                ).withItemTextItalic(true)
-                                .withItemTextUnderlined(true)
-                                .appendTailText("  FlutterX", true)
-                        )
-                    }
-            }
+            Util.resolveLocalAddresses().stream()
+                .forEach {
+                    result.addElement(
+                        LookupElementBuilder.create(it.hostAddress).withIcon(MyIcons.flutter)
+                            .withItemTextForeground(
+                                UIUtil.getLabelInfoForeground()
+                            ).withItemTextItalic(true)
+                            .withItemTextUnderlined(true)
+                    )
+                }
         }
     }
 }

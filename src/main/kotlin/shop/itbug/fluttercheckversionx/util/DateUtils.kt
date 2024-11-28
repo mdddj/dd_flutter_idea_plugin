@@ -37,7 +37,7 @@ object DateUtils {
                 duration.toDays() < 365 -> "${duration.toDays() / 30}"
                 else -> "${duration.toDays() / 365}"
             }
-            return "$time $text"
+            return "$time$text"
         } catch (e: Exception) {
             e.printStackTrace()
             return timeString

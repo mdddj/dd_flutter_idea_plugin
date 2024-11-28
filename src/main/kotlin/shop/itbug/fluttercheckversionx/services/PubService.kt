@@ -2,7 +2,13 @@ package shop.itbug.fluttercheckversionx.services
 
 import PluginVersionModel
 import com.intellij.util.io.HttpRequests
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
+import shop.itbug.fluttercheckversionx.model.PubPackageInfo
+import shop.itbug.fluttercheckversionx.model.PubPackageScore
 import shop.itbug.fluttercheckversionx.model.PubSearchResult
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
@@ -52,13 +58,43 @@ object PubService {
      */
     fun search(pluginName: String): PubSearchResult? {
         val url = "${DioListingUiConfig.setting.pubServerUrl}/api/search?q=$pluginName"
-        println("url:$url")
         try {
             val resposne = HttpRequests.request(url).readString()
             return DioApiService.getInstance().gson.fromJson(resposne, PubSearchResult::class.java)
         } catch (_: Exception) {
             return null
         }
+    }
+
+    /**
+     * 获取插件评分
+     */
+    fun getScore(pluginName: String): PubPackageScore? {
+        val url = "${DioListingUiConfig.setting.pubServerUrl}/api/packages/$pluginName/score"
+        return try {
+            DioApiService.getInstance().gson.fromJson(
+                HttpRequests.request(url).readString(),
+                PubPackageScore::class.java
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /**
+     * 获取插件详情
+     */
+    fun findAllPluginInfo(packageNames: List<String>): List<PubPackageInfo> {
+        val r = runBlocking(Dispatchers.IO) {
+            return@runBlocking packageNames.map {
+                async {
+                    val score = getScore(it) ?: return@async null
+                    val info = callPluginDetails(it) ?: return@async null
+                    return@async PubPackageInfo(score, info)
+                }
+            }.awaitAll()
+        }.filterNotNull()
+        return r
     }
 }
 

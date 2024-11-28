@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.0.34] - 2024-11-28
+
+- Fix: autocomplete failure problem
+
 ## [5.0.3] - 2024-11-26
 
 - Fix: freezed name save error

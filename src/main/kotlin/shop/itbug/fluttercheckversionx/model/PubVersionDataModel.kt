@@ -53,6 +53,10 @@ data class PubVersionDataModel(
         return DateUtils.parseDate(latest.published)
     }
 
+    fun formatTime(): String {
+        return DateUtils.timeAgo(lastVersionUpdateTimeString)
+    }
+
     val lastVersionUpdateTimeString get() = getLastUpdateTime()
 }
 
