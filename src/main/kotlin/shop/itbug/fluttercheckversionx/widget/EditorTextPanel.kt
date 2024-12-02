@@ -39,7 +39,6 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
         ApplicationManager.getApplication().invokeLater {
             this.format(JsonLanguage.INSTANCE)
         }
-
     }
 
     override fun createEditor(): EditorEx {
@@ -100,5 +99,6 @@ private fun myCreateEditor(ex: EditorEx, init: MyCreateEditor? = null): EditorEx
     settings.isAllowSingleLogicalLineFolding = true
     settings.isRightMarginShown = true
     ex.scrollPane.border = emptyBorder()
+    ex.setBorder(emptyBorder())
     return ex
 }

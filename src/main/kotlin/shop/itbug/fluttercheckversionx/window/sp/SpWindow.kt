@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
-import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
@@ -38,7 +37,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
         addToTop(createToolbar().component)
         addToCenter(OnePixelSplitter().apply {
             firstComponent = left.scroll()
-            secondComponent = right.scroll()
+            secondComponent = right
             this.splitterProportionKey = "sp-window-key"
             border = emptyBorder
         })
@@ -75,7 +74,6 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
         println("sp window disposed")
         removeMessageProcess()
     }
-
 }
 
 
@@ -92,23 +90,16 @@ class SpRefreshAction : DumbAwareAction(AllIcons.Actions.Refresh) {
 }
 
 ///数据展示区域
-private class SpWindowRight(project: Project) : BorderLayoutPanel(), Disposable {
-    private var jsonView: JsonValueRender = JsonValueRender(p = project)
+private class SpWindowRight(project: Project) : JsonValueRender(project), Disposable {
     override fun dispose() {
         println("dispose sp window right disposed")
     }
 
     init {
-        addToCenter(JBScrollPane(jsonView).apply {
-            this.border = BorderFactory.createEmptyBorder()
-        })
         SpManagerListen.listen(this, null) {
-            jsonView.changeValue(it?.value)
+            changeValue(it?.value)
         }
-        border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
     }
-
-
 }
 
 
@@ -123,7 +114,6 @@ private class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable
         addListSelectionListener(this)
         border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
     }
-
 
     override fun valueChanged(e: ListSelectionEvent?) {
         if (e != null && e.valueIsAdjusting.not() && selectedValue != null) {

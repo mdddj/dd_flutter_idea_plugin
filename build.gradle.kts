@@ -6,17 +6,18 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val pluginVersion: String by project
+val idePath: String by project
 
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 
 
 plugins {
     idea
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
     id("org.jetbrains.intellij.platform") version "2.1.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
-    id("ldd-idea-publisher-plugin")
+//    id("ldd-idea-publisher-plugin")
 }
 
 group = "shop.itbug"
@@ -38,15 +39,12 @@ repositories {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-//        intellijIdeaCommunity("243.21155.17")
-//        intellijIdeaCommunity("2024.1.7")
-        intellijIdeaUltimate("2024.3")
-//        local("/Applications/Android Studio.app")
+        local(idePath)
         bundledPlugins(
             "org.jetbrains.plugins.terminal",
             "org.jetbrains.plugins.yaml",
             "org.intellij.plugins.markdown",
-            "com.intellij.modules.json"
+//            "com.intellij.modules.json"
         )
         plugins("Dart:$dartVersion")
         pluginVerifier()
@@ -122,11 +120,6 @@ tasks {
     configurations.all {
 
     }
-
-    pingIdeaPublisherServer {
-        url.set("http://127.0.0.1:5800")
-    }
-
 
     buildSearchableOptions {
         enabled = false

@@ -40,7 +40,7 @@ class SocketWindow : ToolWindowFactory {
                     DioApiService.getInstance().builder(port).start()
                     toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     project.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
                 }
             }

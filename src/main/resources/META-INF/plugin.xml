@@ -50,7 +50,7 @@
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.java</depends>
-    <depends>com.intellij.modules.json</depends>
+    <!--    <depends>com.intellij.modules.json</depends>-->
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
