@@ -110,7 +110,10 @@ class DartMacroDialog(val project: Project, json: String) : DialogWrapper(projec
             }
             nameRuleConfig(
                 onChange = NameRuleConfig(
-                    className = classConfig::classNameRule, propertiesName = classConfig::propertiesNameRule
+                    classNameNew = classConfig::classNameRuleNew,
+                    propertyNameNew = classConfig::propertiesNameRuleNew,
+                    classNameRaw = classConfig::classNameRuleRaw,
+                    propertyNameRaw = classConfig::propertiesNameRuleRaw,
                 )
             )
         }

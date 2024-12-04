@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.tools
 
-import com.google.common.base.CaseFormat
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -8,46 +7,19 @@ import com.google.gson.JsonParser
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.dialog.NameFormatRule
 import shop.itbug.fluttercheckversionx.util.formatDartName
 
 typealias VoidCallback = () -> Unit
 
-sealed class MyDartType(var dartType: String, var defaultValue: String, var isBaseType: Boolean = true)
+sealed class MyDartType(var dartType: String, var defaultValue: String)
 data object DartDynamicValue : MyDartType("dynamic", "")
 data object DartStringValue : MyDartType("String", "''")
 data object DartNumberValue : MyDartType("num", "0")
 data object DartBooleanValue : MyDartType("bool", "false")
 data class DartCustomObject(var className: String) :
-    MyDartType(className.formatDartName(), "${className.formatDartName()}()", false)
+    MyDartType(className.formatDartName(), "${className.formatDartName()}()")
 
-enum class NameFormat(val title: String, val example: String) {
-    Original(
-        PluginBundle.get("freezed.gen.formatname.original"),
-        "${PluginBundle.get("freezed.gen.formatname.start")}:Root ${PluginBundle.get("freezed.gen.formatname.after")}:Root"
-    ),
-    Tf(
-        PluginBundle.get("freezed.gen.formatname.tf"),
-        "${PluginBundle.get("freezed.gen.formatname.start")}:test_properties ${PluginBundle.get("freezed.gen.formatname.after")}:testProperties"
-    ),
-    UC(
-        "C++",
-        "${PluginBundle.get("freezed.gen.formatname.start")}:test_properties ${PluginBundle.get("freezed.gen.formatname.after")}:TestProperties"
-    );
-
-    fun formatText(text: String): String {
-        var finalName = text
-        if (text.startsWith("_")) {
-            finalName = finalName.removePrefix("_")
-        }
-        return when (this) {
-            Original -> finalName
-            Tf -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, finalName)
-            UC -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, finalName)
-        }
-    }
-
-}
 
 enum class FormJsonType(val value: String) {
     DynamicMap("Map<String,dynamic>"), ObjectType("Map<String,Object>"), ObjectObject("Map<Object,Object>"), DynamicType(
@@ -68,7 +40,8 @@ data class MyChildObject(var className: String, var properties: List<MyDartPrope
 data class FreezedPropertiesConfig(
     var setDefaultValue: Boolean = true,
     var useJsonKey: Boolean = true,
-    var nameFormat: NameFormat = NameFormat.Tf,
+    var nameRuleRaw: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
+    var nameRuleTo: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
     var hiveConfig: HiveSetting = HiveSetting()
 ) : DartPropertyGenerateConfig()
 
@@ -79,15 +52,20 @@ data class FreezedClassConfig(
     var saveDirectory: String = "",
     var addStructureFunction: Boolean = true,
     var addFromJsonFunction: Boolean = true,
-    var classNameFormat: NameFormat = NameFormat.Original,
-    var propertyNameFormat: NameFormat = NameFormat.Tf,
     var propsConfig: FreezedPropertiesConfig = FreezedPropertiesConfig(),
-    var formJsonType: FormJsonType = FormJsonType.DynamicMap,
+    var formJsonType: FormJsonType? = FormJsonType.DynamicMap,
     var hiveSetting: HiveSetting = HiveSetting(),
     var runBuildCommand: Boolean = false,
     var openInEditor: Boolean = false,
     var useIsar: Boolean = false,
     var objectIndex: Int? = null,
+
+    //命名规则
+    var classNameFormatNew: NameFormatRule? = NameFormatRule.UPPER_CAMEL,
+    var propertyNameFormatNew: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
+    //命名规则raw
+    var classNameRaw: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
+    var propertyNameRaw: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
 ) : DartClassGenerateConfig()
 
 fun FreezedClassConfig.mainClassRun(mainCall: VoidCallback, otherRun: VoidCallback? = null) {
@@ -270,7 +248,7 @@ fun JsonArray.getMaxObject(): JsonElement? {
 fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfig()): String {
     val sb = StringBuilder()
     val hiveConfig = config.hiveSetting
-    val className = this.className.formatDartName(config.classNameFormat)
+    val className = this.className.formatDartName(config.classNameRaw, config.classNameRaw)
     sb.appendLine("@freezed")
 
 
@@ -313,7 +291,9 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
             "\t\t${
                 p.getFreezedProperty(
                     config.propsConfig.copy(
-                        nameFormat = config.propertyNameFormat, hiveConfig = hiveConfig
+                        hiveConfig = hiveConfig,
+                        nameRuleRaw = config.propertyNameRaw,
+                        nameRuleTo = config.propertyNameFormatNew
                     )
                 )
             }${if (isLast) "" else ","}"
@@ -327,7 +307,7 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
 
     //添加 fromJson
     if (config.addFromJsonFunction) {
-        sb.appendLine("\tfactory $className.fromJson(${config.formJsonType.value} json) => _\$$className" + "FromJson(json);")
+        sb.appendLine("\tfactory $className.fromJson(${(config.formJsonType ?: FormJsonType.DynamicMap).value} json) => _\$$className" + "FromJson(json);")
         sb.appendLine("")
     }
 
@@ -364,13 +344,15 @@ fun MyDartProperties.getFreezedProperty(config: FreezedPropertiesConfig): String
 
     sb.append(this.type.dartType + " ")
 
-    sb.append(this.name.formatDartName(config.nameFormat))
+    sb.append(this.name.formatDartName(config.nameRuleRaw, config.nameRuleTo))
 
 
     return sb.toString()
 }
 
 
-fun String.formatDartName(type: NameFormat): String {
-    return type.formatText(this)
+fun String.formatDartName(raw: NameFormatRule?, to: NameFormatRule?): String {
+    return (raw ?: NameFormatRule.LOWER_CAMEL).format.to((to ?: NameFormatRule.LOWER_CAMEL).format, this)
 }
+
+
