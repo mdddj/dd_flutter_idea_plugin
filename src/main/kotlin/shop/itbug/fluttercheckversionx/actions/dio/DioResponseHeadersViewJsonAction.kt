@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.dialog.SimpleJsonViewDialog
-
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 
 class DioResponseHeadersViewJsonAction : AnAction() {
 
@@ -15,7 +15,7 @@ class DioResponseHeadersViewJsonAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.project != null && e.api()?.responseHeaders?.isNotEmpty() == true
-        e.presentation.text = "View Response Headers"
+        e.presentation.text = "${PluginBundle.get("view.text")} Response Headers"
         super.update(e)
     }
 

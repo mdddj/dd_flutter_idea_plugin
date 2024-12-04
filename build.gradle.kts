@@ -6,10 +6,7 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val pluginVersion: String by project
-val idePath: String by project
-
-// https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
-
+val ideVersion: String by project
 
 plugins {
     idea
@@ -17,7 +14,6 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.1.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
-//    id("ldd-idea-publisher-plugin")
 }
 
 group = "shop.itbug"
@@ -36,16 +32,21 @@ repositories {
 }
 
 
+val bPlugins = mutableListOf<String>(
+    "org.jetbrains.plugins.terminal",
+    "org.jetbrains.plugins.yaml",
+    "org.intellij.plugins.markdown",
+)
+
+if (sinceBuildVersion.toInt() >= 243) {
+    bPlugins.add("com.intellij.modules.json")
+}
+
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-        local(idePath)
-        bundledPlugins(
-            "org.jetbrains.plugins.terminal",
-            "org.jetbrains.plugins.yaml",
-            "org.intellij.plugins.markdown",
-//            "com.intellij.modules.json"
-        )
+        intellijIdeaCommunity(ideVersion)
+        bundledPlugins(bPlugins)
         plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
@@ -58,9 +59,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-//            ide(IntelliJPlatformType.IntellijIdeaCommunity, "243.21155.17")
-//            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.1.7")
-//            local("/Applications/IntelliJ IDEA Ultimate.app")
+            recommended()
         }
     }
 }

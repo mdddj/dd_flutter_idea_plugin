@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions.bar
 
+import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -135,6 +136,7 @@ class OpenSettingAction : AnAction() {
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = e.project != null
         e.presentation.text = PluginBundle.get("open_flutterx_setting")
+        e.presentation.icon = AllIcons.General.Settings
     }
 }
 

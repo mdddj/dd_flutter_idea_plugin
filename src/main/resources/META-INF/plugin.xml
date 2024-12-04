@@ -2,54 +2,12 @@
     <id>shop.itbug.FlutterCheckVersionX</id>
     <name>FlutterX</name>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
-
-    <!--    <description><![CDATA[-->
-    <!--        <p>-->
-    <!--            Flutter automatic detection tool-->
-    <!--        </p>-->
-
-    <!--        <p>-->
-    <!--            Github:<a href="https://github.com/mdddj/dd_flutter_idea_plugin">GITHUB</a>-->
-    <!--            Document:<a href="https://flutterx.itbug.shop/starter.html">Document Web Site</a>-->
-    <!--        </p>-->
-
-
-    <!--        <h3>Feature</h3>-->
-
-
-    <!--        <ul>-->
-    <!--            <li>1.Detect the latest plugin version and provide automatic repair function</li>-->
-    <!--            <li>2.Quickly jump to the pub.dev plugin details page</li>-->
-    <!--            <li>3.Detect packages that have never been used</li>-->
-    <!--            <li>4.`final`,`var`,`const` Inline type hints for variables</li>-->
-    <!--            <li>5.dio request listening</li>-->
-    <!--            <li>6.If the json field is an image, it can be previewed with focus</li>-->
-    <!--            <li>7.`Doc class annotation`The annotation content is automatically displayed</li>-->
-    <!--            <li>8.Plugin details display function, please move the mouse focus to the plugin name, the plugin details-->
-    <!--                will be displayed-->
-    <!--            </li>-->
-    <!--            <li>9.Add markdown type parsing to the document</li>-->
-    <!--            <br/>-->
-    <!--            <li>1.检测最新插件版本并提供自动修复功能</li>-->
-    <!--            <li>2.快速跳转到 pub.dev 插件详情页面</li>-->
-    <!--            <li>3.检测从未使用过的包</li>-->
-    <!--            <li>4.`final`,`var`,`const` 变量的内联类型提示</li>-->
-    <!--            <li>5.dio请求监听</li>-->
-    <!--            <li>6.如果json字段是图片，可以带焦点预览</li>-->
-    <!--            <li>7.`Doc类注解`注释内容自动显示</li>-->
-    <!--            <li>8.插件详情面板展示,只需要将鼠标焦点移动到插件名字上面即可</li>-->
-    <!--            <li>9.文档添加markdown类型解析</li>-->
-    <!--            <ul>-->
-    <!--        ]]></description>-->
-
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
-    <!--    <depends config-file="actions.xml">Dart</depends>-->
     <depends>Dart</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
-    <depends>com.intellij.modules.java</depends>
     <!--    <depends>com.intellij.modules.json</depends>-->
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
@@ -79,9 +37,6 @@
         <notificationGroup displayType="BALLOON" id="flutterx_check_unused_package"/>
         <notificationGroup displayType="BALLOON" id="open_flutter_project_in_ide"/>
 
-        <fileDocumentSynchronizationVetoer
-                implementation="shop.itbug.fluttercheckversionx.save.DartFileDocumentSynchronizationVetoer"/>
-
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
@@ -108,6 +63,12 @@
                                               language="yaml"
                                               nameKey="lastupdate_date_time"
                                               providerId="flutterxWithPubspecUpdateTime"/>
+
+        <!--        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"-->
+        <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.DartRunBuildInlay"-->
+        <!--                                              isEnabledByDefault="true"-->
+        <!--                                              language="Dart"-->
+        <!--                                              nameKey="lastupdate_date_time" providerId="flutterxWithRunBuilder"/>-->
 
 
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
@@ -181,9 +142,6 @@
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
 
 
-        <applicationService serviceImplementation="shop.itbug.fluttercheckversionx.save.DartFileSaveSettingState"/>
-
-
         <!--        插件新版本检测-->
 
         <externalAnnotator
@@ -199,7 +157,7 @@
         <postStartupActivity
                 implementation="shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckServiceActivity"/>
         <!--        错误处理-->
-        <errorHandler implementation="shop.itbug.fluttercheckversionx.common.PluginErrorHandle"/>
+        <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.common.PluginErrorHandle"/>-->
         <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
 
@@ -217,7 +175,8 @@
         </action>
         <action id="AssetsAutoGenerateClassAction"
                 class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction"
-                icon="/icons/refresh.svg">
+                icon="AllIcons.General.Refresh"
+        >
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
@@ -225,7 +184,7 @@
         <!--        打开设置-->
         <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
                 class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
-                text="Setting" icon="/icons/setting.svg"/>
+                text="Setting" icon="AllIcons.General.Settings"/>
 
         <action id="IosFrameworkScanAction" class="shop.itbug.fluttercheckversionx.actions.IosFrameworkScanAction"
                 text="FrameworkScan">
@@ -340,7 +299,7 @@
                 class="shop.itbug.fluttercheckversionx.actions.bar.JsonToFreezedClass"
         />
         <action id="StatusBarOpenSettingAction"
-                class="shop.itbug.fluttercheckversionx.actions.bar.OpenSettingAction" icon="/icons/setting.svg"
+                class="shop.itbug.fluttercheckversionx.actions.bar.OpenSettingAction"
         />
         <action id="GoToDiscordAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDiscordAction"

@@ -18,7 +18,7 @@ class DartTypeClickActionHandle : InlayActionHandler {
         when (payload) {
             is PsiPointerInlayActionPayload -> {
                 payload.pointer.element?.let {
-                    findUseAge(it, editor)
+                    findUseAge(it)
                 }
             }
 
@@ -29,10 +29,8 @@ class DartTypeClickActionHandle : InlayActionHandler {
 
 
     //查找类型的定义
-    private fun findUseAge(element: PsiElement, editor: Editor) {
-
+    private fun findUseAge(element: PsiElement) {
         val typeText = element.getDartElementType()
-        val project = element.project
         if (typeText != null) {
             val findType = MyDartPsiElementUtil.searchClassByText(element.project, typeText)
             if (findType != null) {
