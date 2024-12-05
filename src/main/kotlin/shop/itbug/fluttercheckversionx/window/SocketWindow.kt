@@ -29,7 +29,7 @@ class SocketWindow : ToolWindowFactory {
         val instance = ContentFactory.getInstance()
         val socketRequestForm = SocketRequestForm(project, toolWindow)
         val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
-        createContent.setDisposer(socketRequestForm.apiPanel) //销毁监听
+        createContent.setDisposer(socketRequestForm) //销毁监听
 
         toolWindow.contentManager.addContent(createContent)
 

@@ -27,7 +27,6 @@ class DioWindowAutoScrollToMaxAction : MyToggleAction(PluginBundle.getLazyMessag
         DioListingUiConfig.changeSetting { it.copy(autoScroller = state) }
     }
 
-
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }

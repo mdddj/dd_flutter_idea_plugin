@@ -72,9 +72,12 @@ data class DoxListeningSetting(
     var checkFlutterVersionUrl: String = Links.defaultFlutterInfosUrl,
 
     /// pubspec服务器地址
-    var pubServerUrl: String = Links.pubServerUrl
+    var pubServerUrl: String = Links.pubServerUrl,
 
-)
+    ///是否倒序显示接口,默认false,版本5.0.5新增
+    var isReverseApi: Boolean = false,
+
+    )
 
 
 /**
