@@ -85,6 +85,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         splitterProportionKey = SPLIT_KEY
         register()
         Disposer.register(this, apiPanel)
+        apiPanel.model.addListDataListener(this)
     }
 
 
@@ -144,6 +145,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     override fun dispose() {
         println("dispose.....SocketRequestForm")
+        apiPanel.model.removeListDataListener(this)
         super.dispose()
     }
 

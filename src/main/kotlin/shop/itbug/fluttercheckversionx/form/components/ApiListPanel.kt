@@ -114,7 +114,15 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
      * 更新api列表
      */
     private fun changeApisModel(apis: MutableList<Request>) {
-        model = ItemModel(apis)
+        println("change api...")
+        val isReverse = DioListingUiConfig.setting.isReverseApi
+        if (isReverse.not()) {
+            model = ItemModel(apis)
+        } else {
+            apis.reverse()
+            model = ItemModel(apis)
+        }
+
     }
 
 
@@ -179,9 +187,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
-        if (project.isDisposed) {
-            return
-        }
+        if (project.isDisposed) return
         try {
             MyLoggerEvent.fire(MyLogInfo(message = Gson().toJson(model), key = LogKeys.dioLog))
         } catch (_: Exception) {
