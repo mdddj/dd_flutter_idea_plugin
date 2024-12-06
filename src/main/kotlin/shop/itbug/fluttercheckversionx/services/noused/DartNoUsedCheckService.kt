@@ -99,9 +99,7 @@ class DartNoUsedCheckService(val project: Project) {
     fun startCheck(indicator: ProgressIndicator? = null) {
 
         //获取包信息
-        runBlocking {
-            DartPackageCheckService.getInstance(project).resetIndex(DartPackageTaskParam(showNotification = false))
-        }
+        DartPackageCheckService.getInstance(project).startResetIndex(DartPackageTaskParam(showNotification = false))
 
         packages = emptyList()
         runBlocking {

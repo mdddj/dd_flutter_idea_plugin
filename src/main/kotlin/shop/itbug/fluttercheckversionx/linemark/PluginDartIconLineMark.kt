@@ -13,9 +13,6 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import icons.MyImages
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -120,7 +117,6 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
         MyFileUtil.reIndexFile(project, virtualFile)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onChosen(selectedValue: PluginDartIconActionMenuItem?, finalChoice: Boolean): PopupStep<*>? {
         when (selectedValue?.type) {
             menus[0].type -> {
@@ -130,12 +126,10 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
             menus[1].type -> {
                 if (isIgnored) {
                     DartPluginIgnoreConfig.getInstance(project).remove(pluginName)
-
-                    GlobalScope.launch {
-                        DartPackageCheckService.getInstance(project).resetIndex(DartPackageTaskParam(false) {
-                            reIndexFile()
-                        })
+                    val params = DartPackageTaskParam(false) {
+                        reIndexFile()
                     }
+                    DartPackageCheckService.getInstance(project).startResetIndex(params)
                 } else {
                     DartPluginIgnoreConfig.getInstance(project).add(pluginName)
                     DartPackageCheckService.getInstance(project).removeItemByPluginName(pluginName)

@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.services
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runReadAction
@@ -13,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -149,15 +151,15 @@ data class MyDartPackage(
 typealias DartCheckTaskComplete = () -> Unit
 
 data class DartPackageTaskParam(
-    val showNotification: Boolean = true,
-    val complete: DartCheckTaskComplete? = null
+    val showNotification: Boolean = true, val complete: DartCheckTaskComplete? = null
 )
 
 /**
  * 项目包检测的服务类
  */
 @Service(Service.Level.PROJECT)
-class DartPackageCheckService(val project: Project) {
+class DartPackageCheckService(val project: Project) : Disposable {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val ignoreManager = DartPluginIgnoreConfig.getInstance(project)
     private var pubspecFile: YAMLFile? = null
     var details: MutableList<PubPackage> = mutableListOf()///从服务器获取的数据
@@ -233,17 +235,16 @@ class DartPackageCheckService(val project: Project) {
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     suspend fun startWithAsync(param: DartPackageTaskParam = DartPackageTaskParam()) {
         val startTime = System.currentTimeMillis()  // 获取起始时间
         this.details.clear()
         val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
-        val results = GlobalScope.async {
+        val results = withContext(Dispatchers.IO) {
             list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
-        }.await()
+        }
         this.details = results.toMutableList()
         val endTime = System.currentTimeMillis()  // 获取结束时间
-        GlobalScope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main) {
             project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
             if (param.showNotification) {
                 getNotificationGroup()?.createNotification(
@@ -278,8 +279,22 @@ class DartPackageCheckService(val project: Project) {
     /**
      * 重新索引
      */
-    suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
+    private suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
         startWithAsync(param)
+    }
+
+
+    fun startResetIndex(params: DartPackageTaskParam = DartPackageTaskParam()) {
+        scope.launch {
+            resetIndex(params)
+        }
+    }
+
+
+    fun reIndexFile(file: VirtualFile) {
+        scope.launch {
+            MyFileUtil.reIndexFileByXc(project, file)
+        }
     }
 
 
@@ -299,16 +314,9 @@ class DartPackageCheckService(val project: Project) {
         return details.find { it.first.packageName == pluginName }
     }
 
-    fun getTableRows(): List<Array<String>> {
-        return details.map {
-            val date = it.second?.lastVersionUpdateTimeString ?: ""
-            val timeAgo = if (date.isBlank()) "-" else DateUtils.timeAgo(date)
-            arrayOf(
-                it.first.packageName, it.first.detail.version, it.second?.latest?.version ?: "-", "$date ($timeAgo)"
-            )
-        }
+    override fun dispose() {
+        scope.cancel()
     }
-
 
     /**
      * 包数据加载完成事件

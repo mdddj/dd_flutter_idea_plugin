@@ -10,10 +10,6 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 
 
@@ -86,7 +82,7 @@ class PubspecService(val project: Project) : Disposable {
  * 监听pubspec.yaml文件被修改,重新索引它
  */
 class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
-    @OptIn(DelicateCoroutinesApi::class)
+
     override fun prepareChange(events: MutableList<out VFileEvent>): AsyncFileListener.ChangeApplier? {
         if (project.isDisposed) {
             return null
@@ -100,12 +96,9 @@ class PubspecFileChangeListenAsync(val project: Project) : AsyncFileListener {
                     it.file?.let { file ->
                         val filename = file.name
                         if (filename == "pubspec.yaml") {
-                            println("(pubspec.yaml)保存中,重新索引....")
-                            GlobalScope.launch {
-                                MyFileUtil.reIndexFileByXc(project, file)
-                                DartPackageCheckService.getInstance(project)
-                                    .resetIndex(DartPackageTaskParam(showNotification = false))
-                            }
+                            DartPackageCheckService.getInstance(project).reIndexFile(file)
+                            DartPackageCheckService.getInstance(project)
+                                .startResetIndex(DartPackageTaskParam(showNotification = false))
                         }
                     }
 

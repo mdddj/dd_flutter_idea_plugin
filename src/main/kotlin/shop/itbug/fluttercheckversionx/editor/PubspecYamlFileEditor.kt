@@ -18,9 +18,6 @@ import com.intellij.ui.JBSplitter
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.popup.HintUpdateSupply
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
@@ -67,8 +64,7 @@ class MyYamlSplitEditorProvider : FileEditorProvider {
 }
 
 
-class MyDartPackageTree(val project: Project) : DnDAwareTree(),
-    DartPackageCheckService.FetchDartPackageFinish {
+class MyDartPackageTree(val project: Project) : DnDAwareTree(), DartPackageCheckService.FetchDartPackageFinish {
 
     private val packageService = DartPackageCheckService.getInstance(project)
 
@@ -106,24 +102,18 @@ class MyDartPackageTree(val project: Project) : DnDAwareTree(),
 
     companion object {
 
-        @OptIn(DelicateCoroutinesApi::class)
         fun createPanel(project: Project): JPanel {
-            val panel = ToolbarDecorator.createDecorator(MyDartPackageTree(project))
-                .apply {
+            val panel = ToolbarDecorator.createDecorator(MyDartPackageTree(project)).apply {
                     disableAddAction()
                     disableRemoveAction()
                     disableUpDownActions()
                     disableInputMethodSupport()
                     addExtraAction(object : AnAction({ "Refresh" }, AllIcons.Actions.Refresh) {
                         override fun actionPerformed(e: AnActionEvent) {
-                            GlobalScope.launch {
-                                DartPackageCheckService.getInstance(project).startWithAsync()
-                            }
+                            DartPackageCheckService.getInstance(project).startResetIndex()
                         }
                     })
-                }
-                .setPanelBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0))
-                .createPanel()
+                }.setPanelBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)).createPanel()
             return panel
         }
     }
@@ -132,13 +122,7 @@ class MyDartPackageTree(val project: Project) : DnDAwareTree(),
 
 private class TreeRender(val project: Project) : NodeRenderer() {
     override fun customizeCellRenderer(
-        tree: JTree,
-        value: Any?,
-        selected: Boolean,
-        expanded: Boolean,
-        leaf: Boolean,
-        row: Int,
-        hasFocus: Boolean
+        tree: JTree, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean
     ) {
         val obj = (value as? DefaultMutableTreeNode)?.userObject
         val myIcon: Icon? = when (obj) {
@@ -167,7 +151,9 @@ private class TreeRender(val project: Project) : NodeRenderer() {
             if (canUpdate) {
                 append(
                     "${PluginBundle.get("pub_dart_package_new_version")}:$it",
-                    SimpleTextAttributes.LINK_BOLD_ATTRIBUTES, 12, SwingConstants.RIGHT
+                    SimpleTextAttributes.LINK_BOLD_ATTRIBUTES,
+                    12,
+                    SwingConstants.RIGHT
                 )
             }
 
@@ -175,7 +161,9 @@ private class TreeRender(val project: Project) : NodeRenderer() {
         if (canUpdate) {
             append(
                 PluginBundle.get("pub_package_has_new_version_tips"),
-                SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES, 12, SwingConstants.RIGHT
+                SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES,
+                12,
+                SwingConstants.RIGHT
             )
         }
 

@@ -10,10 +10,6 @@ import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.rd.util.Callable
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -25,6 +21,7 @@ import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.widget.DartPackageTable
+import java.util.concurrent.Callable
 import java.util.function.Function
 import javax.swing.JComponent
 
@@ -53,7 +50,7 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider, DumbAware 
 
 }
 
-@OptIn(DelicateCoroutinesApi::class)
+
 class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
@@ -76,7 +73,7 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
 
         ///重新索引
         val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
-            GlobalScope.launch { DartPackageCheckService.getInstance(project).resetIndex() }
+            DartPackageCheckService.getInstance(project).startResetIndex()
             MyFileUtil.reIndexPubspecFile(project)
         }
         myLinksPanel.add(reIndexLabel)

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
@@ -20,8 +21,9 @@ data class DartPartPath(var libName: String, var path: String, val file: Virtual
 private data class FileAndElement(val file: VirtualFile, val element: DartLibraryStatementImpl)
 
 @Service(Service.Level.PROJECT)
-class UserDartLibService(val project: Project) : DumbAware {
+class UserDartLibService(val project: Project) : DumbAware, Disposable {
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var libraryNames: MutableSet<String> = hashSetOf()
     private var virtualFiles: MutableSet<DartPartLibModel> = hashSetOf() //定义了libaray的文件列表
 
@@ -52,11 +54,10 @@ class UserDartLibService(val project: Project) : DumbAware {
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun collectPartOf() {
         libraryNames = hashSetOf()
         virtualFiles = hashSetOf()
-        GlobalScope.launch {
+        scope.launch {
             val files = readAction { MyFileUtil.findAllProjectFiles(project) }
             val result: List<FileAndElement> = files.map {
                 async {
@@ -78,6 +79,10 @@ class UserDartLibService(val project: Project) : DumbAware {
             }
 
         }
+    }
+
+    override fun dispose() {
+        scope.cancel()
     }
 
 }

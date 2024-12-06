@@ -14,8 +14,9 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.ui.components.BorderLayoutPanel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
@@ -31,8 +32,7 @@ import javax.swing.event.ListSelectionListener
 
 
 data class PubSearchResult(
-    val packages: List<Package>,
-    val next: String
+    val packages: List<Package>, val next: String
 )
 
 data class Package(
@@ -43,6 +43,7 @@ data class Package(
 class SearchDialog(val project: Project) : DialogWrapper(project) {
 
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var selectedModel: Package? = null
     private var selectLabel: JLabel = JLabel()
 
@@ -59,13 +60,10 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
 
     }
 
-    //项目所有插件
-    private var allPlugins = emptyList<String>()
 
     init {
         title = PluginBundle.get("search.pub.plugin")
         init()
-        getAllPlugins()
         setOKButtonText(PluginBundle.get("add"))
         setCancelButtonText(PluginBundle.get("cancel"))
         myOKAction.isEnabled = false
@@ -79,18 +77,12 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
 
 
     //执行插入
-    @OptIn(DelicateCoroutinesApi::class)
     private fun doInset() {
         selectedModel?.let {
-            GlobalScope.launch {
-                launch {
-                    MyPsiElementUtil.insertPluginToPubspecFile(
-                        project,
-                        it.`package`,
-                        versionSelect.item,
-                        FlutterPluginType.Dependencies
-                    )
-                }
+            scope.launch {
+                MyPsiElementUtil.insertPluginToPubspecFile(
+                    project, it.`package`, versionSelect.item, FlutterPluginType.Dependencies
+                )
             }
 
         }
@@ -106,12 +98,6 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
         return false
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun getAllPlugins() {
-        GlobalScope.launch {
-            allPlugins = MyPsiElementUtil.getAllPlugins(project)
-        }
-    }
 
     override fun createCenterPanel(): JComponent {
         val corePanel = BorderLayoutPanel()
@@ -125,6 +111,11 @@ class SearchDialog(val project: Project) : DialogWrapper(project) {
         return corePanel
     }
 
+    override fun dispose() {
+//        scope.cancel()
+        println("dispose...")
+        super.dispose()
+    }
 }
 
 
@@ -212,11 +203,7 @@ class ResultModel(private val packages: List<Package>) : DefaultListModel<Packag
 
 class ReultItemRender : ListCellRenderer<Package> {
     override fun getListCellRendererComponent(
-        list: JList<out Package>?,
-        value: Package?,
-        index: Int,
-        isSelected: Boolean,
-        cellHasFocus: Boolean
+        list: JList<out Package>?, value: Package?, index: Int, isSelected: Boolean, cellHasFocus: Boolean
     ): Component {
         return JLabel(value?.`package`)
     }
@@ -238,9 +225,8 @@ class VersionSelect(val project: Project) : ComboBox<String>() {
             val task = object : Task.Backgroundable(project, PluginBundle.get("get_package_verion_task_title")) {
                 override fun run(indicator: ProgressIndicator) {
                     try {
-                        val response =
-                            HttpRequests.request("https://pub.dartlang.org/packages/$pluginName.json")
-                                .readString(indicator)
+                        val response = HttpRequests.request("https://pub.dartlang.org/packages/$pluginName.json")
+                            .readString(indicator)
                         val result = Gson().fromJson(response, PluginVersionModel::class.java)
                         model = VersionSelectModel(versions = result.versions)
                         isEnabled = true
@@ -253,7 +239,7 @@ class VersionSelect(val project: Project) : ComboBox<String>() {
             task.queue()
 
 
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             println("搜索失败")
         }
     }
