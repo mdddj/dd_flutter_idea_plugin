@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.0.5] - 2024-12-05
+## [5.0.5] - 2024-12-06
 
 * Add api to display in reverse order
 * Fix the bug of automatically sliding to the bottom
@@ -10,6 +10,7 @@
 * Update some icons and delete some icons, compress some image assets, and reduce the package size to the extreme, only
   1.5M
 * Optimize the component hierarchy of window
+* Remove `GlobalScope.launch` to avoid the risk of memory leaks
 
 ### [5.0.4] - 2024-11-28
 

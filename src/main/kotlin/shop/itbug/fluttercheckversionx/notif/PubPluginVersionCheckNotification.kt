@@ -1,20 +1,25 @@
 package shop.itbug.fluttercheckversionx.notif
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
+import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService
+import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService.Companion.TOPIC
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
@@ -24,6 +29,8 @@ import shop.itbug.fluttercheckversionx.widget.DartPackageTable
 import java.util.concurrent.Callable
 import java.util.function.Function
 import javax.swing.JComponent
+import javax.swing.SwingUtilities
+import javax.swing.ToolTipManager
 
 class PubPluginVersionCheckNotification : EditorNotificationProvider, DumbAware {
     private var pubFile: YAMLFile? = null
@@ -54,12 +61,17 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider, DumbAware 
 class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
 
+
     private var checkLabel: HyperlinkLabel = createActionLabel(PluginBundle.get("check.flutter.plugin")) {
-//        MyDartPackageTree.createPanel(project).showInCenterOfPopup(project)
         DartPackageTable(project).show()
     }
 
+    private val pubCacheSizeComponent = MyCheckPubCacheSizeComponent(project)
+
     init {
+
+        myLinksPanel.add(pubCacheSizeComponent)
+
         icon(MyIcons.dartPluginIcon)
         text(PluginBundle.get("w.t"))
 
@@ -118,4 +130,32 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
         SearchDialog(project).show()
     }
 
+}
+
+
+///计算pub cache 占用大小
+private class MyCheckPubCacheSizeComponent(val project: Project) : JBLabel(), PubCacheSizeCalcService.Listener,
+    Disposable {
+    init {
+        project.messageBus.connect(PubCacheSizeCalcService.getInstance(project)).subscribe(TOPIC, this)
+        Disposer.register(PubCacheSizeCalcService.getInstance(project), this)
+        SwingUtilities.invokeLater {
+            setDefaultText()
+        }
+        ToolTipManager.sharedInstance().registerComponent(this)
+        toolTipText = PubCacheSizeCalcService.getInstance(project).getPubCacheDirPathString()
+    }
+
+
+    private fun setDefaultText() {
+        text = "Pub Cache Size: " + PubCacheSizeCalcService.getInstance(project).getCurrentSizeFormatString()
+    }
+
+    override fun calcComplete(len: Long, formatString: String) {
+        text = "Pub Cache Size: $formatString"
+    }
+
+    override fun dispose() {
+        ToolTipManager.sharedInstance().unregisterComponent(this)
+    }
 }

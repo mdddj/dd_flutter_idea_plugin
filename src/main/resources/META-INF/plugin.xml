@@ -8,7 +8,7 @@
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
-    <!--    <depends>com.intellij.modules.json</depends>-->
+    <depends>com.intellij.modules.json</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -154,6 +154,7 @@
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.UserDartLibServiceInit"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.DartPackageCheckActivity"/>
+        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcPostStart"/>
         <postStartupActivity
                 implementation="shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckServiceActivity"/>
         <!--        错误处理-->

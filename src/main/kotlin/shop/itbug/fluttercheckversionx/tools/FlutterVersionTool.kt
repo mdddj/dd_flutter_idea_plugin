@@ -41,10 +41,10 @@ object FlutterVersionTool {
                     return@readAction line
                 }
                 return@readAction null
-            } catch (e: IOException) {
+            } catch (_: IOException) {
                 return@readAction null
             }
         }
-
     }
+
 }

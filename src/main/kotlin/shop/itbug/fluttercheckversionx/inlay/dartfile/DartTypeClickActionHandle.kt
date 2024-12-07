@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.inlay.dartfile
 import com.intellij.codeInsight.hints.declarative.InlayActionHandler
 import com.intellij.codeInsight.hints.declarative.InlayActionPayload
 import com.intellij.codeInsight.hints.declarative.PsiPointerInlayActionPayload
-import com.intellij.codeInsight.hints.declarative.StringInlayActionPayload
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import shop.itbug.fluttercheckversionx.document.getDartElementType
@@ -22,8 +21,7 @@ class DartTypeClickActionHandle : InlayActionHandler {
                 }
             }
 
-            is StringInlayActionPayload -> {}
-//            is SymbolPointerInlayActionPayload -> {}
+            else -> {}
         }
     }
 

@@ -183,7 +183,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.SHORT_REFERENCE_LINK -> {
                 if (node.text.startsWith("[") && node.text.endsWith("]")) {
                     val r = node.text.removeSuffix("]").removePrefix("[")
-                    DocumentationManagerUtil.createHyperlink(sb, r, r, false, false)
+                    DocumentationManagerUtil.createHyperlink(sb, r, r, false)
                 } else {
                     sb.append(node.text)
                 }

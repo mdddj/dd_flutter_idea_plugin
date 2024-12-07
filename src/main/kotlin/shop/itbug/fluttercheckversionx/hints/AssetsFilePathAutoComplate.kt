@@ -6,9 +6,9 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ProcessingContext
 import com.jetbrains.lang.dart.DartLanguage
+import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.AppStateModel
@@ -27,7 +27,7 @@ class FlutterAssetsStartHandle : ProjectActivity, DumbAware {
         }
         val setting: AppStateModel = PluginStateService.getInstance().state ?: AppStateModel()
         if (setting.assetsScanEnable) {
-            FlutterAssetsService.getInstance(project).init(setting.assetScanFolderName)
+            FlutterAssetsService.getInstance(project).startInit()
         }
 
     }
@@ -40,16 +40,15 @@ class AssetsFilePathAutoComplete : CompletionContributor() {
     private var setting: AppStateModel = PluginStateService.getInstance().state ?: AppStateModel()
 
     init {
+
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement(LeafPsiElement::class.java)
+            PlatformPatterns.psiElement(DartTokenTypes.REGULAR_STRING_PART)
                 .withParent(DartStringLiteralExpressionImpl::class.java)
                 .withLanguage(DartLanguage.INSTANCE),
             AssetsFilePathAutoCompleteProvider(setting)
         )
     }
-
-
 }
 
 
@@ -63,10 +62,11 @@ class AssetsFilePathAutoCompleteProvider(val setting: AppStateModel) : Completio
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        val element = parameters.originalPosition
+        val element = parameters.originalPosition ?: return
         val project = parameters.editor.project
-        val text = element?.text ?: ""
-        if (text.startsWith(setting.assetCompilationTriggerString)) {
+        val text = element.text ?: ""
+        val isOk = text.startsWith(setting.assetCompilationTriggerString)
+        if (isOk) {
             project?.let {
                 FlutterAssetsService.getInstance(it).allAssets().forEach { filePath ->
                     result
