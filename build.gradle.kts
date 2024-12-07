@@ -11,7 +11,7 @@ val ideVersion: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.0"
-    id("org.jetbrains.intellij.platform") version "2.1.0"
+    id("org.jetbrains.intellij.platform") version "2.2.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
@@ -50,7 +50,7 @@ dependencies {
         plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
-        instrumentationTools()
+        javaCompiler()
     }
 
 }
@@ -165,3 +165,9 @@ try {
     println("上传插件到私服失败:${e}")
 }
 
+
+idea {
+    module {
+        isDownloadSources = true
+    }
+}
