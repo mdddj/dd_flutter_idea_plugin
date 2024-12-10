@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -10,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.util.messages.Topic
 import fleet.util.formatFileSize
+import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.socket.formatSize
 import shop.itbug.fluttercheckversionx.tools.DartPubTools
 
@@ -23,6 +26,7 @@ class PubCacheSizeCalcPostStart : ProjectActivity {
 @Service(Service.Level.PROJECT)
 class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<VirtualFile>(), Disposable {
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var size: Long = 0
     private var cachePath: String? = null
     suspend fun startCheck() {
@@ -42,6 +46,17 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
         return true
     }
 
+    /**
+     * 在文件浏览器中打开dart缓存目录
+     */
+    fun openDir() {
+        scope.launch(Dispatchers.EDT) {
+            val file = DartPubTools.getPubCacheDir()
+            if (file != null) {
+                BrowserUtil.browse(file)
+            }
+        }
+    }
 
     override fun afterChildrenVisited(file: VirtualFile) {
         project.messageBus.syncPublisher(TOPIC).calcComplete(size, formatFileSize(size))
@@ -53,6 +68,7 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
 
     override fun dispose() {
         println("PubCacheSizeCalcService -- dispose")
+        scope.cancel()
     }
 
     companion object {

@@ -11,7 +11,6 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
-import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
@@ -26,6 +25,7 @@ import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
 import shop.itbug.fluttercheckversionx.widget.DartPackageTable
+import java.awt.event.InputEvent
 import java.util.concurrent.Callable
 import java.util.function.Function
 import javax.swing.JComponent
@@ -71,6 +71,7 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
     init {
 
         myLinksPanel.add(pubCacheSizeComponent)
+
 
         icon(MyIcons.dartPluginIcon)
         text(PluginBundle.get("w.t"))
@@ -134,7 +135,7 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
 
 
 ///计算pub cache 占用大小
-private class MyCheckPubCacheSizeComponent(val project: Project) : JBLabel(), PubCacheSizeCalcService.Listener,
+private class MyCheckPubCacheSizeComponent(val project: Project) : HyperlinkLabel(), PubCacheSizeCalcService.Listener,
     Disposable {
     init {
         project.messageBus.connect(PubCacheSizeCalcService.getInstance(project)).subscribe(TOPIC, this)
@@ -146,13 +147,18 @@ private class MyCheckPubCacheSizeComponent(val project: Project) : JBLabel(), Pu
         toolTipText = PubCacheSizeCalcService.getInstance(project).getPubCacheDirPathString()
     }
 
+    override fun fireHyperlinkEvent(inputEvent: InputEvent?) {
+        PubCacheSizeCalcService.getInstance(project).openDir()
+        super.fireHyperlinkEvent(inputEvent)
+    }
+
 
     private fun setDefaultText() {
-        text = "Pub Cache Size: " + PubCacheSizeCalcService.getInstance(project).getCurrentSizeFormatString()
+        setHyperlinkText("Pub Cache Size: " + PubCacheSizeCalcService.getInstance(project).getCurrentSizeFormatString())
     }
 
     override fun calcComplete(len: Long, formatString: String) {
-        text = "Pub Cache Size: $formatString"
+        setHyperlinkText("Pub Cache Size: $formatString")
     }
 
     override fun dispose() {
