@@ -12,13 +12,12 @@ import shop.itbug.fluttercheckversionx.config.*
 import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import javax.swing.JComponent
 
 class AppConfig(val project: Project) : Configurable, Disposable, SearchableConfigurable {
 
-    var model = PluginStateService.getInstance().state ?: AppStateModel()
+    var model = PluginStateService.appSetting
 
     val pluginConfig: PluginSetting = PluginConfig.getState(project)
 

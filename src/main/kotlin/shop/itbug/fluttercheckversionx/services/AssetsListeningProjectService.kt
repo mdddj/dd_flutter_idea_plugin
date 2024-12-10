@@ -99,12 +99,17 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
         })
     }
 
-    private fun checkAndAutoGenFile(projectPath: String, file: VirtualFile, project: Project) {
+    private fun checkAndAutoGenFile(
+        projectPath: String,
+        file: VirtualFile,
+        project: Project
+    ) {
         var filePath = file.canonicalPath
         filePath = filePath?.replace("$projectPath/", "")
         if (filePath != null) {
-            if (filePath.indexOf("assets") == 0) {
-                MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project, "assets", true)
+            val appSetting = PluginStateService.appSetting
+            if (filePath.indexOf(appSetting.assetScanFolderName) == 0) {
+                MyDartPsiElementUtil.autoGenerateAssetsDartClassFile(project, appSetting.assetScanFolderName, true)
             }
         }
     }
@@ -126,7 +131,6 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     val release = releases.find { o -> o.hash == hash }
                     release?.let { r ->
                         if (r.version != c.version) {
-                            println("has new version")
                             showTip(r, project, currentFlutterVersion, flutterChannel)
                         }
                     }
