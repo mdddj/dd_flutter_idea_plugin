@@ -49,7 +49,7 @@ class MyProjectListening : ProjectManagerListener {
 
 @Service(Service.Level.PROJECT)
 class AssetsListeningProjectService(val project: Project) : Disposable {
-    private lateinit var connect: MessageBusConnection
+    private val connect: MessageBusConnection = project.messageBus.connect(this)
     private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
 
     companion object {
@@ -63,9 +63,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             if (checkFlutterVersionTask.indication?.isRunning == true) {
                 checkFlutterVersionTask.indication?.cancel()
             }
-
         }
-        connect.dispose()
     }
 
     ///初始化
@@ -78,7 +76,6 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
 
 
     private fun checkAssetsChange() {
-        connect = project.messageBus.connect()
         connect.subscribe(VirtualFileManager.VFS_CHANGES, object :
             BulkFileListener {
             override fun after(events: MutableList<out VFileEvent>) {
