@@ -35,7 +35,6 @@ open class JsonEditorTextPanel(project: Project, initText: String = "") :
     LanguageTextField(JsonLanguage.INSTANCE, project, initText, false) {
 
     init {
-        text = initText
         ApplicationManager.getApplication().invokeLater {
             this.format(JsonLanguage.INSTANCE)
         }

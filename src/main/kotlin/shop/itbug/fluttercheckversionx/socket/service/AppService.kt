@@ -49,7 +49,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
 
     init {
         register()
-//        addTestRequestItem()
     }
 
 
@@ -80,6 +79,8 @@ class AppService : DioApiService.HandleFlutterApiModel {
             .changeProject(appName, project)
     }
 
+    //当前选中项目
+    fun getCurrentSelectProjectName() = currentSelectName.get()
 
     /**
      * 获取全部的请求,不区分项目

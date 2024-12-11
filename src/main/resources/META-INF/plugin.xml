@@ -64,6 +64,13 @@
                                               nameKey="lastupdate_date_time"
                                               providerId="flutterxWithPubspecUpdateTime"/>
 
+        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
+                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"
+                                              isEnabledByDefault="true"
+                                              language="Dart"
+                                              nameKey="useage_count" providerId="flutterxInlayWithDartUseageCount"/>
+
+
         <!--        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"-->
         <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.DartRunBuildInlay"-->
         <!--                                              isEnabledByDefault="true"-->

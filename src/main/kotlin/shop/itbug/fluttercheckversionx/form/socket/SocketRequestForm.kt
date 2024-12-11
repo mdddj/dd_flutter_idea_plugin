@@ -14,6 +14,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.dialog.validParseToFreezed
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
@@ -61,11 +62,11 @@ fun SocketResponseModel.getDataString(): String {
 
 // 监听http请求的窗口
 class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow) : OnePixelSplitter(),
-    DioApiService.HandleFlutterApiModel, Disposable, ListDataListener {
+    DioApiService.HandleFlutterApiModel, Disposable, ListDataListener, ApiListPanel.OnChangeConfigListen {
 
 
     ///接口列表
-    val apiPanel = ApiListPanel(project)
+    val apiPanel = ApiListPanel(project).also { it.addOnChangeConfigListen(this) }
 
 
     private val apiList = apiPanel.scroll().apply {
@@ -94,6 +95,13 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         val verticalScrollBar = apiList.verticalScrollBar
         verticalScrollBar.value = verticalScrollBar.maximum
         apiPanel.ensureIndexIsVisible(apiPanel.model.size - 1)
+    }
+
+    ///滚动到底部.
+    private fun scrollToTop() {
+        val verticalScrollBar = apiList.verticalScrollBar
+        verticalScrollBar.value = 0
+        apiPanel.ensureIndexIsVisible(0)
     }
 
 
@@ -138,6 +146,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         autoScrollToMax()
     }
 
+
     companion object {
         const val SPLIT_KEY = "Dio Panel Re Key"
     }
@@ -146,6 +155,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
     override fun dispose() {
         println("dispose.....SocketRequestForm")
         apiPanel.model.removeListDataListener(this)
+        apiPanel.removeOnChangeConfigListen(this)
         super.dispose()
     }
 
@@ -159,6 +169,24 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
 
     override fun contentsChanged(p0: ListDataEvent?) {
         autoScrollToMax()
+    }
+
+    override fun listenChanged(
+        p1: DoxListeningSetting,
+        p2: DoxListeningSetting
+    ) {
+        if (p1.isReverseApi != p2.isReverseApi) {
+            ApplicationManager.getApplication().invokeLater {
+                if (p2.isReverseApi) {
+                    //到顶部
+                    scrollToTop()
+                } else {
+                    //到底部
+                    scrollToBottom()
+                }
+
+            }
+        }
     }
 
 }

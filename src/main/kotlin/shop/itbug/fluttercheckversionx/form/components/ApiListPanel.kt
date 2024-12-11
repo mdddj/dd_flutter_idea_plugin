@@ -1,9 +1,9 @@
 package shop.itbug.fluttercheckversionx.form.components
 
-import com.google.gson.Gson
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.PopupHandler
@@ -16,9 +16,7 @@ import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.bus.DioWindowApiSearchBus
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
-import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
-import shop.itbug.fluttercheckversionx.config.DioSettingChangeEvent
-import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.config.*
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.dsl.formatUrl
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
@@ -26,7 +24,6 @@ import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
-import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
@@ -34,9 +31,8 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.util.Util
-import shop.itbug.fluttercheckversionx.window.logger.LogKeys
-import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import javax.swing.DefaultListModel
+import javax.swing.ListSelectionModel
 import javax.swing.SwingUtilities
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.ListSelectionEvent
@@ -46,26 +42,24 @@ import javax.swing.event.ListSelectionListener
 /**
  * api列表
  */
-class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListener, UiDataProvider,
-    DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent, Disposable {
+class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableListOf())), ListSelectionListener,
+    UiDataProvider, DioApiService.HandleFlutterApiModel, FlutterProjectChangeEvent, Disposable,
+    DioSettingChangeEventChangeFun {
 
     private val appService = AppService.getInstance()
-    private fun listModel(): ItemModel = model as ItemModel
-
+    private val configChangeListeners = mutableListOf<OnChangeConfigListen>()
 
     init {
         register()
         connectFlutterProjectChangeEvent(this)
-        model = ItemModel(mutableListOf())
         cellRenderer = MyCustomItemRender()
+        selectionModel.selectionMode = ListSelectionModel.SINGLE_SELECTION
         setApiListEmptyText()
         addListSelectionListener(this)
         border = emptyBorder()
         DioWindowApiSearchBus.listing(this) { doSearch(it) }
-        DioWindowCleanRequests.listening(this) { listModel().clear() }
-        DioSettingChangeEvent.listen(this) { _, _ ->
-            refreshUi()
-        }
+        DioWindowCleanRequests.listening(this) { getListModel().clear() }
+        DioSettingChangeEvent.listen(this, this)
         SwingUtilities.invokeLater {
             appService.refreshProjectRequest(project)
         }
@@ -80,10 +74,8 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
     }
 
 
-    ///重新构建一下 UI
-    private fun refreshUi() {
-        model = ItemModel(listModel().list)
-    }
+    ///获取列表模型
+    fun getListModel() = model as ItemModel
 
 
     private val myActionGroup: ActionGroup
@@ -97,32 +89,39 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         val allRequest = appService.getAllRequest()
         val results = allRequest.filter { it.url.uppercase().contains(keyword.uppercase()) }
         if (results.isNotEmpty()) {
-            listModel().apply {
-                clear()
-                addAll(results)
-            }
+            changeApisModel(results)
         } else {
-            listModel().apply {
-                clear()
-                addAll(appService.getCurrentProjectAllRequest())
-            }
+            changeApisModel(appService.getCurrentProjectAllRequest())
         }
     }
 
 
-    /**
-     * 更新api列表
-     */
-    private fun changeApisModel(apis: MutableList<Request>) {
-        println("change api...")
-        val isReverse = DioListingUiConfig.setting.isReverseApi
-        if (isReverse.not()) {
-            model = ItemModel(apis)
-        } else {
-            apis.reverse()
-            model = ItemModel(apis)
-        }
+    //刷新UI
+    private fun refreshListWithConfig() {
+        println("刷新api列表")
+        changeApisModel()
+    }
 
+
+    //顺序显示
+    private fun changeReverseConfig() {
+        refreshListWithConfig()
+    }
+
+    //更新api列表显示
+    private fun changeApisModel(apis: List<Request> = appService.getCurrentProjectAllRequest()) {
+        if (apis.isNotEmpty()) {
+            ApplicationManager.getApplication().invokeLater {
+                val isReverse = DioListingUiConfig.setting.isReverseApi
+                if (isReverse.not()) {
+                    getListModel().changeList(apis)
+                } else {
+                    println("倒序.")
+                    val mList = apis.toMutableList().reversed()
+                    getListModel().changeList(mList)
+                }
+            }
+        }
     }
 
 
@@ -188,18 +187,16 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
 
     override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
         if (project.isDisposed) return
-        try {
-            MyLoggerEvent.fire(MyLogInfo(message = Gson().toJson(model), key = LogKeys.dioLog))
-        } catch (_: Exception) {
+        if (appService.getCurrentSelectProjectName() == model.projectName) {
+            showNewApiTips(model)
+            getListModel().addItem(model, DioListingUiConfig.setting.isReverseApi)
         }
-        showNewApiTips(model)
-        changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
         super.handleModel(model)
     }
 
 
+    //弹窗新接口提示
     private fun showNewApiTips(req: Request) {
-
         val config = PluginStateService.getInstance().state
         val manager = ToolWindowManager.getInstance(project)
         val windowId = MyToolWindowTools.windowId
@@ -223,15 +220,10 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         }
     }
 
-    private inner class ItemModel(val list: MutableList<Request>) : DefaultListModel<Request>() {
-        init {
-            addAll(list)
-        }
-    }
 
     //更新项目
     override fun changeProject(projectName: String, project: Project?) {
-        changeApisModel(appService.getCurrentProjectAllRequest().toMutableList())
+        changeApisModel()
     }
 
     override fun uiDataSnapshot(sink: DataSink) {
@@ -243,5 +235,51 @@ class ApiListPanel(val project: Project) : JBList<Request>(), ListSelectionListe
         println("api list panel dispose....")
     }
 
+    override fun invoke(
+        p1: DoxListeningSetting, p2: DoxListeningSetting
+    ) {
+        println("监听到: 设置发生变化")
+        for (listen in configChangeListeners) {
+            listen.listenChanged(p1, p2)
+        }
+        if (p1.isReverseApi != p2.isReverseApi) {
+            println("切换api顺序显示")
+            changeReverseConfig()
+        }
+    }
 
+    fun addOnChangeConfigListen(obj: OnChangeConfigListen) {
+        configChangeListeners.add(obj)
+    }
+
+    fun removeOnChangeConfigListen(obj: OnChangeConfigListen) {
+        configChangeListeners.remove(obj)
+    }
+
+    interface OnChangeConfigListen {
+        fun listenChanged(p1: DoxListeningSetting, p2: DoxListeningSetting)
+    }
+}
+
+//模型
+class ItemModel(val list: List<Request>) : DefaultListModel<Request>() {
+
+    init {
+        addAll(list)
+    }
+
+    //添加项目
+    fun addItem(newItem: Request, isReverse: Boolean) {
+        if (isReverse) {
+            add(0, newItem)
+        } else {
+            add(size, newItem)
+        }
+    }
+
+    //切换显示列表
+    fun changeList(newItems: List<Request>) {
+        removeAllElements()
+        addAll(newItems)
+    }
 }
