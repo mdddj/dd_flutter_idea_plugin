@@ -14,7 +14,6 @@ import shop.itbug.fluttercheckversionx.icons.MyIcons
 class MyNotificationUtil {
 
     companion object {
-        private const val toolWindowId = "Dio Request"
 
         //socket 相关通知
         fun socketNotify(message: String, project: Project, type: NotificationType = NotificationType.INFORMATION) {

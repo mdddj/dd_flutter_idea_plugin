@@ -98,15 +98,9 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
 
     //刷新UI
     private fun refreshListWithConfig() {
-        println("刷新api列表")
         changeApisModel()
     }
 
-
-    //顺序显示
-    private fun changeReverseConfig() {
-        refreshListWithConfig()
-    }
 
     //更新api列表显示
     private fun changeApisModel(apis: List<Request> = appService.getCurrentProjectAllRequest()) {
@@ -116,7 +110,6 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
                 if (isReverse.not()) {
                     getListModel().changeList(apis)
                 } else {
-                    println("倒序.")
                     val mList = apis.toMutableList().reversed()
                     getListModel().changeList(mList)
                 }
@@ -163,10 +156,10 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
             }
             appendLine(
                 "IP:${
-                    Util.resolveLocalAddresses()
-                        .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
-                        .map { it.hostAddress }
-                }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
+                Util.resolveLocalAddresses()
+                    .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
+                    .map { it.hostAddress }
+            }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
 
         }
     }
@@ -232,20 +225,16 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
     }
 
     override fun dispose() {
-        println("api list panel dispose....")
+        configChangeListeners.clear()
     }
 
     override fun invoke(
         p1: DoxListeningSetting, p2: DoxListeningSetting
     ) {
-        println("监听到: 设置发生变化")
         for (listen in configChangeListeners) {
             listen.listenChanged(p1, p2)
         }
-        if (p1.isReverseApi != p2.isReverseApi) {
-            println("切换api顺序显示")
-            changeReverseConfig()
-        }
+        refreshListWithConfig()
     }
 
     fun addOnChangeConfigListen(obj: OnChangeConfigListen) {

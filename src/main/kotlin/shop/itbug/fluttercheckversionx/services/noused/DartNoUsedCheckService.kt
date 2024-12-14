@@ -13,7 +13,6 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
 import com.intellij.psi.PsiManager
@@ -68,16 +67,6 @@ private fun PathModel.getPath(): String? {
     return packageFile?.path
 }
 
-/**
- * 启动开始检测包本地路径
- */
-class DartNoUsedCheckServiceActivity : ProjectActivity {
-    override suspend fun execute(project: Project) {
-        // todo 暂时去掉, 开始检查的时机不太对,导致结果不准确
-        // DartNoUsedCheckService.getInstance(project).startCheck()
-    }
-}
-
 
 /**
  * 检查项目中pubspec.yaml定义的依赖,有哪些没有在项目中使用
@@ -97,7 +86,6 @@ class DartNoUsedCheckService(val project: Project) {
      * 开始检测
      */
     fun startCheck(indicator: ProgressIndicator? = null) {
-
         //获取包信息
         DartPackageCheckService.getInstance(project).startResetIndex(DartPackageTaskParam(showNotification = false))
 
@@ -187,10 +175,7 @@ class DartNoUsedCheckService(val project: Project) {
                 if (resultModel != null) {
                     DartNoUsedResultModel(project, resultModel!!).show()
                 }
-
-
             }
-
         }
         task.queue()
     }
@@ -268,11 +253,8 @@ class DartNoUsedCheckService(val project: Project) {
                 }
             }
         }
-
         task.queue()
-
     }
-
 
     /**
      * 判断文件是否在目录下

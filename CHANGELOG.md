@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-## [5.0.5] - 2024-12-06
+## [5.0.6] - 2024-12-12
+
+* New: Statistics of the size of the package occupied on the disk
+* Optimize: `Dio api list window` refactor
+* Fix: `assets generate tool` initialization issues in some scenarios
+* Removed: pubspec.yaml dart package table dialog
+* New: The reconstructed pubspec.yaml check logic supports detection of multiple nested folders.
+
+### [5.0.5] - 2024-12-06
 
 * Add api to display in reverse order
 * Fix the bug of automatically sliding to the bottom

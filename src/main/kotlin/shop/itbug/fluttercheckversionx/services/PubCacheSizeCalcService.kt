@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.util.messages.Topic
-import fleet.util.formatFileSize
 import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.socket.formatSize
 import shop.itbug.fluttercheckversionx.tools.DartPubTools
@@ -59,7 +58,7 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
     }
 
     override fun afterChildrenVisited(file: VirtualFile) {
-        project.messageBus.syncPublisher(TOPIC).calcComplete(size, formatFileSize(size))
+        project.messageBus.syncPublisher(TOPIC).calcComplete(size, formatSize(size))
         super.afterChildrenVisited(file)
     }
 

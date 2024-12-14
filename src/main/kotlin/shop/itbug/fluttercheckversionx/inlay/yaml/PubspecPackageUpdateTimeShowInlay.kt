@@ -4,8 +4,9 @@ import com.intellij.codeInsight.hints.declarative.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.inlay.getLine
-import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
+import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 
 class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
@@ -14,12 +15,12 @@ class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
 
         return object : SharedBypassCollector {
             override fun collectFromElement(element: PsiElement, sink: InlayTreeSink) {
-                val project = element.project
-                val service = DartPackageCheckService.getInstance(project)
+                if (file !is YAMLFile) return
+                val dartInfos = file.getUserData(YAML_DART_PACKAGE_INFO_KEY) ?: return
                 val packageInfo = YamlExtends(element).getMyDartPackageModel()
                 if (packageInfo != null) {
-                    val model = service.findPackageInfoByName(packageInfo.packageName)
-                    if (model != null) {
+                    val model = dartInfos.find { it.name == packageInfo.packageName }
+                    if (model != null && model.pubData != null && model.getLastUpdate() != null) {
                         sink.addPresentation(
                             EndOfLinePosition(editor.getLine(element)),
                             null,
@@ -30,9 +31,10 @@ class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
                                 .withFontSize(HintFontSize.AsInEditor)
                         ) {
                             this.text(model.getLastUpdateTimeFormatString())
+
                         }
 
-                        model.serverLastVersion()?.let { lastVersion ->
+                        model.getLastVersionText()?.let { lastVersion ->
                             sink.addPresentation(
                                 InlineInlayPosition(element.textRange.endOffset, true, 0),
                                 null,
@@ -44,8 +46,6 @@ class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
                                 this.text(lastVersion)
                             }
                         }
-
-
                     }
                 }
             }

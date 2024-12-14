@@ -71,27 +71,27 @@ fun Row.saveToDirectoryConfig(
                     }
             }
             row(PluginBundle.get("g.3")) {
-                textFieldWithBrowseButton(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project) {
-                    it.path
-                }.bindText(onChange.onDirectoryChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
-                    VerifyFileDir.validDirByComponent(it)
-                }.validationOnInput {
-                    if (VerifyFileDir.validDirByComponent(it)) {
-                        return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-                    }
-                    return@validationOnInput null
-                }
-//                textFieldWithBrowseButton(
-//                    "Select Dir", project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
-//                ) { it.path }.bindText(onChange.onDirectoryChange).align(Align.FILL)
-//                    .addValidationRule(VerifyFileDir.ERROR_MSG) {
-//                        VerifyFileDir.validDirByComponent(it)
-//                    }.validationOnInput {
-//                        if (VerifyFileDir.validDirByComponent(it)) {
-//                            return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-//                        }
-//                        return@validationOnInput null
+//                textFieldWithBrowseButton(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project) {
+//                    it.path
+//                }.bindText(onChange.onDirectoryChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+//                    VerifyFileDir.validDirByComponent(it)
+//                }.validationOnInput {
+//                    if (VerifyFileDir.validDirByComponent(it)) {
+//                        return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
 //                    }
+//                    return@validationOnInput null
+//                }
+                textFieldWithBrowseButton(
+                    "Select Dir", project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
+                ) { it.path }.bindText(onChange.onDirectoryChange).align(Align.FILL)
+                    .addValidationRule(VerifyFileDir.ERROR_MSG) {
+                        VerifyFileDir.validDirByComponent(it)
+                    }.validationOnInput {
+                        if (VerifyFileDir.validDirByComponent(it)) {
+                            return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+                        }
+                        return@validationOnInput null
+                    }
             }
             row {
                 checkBox(PluginBundle.get("freezed.gen.base.open.in.editor")).bindSelected(onChange.onOpenInEditor)

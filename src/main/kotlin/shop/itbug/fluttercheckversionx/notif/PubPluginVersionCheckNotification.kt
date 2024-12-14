@@ -1,56 +1,52 @@
 package shop.itbug.fluttercheckversionx.notif
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
-import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.ui.UIUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.yaml.psi.YAMLFile
+import shop.itbug.fluttercheckversionx.common.yaml.PubspecYamlFileTools
 import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService
 import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService.Companion.TOPIC
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
+import shop.itbug.fluttercheckversionx.tools.log
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
-import shop.itbug.fluttercheckversionx.util.getPubspecYAMLFile
-import shop.itbug.fluttercheckversionx.widget.DartPackageTable
 import java.awt.event.InputEvent
-import java.util.concurrent.Callable
 import java.util.function.Function
 import javax.swing.JComponent
 import javax.swing.SwingUtilities
 import javax.swing.ToolTipManager
 
-class PubPluginVersionCheckNotification : EditorNotificationProvider, DumbAware {
-    private var pubFile: YAMLFile? = null
+class PubPluginVersionCheckNotification : EditorNotificationProvider {
     override fun collectNotificationData(
         project: Project, file: VirtualFile
     ): Function<in FileEditor, out JComponent?> {
-
         return Function<FileEditor, JComponent?> {
+            if (project.isDisposed) return@Function null
             if (it.component.parent == null) return@Function null
-            val panel = YamlFileNotificationPanel(it, project)
-            if (pubFile != null && file.name == "pubspec.yaml") {
+            val psiFile = PsiManager.getInstance(project).findFile(file) ?: return@Function null
+            if (file.name == "pubspec.yaml" && psiFile is YAMLFile) {
+                log.warn("start check is flutter project")
+                val isFlutterProject =
+                    runBlocking(Dispatchers.IO) { PubspecYamlFileTools.create(psiFile).isFlutterProject() }
+                log.warn("is a flutter project: $isFlutterProject")
+                if (!isFlutterProject) return@Function null
+                val panel = YamlFileNotificationPanel(it, psiFile, project)
                 return@Function panel
             }
-            pubFile =
-                ApplicationManager.getApplication().executeOnPooledThread(Callable { project.getPubspecYAMLFile() })
-                    .get()
-            if (it.component.parent != null && pubFile != null) {
-                EditorNotifications.getInstance(project).updateNotifications(pubFile!!.virtualFile)
-            }
-
             return@Function null
         }
     }
@@ -58,13 +54,8 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider, DumbAware 
 }
 
 
-class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
+private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFile, val project: Project) :
     EditorNotificationPanel(fileEditor, UIUtil.getEditorPaneBackground()) {
-
-
-    private var checkLabel: HyperlinkLabel = createActionLabel(PluginBundle.get("check.flutter.plugin")) {
-        DartPackageTable(project).show()
-    }
 
     private val pubCacheSizeComponent = MyCheckPubCacheSizeComponent(project)
 
@@ -76,8 +67,6 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
         icon(MyIcons.dartPluginIcon)
         text(PluginBundle.get("w.t"))
 
-        myLinksPanel.add(checkLabel)
-
         val searchPluginLabel = createActionLabel(PluginBundle.get("search.pub.plugin")) {
             search()
         }
@@ -86,9 +75,9 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
 
         ///重新索引
         val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
-            DartPackageCheckService.getInstance(project).startResetIndex()
-            MyFileUtil.reIndexPubspecFile(project)
+            MyFileUtil.reIndexWithVirtualFile(file.virtualFile)
         }
+
         myLinksPanel.add(reIndexLabel)
 
 
@@ -103,7 +92,7 @@ class YamlFileNotificationPanel(fileEditor: FileEditor, val project: Project) :
 
         ///管理忽略的包
         val igPackageLabel = createActionLabel("Ignore packages") {
-            IgPluginPubspecConfigList.showInPopup(project)
+            IgPluginPubspecConfigList.showInPopup(project, file)
         }
         myLinksPanel.add(igPackageLabel)
 

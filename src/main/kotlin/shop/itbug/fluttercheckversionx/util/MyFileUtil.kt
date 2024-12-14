@@ -110,10 +110,13 @@ object MyFileUtil {
     fun reIndexPubspecFile(project: Project) {
         getPubspecVirtualFile(project)?.let { virtualFile ->
             if (checkFileIsIndex(project, virtualFile)) {
-                println("reindex pubspec.yaml")
                 FileBasedIndex.getInstance().requestReindex(virtualFile)
             }
         }
+    }
+
+    fun reIndexWithVirtualFile(virtualFile: VirtualFile) {
+        FileBasedIndex.getInstance().requestReindex(virtualFile)
     }
 
 

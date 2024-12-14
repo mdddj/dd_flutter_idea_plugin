@@ -12,14 +12,12 @@ class FlutterXRunConfigurationFactory(configurationType: ConfigurationType) :
         return FlutterXRunConfiguration(project, this, "FlutterX Run")
     }
 
-
     override fun getId(): String {
         return FlutterXRunConfigType.ID
     }
 
-
     override fun getOptionsClass(): Class<out BaseState> {
         return FlutterXRunConfigOptions::class.java
     }
-
+    
 }

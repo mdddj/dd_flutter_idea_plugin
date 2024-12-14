@@ -62,12 +62,14 @@
                                               isEnabledByDefault="true"
                                               language="yaml"
                                               nameKey="lastupdate_date_time"
+                                              bundle="messages.pluginBundle"
                                               providerId="flutterxWithPubspecUpdateTime"/>
 
         <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
                                               implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"
                                               isEnabledByDefault="true"
                                               language="Dart"
+                                              bundle="messages.pluginBundle"
                                               nameKey="useage_count" providerId="flutterxInlayWithDartUseageCount"/>
 
 
@@ -84,6 +86,12 @@
         <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
                                    language="JSON"/>
+
+
+        <externalAnnotator
+                implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"
+                language="yaml"/>
+
 
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.actions.riverpod.PsiElementEditorPopupMenuInlay"
@@ -131,7 +139,8 @@
                                     order="first, after Translation.TranslatedDocumentationProvider.Dart"/>
 
         <!--   dio监听http请求小窗口   -->
-        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.SocketWindow" id="Dio Request" anchor="bottom"
+        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
+                    anchor="bottom"
                     icon="/icons/flutter.svg"/>
 
         <!--   底部状态栏展示小部件     -->
@@ -151,19 +160,16 @@
 
         <!--        插件新版本检测-->
 
-        <externalAnnotator
-                implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"
-                language="yaml"/>
+        <!--        <externalAnnotator-->
+        <!--                implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"-->
+        <!--                language="yaml"/>-->
 
 
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubspecStartActivity"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.UserDartLibServiceInit"/>
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.DartPackageCheckActivity"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcPostStart"/>
-        <postStartupActivity
-                implementation="shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckServiceActivity"/>
         <!--        错误处理-->
         <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.common.PluginErrorHandle"/>-->
         <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
@@ -175,6 +181,8 @@
     <projectListeners>
         <listener class="shop.itbug.fluttercheckversionx.services.MyProjectListening"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="shop.itbug.fluttercheckversionx.common.dart.RunConfigListener"
+                  topic="com.intellij.execution.ExecutionListener"/>
     </projectListeners>
 
     <actions>

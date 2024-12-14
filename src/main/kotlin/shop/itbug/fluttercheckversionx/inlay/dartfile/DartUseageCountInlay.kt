@@ -39,9 +39,7 @@ class DartUseageCountInlay : InlayHintsProvider {
                         element.componentName?.let { viewInEnd(it, sink, editor) }
                     }
                 }
-
             }
-
 
             fun viewInEnd(element: PsiElement, sink: InlayTreeSink, editor: Editor) {
                 val size =
