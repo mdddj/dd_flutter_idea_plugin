@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.linemark
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
@@ -13,21 +14,18 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import icons.MyImages
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.actions.PUB_URL
-import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
+import shop.itbug.fluttercheckversionx.cache.YamlFileIgDartPackageCache
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
-import shop.itbug.fluttercheckversionx.services.DartPackageTaskParam
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
+import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
+import shop.itbug.fluttercheckversionx.tools.YAML_FILE_IS_FLUTTER_PROJECT
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.getPluginName
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
-import shop.itbug.fluttercheckversionx.util.restartAnalyzer
 import java.awt.event.MouseEvent
 import javax.swing.Icon
 
@@ -35,16 +33,19 @@ import javax.swing.Icon
 class PluginDartIconLineMark : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
+        val psiFile = element.containingFile ?: return null
+        if (psiFile !is YAMLFile) return null
+        val isFlutterProject = psiFile.getUserData(YAML_FILE_IS_FLUTTER_PROJECT) ?: return null
+        if (!isFlutterProject) return null
         if (element.isDartPluginElement()) {
             val packageName = element.getPluginName()
-            val igManager = DartPluginIgnoreConfig.getInstance(element.project)
-            val isIgnored = igManager.isIg(packageName)
+            val isIgnored = YamlFileIgDartPackageCache.getInstance(element.project).state.hasItem(psiFile, packageName)
             return LineMarkerInfo(
                 element.firstChild,
                 element.firstChild.textRange,
                 if (isIgnored) MyImages.ignore else MyIcons.dartPackageIcon,
                 { element.text },
-                PluginDartIconLineMarkNavHandler(element),
+                PluginDartIconLineMarkNavHandler(element, psiFile),
                 GutterIconRenderer.Alignment.LEFT
             ) { "" }
         }
@@ -52,10 +53,11 @@ class PluginDartIconLineMark : LineMarkerProvider {
     }
 }
 
-class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavigationHandler<PsiElement> {
+class PluginDartIconLineMarkNavHandler(val element: PsiElement, val file: YAMLFile) :
+    GutterIconNavigationHandler<PsiElement> {
     override fun navigate(e: MouseEvent?, elt: PsiElement?) {
         if ((e != null) && (e.clickCount == 1)) {
-            JBPopupFactory.getInstance().createListPopup(PluginDartIconActionMenuList(element = element))
+            JBPopupFactory.getInstance().createListPopup(PluginDartIconActionMenuList(element = element, file))
                 .show(RelativePoint(e.locationOnScreen))
         }
     }
@@ -63,16 +65,16 @@ class PluginDartIconLineMarkNavHandler(val element: PsiElement) : GutterIconNavi
 
 data class PluginDartIconActionMenuItem(val title: String, val type: String, val icon: Icon)
 
-class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<PluginDartIconActionMenuItem>() {
+class PluginDartIconActionMenuList(val element: PsiElement, val file: YAMLFile) :
+    BaseListPopupStep<PluginDartIconActionMenuItem>() {
 
     private val project = element.project
-    private val virtualFile = element.containingFile.virtualFile
+    private val ignoreServices = YamlFileIgDartPackageCache.getInstance(project)
     private val removeIgnoreText = PluginBundle.get("ignore_remove")
     private val addIgnoreText = PluginBundle.get("ig.version.check")
-    private val igManager = DartPluginIgnoreConfig.getInstance(project)
     private val pluginName = element.getPluginName()
-    private val isIgnored = igManager.isIg(pluginName)
-    private val detail = DartPackageCheckService.getInstance(project).findPackageInfoByName(pluginName)
+    private val isIgnored = ignoreServices.state.hasItem(file, pluginName)
+
 
     private val menus: MutableList<PluginDartIconActionMenuItem>
         get() {
@@ -115,12 +117,6 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
         return value?.title ?: "未知选项"
     }
 
-    fun reIndexFile() {
-        project.restartAnalyzer()
-        MyFileUtil.reIndexFile(project, virtualFile)
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onChosen(selectedValue: PluginDartIconActionMenuItem?, finalChoice: Boolean): PopupStep<*>? {
         when (selectedValue?.type) {
             menus[0].type -> {
@@ -129,20 +125,12 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
 
             menus[1].type -> {
                 if (isIgnored) {
-                    DartPluginIgnoreConfig.getInstance(project).remove(pluginName)
-
-                    GlobalScope.launch {
-                        DartPackageCheckService.getInstance(project).resetIndex(DartPackageTaskParam(false) {
-                            reIndexFile()
-                        })
-                    }
+                    ignoreServices.state.remove(file, pluginName)
                 } else {
-                    DartPluginIgnoreConfig.getInstance(project).add(pluginName)
-                    DartPackageCheckService.getInstance(project).removeItemByPluginName(pluginName)
-                    reIndexFile()
+                    ignoreServices.state.addNew(file, pluginName)
                 }
-
-
+                DaemonCodeAnalyzer.getInstance(project).restart(file)
+                MyFileUtil.reIndexFile(project, file.virtualFile)
             }
 
             menus[2].type -> {
@@ -152,8 +140,10 @@ class PluginDartIconActionMenuList(val element: PsiElement) : BaseListPopupStep<
             menus[3].type -> {
                 //打开json文件
                 ApplicationManager.getApplication().invokeLater {
-                    val jsonText = detail?.second?.jsonText
-                    if (jsonText != null) {
+                    val infos = file.getUserData(YAML_DART_PACKAGE_INFO_KEY) ?: return@invokeLater
+                    val detail = infos.find { it.name == pluginName } ?: return@invokeLater
+                    val jsonText = detail.pubData?.jsonText ?: return@invokeLater
+                    if (jsonText.isNotEmpty()) {
                         MyFileUtil.createVirtualFileByJsonText(jsonText, "${pluginName}.json") { file, tool ->
                             tool.openInEditor(file, project)
                             tool.reformatVirtualFile(file, project)

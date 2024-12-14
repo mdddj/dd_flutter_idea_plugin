@@ -31,7 +31,7 @@ fun isValidJson(jsonString: String): Boolean {
     return try {
         Json.parseToJsonElement(jsonString)
         true
-    } catch (e: JsonException) {
+    } catch (_: JsonException) {
         false
     }
 }

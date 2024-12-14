@@ -23,12 +23,10 @@ data class PluginSetting(
     //缩放大小
     var assetsIconSize: Int = 16,
 
-
     //显示discord
     var showDiscord: Boolean = true,
     //显示qq群
     var showQQGroup: Boolean = true,
-
     //显示打赏action
     var showRewardAction: Boolean = true,
 

@@ -166,7 +166,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
         if (info.staticType != null) {
             val t = info.staticType
             val tsb = StringBuilder()
-            DocumentationManagerUtil.createHyperlink(tsb, t, t, false, false)
+            DocumentationManagerUtil.createHyperlink(tsb, t, t, false)
             Helper.addKeyValueSection(PluginBundle.get("type"), tsb.toString(), sb)
         }
         if (referenceElement != null) {

@@ -29,6 +29,7 @@ class AssetsAutoGenerateClassAction : MyAction(PluginBundle.getLazyMessage("asse
     override fun update(e: AnActionEvent) {
         val vf = e.getData(CommonDataKeys.VIRTUAL_FILE)
         e.presentation.isEnabledAndVisible = vf != null && vf.isDirectory && e.project != null
+
         super.update(e)
     }
 

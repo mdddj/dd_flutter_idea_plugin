@@ -1,11 +1,14 @@
 package shop.itbug.fluttercheckversionx.window
 
+import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
+import shop.itbug.fluttercheckversionx.common.dart.FlutterEvent
+import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -18,18 +21,17 @@ import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
 import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
-
 /**
  * dio 的请求监听窗口, 在这个窗口中,会将手机里面的一系列请求在这个窗口中显示,并可以查看详细信息
  * 梁典典: 2022年04月29日11:12:51
  */
-class SocketWindow : ToolWindowFactory {
+class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val instance = ContentFactory.getInstance()
         val socketRequestForm = SocketRequestForm(project, toolWindow)
         val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
-        createContent.setDisposer(socketRequestForm.apiPanel) //销毁监听
+        createContent.setDisposer(socketRequestForm) //销毁监听
 
         toolWindow.contentManager.addContent(createContent)
 
@@ -40,7 +42,7 @@ class SocketWindow : ToolWindowFactory {
                     DioApiService.getInstance().builder(port).start()
                     toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
                     AppService.getInstance().setDioSocketState(true)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     project.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
                 }
             }
@@ -74,15 +76,20 @@ class SocketWindow : ToolWindowFactory {
         //隐私扫描工具窗口
         val privacyPanel = PrivacyScanWindow(project)
         val privacyContent = instance.createContent(
-            privacyPanel,
-            "IOS ${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}",
-            false
+            privacyPanel, "IOS ${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}", false
         )
         toolWindow.contentManager.addContent(privacyContent)
-//
-//        val depsWindow = MyDartPackageTree.createPanel(project)
-//        val depsContent = instance.createContent(depsWindow, "Deps", false)
-//        toolWindow.contentManager.addContent(depsContent)
+
+
+        FlutterXVMService.getInstance(project).addListener(this)
+
     }
+
+
+    ///监听flutter项目启动
+    override fun processFlutterEvent(project: Project, flutterEvent: FlutterEvent, event: ProcessEvent) {
+
+    }
+
 
 }

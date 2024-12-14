@@ -3,13 +3,11 @@ package shop.itbug.fluttercheckversionx.dialog.freezed
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.TextFieldWithBrowseButton
-import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.ui.*
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.listCellRenderer.listCellRenderer
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
@@ -79,6 +77,11 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                         row {
                             checkBox(PluginBundle.get("freezed.gen.base.set.default.value")).bindSelected(generateConfig.propsConfig::setDefaultValue)
                         }
+                        val box = ComboBox<FormJsonType>(FormJsonType.entries.toTypedArray())
+                        box.renderer = listCellRenderer { text(this.value.value) }
+                        row("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}") {
+                            cell(box).bindItem(generateConfig::formJsonType)
+                        }
                     }
                 }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
 
@@ -100,17 +103,12 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
             ///命名规则
             nameRuleConfig(
                 NameRuleConfig(
-                    className = generateConfig::classNameFormat, propertiesName = generateConfig::propertyNameFormat
+                    classNameNew = generateConfig::classNameFormatNew,
+                    propertyNameNew = generateConfig::propertyNameFormatNew,
+                    classNameRaw = generateConfig::classNameRaw,
+                    propertyNameRaw = generateConfig::propertyNameRaw,
                 )
-            ) {
-                buttonsGroup("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}:") {
-                    row {
-                        FormJsonType.entries.forEach {
-                            radioButton(it.value, it)
-                        }
-                    }
-                }.bind(generateConfig::formJsonType)
-            }
+            )
 
             collapsibleGroup("<html>Hive & Isar ${PluginBundle.get("freezed.gen.base.setting")}</html>", false) {
                 row {
@@ -193,7 +191,7 @@ private class RustEditorPanel(
     var globalConfig = FreezedClassConfig()
     var config = FreezedPropertiesConfig()
     private val settingPanel = panel {
-        row("class Name") {
+        row("Class Name") {
             textField().bindText(dartClass::className)
         }
     }
@@ -214,7 +212,7 @@ private class RustEditorPanel(
                 changeText(globalConfig)
             }
             listenChange()
-        }, 1000)
+        }, 700)
     }
 
     fun changeText(config: FreezedClassConfig) {
@@ -224,5 +222,5 @@ private class RustEditorPanel(
 
     fun getObjectClassText() = rustEditor.text
 
-
 }
+

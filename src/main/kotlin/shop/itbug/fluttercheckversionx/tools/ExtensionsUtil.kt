@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.tools
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import javax.swing.BorderFactory
@@ -25,3 +26,6 @@ fun JComponent.showInCenterOfPopup(project: Project) {
     JBPopupFactory.getInstance()
         .createComponentPopupBuilder(this, null).createPopup().showCenteredInCurrentWindow(project)
 }
+
+inline fun <reified T : Any> T.log() = logger<T>()
+inline val <reified T : Any> T.log get() = logger<T>()

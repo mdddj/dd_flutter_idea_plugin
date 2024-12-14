@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.inlay.freezed
 
 import com.intellij.codeInsight.hints.*
 import com.intellij.icons.AllIcons
+import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
@@ -13,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
+import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.common.MyAction
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
@@ -37,11 +39,19 @@ class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
     override val name: String
         get() = "FreezedInlay"
     override val previewText: String
-        get() = "@freezed\n" +
-                "class Test {}"
+        get() = """
+            @freezed
+            class MyClass with _MyClass {
+                
+            }
+        """.trimIndent()
 
     override fun createSettings(): DoxListeningSetting {
         return DioListingUiConfig.setting
+    }
+
+    override fun isLanguageSupported(language: Language): Boolean {
+        return language == DartLanguage.INSTANCE
     }
 
     override fun getCollectorFor(
@@ -56,7 +66,6 @@ class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
     override fun createConfigurable(settings: DoxListeningSetting): ImmediateConfigurable {
         return FreezedInlayPanel()
     }
-
 }
 
 

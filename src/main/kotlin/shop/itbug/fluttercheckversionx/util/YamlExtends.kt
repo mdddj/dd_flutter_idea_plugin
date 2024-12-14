@@ -17,9 +17,19 @@ private val betaPattern = Regex("""\bbeta\b""")
 
 
 enum class DartVersionType {
-    Dev, Beta, Base
+    Dev, Beta, Base, Any
 }
 
+/**
+ * 使用正则表达式
+ * 解析dart package版本类型
+ */
+fun tryParseDartVersionType(version: String): DartVersionType {
+    if (devPattern.containsMatchIn(version)) return DartVersionType.Dev
+    if (betaPattern.containsMatchIn(version)) return DartVersionType.Beta
+    if (version.isEmpty() || version == "any") return DartVersionType.Any
+    return DartVersionType.Base
+}
 
 ///插件版本是不是 dev
 fun DartPluginVersionName.isDev(): Boolean = devPattern.containsMatchIn(version)
@@ -27,11 +37,8 @@ fun DartPluginVersionName.isBeta(): Boolean = betaPattern.containsMatchIn(versio
 
 ///版本类型
 val DartPluginVersionName.versionType: DartVersionType
-    get() = when {
-        isBeta() -> DartVersionType.Beta
-        isDev() -> DartVersionType.Dev
-        else -> DartVersionType.Base
-    }
+    get() = tryParseDartVersionType(version)
+
 val DartPluginVersionName.finalVersionText get() = version.removePrefix("^")
 
 data class DartPluginVersionName(val name: String, val version: String)
@@ -104,6 +111,6 @@ object MyYamlPsiElementFactory {
     fun createPlainPsiElement(project: Project, text: String): YAMLPlainTextImpl? {
         val instance = PsiFileFactory.getInstance(project)
         val createFileFromText: YAMLFile = instance.createFileFromText(YAMLLanguage.INSTANCE, "name: $text") as YAMLFile
-        return PsiTreeUtil.findChildrenOfAnyType(createFileFromText, YAMLPlainTextImpl::class.java).lastOrNull()
+        return PsiTreeUtil.findChildOfType(createFileFromText, YAMLPlainTextImpl::class.java)
     }
 }

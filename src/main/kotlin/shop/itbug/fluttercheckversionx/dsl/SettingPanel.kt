@@ -36,24 +36,10 @@ fun settingPanel(
         }.bind({ model.lang }, { model.lang = it })
 
         group(PluginBundle.get("check_flutter_version_title")) {
-
             row {
                 checkBox(PluginBundle.get("open")).bindSelected(dioxSetting::checkFlutterVersion)
             }.comment(PluginBundle.get("check_flutter_version_comment"))
-            row("Url") {
-                urlInput = textField().bindText(dioxSetting::checkFlutterVersionUrl).align(Align.FILL)
-            }
-            row {
-                button(PluginBundle.get("use_default_value")) {
-                    urlInput.component.text = Links.defaultFlutterInfosUrl
-                }
-                button("设置中国区镜像地址") {
-                    urlInput.component.text = Links.defaultFlutterInfosUrlByCN
-                }
-            }.comment(Links.generateDocCommit(urlInput.component.text, "View"))
-//            row("pub.dev host") {
-//                textField().bindText(dioxSetting::pubServerUrl).align(Align.FILL)
-//            }
+            PubDevMirrorImageSetting.createFlutterCheckUrlPanel(this, dioxSetting)
             PubDevMirrorImageSetting.createPanel(this, dioxSetting)
             documentCommentRow(Links.checkFlutterVersion)
         }

@@ -17,7 +17,6 @@ class OpenSettingAnAction : DumbAwareAction({ PluginBundle.get("setting.flutterx
         e.project?.let { ShowSettingsUtil.getInstance().showSettingsDialog(it, AppConfig::class.java) }
     }
 
-
     companion object {
         fun getInstance(): AnAction =
             ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction")

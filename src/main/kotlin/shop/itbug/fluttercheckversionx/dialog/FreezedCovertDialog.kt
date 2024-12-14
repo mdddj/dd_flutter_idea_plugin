@@ -2,14 +2,12 @@ package shop.itbug.fluttercheckversionx.dialog
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.model.FreezedCovertModel
 import shop.itbug.fluttercheckversionx.model.getPropertiesString
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
-import java.awt.BorderLayout
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) : DialogWrapper(project) {
 
@@ -26,20 +24,19 @@ class FreezedCovertDialog(val project: Project, val model: FreezedCovertModel) :
 
 
     private var editView = DartEditorTextPanel(project)
-    
+
 
     init {
         super.init()
-        title = "模型转Freezed对象(${model.className})"
+        title = "To freezed class (${model.className})"
         generateFreezedModel()
     }
 
     override fun createCenterPanel(): JComponent {
 
-
-        return object : JPanel(BorderLayout()) {
+        return object : BorderLayoutPanel() {
             init {
-                add(JBScrollPane(editView), BorderLayout.CENTER)
+                addToCenter(editView)
             }
         }
     }

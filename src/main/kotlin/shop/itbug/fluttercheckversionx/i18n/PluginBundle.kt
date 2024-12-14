@@ -12,6 +12,9 @@ object PluginBundle : DynamicPluginBundle(pathToBundleKey) {
     }
 
     val doc: String get() = get("doc")
+
+    fun defaultText() = get("default.value")
+    fun mirrorText() = get("my_setting_mirror_text")
 }
 
 fun String.i18n(): String {

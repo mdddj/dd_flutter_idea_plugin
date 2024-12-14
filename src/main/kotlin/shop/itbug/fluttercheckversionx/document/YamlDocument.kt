@@ -13,8 +13,7 @@ import shop.itbug.fluttercheckversionx.document.Helper.Companion.addKeyValueSect
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.filteredDependenciesString
 import shop.itbug.fluttercheckversionx.model.filteredDevDependenciesString
-import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
-import shop.itbug.fluttercheckversionx.services.PubPackage
+import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 import shop.itbug.fluttercheckversionx.util.isDartPluginElement
@@ -32,25 +31,21 @@ class YamlDocument : DocumentationProvider {
         element?.let {
             val packEle = YamlExtends(element).getMyDartPackageModel()
             if (packEle != null) {
-                val project = element.project
-                val packageInfo: PubPackage? =
-                    ApplicationManager.getApplication().executeOnPooledThread<PubPackage?> {
-                        DartPackageCheckService.getInstance(project)
-                            .fetchPluginDateFromApi(element, packEle.packageName)
+                val packageInfo: PubVersionDataModel? =
+                    ApplicationManager.getApplication().executeOnPooledThread<PubVersionDataModel?> {
+                        PubService.callPluginDetails(packEle.packageName)
                     }.get()
                 if (packageInfo != null) {
-                    val detail = packageInfo.second
-                    val lastTime = packageInfo.getLastUpdateTime()
-                    if (detail != null) {
-                        return renderFullDoc(
-                            pluginName = detail.name,
-                            lastVersion = detail.latest.version,
-                            githubUrl = detail.latest.pubspec.homepage,
-                            desc = detail.latest.pubspec.description,
-                            lastUpdate = lastTime,
-                            model = detail
-                        )
-                    }
+                    val detail = packageInfo
+                    val lastTime = packageInfo.lastVersionUpdateTimeString
+                    return renderFullDoc(
+                        pluginName = detail.name,
+                        lastVersion = detail.latest.version,
+                        githubUrl = detail.latest.pubspec.homepage,
+                        desc = detail.latest.pubspec.description,
+                        lastUpdate = lastTime,
+                        model = detail
+                    )
                 }
             }
 

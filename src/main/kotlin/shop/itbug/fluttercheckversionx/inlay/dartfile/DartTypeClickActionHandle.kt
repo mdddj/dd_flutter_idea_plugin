@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
-import com.intellij.codeInsight.hints.declarative.*
+import com.intellij.codeInsight.hints.declarative.InlayActionHandler
+import com.intellij.codeInsight.hints.declarative.InlayActionPayload
+import com.intellij.codeInsight.hints.declarative.PsiPointerInlayActionPayload
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import shop.itbug.fluttercheckversionx.document.getDartElementType
@@ -15,22 +17,18 @@ class DartTypeClickActionHandle : InlayActionHandler {
         when (payload) {
             is PsiPointerInlayActionPayload -> {
                 payload.pointer.element?.let {
-                    findUseAge(it, editor)
+                    findUseAge(it)
                 }
             }
 
-            is StringInlayActionPayload -> {}
-//            is SymbolPointerInlayActionPayload -> {}
-            is SymbolPointerInlayActionPayload -> {}
+            else -> {}
         }
     }
 
 
     //查找类型的定义
-    private fun findUseAge(element: PsiElement, editor: Editor) {
-
+    private fun findUseAge(element: PsiElement) {
         val typeText = element.getDartElementType()
-        val project = element.project
         if (typeText != null) {
             val findType = MyDartPsiElementUtil.searchClassByText(element.project, typeText)
             if (findType != null) {

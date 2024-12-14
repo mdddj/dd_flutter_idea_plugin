@@ -23,6 +23,7 @@ fun PubVersionDataModel.hasNewVersion(model: DartPluginVersionName): Boolean {
         DartVersionType.Dev -> lastDevVersion?.finalVersionText?.equals(model.finalVersionText)?.not() == true
         DartVersionType.Beta -> lastBetaVersion?.finalVersionText?.equals(model.finalVersionText)?.not() == true
         DartVersionType.Base -> (latest.version.removePrefix("^") == model.finalVersionText).not()
+        DartVersionType.Any -> false
     }
 }
 
@@ -36,6 +37,7 @@ fun PubVersionDataModel.getLastVersionText(model: DartPluginVersionName): String
         DartVersionType.Dev -> lastDevVersion?.finalVersionText
         DartVersionType.Beta -> lastBetaVersion?.finalVersionText
         DartVersionType.Base -> latest.version.removePrefix("^")
+        DartVersionType.Any -> null
     }
     return handleCaret(v)
 }

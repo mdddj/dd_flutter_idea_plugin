@@ -2,7 +2,27 @@
 
 ## Unreleased
 
-## [5.0.4] - 2024-11-28
+## [5.1.0] - 2024-12-14
+
+* New: Statistics of the size of the package occupied on the disk
+* Optimize: `Dio api list window` refactor
+* Fix: `assets generate tool` initialization issues in some scenarios
+* Removed: pubspec.yaml dart package table dialog
+* New: The reconstructed pubspec.yaml check logic supports detection of multiple nested folders.
+* New: mirror image setting ui
+* Refactor: Ignoring packet detection requires defining each file individually
+
+### [5.0.5] - 2024-12-06
+
+* Add api to display in reverse order
+* Fix the bug of automatically sliding to the bottom
+* Tweaked frozen generator UI
+* Update some icons and delete some icons, compress some image assets, and reduce the package size to the extreme, only
+  1.5M
+* Optimize the component hierarchy of window
+* Remove `GlobalScope.launch` to avoid the risk of memory leaks
+
+### [5.0.4] - 2024-11-28
 
 - Fix: autocomplete failure problem (Assets)
 - Fix: Bugs caused by lack of release time (dart package)

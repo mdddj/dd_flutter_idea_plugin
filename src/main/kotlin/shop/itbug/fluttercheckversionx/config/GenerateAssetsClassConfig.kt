@@ -1,13 +1,9 @@
 package shop.itbug.fluttercheckversionx.config
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.*
 
 data class GenerateAssetsClassConfigModel(
-    //类型
+    //dart class 类型
     var className: String = "Assets",
     //文件名
     var fileName: String = "assets",
@@ -29,11 +25,6 @@ data class GenerateAssetsClassConfigModel(
     var firstChatUpper: Boolean = true,
     //是否在编辑器中显示图标预览
     var showImageIconInEditor: Boolean = true
-
-
-    //--------------------
-
-
 )
 
 @State(name = "DDGenerateAssetsClassConfig", storages = [Storage("DDGenerateAssetsClassConfig.xml")])

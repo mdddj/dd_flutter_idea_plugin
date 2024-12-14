@@ -33,7 +33,6 @@ internal class GsonIntAdapter : JsonSerializer<Int?>, JsonDeserializer<Int?> {
 
 open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
 
-
     /**
      * 外部调用,改变json内容
      */

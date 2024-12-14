@@ -9,17 +9,6 @@ import javax.swing.JList
 ///渲染请求列表
 class MyCustomItemRender : ColoredListCellRenderer<Request>() {
 
-    override fun customizeCellRenderer(
-        list: JList<out Request>,
-        value: Request?,
-        index: Int,
-        selected: Boolean,
-        hasFocus: Boolean
-    ) {
-
-
-    }
-
     override fun getListCellRendererComponent(
         list: JList<out Request>?,
         value: Request?,
@@ -34,6 +23,17 @@ class MyCustomItemRender : ColoredListCellRenderer<Request>() {
         val dialog = requestDetailLayout(value, selected)
         return dialog
     }
+
+    override fun customizeCellRenderer(
+        list: JList<out Request?>,
+        value: Request?,
+        index: Int,
+        selected: Boolean,
+        hasFocus: Boolean
+    ) {
+        
+    }
+
 }
 
 

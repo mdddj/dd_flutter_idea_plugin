@@ -1,13 +1,13 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.InvalidVirtualFileAccessException
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import java.io.File
-
-private typealias HandleVirtualFile = (virtualFile: VirtualFile) -> Unit
 
 data class AssetsModel(
     val text: String,
@@ -16,8 +16,9 @@ data class AssetsModel(
 
 // assets
 @Service(Service.Level.PROJECT)
-class FlutterAssetsService(val project: Project) {
-
+class FlutterAssetsService(val project: Project) : VirtualFileVisitor<VirtualFile>(NO_FOLLOW_SYMLINKS), Disposable {
+    private val setting: AppStateModel = PluginStateService.getInstance().state ?: AppStateModel()
+    private val folderName = setting.assetScanFolderName
 
     companion object {
         fun getInstance(project: Project): FlutterAssetsService = project.getService(FlutterAssetsService::class.java)
@@ -27,41 +28,31 @@ class FlutterAssetsService(val project: Project) {
 
     fun allAssets(): MutableList<AssetsModel> = assets
 
-    fun init(folderName: String) {
+    fun startInit() {
         assets.clear()
-        onFolderEachWithProject(folderName) {
-            assets.add(AssetsModel(it.fileNameWith(folderName), it))
-        }
+        onFolderEachWithProject(folderName)
     }
 
 
-    private fun onFolderEachWithProject(folderName: String, handle: HandleVirtualFile) {
+    override fun visitFileEx(file: VirtualFile): Result {
+        assets.add(AssetsModel(file.fileNameWith(folderName), file))
+        return super.visitFileEx(file)
+    }
+
+
+    private fun onFolderEachWithProject(folderName: String) {
         val path = project.basePath + "${File.separator}$folderName"
-        val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path)
-        findFileByPath?.apply {
-            virtualFileHandle(this, handle)
-        }
+        val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path) ?: return
+        VfsUtilCore.visitChildrenRecursively(findFileByPath, this)
     }
 
-    private fun virtualFileHandle(file: VirtualFile, handle: HandleVirtualFile) {
-        if (file.isDirectory) {
-            try {
-                val cs = file.children.toList()
-                cs.forEach { f ->
-                    if (f.isDirectory) {
-                        virtualFileHandle(f, handle)
-                    } else {
-                        handle.invoke(f)
-                    }
-                }
-            } catch (_: InvalidVirtualFileAccessException) {
-            }
-        }
-    }
 
     fun VirtualFile.fileNameWith(folderName: String): String {
         val indexOf = this.path.indexOf(folderName)
         return this.path.substring(indexOf)
+    }
+
+    override fun dispose() {
     }
 
 }

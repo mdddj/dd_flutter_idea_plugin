@@ -3,16 +3,16 @@ package shop.itbug.fluttercheckversionx.services
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -25,7 +25,6 @@ import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
-import shop.itbug.fluttercheckversionx.cache.DartPluginIgnoreConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
@@ -35,12 +34,6 @@ import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import javax.swing.table.DefaultTableModel
 
-
-class DartPackageCheckActivity : ProjectActivity, DumbAware {
-    override suspend fun execute(project: Project) {
-        DartPackageCheckService.getInstance(project).start()
-    }
-}
 
 /**
  * 包类型
@@ -109,9 +102,7 @@ data class MyDartPackage(
     val detail: DartPluginVersionName,
     val versionElement: YAMLPlainTextImpl,
     val error: String? = null,
-    val service: DartPackageCheckService? = null,
     val group: MyPackageGroup = MyPackageGroup.Dependencies
-
 ) {
     /**
      * 通过 api来向 pub加载插件的数据
@@ -129,36 +120,22 @@ data class MyDartPackage(
         return detail
     }
 
-    ///替换成功了
-    fun replaced(newVersion: String, newTextElement: YAMLPlainTextImpl) {
-        if (service != null) {
-            var find = service.details.firstOrNull { it.first == this }
-            val newObject = this.copy(detail = this.detail.copy(version = newVersion), versionElement = newTextElement)
-            if (find != null) {
-                find = find.copy(first = newObject)
-                val index = service.details.indexOfFirst { it.first.packageName == this.packageName }
-                if (index >= 0) {
-                    service.details[index] = find
-                }
 
-            }
-        }
-    }
 }
 
 typealias DartCheckTaskComplete = () -> Unit
 
 data class DartPackageTaskParam(
-    val showNotification: Boolean = true,
-    val complete: DartCheckTaskComplete? = null
+    val showNotification: Boolean = true, val complete: DartCheckTaskComplete? = null
 )
 
 /**
  * 项目包检测的服务类
  */
 @Service(Service.Level.PROJECT)
-class DartPackageCheckService(val project: Project) {
-    private val ignoreManager = DartPluginIgnoreConfig.getInstance(project)
+@Deprecated("不建议使用了这个")
+class DartPackageCheckService(val project: Project) : Disposable {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var pubspecFile: YAMLFile? = null
     var details: MutableList<PubPackage> = mutableListOf()///从服务器获取的数据
     var projectName: String = "Flutter App"
@@ -211,7 +188,6 @@ class DartPackageCheckService(val project: Project) {
             packageElements.map {
                 async(Dispatchers.EDT) {
                     YamlExtends(it).getMyDartPackageModel()?.copy(
-                        service = this@DartPackageCheckService, group = group
                     )
                 }
             }.awaitAll()
@@ -223,7 +199,7 @@ class DartPackageCheckService(val project: Project) {
      * 开始检测包,然后远程检测包的新版本信息
      */
     fun start() {
-        val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
+        val list = getPackageInfos()
         val results = runBlocking {
             list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
         }
@@ -233,17 +209,16 @@ class DartPackageCheckService(val project: Project) {
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     suspend fun startWithAsync(param: DartPackageTaskParam = DartPackageTaskParam()) {
         val startTime = System.currentTimeMillis()  // 获取起始时间
         this.details.clear()
-        val list = getPackageInfos().filter { ignoreManager.isIg(it.packageName).not() }
-        val results = GlobalScope.async {
+        val list = getPackageInfos()
+        val results = withContext(Dispatchers.IO) {
             list.map { async(Dispatchers.IO) { it.getDetailApi() } }.awaitAll()
-        }.await()
+        }
         this.details = results.toMutableList()
         val endTime = System.currentTimeMillis()  // 获取结束时间
-        GlobalScope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main) {
             project.messageBus.syncPublisher(FetchDartPackageFinishTopic).finish(results)///发送加载完成通知
             if (param.showNotification) {
                 getNotificationGroup()?.createNotification(
@@ -278,8 +253,22 @@ class DartPackageCheckService(val project: Project) {
     /**
      * 重新索引
      */
-    suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
+    private suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
         startWithAsync(param)
+    }
+
+
+    fun startResetIndex(params: DartPackageTaskParam = DartPackageTaskParam()) {
+        scope.launch {
+            resetIndex(params)
+        }
+    }
+
+
+    fun reIndexFile(file: VirtualFile) {
+        scope.launch {
+            MyFileUtil.reIndexFileByXc(project, file)
+        }
     }
 
 
@@ -289,7 +278,7 @@ class DartPackageCheckService(val project: Project) {
     fun fetchPluginDateFromApi(element: PsiElement, packageName: String): PubPackage? {
         val packInfo = runReadAction { YamlExtends(element).getMyDartPackageModel() } ?: return null
         val r = PubService.callPluginDetails(packageName)
-        return PubPackage(packInfo.copy(service = this), r)
+        return PubPackage(packInfo, r)
     }
 
     /**
@@ -299,16 +288,9 @@ class DartPackageCheckService(val project: Project) {
         return details.find { it.first.packageName == pluginName }
     }
 
-    fun getTableRows(): List<Array<String>> {
-        return details.map {
-            val date = it.second?.lastVersionUpdateTimeString ?: ""
-            val timeAgo = if (date.isBlank()) "-" else DateUtils.timeAgo(date)
-            arrayOf(
-                it.first.packageName, it.first.detail.version, it.second?.latest?.version ?: "-", "$date ($timeAgo)"
-            )
-        }
+    override fun dispose() {
+        scope.cancel()
     }
-
 
     /**
      * 包数据加载完成事件
