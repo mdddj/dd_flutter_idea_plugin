@@ -2,13 +2,15 @@
 
 ## Unreleased
 
-## [5.0.6] - 2024-12-12
+## [5.1.0] - 2024-12-14
 
 * New: Statistics of the size of the package occupied on the disk
 * Optimize: `Dio api list window` refactor
 * Fix: `assets generate tool` initialization issues in some scenarios
 * Removed: pubspec.yaml dart package table dialog
 * New: The reconstructed pubspec.yaml check logic supports detection of multiple nested folders.
+* New: mirror image setting ui
+* Refactor: Ignoring packet detection requires defining each file individually
 
 ### [5.0.5] - 2024-12-06
 
