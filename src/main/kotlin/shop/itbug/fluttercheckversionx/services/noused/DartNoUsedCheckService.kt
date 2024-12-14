@@ -79,7 +79,6 @@ class DartNoUsedCheckService(val project: Project) {
     private var usedPackages: Set<DartNoUsedModel> = hashSetOf()//已经使用的包
     private var collectImportPsiElementJobs: List<Deferred<MutableCollection<DartImportStatementImpl>?>>? = null
     private var analysisJobs: List<Deferred<PathModel>>? = null
-
     private var resultModel: DartNoUsedCheckResultModel? = null
 
     /**
@@ -184,7 +183,10 @@ class DartNoUsedCheckService(val project: Project) {
     /**
      * 分析导入用了哪个包
      */
-    private fun analysisImportElement(imps: List<DartImportStatementImpl>, indicator: ProgressIndicator? = null) {
+    private fun analysisImportElement(
+        imps: List<DartImportStatementImpl>,
+        indicator: ProgressIndicator? = null
+    ) {
 
         var filterSize = imps.size
         val r = runBlocking {
@@ -223,6 +225,7 @@ class DartNoUsedCheckService(val project: Project) {
                 }
             }.awaitAll()
         }.filterNotNull().toHashSet()
+
 
         val allPackages =
             DartPackageCheckService.getInstance(project).getPackageInfos()
