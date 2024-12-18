@@ -66,6 +66,16 @@ intellijPlatform {
     }
 }
 
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xmulti-dollar-interpolation")
+        freeCompilerArgs.add("-Xwhen-guards")
+        freeCompilerArgs.add("-Xnon-local-break-continue")
+        extraWarnings.set(true)
+    }
+}
+
 val pushToken: String? = System.getenv("idea_push_token")
 
 tasks {

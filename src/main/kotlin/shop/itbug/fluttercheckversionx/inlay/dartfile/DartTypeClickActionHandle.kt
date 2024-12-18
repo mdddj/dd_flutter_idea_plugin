@@ -31,13 +31,7 @@ class DartTypeClickActionHandle : InlayActionHandler {
         val typeText = element.getDartElementType()
         if (typeText != null) {
             val findType = MyDartPsiElementUtil.searchClassByText(element.project, typeText)
-            if (findType != null) {
-                findType.navigate(true)
-            } else {
-//                WriteCommandAction.runWriteCommandAction(project) {
-//                    editor.document.insertString(element.textRange.startOffset, " $typeText ")
-//                }
-            }
+            findType?.navigate(true)
         }
     }
 }

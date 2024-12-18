@@ -16,7 +16,10 @@ import java.awt.Font
 
 private fun LanguageTextField.format(lang: Language) {
 
-    fun createPsiFile(project: Project, text: String): PsiFile {
+    fun createPsiFile(project: Project, text: String): PsiFile? {
+        if (project.isDisposed) {
+            return null
+        }
         val fileName = "tempFile.${lang.id}"
         val psiFileFactory = PsiFileFactory.getInstance(project)
         return psiFileFactory.createFileFromText(fileName, DartLanguage.INSTANCE, text, false, true)
@@ -24,9 +27,11 @@ private fun LanguageTextField.format(lang: Language) {
 
     fun formatCode() {
         val psiFile = createPsiFile(project, text)
-        val codeStyleManager = CodeStyleManager.getInstance(project)
-        val formattedCode = codeStyleManager.reformat(psiFile)
-        text = formattedCode.text
+        if (psiFile != null) {
+            val codeStyleManager = CodeStyleManager.getInstance(project)
+            val formattedCode = codeStyleManager.reformat(psiFile)
+            text = formattedCode.text
+        }
     }
     formatCode()
 }

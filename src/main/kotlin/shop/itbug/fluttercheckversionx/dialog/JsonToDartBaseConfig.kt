@@ -71,19 +71,7 @@ fun Row.saveToDirectoryConfig(
                     }
             }
             row(PluginBundle.get("g.3")) {
-
-
-                textFieldWithBrowseButton(
-                    "Select Folder", project,
-                    FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                ).bindText(onChange.onDirectoryChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
-                    VerifyFileDir.validDirByComponent(it)
-                }.validationOnInput {
-                    if (VerifyFileDir.validDirByComponent(it)) {
-                        return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-                    }
-                    return@validationOnInput null
-                }
+                MyRowBuild.folder(this, onChange.onDirectoryChange, project)
             }
             row {
                 checkBox(PluginBundle.get("freezed.gen.base.open.in.editor")).bindSelected(onChange.onOpenInEditor)
@@ -94,6 +82,22 @@ fun Row.saveToDirectoryConfig(
 
 }
 
+
+private object MyRowBuild {
+    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
+        row.textFieldWithBrowseButton(
+            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+            project,
+        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+            VerifyFileDir.validDirByComponent(it)
+        }.validationOnInput {
+            if (VerifyFileDir.validDirByComponent(it)) {
+                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+            }
+            return@validationOnInput null
+        }
+    }
+}
 
 enum class NameFormatRule(val format: CaseFormat, val eg: String) {
     LOWER_HYPHEN(

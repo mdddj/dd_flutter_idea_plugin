@@ -36,3 +36,5 @@ var igFlutterPlugin = AppConfig.FlutterIgScanPlugins(
 )//需要忽略扫描的插件,后面要做成可自定义配置的
 
 val dartKeys = setOf("do", "abstract", "else", "in", "is", "as", "on", "if", "set", "this")
+
+const val ideaPluginStoreUrl = "https://ide.itbug.shop"

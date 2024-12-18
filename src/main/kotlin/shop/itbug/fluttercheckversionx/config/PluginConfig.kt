@@ -1,7 +1,9 @@
 package shop.itbug.fluttercheckversionx.config
 
+import com.intellij.ide.plugins.RepositoryHelper
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import shop.itbug.fluttercheckversionx.constance.ideaPluginStoreUrl
 
 data class PluginSetting(
 
@@ -30,7 +32,9 @@ data class PluginSetting(
     //显示打赏action
     var showRewardAction: Boolean = true,
 
-    ) : BaseState()
+    //是否加入了开发版本更新
+    var isJoinDevVersion: Boolean = RepositoryHelper.getCustomPluginRepositoryHosts().contains(ideaPluginStoreUrl)
+) : BaseState()
 
 @Service(Service.Level.PROJECT)
 @State(name = "FlutterxFullConfig", storages = [Storage("FlutterxFullConfig.xml")])

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.1.0] - 2024-12-14
+## [5.1.0] - 2024-12-16
 
 * New: Statistics of the size of the package occupied on the disk
 * Optimize: `Dio api list window` refactor
