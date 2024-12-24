@@ -72,6 +72,11 @@
                                               bundle="messages.pluginBundle"
                                               nameKey="useage_count" providerId="flutterxInlayWithDartUseageCount"/>
 
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartWidgetToRiverpodWidgetCodeVisit"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartFileInsertPartOfString"/>
+
 
         <!--        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"-->
         <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.DartRunBuildInlay"-->
@@ -83,20 +88,9 @@
         <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
                                    language="Dart"/>
 
-        <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
-                                   language="JSON"/>
-
-
         <externalAnnotator
                 implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"
                 language="yaml"/>
-
-
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.actions.riverpod.PsiElementEditorPopupMenuInlay"
-                language="Dart"/>
-
 
         <!--   dart变量的内联显示     -->
         <!--        <codeInsight.inlayProvider-->
@@ -111,10 +105,6 @@
 
         <codeInsight.inlayActionHandler handlerId="dartTypeInlayProviderId"
                                         implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeClickActionHandle"/>
-
-        <!--   part 自动导入-->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
-                                   language="Dart"/>
 
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"

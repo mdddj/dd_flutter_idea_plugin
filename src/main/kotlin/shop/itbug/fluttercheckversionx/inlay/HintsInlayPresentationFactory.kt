@@ -1,18 +1,10 @@
 package shop.itbug.fluttercheckversionx.inlay
 
-import com.intellij.codeInsight.hints.InlayPresentationFactory
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.icons.AllIcons
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.PopupStep
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.ui.awt.RelativePoint
-import shop.itbug.fluttercheckversionx.actions.PUB_URL
 import shop.itbug.fluttercheckversionx.config.PluginSetting
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.SwingUtil
@@ -57,24 +49,6 @@ fun Editor.getIndent(element: PsiElement): Int {
 class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
 
-    fun blockIconAndText(editor: Editor, element: PsiElement, icon: Icon, text: String): InlayPresentation {
-        val lWidth = lineStart(editor, element)
-        val iText = iconText(icon, text)
-        return factory.seq(lWidth, iText)
-    }
-
-    fun blockText(editor: Editor, element: PsiElement, text: String): InlayPresentation {
-        val w = lineStart(editor, element)
-        return factory.seq(w, factory.smallText(text).addRoundBg())
-    }
-
-    private fun lineStart(editor: Editor, element: PsiElement): InlayPresentation {
-        val indent = editor.getIndent(element)
-        val indentText = StringUtil.repeat("\t\t", indent)
-        return factory.text(indentText)
-    }
-
-
     fun iconRoundClick(icon: Icon, clicked: InlayPresentationClickHandle? = null): InlayPresentation {
         return factory.smallScaledIcon(icon).addRoundBg().clickHandle(clicked)
     }
@@ -97,10 +71,6 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
         }
     }
 
-    fun lineStartText(editor: Editor, element: PsiElement, text: String): InlayPresentation {
-        return factory.seq(lineStart(editor, element), factory.smallText(text).addRoundBg())
-    }
-
     private fun InlayPresentation.addRoundBg(): InlayPresentation {
         return factory.roundWithBackgroundAndSmallInset(this)
     }
@@ -111,35 +81,6 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
 
     fun simpleText(text: String, tip: String?, handle: InlayPresentationClickHandle?): InlayPresentation {
         return text(text).bg().addTip(tip ?: text).clickHandle(handle)
-    }
-
-    fun simpleTextWithClick(text: String, tip: String?): InlayPresentation {
-        return text(text).bg().addTip(tip ?: text)
-    }
-
-    fun menuActions(pluginName: String): InlayPresentation {
-        return factory.mouseHandling(
-            base = dartIcon().addTip("Click to operate on the plug-in package"),
-            clickListener = { event, _ ->
-
-                // 插件图标项目被点击
-                JBPopupFactory.getInstance().createListPopup(pluginMenusActionPopup {
-                    when (it) {
-                        // 打开pub.dev对应的插件详细页面
-                        actionMenus[0].key -> BrowserUtil.browse("$PUB_URL$pluginName")
-                    }
-                })
-                    .show(RelativePoint(event.locationOnScreen))
-            },
-            hoverListener = object : InlayPresentationFactory.HoverListener {
-                override fun onHover(event: MouseEvent, translated: Point) {
-                }
-
-                override fun onHoverFinished() {
-                }
-
-            }
-        )
     }
 
     private fun dartIcon(): InlayPresentation = factory.smallScaledIcon(MyIcons.dartPluginIcon)
@@ -163,14 +104,9 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
     )
 
 
-    private fun pluginMenusActionPopup(itemSelected: (key: String) -> Unit): BaseListPopupStep<String> =
-        MyPluginMenusActionPopup(actionMenus, itemSelected)
-
-
     fun getImageWithPath(path: String, basePath: String, setting: PluginSetting): InlayPresentation? {
         return try {
             val file = File(path)
-
             // 检查文件是否存在且非空
             if (!file.exists() || file.length() == 0L) {
                 return null
@@ -181,31 +117,6 @@ class HintsInlayPresentationFactory(private val factory: PresentationFactory) {
         } catch (_: Exception) {
             null
         }
-    }
-
-    /// 自定义菜单弹窗
-    class MyPluginMenusActionPopup(private val items: List<MenuItem>, private val itemSelected: (key: String) -> Unit) :
-        BaseListPopupStep<String>() {
-
-        init {
-            val titles = items.map { it.title }
-            val icons = items.map { it.icon }
-            super.init(
-                "Please select your action", titles, icons
-            )
-        }
-
-        override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
-            if (selectedValue != null) {
-                val find: MenuItem? = items.find { it.title == selectedValue }
-                if (find != null) {
-                    itemSelected(find.key)
-                }
-            }
-            return super.onChosen(selectedValue, finalChoice)
-        }
-
-
     }
 
     data class MenuItem(

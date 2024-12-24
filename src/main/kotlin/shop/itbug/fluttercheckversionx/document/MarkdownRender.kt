@@ -249,12 +249,7 @@ fun MarkdownNode.toHtml(project: Project): String {
 
             MarkdownTokenTypes.CODE_LINE,
             MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
-                val en = DocumentationSettings.isHighlightingOfCodeBlocksEnabled()
                 sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                    when (en) {
-                        true -> DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING
-                        false -> DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING
-                    },
                     comment.project,
                     lang,
                     nodeText
@@ -368,34 +363,24 @@ private fun getTableAlignment(node: MarkdownNode): List<String> {
  * 文字代码高亮
  */
 private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-    highlightingMode: DocumentationSettings.InlineCodeHighlightingMode,
     project: Project,
     language: Language,
     codeSnippet: String
 ): StringBuilder {
     val codeSnippetBuilder = StringBuilder()
-    if (highlightingMode == DocumentationSettings.InlineCodeHighlightingMode.SEMANTIC_HIGHLIGHTING) { // highlight code by lexer
-        HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-            codeSnippetBuilder,
-            project,
-            language,
-            codeSnippet,
-            false,
-            DocumentationSettings.getHighlightingSaturation(true)
-        )
-    } else {
-        codeSnippetBuilder.append(StringUtil.escapeXmlEntities(codeSnippet))
-    }
-    if (highlightingMode != DocumentationSettings.InlineCodeHighlightingMode.NO_HIGHLIGHTING) {
-        // 将代码文本颜色设置为编辑器默认代码颜色，而不是文档组件文本颜色
-        val codeAttributes =
-            EditorColorsManager.getInstance().globalScheme.getAttributes(TextAttributesKey.createTextAttributesKey("DART"))
-                .clone()
-        codeAttributes.backgroundColor = null
-        appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
-    } else {
-        append(codeSnippetBuilder.toString())
-    }
+    HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
+        codeSnippetBuilder,
+        project,
+        language,
+        codeSnippet,
+        false,
+        DocumentationSettings.getHighlightingSaturation(true)
+    )
+    val codeAttributes =
+        EditorColorsManager.getInstance().globalScheme.getAttributes(TextAttributesKey.createTextAttributesKey("DART"))
+            .clone()
+    codeAttributes.backgroundColor = null
+    appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
     return this
 }
 

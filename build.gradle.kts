@@ -61,7 +61,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            recommended()
+            local("/Applications/IntelliJ IDEA Ultimate.app")
         }
     }
 }

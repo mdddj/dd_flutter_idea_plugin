@@ -1,13 +1,6 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
-import com.intellij.codeInsight.hints.ChangeListener
-import com.intellij.codeInsight.hints.FactoryInlayHintsCollector
-import com.intellij.codeInsight.hints.ImmediateConfigurable
-import com.intellij.codeInsight.hints.InlayHintsCollector
-import com.intellij.codeInsight.hints.InlayHintsProvider
-import com.intellij.codeInsight.hints.InlayHintsSink
-import com.intellij.codeInsight.hints.NoSettings
-import com.intellij.codeInsight.hints.SettingsKey
+import com.intellij.codeInsight.hints.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -34,7 +27,6 @@ class DartStringIconShowInlay : InlayHintsProvider<NoSettings> {
             override fun createComponent(listener: ChangeListener): JComponent {
                 return panel { }
             }
-
         }
     }
 

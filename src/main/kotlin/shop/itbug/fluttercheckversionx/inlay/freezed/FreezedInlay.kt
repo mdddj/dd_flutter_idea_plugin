@@ -50,6 +50,14 @@ class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
         return DioListingUiConfig.setting
     }
 
+    override fun createConfigurable(settings: DoxListeningSetting): ImmediateConfigurable {
+        return object : ImmediateConfigurable {
+            override fun createComponent(listener: ChangeListener): JComponent {
+                return panel { }
+            }
+        }
+    }
+
     override fun isLanguageSupported(language: Language): Boolean {
         return language == DartLanguage.INSTANCE
     }
@@ -63,9 +71,6 @@ class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
         return FreezedInlayCollector(editor)
     }
 
-    override fun createConfigurable(settings: DoxListeningSetting): ImmediateConfigurable {
-        return FreezedInlayPanel()
-    }
 }
 
 
