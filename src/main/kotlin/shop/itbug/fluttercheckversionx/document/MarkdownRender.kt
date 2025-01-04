@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.document
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationMarkup.*
-import com.intellij.lang.documentation.DocumentationSettings
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -11,8 +10,10 @@ import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil.appendStyledSpan
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.MathUtil
 import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -70,8 +71,7 @@ class MarkdownRender {
 
             val topMarginOmitted = when {
                 firstParagraphOmitted.startsWith("<p>") -> firstParagraphOmitted.replaceFirst(
-                    "<p>",
-                    "<p style='margin-top:0;padding-top:0;'>"
+                    "<p>", "<p style='margin-top:0;padding-top:0;'>"
                 )
 
                 else -> firstParagraphOmitted
@@ -86,11 +86,7 @@ class MarkdownRender {
 
 ///处理表格行
 private fun processTableRow(
-    sb: StringBuilder,
-    node: MarkdownNode,
-    cellTag: String,
-    alignment: List<String>,
-    project: Project
+    sb: StringBuilder, node: MarkdownNode, cellTag: String, alignment: List<String>, project: Project
 ) {
     sb.append("<tr style=\"${if (cellTag == "th") "" else ""}\">")
     for ((i, child) in node.children.filter { it.type == GFMTokenTypes.CELL }.withIndex()) {
@@ -168,8 +164,7 @@ fun MarkdownNode.toHtml(project: Project): String {
                 }
             }
 
-            MarkdownElementTypes.CODE_BLOCK,
-            MarkdownElementTypes.CODE_FENCE -> {
+            MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_FENCE -> {
                 sb.append("<div>")
                 processChildren()
                 sb.append("</div>")
@@ -191,8 +186,7 @@ fun MarkdownNode.toHtml(project: Project): String {
 
             MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                 val linkLabelNode = node.child(MarkdownElementTypes.LINK_LABEL)
-                val linkLabelContent = linkLabelNode?.children
-                    ?.dropWhile { it.type == MarkdownTokenTypes.LBRACKET }
+                val linkLabelContent = linkLabelNode?.children?.dropWhile { it.type == MarkdownTokenTypes.LBRACKET }
                     ?.dropLastWhile { it.type == MarkdownTokenTypes.RBRACKET }
                 if (linkLabelContent != null) {
                     val label = linkLabelContent.joinToString(separator = "") { it.text }
@@ -224,18 +218,7 @@ fun MarkdownNode.toHtml(project: Project): String {
 
             }
 
-            MarkdownTokenTypes.TEXT,
-            MarkdownTokenTypes.WHITE_SPACE,
-            MarkdownTokenTypes.COLON,
-            MarkdownTokenTypes.SINGLE_QUOTE,
-            MarkdownTokenTypes.DOUBLE_QUOTE,
-            MarkdownTokenTypes.LPAREN,
-            MarkdownTokenTypes.RPAREN,
-            MarkdownTokenTypes.LBRACKET,
-            MarkdownTokenTypes.RBRACKET,
-            MarkdownTokenTypes.EXCLAMATION_MARK,
-            GFMTokenTypes.CHECK_BOX,
-            GFMTokenTypes.GFM_AUTOLINK -> {
+            MarkdownTokenTypes.TEXT, MarkdownTokenTypes.WHITE_SPACE, MarkdownTokenTypes.COLON, MarkdownTokenTypes.SINGLE_QUOTE, MarkdownTokenTypes.DOUBLE_QUOTE, MarkdownTokenTypes.LPAREN, MarkdownTokenTypes.RPAREN, MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET, MarkdownTokenTypes.EXCLAMATION_MARK, GFMTokenTypes.CHECK_BOX, GFMTokenTypes.GFM_AUTOLINK -> {
                 sb.append(nodeText)
             }
 
@@ -247,12 +230,9 @@ fun MarkdownNode.toHtml(project: Project): String {
                 sb.append("</pre>")
             }
 
-            MarkdownTokenTypes.CODE_LINE,
-            MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
+            MarkdownTokenTypes.CODE_LINE, MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
                 sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                    comment.project,
-                    lang,
-                    nodeText
+                    comment.project, lang, nodeText
                 )
             }
 
@@ -345,8 +325,7 @@ private fun MarkdownNode.visit(action: (MarkdownNode, () -> Unit) -> Unit) {
 
 
 private fun getTableAlignment(node: MarkdownNode): List<String> {
-    val separatorRow = node.child(GFMTokenTypes.TABLE_SEPARATOR)
-        ?: return emptyList()
+    val separatorRow = node.child(GFMTokenTypes.TABLE_SEPARATOR) ?: return emptyList()
 
     return separatorRow.text.split('|').filterNot { it.isBlank() }.map {
         val trimmed = it.trim()
@@ -363,18 +342,11 @@ private fun getTableAlignment(node: MarkdownNode): List<String> {
  * 文字代码高亮
  */
 private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-    project: Project,
-    language: Language,
-    codeSnippet: String
+    project: Project, language: Language, codeSnippet: String
 ): StringBuilder {
     val codeSnippetBuilder = StringBuilder()
     HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-        codeSnippetBuilder,
-        project,
-        language,
-        codeSnippet,
-        false,
-        DocumentationSettings.getHighlightingSaturation(true)
+        codeSnippetBuilder, project, language, codeSnippet, false, getSaturationFactor()
     )
     val codeAttributes =
         EditorColorsManager.getInstance().globalScheme.getAttributes(TextAttributesKey.createTextAttributesKey("DART"))
@@ -385,13 +357,16 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
 }
 
 
+private fun getSaturationFactor(): Float {
+    val result = Registry.intValue("documentation.component.highlighting.saturation.for.rendered.docs")
+    return MathUtil.clamp(result, 0, 100) * 0.01F;
+}
+
 private fun StringBuilder.appendStyledSpan(
-    doHighlighting: Boolean,
-    attributes: TextAttributes,
-    value: String?
+    doHighlighting: Boolean, attributes: TextAttributes, value: String?
 ): StringBuilder {
     if (doHighlighting) {
-        appendStyledSpan(this, attributes, value, DocumentationSettings.getHighlightingSaturation(true))
+        appendStyledSpan(this, attributes, value, getSaturationFactor())
     } else {
         append(value)
     }
@@ -401,6 +376,6 @@ private fun StringBuilder.appendStyledSpan(
 //分析代码语言
 private fun guessLanguage(name: String): Language? {
     val lower = StringUtil.toLowerCase(name)
-    return Language.findLanguageByID(lower)
-        ?: Language.getRegisteredLanguages().firstOrNull { StringUtil.toLowerCase(it.id) == lower }
+    return Language.findLanguageByID(lower) ?: Language.getRegisteredLanguages()
+        .firstOrNull { StringUtil.toLowerCase(it.id) == lower }
 }

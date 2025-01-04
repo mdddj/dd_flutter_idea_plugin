@@ -5,7 +5,6 @@ import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
 import com.intellij.codeInsight.codeVision.settings.PlatformCodeVisionIds
 import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
-import com.intellij.codeInsight.hints.InlayHintsUtils
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.codeInsight.hints.settings.language.isInlaySettingsEditor
 import com.intellij.ide.projectView.ProjectView
@@ -15,10 +14,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.SyntaxTraverser
+import com.intellij.psi.*
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import com.jetbrains.lang.dart.psi.DartFile
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.util.DartPsiElementHelper
@@ -58,10 +56,9 @@ class DartAssetsIconInlineShow : CodeVisionProviderBase() {
         for (element in traverser) {
             if (!acceptsElement(element)) continue
 
-//            if (!InlayHintsUtils.isFirstInLine(element)) continue
             val hint = getHint(element, file)
             if (hint == null) continue
-            val range = InlayHintsUtils.getTextRangeWithoutLeadingCommentsAndWhitespaces(element)
+            val range = MyHintsUtils.getTextRangeWithoutLeadingCommentsAndWhitespaces(element)
             val handler = ClickHandler(element, hint)
             val file = DartPsiElementHelper.checkHasFile(element)?.file ?: continue
             val icon = SwingUtil.fileToIcon(file, PluginConfig.getInstance(element.project).state.assetsIconSize)
@@ -112,5 +109,15 @@ class DartAssetsIconInlineShow : CodeVisionProviderBase() {
             logClickToFUS(element, hint)
             handleClick(editor, element, event)
         }
+    }
+}
+
+
+object MyHintsUtils {
+
+    fun getTextRangeWithoutLeadingCommentsAndWhitespaces(element: PsiElement): TextRange {
+        val start = SyntaxTraverser.psiApi().children(element).firstOrNull { it !is PsiComment && it !is PsiWhiteSpace }
+            ?: element
+        return TextRange.create(start.startOffset, element.endOffset)
     }
 }

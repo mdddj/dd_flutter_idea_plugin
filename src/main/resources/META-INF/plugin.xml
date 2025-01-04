@@ -59,12 +59,11 @@
                 implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartFileInsertPartOfString"/>
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShow"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlay"/>
 
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!--                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
-
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
-                                   language="Dart"/>
 
         <externalAnnotator
                 implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"

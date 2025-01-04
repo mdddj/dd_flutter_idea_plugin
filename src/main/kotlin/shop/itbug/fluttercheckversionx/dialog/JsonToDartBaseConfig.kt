@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.listCellRenderer.listCellRenderer
 import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.VerifyFileDir
@@ -114,7 +113,11 @@ enum class NameFormatRule(val format: CaseFormat, val eg: String) {
     ),
     UPPER_UNDERSCORE(
         CaseFormat.UPPER_UNDERSCORE, "Java and C++ constant naming convention, e.g., \"UPPER_UNDERSCORE\"."
-    ),
+    );
+
+    override fun toString(): String {
+        return format.name
+    }
 }
 
 object NameStylePanelBuilder {
@@ -131,9 +134,7 @@ object NameStylePanelBuilder {
         rightBind: KMutableProperty0<NameFormatRule?>
     ) {
         val box = ComboBox<NameFormatRule>(NameFormatRule.entries.toTypedArray())
-        box.renderer = listCellRenderer { text(this.value.format.name) }
         val box2 = ComboBox<NameFormatRule>(NameFormatRule.entries.toTypedArray())
-        box2.renderer = listCellRenderer { text(this.value.format.name) }
         fun htmlBuild(item: NameFormatRule): String {
             return HtmlChunk.div().children(
                 HtmlChunk.text(item.name).bold(),

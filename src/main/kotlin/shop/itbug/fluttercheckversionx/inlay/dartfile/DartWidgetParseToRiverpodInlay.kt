@@ -6,7 +6,6 @@ import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
 import com.intellij.codeInsight.codeVision.settings.PlatformCodeVisionIds
 import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
-import com.intellij.codeInsight.hints.InlayHintsUtils
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.codeInsight.hints.settings.language.isInlaySettingsEditor
 import com.intellij.ide.DataManager
@@ -86,10 +85,9 @@ class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
         val traverser = SyntaxTraverser.psiTraverser(file)
         for (element in traverser) {
             if (!acceptsElement(element)) continue
-            if (!InlayHintsUtils.isFirstInLine(element)) continue
             val hint = getHint(element, file)
             if (hint == null) continue
-            val range = InlayHintsUtils.getTextRangeWithoutLeadingCommentsAndWhitespaces(element)
+            val range = MyHintsUtils.getTextRangeWithoutLeadingCommentsAndWhitespaces(element)
             val handler = ClickHandler(element, hint)
             lenses.add(
                 range to ClickableTextCodeVisionEntry(
