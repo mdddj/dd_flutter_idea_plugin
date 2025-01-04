@@ -30,6 +30,7 @@ private val EDITOR = Key.create<Editor>("FLUTTERX EDITOR")
 class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<DartYamlModel>>() {
 
     override fun collectInformation(file: PsiFile, editor: Editor, hasErrors: Boolean): PubspecYamlFileTools? {
+        log.warn("chllect info mation start")
         val yamlFile = file as? YAMLFile ?: return null
         file.putUserData(EDITOR, editor)
         return PubspecYamlFileTools.create(yamlFile)

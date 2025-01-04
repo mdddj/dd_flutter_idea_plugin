@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
@@ -176,9 +175,7 @@ fun getGeneraAssetsPanel(
         initValidation()
     }
 
-    val disposable = Disposer.newDisposable()
-    p.registerValidators(disposable)
-    Disposer.register(parentDisposable, disposable)
+    p.registerValidators(parentDisposable)
 
     return p
 }

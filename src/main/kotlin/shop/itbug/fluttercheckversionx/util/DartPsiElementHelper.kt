@@ -85,7 +85,6 @@ object DartPsiElementHelper {
      */
     fun checkHasFile(psiElement: PsiElement): FileResult? {
 
-
         fun findFileResult(ele: DartStringLiteralExpressionImpl): FileResult? {
             val dir = ele.project.guessProjectDir() ?: return null
             val url = ele.text.replace("\'", "").replace("\"", "")
@@ -154,7 +153,7 @@ object DartPsiElementHelper {
             if (PluginConfig.getState(element.project).showRewardAction) {
                 addLink(PluginBundle.get("reward"), "https://itbug.shop/static/ds.68eb4cac.jpg", "❤️投喂梁典典咖啡")
             }
-               
+
         }
 
         val html = HtmlBuilder()

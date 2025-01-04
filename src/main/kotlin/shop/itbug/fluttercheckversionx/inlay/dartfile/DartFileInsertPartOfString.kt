@@ -1,7 +1,8 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
-import com.intellij.codeInsight.hints.codeVision.InheritorsCodeVisionProvider
+import com.intellij.codeInsight.codeVision.settings.PlatformCodeVisionIds
+import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -19,7 +20,7 @@ import java.nio.file.Paths
 /**
  * part of 自动插入part of 语句
  */
-class DartFileInsertPartOfString : InheritorsCodeVisionProvider() {
+class DartFileInsertPartOfString : CodeVisionProviderBase() {
 
     override fun acceptsFile(file: PsiFile): Boolean {
         return file is DartFile
@@ -42,10 +43,16 @@ class DartFileInsertPartOfString : InheritorsCodeVisionProvider() {
         writeToTarget(element.project, last, createPsi)
     }
 
+    override val name: String
+        get() = "Dart Part Of Auto Insert"
+
     override val relativeOrderings: List<CodeVisionRelativeOrdering>
         get() = emptyList()
     override val id: String
         get() = "DartFileInsertPartOfString"
+
+    override val groupId: String
+        get() = PlatformCodeVisionIds.PROBLEMS.key
 }
 
 private fun DartPartOfStatementImpl.findTargetFile(): PsiFile? {

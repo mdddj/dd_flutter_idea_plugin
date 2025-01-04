@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.inlay.dartfile
 
-import com.intellij.codeInsight.codeVision.CodeVisionAnchorKind
 import com.intellij.codeInsight.codeVision.CodeVisionEntry
 import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
@@ -9,67 +8,39 @@ import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
 import com.intellij.codeInsight.hints.InlayHintsUtils
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.codeInsight.hints.settings.language.isInlaySettingsEditor
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SyntaxTraverser
 import com.jetbrains.lang.dart.psi.DartFile
-import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import shop.itbug.fluttercheckversionx.config.PluginConfig
-import shop.itbug.fluttercheckversionx.constance.MyKeys
-import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.services.PubspecService
+import shop.itbug.fluttercheckversionx.util.DartPsiElementHelper
+import shop.itbug.fluttercheckversionx.util.SwingUtil
 import java.awt.event.MouseEvent
 
-
 /**
- * 是否需要对psi 处理?
+ * dart assets icon render
  */
-private fun PsiElement.needHandler(): Boolean {
-    val setting = PluginConfig.getState(project)
-    val hasRiverpod = PubspecService.getInstance(project).hasRiverpod()
-    val element = this
-    return setting.showRiverpodInlay && element is DartClassDefinitionImpl && hasRiverpod && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
-}
-
-
-class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
+class DartAssetsIconInlineShow : CodeVisionProviderBase() {
     override fun acceptsFile(file: PsiFile): Boolean {
-        val project = file.project
-        val config = PluginConfig.getState(project)
-        val enable = config.showRiverpodInlay
-        if (!enable) return false
-        return file is DartFile
+        return file is DartFile && PluginConfig.getInstance(file.project).state.showAssetsIconInEditor
     }
 
     override fun acceptsElement(element: PsiElement): Boolean {
-        return element.needHandler()
+        val file = DartPsiElementHelper.checkHasFile(element)
+        return file != null
     }
 
     override fun getHint(element: PsiElement, file: PsiFile): String? {
-        return "Riverpod Tool"
-    }
-
-    private val group = ActionManager.getInstance().getAction("WidgetToRiverpod") as DefaultActionGroup
-    override fun handleClick(
-        editor: Editor,
-        element: PsiElement,
-        event: MouseEvent?
-    ) {
-        event ?: return
-        editor.putUserData(MyKeys.DartClassKey, element as DartClassDefinitionImpl)
-        val context = DataManager.getInstance().getDataContext(editor.component)
-        val popupMenu = ActionManager.getInstance().createActionPopupMenu("Riverpod Tool Menu", group)
-        popupMenu.setDataContext { context }
-        JBPopupMenu.showByEvent(event, popupMenu.component)
+        val file = DartPsiElementHelper.checkHasFile(element) ?: return null
+        return " ${file.file.name}"
     }
 
     override fun computeForEditor(editor: Editor, file: PsiFile): List<Pair<TextRange, CodeVisionEntry>> {
@@ -86,23 +57,48 @@ class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
         val traverser = SyntaxTraverser.psiTraverser(file)
         for (element in traverser) {
             if (!acceptsElement(element)) continue
-            if (!InlayHintsUtils.isFirstInLine(element)) continue
+
+//            if (!InlayHintsUtils.isFirstInLine(element)) continue
             val hint = getHint(element, file)
             if (hint == null) continue
             val range = InlayHintsUtils.getTextRangeWithoutLeadingCommentsAndWhitespaces(element)
             val handler = ClickHandler(element, hint)
+            val file = DartPsiElementHelper.checkHasFile(element)?.file ?: continue
+            val icon = SwingUtil.fileToIcon(file, PluginConfig.getInstance(element.project).state.assetsIconSize)
             lenses.add(
                 range to ClickableTextCodeVisionEntry(
                     hint,
                     id,
                     handler,
-                    icon = MyIcons.flutter,
-                    tooltip = "Riverpod tool"
+                    icon = icon,
                 )
             )
         }
         return lenses
     }
+
+    override fun handleClick(
+        editor: Editor,
+        element: PsiElement,
+        event: MouseEvent?
+    ) {
+        val findFile = DartPsiElementHelper.checkHasFile(element) ?: return
+        val file = runReadAction { LocalFileSystem.getInstance().findFileByIoFile(findFile.file) }
+        if (file != null) {
+            ProjectView.getInstance(element.project).select(null, file, true) //文件浏览器中打开
+        }
+    }
+
+    override val name: String
+        get() = "Dart Assets Icon Inline"
+    override val relativeOrderings: List<CodeVisionRelativeOrdering>
+        get() = emptyList()
+    override val id: String
+        get() = "DartAssetsIconInlineShow"
+
+    override val groupId: String
+        get() = PlatformCodeVisionIds.INHERITORS.key
+
 
     private inner class ClickHandler(
         element: PsiElement,
@@ -117,18 +113,4 @@ class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
             handleClick(editor, element, event)
         }
     }
-
-    override val relativeOrderings: List<CodeVisionRelativeOrdering>
-        get() = emptyList()
-    override val id: String
-        get() = "Simple Widget to Riverpod Widget"
-
-    override val name: String
-        get() = "Simple Widget to Riverpod Widget"
-
-    override val groupId: String
-        get() = PlatformCodeVisionIds.INHERITORS.key
-
-    override val defaultAnchor: CodeVisionAnchorKind
-        get() = CodeVisionAnchorKind.Top
 }

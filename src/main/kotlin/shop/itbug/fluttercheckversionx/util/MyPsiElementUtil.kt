@@ -278,7 +278,7 @@ class MyDartPsiElementUtil {
             )
             names.clear()
             if (auto) {
-                project.toast("梁典典:自动生成资产类成功")
+                project.toast("Success")
             }
         }
 
