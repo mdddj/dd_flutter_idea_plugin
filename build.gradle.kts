@@ -61,8 +61,23 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            recommended()
+            if (sinceBuildVersion == "243") {
+                local("/Applications/IntelliJ IDEA Ultimate.app")
+            } else {
+                local("/Applications/Android Studio.app")
+            }
+
         }
+    }
+}
+
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xmulti-dollar-interpolation")
+        freeCompilerArgs.add("-Xwhen-guards")
+        freeCompilerArgs.add("-Xnon-local-break-continue")
+        extraWarnings.set(true)
     }
 }
 

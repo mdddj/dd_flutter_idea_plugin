@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.notif
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
@@ -63,7 +64,6 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
 
         myLinksPanel.add(pubCacheSizeComponent)
 
-
         icon(MyIcons.dartPluginIcon)
         text(PluginBundle.get("w.t"))
 
@@ -76,6 +76,7 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
         ///重新索引
         val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
             MyFileUtil.reIndexWithVirtualFile(file.virtualFile)
+            DaemonCodeAnalyzer.getInstance(project).restart(file)
         }
 
         myLinksPanel.add(reIndexLabel)

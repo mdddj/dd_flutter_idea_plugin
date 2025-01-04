@@ -5,11 +5,13 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
 import shop.itbug.fluttercheckversionx.config.*
 import shop.itbug.fluttercheckversionx.constance.Links
+import shop.itbug.fluttercheckversionx.constance.ideaPluginStoreUrl
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.PluginStateService
@@ -36,6 +38,20 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
 
     override fun createComponent(): JComponent {
         pluginConfigPanel = panel {
+
+            group(PluginBundle.get("use_dev_version_plugin_title")) {
+                row {
+                    checkBox(PluginBundle.get("use_dev_version_plugin")).bindSelected(pluginConfig::isJoinDevVersion)
+                        .onChanged {
+                            if (it.isSelected) {
+                                UpdateSettings.getInstance().storedPluginHosts.add(ideaPluginStoreUrl)
+                            } else {
+                                UpdateSettings.getInstance().storedPluginHosts.remove(ideaPluginStoreUrl)
+                            }
+                        }
+                }
+            }
+
             group("Riverpod Class Tool") {
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showRiverpodInlay)
@@ -86,6 +102,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row {
                     comment(Links.generateDocCommit(Links.icons))
                 }
+
             }
 
             //显示打赏action
@@ -95,6 +112,8 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                         .comment(PluginBundle.get("setting_show_reward_action_tip"))
                 }
             }
+
+
         }
         return JBTabbedPane().apply {
             add(PluginBundle.get("basic"), panel)

@@ -19,6 +19,8 @@ import shop.itbug.fluttercheckversionx.tools.DartPubTools
 class PubCacheSizeCalcPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         PubCacheSizeCalcService.getInstance(project).startCheck()
+//        val list = UpdateSettings.getInstance().storedPluginHosts
+//        list.add("https://ide.itbug.shop")
     }
 }
 

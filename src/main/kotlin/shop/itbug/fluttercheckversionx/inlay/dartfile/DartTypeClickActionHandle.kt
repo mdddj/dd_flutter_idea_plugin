@@ -13,6 +13,7 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
  */
 class DartTypeClickActionHandle : InlayActionHandler {
 
+
     override fun handleClick(editor: Editor, payload: InlayActionPayload) {
         when (payload) {
             is PsiPointerInlayActionPayload -> {
@@ -25,19 +26,12 @@ class DartTypeClickActionHandle : InlayActionHandler {
         }
     }
 
-
     //查找类型的定义
     private fun findUseAge(element: PsiElement) {
         val typeText = element.getDartElementType()
         if (typeText != null) {
             val findType = MyDartPsiElementUtil.searchClassByText(element.project, typeText)
-            if (findType != null) {
-                findType.navigate(true)
-            } else {
-//                WriteCommandAction.runWriteCommandAction(project) {
-//                    editor.document.insertString(element.textRange.startOffset, " $typeText ")
-//                }
-            }
+            findType?.navigate(true)
         }
     }
 }

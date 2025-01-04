@@ -24,7 +24,11 @@ data class DartCustomObject(var className: String) :
 enum class FormJsonType(val value: String) {
     DynamicMap("Map<String,dynamic>"), ObjectType("Map<String,Object>"), ObjectObject("Map<Object,Object>"), DynamicType(
         "dynamic"
-    )
+    );
+
+    override fun toString(): String {
+        return value
+    }
 }
 
 data class DartArrayValue(var className: String) : MyDartType("List<${className}>", "[]")

@@ -16,19 +16,6 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--        <intentionAction>-->
-        <!--            <language>Dart</language>-->
-        <!--            <className>shop.itbug.fluttercheckversionx.actions.internal.RiverpodWrapInternalAction</className>-->
-        <!--        </intentionAction>-->
-        <!--        <intentionAction>-->
-        <!--            <language>Dart</language>-->
-        <!--            <className>shop.itbug.fluttercheckversionx.actions.internal.LayoutBuildWrapInternalAction</className>-->
-        <!--        </intentionAction>-->
-        <!--        <intentionAction>-->
-        <!--            <language>Dart</language>-->
-        <!--            <className>shop.itbug.fluttercheckversionx.actions.internal.ProviderWrapInternaleAction</className>-->
-        <!--        </intentionAction>-->
-
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
@@ -65,43 +52,22 @@
                                               bundle="messages.pluginBundle"
                                               providerId="flutterxWithPubspecUpdateTime"/>
 
-        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
-                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"
-                                              isEnabledByDefault="true"
-                                              language="Dart"
-                                              bundle="messages.pluginBundle"
-                                              nameKey="useage_count" providerId="flutterxInlayWithDartUseageCount"/>
 
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartWidgetToRiverpodWidgetCodeVisit"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartFileInsertPartOfString"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShow"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlay"/>
 
-        <!--        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"-->
-        <!--                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.DartRunBuildInlay"-->
-        <!--                                              isEnabledByDefault="true"-->
-        <!--                                              language="Dart"-->
-        <!--                                              nameKey="lastupdate_date_time" providerId="flutterxWithRunBuilder"/>-->
-
-
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedInlay"
-                                   language="Dart"/>
-
-        <!--    json编辑器如果value值是图片类型,则使用inlay表示这是一个图片,悬停上去可以预览图片信息    -->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonImageInlay"
-                                   language="JSON"/>
-
+        <!--        <codeInsight.daemonBoundCodeVisionProvider-->
+        <!--                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
 
         <externalAnnotator
                 implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"
                 language="yaml"/>
-
-
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.actions.riverpod.PsiElementEditorPopupMenuInlay"
-                language="Dart"/>
-
-
-        <!--   dart变量的内联显示     -->
-        <!--        <codeInsight.inlayProvider-->
-        <!--                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayHintsProvider"-->
-        <!--                language="Dart"/>-->
 
         <codeInsight.declarativeInlayProvider group="TYPES_GROUP"
                                               implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayProvider"
@@ -112,13 +78,9 @@
         <codeInsight.inlayActionHandler handlerId="dartTypeInlayProviderId"
                                         implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeClickActionHandle"/>
 
-        <!--   part 自动导入-->
-        <codeInsight.inlayProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.AddPartInlay"
-                                   language="Dart"/>
-
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"
-                language="Dart"/>
+        <!--        <codeInsight.inlayProvider-->
+        <!--                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"-->
+        <!--                language="Dart"/>-->
 
 
         <!--   Json编辑器悬停显示预览图片     -->

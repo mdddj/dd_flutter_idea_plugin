@@ -13,11 +13,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.ui.table.JBTable
 import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import org.jetbrains.yaml.YAMLUtil
@@ -27,12 +25,9 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
-import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.util.DartPluginVersionName
-import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.YamlExtends
-import javax.swing.table.DefaultTableModel
 
 
 /**
@@ -56,44 +51,6 @@ data class PubPackage(
         return first.packageName
     }
 
-    /**
-     * 是否可以升级
-     */
-    fun hasNew(): Boolean {
-        val packageName = first.getDartPluginVersionName()
-        val second = second ?: return false
-        return second.getLastVersionText(packageName) != null
-    }
-
-    /**
-     * 获取最新版本
-     */
-    fun serverLastVersion(): String? {
-        return second?.getLastVersionText(first.getDartPluginVersionName())
-    }
-
-    /**
-     * 获取最后更新时间
-     */
-    fun getLastUpdateTime(): String {
-        val time = second?.lastVersionUpdateTimeString ?: return ""
-        return DateUtils.timeAgo(time)
-    }
-
-    /**
-     * 获取最后更新时间
-     */
-    fun getLastUpdateTimeFormatString(): String {
-        val time = second?.lastVersionUpdateTimeString ?: return ""
-        return DateUtils.timeAgo(time)
-    }
-
-    /**
-     * 读取表格行数据
-     */
-    fun getTableRowData(): Array<Any> {
-        return arrayOf(first.packageName, first.detail.version, this, getLastUpdateTime())
-    }
 }
 
 data class MyDartPackage(
@@ -233,24 +190,6 @@ class DartPackageCheckService(val project: Project) : Disposable {
 
 
     /**
-     * 判断是否有新版本
-     */
-    fun hasNew(item: PubPackage): Boolean {
-        return item.hasNew()
-    }
-
-
-    /**
-     * 删除某一个项目
-     */
-    fun removeItemByPluginName(name: String) {
-        val find = details.find { it.first.packageName == name }
-        if (find != null) {
-            details.remove(find)
-        }
-    }
-
-    /**
      * 重新索引
      */
     private suspend fun resetIndex(param: DartPackageTaskParam = DartPackageTaskParam()) {
@@ -272,22 +211,6 @@ class DartPackageCheckService(val project: Project) : Disposable {
     }
 
 
-    /**
-     * 从api请求插件信息
-     */
-    fun fetchPluginDateFromApi(element: PsiElement, packageName: String): PubPackage? {
-        val packInfo = runReadAction { YamlExtends(element).getMyDartPackageModel() } ?: return null
-        val r = PubService.callPluginDetails(packageName)
-        return PubPackage(packInfo, r)
-    }
-
-    /**
-     * 插件名查找已经获取到包信息
-     */
-    fun findPackageInfoByName(pluginName: String): PubPackage? {
-        return details.find { it.first.packageName == pluginName }
-    }
-
     override fun dispose() {
         scope.cancel()
     }
@@ -308,41 +231,11 @@ class DartPackageCheckService(val project: Project) : Disposable {
         /**
          * 读取项目包操作模块的实例
          */
+        @Deprecated("已弃用")
         fun getInstance(project: Project): DartPackageCheckService {
             return project.service<DartPackageCheckService>()
         }
 
-        /**
-         * 获取表格的列
-         */
-        fun getTableColumns(): Array<String> {
-            return arrayOf("Name", "Current Version(in file)", "Last Version(Pub.dev)", "Last Update")
-        }
-
-        /**
-         * 设置表格的列宽度
-         */
-        fun setColumnWidth(table: JBTable) {
-            table.columnModel.let {
-                it.getColumn(0).minWidth = 250
-                it.getColumn(1).minWidth = 200
-                it.getColumn(2).minWidth = 200
-                it.getColumn(3).minWidth = 300
-            }
-        }
-
-
-        /**
-         * 设置表格数据
-         */
-        fun setJBTableData(table: JBTable, project: Project) {
-            val model = DefaultTableModel(getTableColumns(), 0)
-            val service = getInstance(project)
-            service.details.map {
-                model.addRow(it.getTableRowData())
-            }
-            table.model = model
-        }
 
         fun getNotificationGroup(): NotificationGroup? {
             val id = "dart_package_check_service"

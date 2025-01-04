@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.listCellRenderer.listCellRenderer
 import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.VerifyFileDir
@@ -71,27 +70,7 @@ fun Row.saveToDirectoryConfig(
                     }
             }
             row(PluginBundle.get("g.3")) {
-//                textFieldWithBrowseButton(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project) {
-//                    it.path
-//                }.bindText(onChange.onDirectoryChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
-//                    VerifyFileDir.validDirByComponent(it)
-//                }.validationOnInput {
-//                    if (VerifyFileDir.validDirByComponent(it)) {
-//                        return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-//                    }
-//                    return@validationOnInput null
-//                }
-                textFieldWithBrowseButton(
-                    "Select Dir", project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                ) { it.path }.bindText(onChange.onDirectoryChange).align(Align.FILL)
-                    .addValidationRule(VerifyFileDir.ERROR_MSG) {
-                        VerifyFileDir.validDirByComponent(it)
-                    }.validationOnInput {
-                        if (VerifyFileDir.validDirByComponent(it)) {
-                            return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-                        }
-                        return@validationOnInput null
-                    }
+                MyRowBuild.folder(this, onChange.onDirectoryChange, project)
             }
             row {
                 checkBox(PluginBundle.get("freezed.gen.base.open.in.editor")).bindSelected(onChange.onOpenInEditor)
@@ -102,6 +81,40 @@ fun Row.saveToDirectoryConfig(
 
 }
 
+
+private object MyRowBuild {
+    /// 2024.3
+//    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
+//        row.textFieldWithBrowseButton(
+//            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+//            project,
+//        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+//            VerifyFileDir.validDirByComponent(it)
+//        }.validationOnInput {
+//            if (VerifyFileDir.validDirByComponent(it)) {
+//                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+//            }
+//            return@validationOnInput null
+//        }
+//    }
+
+    /// 2023.2
+    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
+        row.textFieldWithBrowseButton(
+            PluginBundle.get("select_a_folder"),
+            project,
+            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+            { it.path },
+        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+            VerifyFileDir.validDirByComponent(it)
+        }.validationOnInput {
+            if (VerifyFileDir.validDirByComponent(it)) {
+                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+            }
+            return@validationOnInput null
+        }
+    }
+}
 
 enum class NameFormatRule(val format: CaseFormat, val eg: String) {
     LOWER_HYPHEN(
@@ -118,7 +131,11 @@ enum class NameFormatRule(val format: CaseFormat, val eg: String) {
     ),
     UPPER_UNDERSCORE(
         CaseFormat.UPPER_UNDERSCORE, "Java and C++ constant naming convention, e.g., \"UPPER_UNDERSCORE\"."
-    ),
+    );
+
+    override fun toString(): String {
+        return format.name
+    }
 }
 
 object NameStylePanelBuilder {
@@ -135,9 +152,7 @@ object NameStylePanelBuilder {
         rightBind: KMutableProperty0<NameFormatRule?>
     ) {
         val box = ComboBox<NameFormatRule>(NameFormatRule.entries.toTypedArray())
-        box.renderer = listCellRenderer { text(this.value.format.name) }
         val box2 = ComboBox<NameFormatRule>(NameFormatRule.entries.toTypedArray())
-        box2.renderer = listCellRenderer { text(this.value.format.name) }
         fun htmlBuild(item: NameFormatRule): String {
             return HtmlChunk.div().children(
                 HtmlChunk.text(item.name).bold(),

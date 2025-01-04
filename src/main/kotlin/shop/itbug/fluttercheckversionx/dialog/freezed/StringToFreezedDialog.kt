@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.*
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.listCellRenderer.listCellRenderer
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
@@ -78,7 +77,6 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                             checkBox(PluginBundle.get("freezed.gen.base.set.default.value")).bindSelected(generateConfig.propsConfig::setDefaultValue)
                         }
                         val box = ComboBox<FormJsonType>(FormJsonType.entries.toTypedArray())
-                        box.renderer = listCellRenderer { text(this.value.value) }
                         row("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}") {
                             cell(box).bindItem(generateConfig::formJsonType)
                         }

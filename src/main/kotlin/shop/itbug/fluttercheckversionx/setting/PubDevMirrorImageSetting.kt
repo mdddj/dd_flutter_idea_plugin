@@ -4,11 +4,9 @@ import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bindItem
-import com.intellij.ui.dsl.listCellRenderer.listCellRenderer
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.constance.DartPubMirrorImage
 import shop.itbug.fluttercheckversionx.constance.FlutterCheckUrlMirrorImage
-import javax.swing.ListCellRenderer
 
 
 object PubDevMirrorImageSetting {
@@ -23,8 +21,6 @@ object PubDevMirrorImageSetting {
                 DartPubMirrorImage.entries.find { it.url == setting.pubServerUrl } ?: defaultSelect
             }) {
                 setting.pubServerUrl = it?.url ?: defaultSelect.url
-            }.component.apply {
-                renderer = createRenderer()
             }
         }.comment(createTestLink(setting.pubServerUrl))
     }
@@ -43,23 +39,8 @@ object PubDevMirrorImageSetting {
                 FlutterCheckUrlMirrorImage.entries.find { it.url == setting.checkFlutterVersionUrl } ?: defaultSelect
             }) {
                 setting.checkFlutterVersionUrl = it?.url ?: defaultSelect.url
-            }.component.apply {
-                renderer = createRenderer2()
             }
         }.comment(createTestLink(setting.checkFlutterVersionUrl))
-    }
-}
-
-
-private fun createRenderer(): ListCellRenderer<DartPubMirrorImage> {
-    return listCellRenderer {
-        text(this.value.title)
-    }
-}
-
-private fun createRenderer2(): ListCellRenderer<FlutterCheckUrlMirrorImage> {
-    return listCellRenderer {
-        text(this.value.title)
     }
 }
 

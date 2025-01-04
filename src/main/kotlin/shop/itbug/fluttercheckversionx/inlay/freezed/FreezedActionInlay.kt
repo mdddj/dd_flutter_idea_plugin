@@ -1,8 +1,7 @@
 package shop.itbug.fluttercheckversionx.inlay.freezed
 
-import com.intellij.codeInsight.hints.*
-import com.intellij.icons.AllIcons
-import com.intellij.lang.Language
+import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
+import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
@@ -13,15 +12,11 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.dsl.builder.panel
-import com.jetbrains.lang.dart.DartLanguage
+import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.fluttercheckversionx.common.MyAction
-import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
-import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.inlay.HintsInlayPresentationFactory
 import shop.itbug.fluttercheckversionx.manager.DartClassManager
 import shop.itbug.fluttercheckversionx.manager.myManagerFun
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
@@ -30,82 +25,60 @@ import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import java.awt.event.MouseEvent
-import javax.swing.JComponent
 
+/**
+ * freezed class 操作
+ */
+class FreezedActionInlay : CodeVisionProviderBase() {
 
-class FreezedInlay : InlayHintsProvider<DoxListeningSetting> {
-    override val key: SettingsKey<DoxListeningSetting>
-        get() = SettingsKey("FreezedInlay")
-    override val name: String
-        get() = "FreezedInlay"
-    override val previewText: String
-        get() = """
-            @freezed
-            class MyClass with _MyClass {
-                
-            }
-        """.trimIndent()
-
-    override fun createSettings(): DoxListeningSetting {
-        return DioListingUiConfig.setting
+    override fun acceptsFile(file: PsiFile): Boolean {
+        return file is DartFile
     }
 
-    override fun isLanguageSupported(language: Language): Boolean {
-        return language == DartLanguage.INSTANCE
+    override fun acceptsElement(element: PsiElement): Boolean {
+        return element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata() && DartClassManager(
+            element
+        ).findFreezedMetadata() != null
     }
 
-    override fun getCollectorFor(
-        file: PsiFile,
+    override fun getHint(element: PsiElement, file: PsiFile): String? {
+        return "Freezed Action"
+    }
+
+    override fun handleClick(
         editor: Editor,
-        settings: DoxListeningSetting,
-        sink: InlayHintsSink
-    ): InlayHintsCollector {
-        return FreezedInlayCollector(editor)
-    }
-
-    override fun createConfigurable(settings: DoxListeningSetting): ImmediateConfigurable {
-        return FreezedInlayPanel()
-    }
-}
-
-
-class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit) {
-
-    private val inlayFactory = HintsInlayPresentationFactory(factory)
-    override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-        if (element is DartClassDefinitionImpl && element.myManagerFun().hasFreezeMetadata()) {
-            val manager = DartClassManager(psiElement = element)
-            val freezedElement = manager.findFreezedMetadata()
-            freezedElement?.let {
-                sink.addInlineElement(
-                    it.textRange.endOffset,
-                    true,
-                    inlayFactory.iconRoundClick(AllIcons.General.ChevronDown) { mouseEvent, _ ->
-                        showFreezedActionMenu(
-                            mouseEvent,
-                            element
-                        )
-                    },
-                    true
-                )
-            }
-
-
+        element: PsiElement,
+        event: MouseEvent?
+    ) {
+        event?.let {
+            showFreezedActionMenu(it, element, editor)
         }
-        return true
+
     }
+
+    override val name: String
+        get() = "Freezed Class Action"
+    override val relativeOrderings: List<CodeVisionRelativeOrdering>
+        get() = emptyList()
+    override val id: String
+        get() = "FreezedActionInlay"
+
 
     //显示操作菜单
-    private fun showFreezedActionMenu(mouseEvent: MouseEvent, psiElement: PsiElement) {
+    private fun showFreezedActionMenu(mouseEvent: MouseEvent, psiElement: PsiElement, edit: Editor) {
         val popupCreate = JBPopupFactory.getInstance().createActionGroupPopup(
-            "Freezed Actions", createFreezedActionGroup(psiElement, mouseEvent), DataContext.EMPTY_CONTEXT,
+            "Freezed Actions", createFreezedActionGroup(psiElement, mouseEvent, edit), DataContext.EMPTY_CONTEXT,
             JBPopupFactory.ActionSelectionAid.MNEMONICS, true
         )
         popupCreate.show(RelativePoint.fromScreen(mouseEvent.locationOnScreen))
     }
 
     //操作列表
-    private fun createFreezedActionGroup(psiElement: PsiElement, mouseEvent: MouseEvent): DefaultActionGroup {
+    private fun createFreezedActionGroup(
+        psiElement: PsiElement,
+        mouseEvent: MouseEvent,
+        edit: Editor
+    ): DefaultActionGroup {
         val dartClassElement = psiElement as DartClassDefinitionImpl
         val className = dartClassElement.componentName.name ?: ""
         val dartClassManager = DartClassManager(className, dartClassElement)
@@ -227,11 +200,4 @@ class FreezedInlayCollector(val edit: Editor) : FactoryInlayHintsCollector(edit)
 
         }
     }
-}
-
-class FreezedInlayPanel : ImmediateConfigurable {
-    override fun createComponent(listener: ChangeListener): JComponent {
-        return panel { }
-    }
-
 }

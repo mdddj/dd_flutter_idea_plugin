@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.tools
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.hints.declarative.impl.DeclarativeInlayHintsPassFactory
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.codeInspection.util.IntentionFamilyName
@@ -26,11 +25,14 @@ import javax.swing.Icon
 
 val YAML_DART_PACKAGE_INFO_KEY = Key.create<List<DartYamlModel>>("DART_PACKAGE_INFO_KEY")
 val YAML_FILE_IS_FLUTTER_PROJECT = Key.create<Boolean>("DART_FILE_IS_DART")
+private val EDITOR = Key.create<Editor>("FLUTTERX EDITOR")
 
 class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<DartYamlModel>>() {
 
     override fun collectInformation(file: PsiFile, editor: Editor, hasErrors: Boolean): PubspecYamlFileTools? {
+        log.warn("chllect info mation start")
         val yamlFile = file as? YAMLFile ?: return null
+        file.putUserData(EDITOR, editor)
         return PubspecYamlFileTools.create(yamlFile)
     }
 
@@ -63,17 +65,19 @@ class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<Da
 
             }
         }
-        DaemonCodeAnalyzer.getInstance(file.project).restart(file)
-//        MyFileUtil.reIndexFile(file.project, file.virtualFile) 会触发自身检测,导致无限循环
-        DeclarativeInlayHintsPassFactory.resetModificationStamp()
+        file.getUserData(EDITOR)?.let { editor ->
+            DeclarativeInlayHintsPassFactory.scheduleRecompute(
+                editor, project = file.project,
+            )
+        }
+
     }
 
 }
 
 
 //修复函数
-private class FixNewVersionAction(val model: DartYamlModel) :
-    PsiElementBaseIntentionAction(), Iconable {
+private class FixNewVersionAction(val model: DartYamlModel) : PsiElementBaseIntentionAction(), Iconable {
 
     val fixText = model.getDesc()
     val lastVersion = model.getLastVersionText() ?: ""
