@@ -61,7 +61,12 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            local("/Applications/IntelliJ IDEA Ultimate.app")
+            if (sinceBuildVersion == "243") {
+                local("/Applications/IntelliJ IDEA Ultimate.app")
+            } else {
+                local("/Applications/Android Studio.app")
+            }
+
         }
     }
 }

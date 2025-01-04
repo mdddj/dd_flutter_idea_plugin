@@ -2,7 +2,13 @@
 
 ## Unreleased
 
-## [5.1.0] - 2024-12-16
+## [5.2.0] - 2024-01-04
+
+* 💐 Happy New Year, 2025 💐
+* Fix known issues
+* Adjust the implementation of some functions
+
+### [5.1.0] - 2024-12-16
 
 * New: Statistics of the size of the package occupied on the disk
 * Optimize: `Dio api list window` refactor

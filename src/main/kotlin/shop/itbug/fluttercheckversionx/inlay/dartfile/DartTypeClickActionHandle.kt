@@ -13,6 +13,7 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
  */
 class DartTypeClickActionHandle : InlayActionHandler {
 
+
     override fun handleClick(editor: Editor, payload: InlayActionPayload) {
         when (payload) {
             is PsiPointerInlayActionPayload -> {
@@ -24,7 +25,6 @@ class DartTypeClickActionHandle : InlayActionHandler {
             else -> {}
         }
     }
-
 
     //查找类型的定义
     private fun findUseAge(element: PsiElement) {
