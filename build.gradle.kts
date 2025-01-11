@@ -1,6 +1,5 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 val dartVersion: String by project
 val sinceBuildVersion: String by project
@@ -47,7 +46,12 @@ if (sinceBuildVersion.toInt() >= 243) {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-        intellijIdeaCommunity(ideVersion)
+//        intellijIdeaCommunity(ideVersion)
+        if (sinceBuildVersion == "243") {
+            local("/Applications/IntelliJ IDEA Ultimate.app")
+        } else {
+            local("/Applications/Android Studio.app")
+        }
         bundledPlugins(bPlugins)
         plugins("Dart:$dartVersion")
         pluginVerifier()
@@ -66,7 +70,6 @@ intellijPlatform {
             } else {
                 local("/Applications/Android Studio.app")
             }
-
         }
     }
 }
@@ -118,7 +121,6 @@ tasks {
     compileKotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
-            languageVersion.set(KotlinVersion.KOTLIN_2_0)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }

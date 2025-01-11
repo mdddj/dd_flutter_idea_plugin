@@ -14,6 +14,18 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 class DartTypeClickActionHandle : InlayActionHandler {
 
 
+    //    override fun handleClick(e: EditorMouseEvent, payload: InlayActionPayload) {
+//        super.handleClick(e, payload)
+//        when (payload) {
+//            is PsiPointerInlayActionPayload -> {
+//                payload.pointer.element?.let {
+//                    findUseAge(it)
+//                }
+//            }
+//
+//            else -> {}
+//        }
+//    }
     override fun handleClick(editor: Editor, payload: InlayActionPayload) {
         when (payload) {
             is PsiPointerInlayActionPayload -> {

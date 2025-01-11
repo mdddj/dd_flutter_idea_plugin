@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.tools
 
 import com.intellij.codeInsight.hints.declarative.impl.DeclarativeInlayHintsPassFactory
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.codeInspection.util.IntentionFamilyName
 import com.intellij.codeInspection.util.IntentionName
 import com.intellij.lang.annotation.AnnotationHolder
@@ -26,6 +27,7 @@ import javax.swing.Icon
 val YAML_DART_PACKAGE_INFO_KEY = Key.create<List<DartYamlModel>>("DART_PACKAGE_INFO_KEY")
 val YAML_FILE_IS_FLUTTER_PROJECT = Key.create<Boolean>("DART_FILE_IS_DART")
 private val EDITOR = Key.create<Editor>("FLUTTERX EDITOR")
+
 
 class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<DartYamlModel>>() {
 
@@ -85,10 +87,9 @@ private class FixNewVersionAction(val model: DartYamlModel) : PsiElementBaseInte
     override fun invoke(
         project: Project, editor: Editor?, element: PsiElement
     ) {
-
         val createNew = model.createPsiElement() ?: return
-        element.replace(createNew)
-
+        val ele = model.plainText.element ?: return
+        ele.replace(createNew)
     }
 
 
@@ -96,6 +97,11 @@ private class FixNewVersionAction(val model: DartYamlModel) : PsiElementBaseInte
         project: Project, editor: Editor?, element: PsiElement
     ): Boolean {
         return element.text != lastVersion
+    }
+
+
+    override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+        return IntentionPreviewInfo.Html(model.createPsiElement()?.text ?: "")
     }
 
     override fun getFamilyName(): @IntentionFamilyName String {

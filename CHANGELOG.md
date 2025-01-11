@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.2.0] - 2024-01-04
+## [5.2.0] - 2025-01-04
 
 * 💐 Happy New Year, 2025 💐
 * Fix known issues
