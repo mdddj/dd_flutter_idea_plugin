@@ -123,6 +123,7 @@ class FlutterProjectUtil(val project: Project) {
      * 在xcode中打开ios目录
      */
     fun openIosInXCode() {
+        log().info("打开iOS项目,xcode")
         val args = arrayOf("-a", "Xcode", iosPath)
         openCommand.withParameters(*args)
         try {
@@ -148,6 +149,7 @@ class FlutterProjectUtil(val project: Project) {
     }
 
     private fun openFailed(msg: String) {
+        log().warn("执行命令失败:$msg")
         showMessage("Open failed:${msg}")
     }
 

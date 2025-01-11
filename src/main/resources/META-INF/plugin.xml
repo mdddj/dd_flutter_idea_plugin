@@ -326,6 +326,16 @@
             <add-to-group group-id="WidgetToRiverpod" anchor="after" relative-to-action="RiverpodActionsSetting"/>
         </action>
         <action id="DioApiSortToggleAction" class="shop.itbug.fluttercheckversionx.actions.dio.DioApiSortToggleAction"/>
+        <action id="OpenFlutterAndroidProjectInAsAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.OpenFlutterAndroidProjectInAsAction"
+                text="Android Studio">
+            <add-to-group group-id="RevealGroup" anchor="last"/>
+        </action>
+        <action id="OpenFlutterIosProjectInAsAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.OpenFlutterIosProjectInAsAction"
+                text="Xcode" description="XCode">
+            <add-to-group group-id="RevealGroup" anchor="last"/>
+        </action>
     </actions>
 
     <actions>

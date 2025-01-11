@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [5.2.1] - 2025-01-11
+
+* Fix: Fixed the problem of version replacement and mouse pointer losing new line at the end
+* Fix: Strengthen package search constraints
+* New: Select `android` directory and select `Open In` action (and ios directory)
+* ![img_1.png](https://minio.itbug.shop/blog/simple-file/img_1___1736561506441___.png)
+
 ## [5.2.0] - 2025-01-04
 
 * 💐 Happy New Year, 2025 💐
