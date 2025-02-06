@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [5.2.3] - 2025-02-06
+
+* Optimize known issues
+
+## [5.2.2] - 2025-01-17
+
+* Fix: dart type click navigator to define error (2024.3)
+
 ## [5.2.1] - 2025-01-11
 
 * Fix: Fixed the problem of version replacement and mouse pointer losing new line at the end
@@ -15,7 +23,7 @@
 * Fix known issues
 * Adjust the implementation of some functions
 
-### [5.1.0] - 2024-12-16
+## [5.1.0] - 2024-12-16
 
 * New: Statistics of the size of the package occupied on the disk
 * Optimize: `Dio api list window` refactor
@@ -25,7 +33,7 @@
 * New: mirror image setting ui
 * Refactor: Ignoring packet detection requires defining each file individually
 
-### [5.0.5] - 2024-12-06
+## [5.0.5] - 2024-12-06
 
 * Add api to display in reverse order
 * Fix the bug of automatically sliding to the bottom
@@ -35,7 +43,7 @@
 * Optimize the component hierarchy of window
 * Remove `GlobalScope.launch` to avoid the risk of memory leaks
 
-### [5.0.4] - 2024-11-28
+## [5.0.4] - 2024-11-28
 
 - Fix: autocomplete failure problem (Assets)
 - Fix: Bugs caused by lack of release time (dart package)
@@ -44,21 +52,21 @@
 - New: Add optional configuration of pub.dev image in China region (pub.dev)
 - ![2.png](https://minio.itbug.shop/blog/simple-file/img___1732782302206___.png)
 
-### [5.0.3] - 2024-11-26
+## [5.0.3] - 2024-11-26
 
 - Fix: freezed name save error
 - Fix: Dio windows memory leak
 - Optimize: Faster display of dart type and support cmd click to jump
 - Optimize: Optimized dart document markdown render panel
 
-### [5.0.2] - 2024-11-04
+## [5.0.2] - 2024-11-04
 
 - New: pubspec.yaml add package last update time
 - New: pubspec.yaml package document add more details
 - Fix known issues
 - Supplementary functional documentation
 
-### [5.0.1] - 2024-10-29
+## [5.0.1] - 2024-10-29
 
 - Fix: Analyze the issue of inaccurate location after file changes (
   `pubspec.yaml`) [(#59)](https://github.com/mdddj/dd_flutter_idea_plugin/issues/59)
@@ -71,7 +79,7 @@
 - New: assets image preview
 - ![img.png](https://minio.itbug.shop/blog/simple-file/img___1730164998800___.png)
 
-### [5.0.0] - 2024-10-22
+## [5.0.0] - 2024-10-22
 
 - Fix: dio api copy data to image action if null will null exception
 - Fix: If the flutter command does not exist, an error pop-up will
@@ -83,18 +91,18 @@
 - New: Open the flutter (android,ios,macos) directory and add settings options, (ide setting->flutterx)
 - New: Add local asset preview to the editor (image type)
 
-### [4.9.9] - 2024-10-17
+## [4.9.9] - 2024-10-17
 
 - Fix: `flutter_lint: 5.0` `part of` auto-completion action not show
 - Fix: `pubspec.yaml` left icon menu `open directory` not working bug
 - New: Support monitoring of `Dio` `FormData` API, need upgrade to `dd_check_plugin:3.2.5`
 
-### [4.9.8] - 2024-10-09
+## [4.9.8] - 2024-10-09
 
 - Adaptation android studio 2024.2.1
 - Support `k2` mode
 
-### [4.9.7] - 2024-09-21
+## [4.9.7] - 2024-09-21
 
 - Fix:[#54](https://github.com/mdddj/dd_flutter_idea_plugin/issues/54)
 - New: Added detection of unused packages in the project.
@@ -102,14 +110,14 @@
 
 ![](https://minio.itbug.shop/blog/simple-file/Snipaste_2024-09-21_11-41-38___1726890133117___.png)
 
-### [4.9.5] - 2024-09-13
+## [4.9.5] - 2024-09-13
 
 - Fix:[#52](https://github.com/mdddj/dd_flutter_idea_plugin/issues/52)
 - Fix:[#51](https://github.com/mdddj/dd_flutter_idea_plugin/issues/51)
 - New: open with tool
   ![](https://minio.itbug.shop/blog/simple-file/Snipaste_2024-09-13_14-47-33___1726210071283___.png)
 
-### [4.9.4] - 2024-09-05
+## [4.9.4] - 2024-09-05
 
 - 更新: 修改flutter新版本,whats new的跳转链接
 - 新增: dio api 接口信息拷贝,支持自定义 key
@@ -124,7 +132,7 @@
 - New: Added Dio API copy as image feature in the right-click menu. Interfaces with too much data will cause memory
   stack overflow, and this issue will not be resolved.
 
-### [4.9.3] - 2024-09-03
+## [4.9.3] - 2024-09-03
 
 - dio拷贝接口信息(Copy all),添加格式化 json
 
@@ -132,7 +140,7 @@
 
 - dio copy interface information (Copy all), add formatted json
 
-### [4.9.2] - 2024-08-13
+## [4.9.2] - 2024-08-13
 
 - 修复 <a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues/50'>#50</a>
 
@@ -140,7 +148,7 @@
 
 - Fixed <a href='https://github.com/mdddj/dd_flutter_idea_plugin/issues/50'>#50</a>
 
-### [4.9.1] - 2024-07-29
+## [4.9.1] - 2024-07-29
 
 - 修复inlay命名导致的part of library无法关闭的问题
 - 修改插件idea版本上限 (2024+)
@@ -148,7 +156,7 @@
 - Fixed the issue where part of the library could not be closed due to inlay naming
 - Updated the plugin's IDEA version upper limit (2024.2+)
 
-### [4.9.0] - 2024-07-24
+## [4.9.0] - 2024-07-24
 
 - 修复: json查看器没有格式化的问题
 - 修复: Dio接口数据类型int会被转化为double类型的bug
@@ -172,12 +180,12 @@
 - Added: JSON to Dart macro object tool (Dart beta)
 - Added: Isar option to JSON to Freezed conversion
 
-### [4.8.0] - 2024-07-08
+## [4.8.0] - 2024-07-08
 
 - fix some bugs by 4.7.0
 - Add `json` to `dart macro` generation tool (bate)
 
-### [4.7.0] - 2024-07-03
+## [4.7.0] - 2024-07-03
 
 - Reconstructed the `json to freezed class code gen` tool,
 - Optimize the repair logic of `package` new version detection
@@ -186,19 +194,19 @@
 - This is the last updated version below `2023.*`. If you want to receive subsequent updates, please update your idea to
   version `2024.*` and `above`.
 
-### [4.6.0] - 2024-06-18
+## [4.6.0] - 2024-06-18
 
 - After optimizing the terminal running logic, windows will no longer be created repeatedly.
 - Add `part of libarary` autocomplete command
 - Optimize the automatic completion popup timing of **_freezed from json_**
 - Fix the problem that **_@Freezed_** does not display the freezed function
 
-### [4.5.2] - 2024-05-30
+## [4.5.2] - 2024-05-30
 
 - Optimize dart file inlay detection performance
 - Optimize some known bugs
 
-### [4.5.0] - 2024-05-25
+## [4.5.0] - 2024-05-25
 
 - Fix the problem of stuck idea or Android studio
 - Upgrade kotlin version to `2.0.0` to `support k2 compiler`
@@ -212,12 +220,12 @@
 - Remove some deprecated functions
 - Replace flutter update log `What's New` Url Link
 
-### [4.2.1] - 2024-05-17
+## [4.2.1] - 2024-05-17
 
 - Adaptation 2024.2
 - Fix performance issues caused by iOS privacy scanning window
 
-### [4.2.0] - 2024-05-15
+## [4.2.0] - 2024-05-15
 
 - Fixed the problem of IP type URI being accessed and parsed incorrectly in the dio panel
 - Fixed the issue where the <code><b>&</b></code> symbol in parameters in Dio URL is displayed as blank

@@ -1,15 +1,18 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val pluginVersion: String by project
-val ideVersion: String by project
+
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
     id("org.jetbrains.intellij.platform") version "2.2.1"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
@@ -46,11 +49,18 @@ if (sinceBuildVersion.toInt() >= 243) {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     intellijPlatform {
-//        intellijIdeaCommunity(ideVersion)
-        if (sinceBuildVersion == "243") {
-            local("/Applications/IntelliJ IDEA Ultimate.app")
-        } else {
-            local("/Applications/Android Studio.app")
+        when (sinceBuildVersion) {
+            "243" -> {
+                local("/Applications/IntelliJ IDEA Ultimate.app")
+            }
+
+            "251" -> {
+                local("/Applications/IntelliJ IDEA Ultimate 2025.1 EAP.app")
+            }
+
+            else -> {
+                local("/Applications/Android Studio.app")
+            }
         }
         bundledPlugins(bPlugins)
         plugins("Dart:$dartVersion")
@@ -65,10 +75,18 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            if (sinceBuildVersion == "243") {
-                local("/Applications/IntelliJ IDEA Ultimate.app")
-            } else {
-                local("/Applications/Android Studio.app")
+            when (sinceBuildVersion) {
+                "243" -> {
+                    local("/Applications/IntelliJ IDEA Ultimate.app")
+                }
+
+                "251" -> {
+                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 EAP.app")
+                }
+
+                else -> {
+                    local("/Applications/Android Studio.app")
+                }
             }
         }
     }
@@ -80,19 +98,35 @@ kotlin {
         freeCompilerArgs.add("-Xmulti-dollar-interpolation")
         freeCompilerArgs.add("-Xwhen-guards")
         freeCompilerArgs.add("-Xnon-local-break-continue")
+        freeCompilerArgs.add("-Xmulti-dollar-interpolation")
         extraWarnings.set(true)
     }
 }
 
 val pushToken: String? = System.getenv("idea_push_token")
+val myChangeLog = provider {
+    changelog.renderItem(
+        changelog.getOrNull(pluginVersion.removeSuffix(".")) ?: changelog.getUnreleased().withHeader(false)
+            .withEmptySections(false), Changelog.OutputType.HTML
+    )
+}
+
+val currentVersionChangelog = provider {
+    changelog.renderItem(
+        changelog.getOrNull(pluginVersion.removeSuffix(".")) ?: changelog.getUnreleased().withHeader(false)
+            .withEmptySections(false), Changelog.OutputType.HTML
+    )
+}
+
+val currentTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.compilerOptions {
+    freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation"))
+}
 
 tasks {
-    val myChangeLog = provider {
-        changelog.renderItem(
-            changelog.getOrNull(pluginVersion.removeSuffix(".")) ?: changelog.getUnreleased().withHeader(false)
-                .withEmptySections(false), Changelog.OutputType.HTML
-        )
-    }
+
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
@@ -190,3 +224,58 @@ idea {
         isDownloadSources = true
     }
 }
+
+
+// 代码生成插件的基本信息
+
+val generateFlutterPluginInfo by tasks.registering {
+    group = "codegen"
+    description = "Generates FlutterPluginInfo class with version info"
+
+    // 定义输出目录和文件路径
+    val outputDir = file("src/main/kotlin/codegen")
+    val outputFile = File(outputDir, "FlutterXPluginInfo.kt")
+
+    // 设置输入和输出以支持增量构建
+    inputs.property("version", project.version)
+    outputs.file(outputFile)
+
+    doLast {
+        outputDir.mkdirs()
+        val q = "\"\"\"\n"
+        outputFile.writeText(
+            """
+            |package codegen
+            |
+            |object FlutterXPluginInfo {
+            |    const val Version: String = "${project.version}"
+            |    const val Changelog: String = $q${currentVersionChangelog.get()}$q
+            |    const val BuildDate: String = "$currentTime"
+            |}
+            |""".trimMargin().trimIndent()
+        )
+    }
+}
+
+// 让 Kotlin 编译任务依赖生成任务
+tasks.compileKotlin {
+    dependsOn(generateFlutterPluginInfo)
+}
+tasks.buildPlugin {
+    dependsOn(generateFlutterPluginInfo)
+}
+tasks.publishPlugin {
+    dependsOn(generateFlutterPluginInfo)
+}
+tasks.runIde {
+    dependsOn(generateFlutterPluginInfo)
+}
+tasks.prepareKotlinBuildScriptModel {
+    dependsOn(generateFlutterPluginInfo)
+}
+// 清理生成的文件（可选）
+tasks.clean {
+    delete("src/main/kotlin/codegen/FlutterPluginInfo.kt")
+}
+
+

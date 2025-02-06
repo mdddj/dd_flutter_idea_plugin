@@ -98,7 +98,6 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
         }
     }
 
-
     /**
      * 扫描第三方依赖包
      */
@@ -175,7 +174,7 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
         val file = (this.pathList.model as ListModel).elementAt(index)
         val pf = file.findPrivacyFile()
         pf?.let {
-            FileEditorManager.getInstance(project).openFile(pf)
+            FileEditorManager.getInstance(project).openFile(it)
         }
     }
 
