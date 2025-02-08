@@ -36,7 +36,7 @@ repositories {
 }
 
 
-val bPlugins = mutableListOf<String>(
+val bPlugins = mutableListOf(
     "org.jetbrains.plugins.terminal",
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
