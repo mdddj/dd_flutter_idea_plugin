@@ -8,6 +8,9 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.yaml.YAMLLanguage
+import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
+import org.jetbrains.yaml.psi.impl.YAMLDocumentImpl
+import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PubService
@@ -23,6 +26,9 @@ class DartPackageAutoCompletion : CompletionContributor() {
             CompletionType.BASIC,
             PlatformPatterns.psiElement(LeafPsiElement::class.java)
                 .withParent(YAMLPlainTextImpl::class.java)
+                .withSuperParent(2, YAMLBlockMappingImpl::class.java)
+                .withSuperParent(3, YAMLKeyValueImpl::class.java)
+                .withSuperParent(5, YAMLDocumentImpl::class.java)
                 .withLanguage(YAMLLanguage.INSTANCE),
             Provider()
         )

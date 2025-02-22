@@ -76,8 +76,6 @@ class FlutterProjectUtil(val project: Project) {
      */
     val isMacos: Boolean = SystemInfo.isMac
 
-    private val openCommand: GeneralCommandLine get() = GeneralCommandLine("open")
-
     /**
      * 获取默认查找路径
      */
@@ -123,13 +121,7 @@ class FlutterProjectUtil(val project: Project) {
      * 在xcode中打开ios目录
      */
     fun openIosInXCode() {
-        val args = arrayOf("-a", "Xcode", iosPath)
-        openCommand.withParameters(*args)
-        try {
-            ExecUtil.execAndReadLine(openCommand)
-        } catch (e: Exception) {
-            openFailed(e.localizedMessage)
-        }
+        runExd(iosPath)
     }
 
 
@@ -137,17 +129,25 @@ class FlutterProjectUtil(val project: Project) {
      * 在xcode中打开macos
      */
     fun openMacosInXCode() {
-        val comTool = GeneralCommandLine("open")
-        val args = arrayOf("-a", "Xcode", macosPath)
-        comTool.withParameters(*args)
+        runExd(macosPath)
+    }
+
+    private fun runExd(filepath: String) {
+        log().warn("打开iOS项目,xcode $iosPath")
+        val oc = GeneralCommandLine("xed")
+        oc.workDirectory = File(filepath)
+
+        val args = arrayOf(".")
+        oc.withParameters(*args)
         try {
-            ExecUtil.execAndReadLine(comTool)
+            ExecUtil.execAndReadLine(oc)
         } catch (e: Exception) {
             openFailed(e.localizedMessage)
         }
     }
 
     private fun openFailed(msg: String) {
+        log().warn("执行命令失败:$msg")
         showMessage("Open failed:${msg}")
     }
 

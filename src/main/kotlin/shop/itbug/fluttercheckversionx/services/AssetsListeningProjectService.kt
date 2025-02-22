@@ -26,8 +26,8 @@ import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.manager.PluginChangelogCache
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
-import shop.itbug.fluttercheckversionx.tools.MyFlutterVersion
 import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
@@ -36,6 +36,7 @@ import shop.itbug.fluttercheckversionx.util.Util
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
+        PluginChangelogCache.getInstance().startShow(project)
     }
 }
 
@@ -131,23 +132,17 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     val release = releases.find { o -> o.hash == hash }
                     release?.let { r ->
                         if (r.version != c.version) {
-                            showTip(r, project, currentFlutterVersion, flutterChannel)
+                            showTip(r, project)
                         }
                     }
                 }
             }
         }
 
-        //
-        fun showTestTip(project: Project) {
-            println("show test tips")
-            showTip(testRelease, project, MyFlutterVersion("3.22.0"), "stable")
-        }
-
         /**
          * 弹出通知
          */
-        fun showTip(release: Release, project: Project, currentVersion: MyFlutterVersion, channel: String) {
+        fun showTip(release: Release, project: Project) {
             val html = HtmlChunk.div().addText("Flutter ${PluginBundle.get("flutter_has_new_version")}")
                 .children(
                     HtmlChunk.nbsp(2),
@@ -191,22 +186,12 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                 },
             )
 
-            // --force
-            createNotification.addAction(object : DumbAwareAction("Flutter upgrade --force") {
-                override fun actionPerformed(e: AnActionEvent) {
-                    RunUtil.runCommand(project, "flutter upgrade --force", "flutter upgrade --force")
-                }
-
-                override fun getActionUpdateThread(): ActionUpdateThread {
-                    return ActionUpdateThread.BGT
-                }
-            })
 
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
                 override fun actionPerformed(e: AnActionEvent) {
                     val version = release.version.replace(".", "")
-                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/master/CHANGELOG.md#$version")
+                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/3.27.4/CHANGELOG.md#$version")
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {
