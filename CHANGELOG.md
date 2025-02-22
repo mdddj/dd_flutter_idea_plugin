@@ -2,8 +2,10 @@
 
 ## Unreleased
 
-## [5.2.3] - 2025-02-06
+## [5.2.3] - 2025-02-13
 
+* Replaced flutter version update record link
+* Fix the wrong command to open an ios project
 * Optimize known issues
 
 ## [5.2.2] - 2025-01-17

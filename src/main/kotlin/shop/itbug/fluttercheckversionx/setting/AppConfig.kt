@@ -122,7 +122,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
         }
     }
 
-    val dialog: DialogPanel = settingPanel(model, dioSetting, this) {
+    val dialog: DialogPanel = settingPanel(project, model, dioSetting, this) {
         model = it
     }
 

@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.dsl
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTextField
@@ -12,12 +13,14 @@ import shop.itbug.fluttercheckversionx.constance.documentCommentRow
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.setting.PubDevMirrorImageSetting
+import shop.itbug.fluttercheckversionx.widget.FlutterVersionCheckPanel
 import javax.swing.SwingUtilities
 
 /**
  * 设置面板
  */
 fun settingPanel(
+    project: Project,
     model: AppStateModel,
     dioxSetting: DoxListeningSetting,
     parentDisposable: Disposable,
@@ -41,6 +44,9 @@ fun settingPanel(
             }.comment(PluginBundle.get("check_flutter_version_comment"))
             PubDevMirrorImageSetting.createFlutterCheckUrlPanel(this, dioxSetting)
             PubDevMirrorImageSetting.createPanel(this, dioxSetting)
+            row {
+                cell(FlutterVersionCheckPanel(project = project))
+            }
             documentCommentRow(Links.checkFlutterVersion)
         }
 

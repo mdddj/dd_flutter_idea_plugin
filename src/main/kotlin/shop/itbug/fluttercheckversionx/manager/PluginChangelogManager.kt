@@ -26,7 +26,7 @@ class PluginChangelogState : BaseState() {
 }
 
 @Service
-@State(name = "pluginchangelog", storages = [Storage("pluginchangelog.xml")])
+@State(name = "FlutterXChangelog", storages = [Storage("FlutterXChangelogVersions.xml")])
 class PluginChangelogCache : SimplePersistentStateComponent<PluginChangelogState>(PluginChangelogState()) {
 
     val version: String get() = FlutterXPluginInfo.Version
