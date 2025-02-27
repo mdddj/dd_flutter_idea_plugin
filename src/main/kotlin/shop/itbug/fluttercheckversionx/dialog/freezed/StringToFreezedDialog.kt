@@ -10,10 +10,7 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.Alarm
 import com.intellij.util.ui.components.BorderLayoutPanel
-import shop.itbug.fluttercheckversionx.dialog.NameRuleConfig
-import shop.itbug.fluttercheckversionx.dialog.SaveToDirectoryModelOnChange
-import shop.itbug.fluttercheckversionx.dialog.nameRuleConfig
-import shop.itbug.fluttercheckversionx.dialog.saveToDirectoryConfig
+import shop.itbug.fluttercheckversionx.dialog.*
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.tools.*
 import shop.itbug.fluttercheckversionx.util.FileWriteService
@@ -80,6 +77,8 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                         row("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}") {
                             cell(box).bindItem(generateConfig::formJsonType)
                         }
+                        // freezed新版本设置
+                        FreezedNewSetting.setting(project, generateConfig, this)
                     }
                 }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
 
@@ -107,6 +106,8 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                     propertyNameRaw = generateConfig::propertyNameRaw,
                 )
             )
+
+
 
             collapsibleGroup("<html>Hive & Isar ${PluginBundle.get("freezed.gen.base.setting")}</html>", false) {
                 row {

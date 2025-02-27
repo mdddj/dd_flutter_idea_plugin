@@ -63,12 +63,14 @@ fun requestDetailLayout(request: Request, isSelected: Boolean): DialogPanel {
     val setting = DioListingUiConfig.setting
 
     val color = UIUtil.getLabelDisabledForeground()
+//    val icon = TextIcon((request.method ?: "TT").toLowerCase(), JBColor.foreground(), JBColor.background(), 2, true)
 
 
     val p = panel {
 
         row {
 
+//            icon(icon)
             // (在紧凑模式下有效,请求方式)
             label(
                 request.method ?: ""

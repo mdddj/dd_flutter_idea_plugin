@@ -16,6 +16,10 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
+
+
+        <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
+
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>

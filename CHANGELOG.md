@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.2.4] - 2025-02-26
+
+* New: json to freezed class tool (Supports version 3.0.0)
+
 ## [5.2.3] - 2025-02-13
 
 * Replaced flutter version update record link

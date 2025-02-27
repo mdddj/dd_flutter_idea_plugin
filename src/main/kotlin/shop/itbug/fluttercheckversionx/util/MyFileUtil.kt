@@ -214,4 +214,12 @@ object MyFileUtil {
         }
     }
 
+
+    //检查某个资产文件是否存在
+    fun hasFileInAssetPath(assets: String, project: Project): Boolean {
+        val projectPath = project.guessProjectDir()?.path ?: return false
+        val fullPath = projectPath + File.separator + assets
+        return File(fullPath).exists()
+    }
+
 }
