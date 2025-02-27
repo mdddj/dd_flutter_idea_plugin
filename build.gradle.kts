@@ -50,6 +50,7 @@ if (sinceBuildVersion.toInt() >= 243) {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
@@ -62,7 +63,8 @@ dependencies {
             }
 
             else -> {
-                local("/Applications/Android Studio.app")
+//                local("/Applications/Android Studio.app")
+                androidStudio("2024.2.2.13")
             }
         }
         bundledPlugins(bPlugins)

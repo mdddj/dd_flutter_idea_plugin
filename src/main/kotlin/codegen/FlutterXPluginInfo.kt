@@ -8,5 +8,5 @@ object FlutterXPluginInfo {
 <ul><li>New: json to freezed class tool (Supports version 3.0.0)</li></ul>
 """
 
-    const val BuildDate: String = "2025-02-26"
+    const val BuildDate: String = "2025-02-27"
 }

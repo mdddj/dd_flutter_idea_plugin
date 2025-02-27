@@ -19,6 +19,8 @@
 
 
         <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
+        <annotator language="yaml"
+                   implementationClass="shop.itbug.fluttercheckversionx.annotator.PubspecPackageDiscontinuedAnnotator"/>
 
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
