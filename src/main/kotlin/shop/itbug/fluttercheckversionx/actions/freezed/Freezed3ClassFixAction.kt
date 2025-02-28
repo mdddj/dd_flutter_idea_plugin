@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -19,9 +20,33 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
  */
 abstract class Freezed3ClassFixAction : AnAction() {
 
+    companion object {
+
+        fun createElement(token: IElementType, project: Project): PsiElement {
+            if (token == DartTokenTypes.SEALED) {
+                return MyDartPsiElementUtil.createSealedPsiElement(project)
+            }
+            return MyDartPsiElementUtil.createAbstractPsiElement(project)
+        }
+
+        suspend fun createElementByXc(token: IElementType, project: Project): PsiElement {
+            if (token == DartTokenTypes.SEALED) {
+                return readAction { MyDartPsiElementUtil.createSealedPsiElement(project) }
+            }
+            return readAction { MyDartPsiElementUtil.createAbstractPsiElement(project) }
+        }
+
+        fun fix(element: DartClassDefinitionImpl, newElement: PsiElement, project: Project) {
+            val clazz = element.node.findChildByType(DartTokenTypes.CLASS)?.psi ?: return
+            WriteCommandAction.runWriteCommandAction(project) {
+                element.addBefore(newElement, clazz)
+            }
+        }
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
-        val project = e.getData(CommonDataKeys.PROJECT) ?: return
+        val project = psiFile.project
         val dartClassList = PsiTreeUtil.findChildrenOfType(psiFile, DartClassDefinitionImpl::class.java)
         if (dartClassList.isEmpty()) return
         val waitFixClass =
@@ -29,27 +54,10 @@ abstract class Freezed3ClassFixAction : AnAction() {
 
         println("修复:${waitFixClass.size}")
         waitFixClass.forEach {
-            fix(project, it)
+            fix(it, createElement(getInsetDartTypElement(), project), project)
         }
     }
 
-    // 创建 psi节点
-    fun fix(project: Project, element: DartClassDefinitionImpl) {
-        val clazz = element.node.findChildByType(DartTokenTypes.CLASS)?.psi ?: return
-        var newElement: PsiElement? = null
-        var token = getInsetDartTypElement()
-        if (token == DartTokenTypes.SEALED) {
-            newElement = MyDartPsiElementUtil.createSealedPsiElement(project)
-        } else if (token == DartTokenTypes.ABSTRACT) {
-            newElement = MyDartPsiElementUtil.createAbstractPsiElement(project)
-        }
-        WriteCommandAction.runWriteCommandAction(project) {
-
-            if (newElement != null) {
-                element.addBefore(newElement, clazz)
-            }
-        }
-    }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
@@ -64,7 +72,6 @@ class Freezed3ClassFixBySealed : Freezed3ClassFixAction() {
     override fun getInsetDartTypElement(): IElementType {
         return DartTokenTypes.SEALED
     }
-
 }
 
 

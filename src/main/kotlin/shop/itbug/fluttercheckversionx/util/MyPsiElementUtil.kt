@@ -470,21 +470,21 @@ object MyDartPsiElementUtil {
     }
 
 
-    fun createSealedPsiElement(project: Project): PsiElement? {
+    fun createSealedPsiElement(project: Project): PsiElement {
         val createDummyFile = DartElementGenerator.createDummyFile(
             project, "sealed class Test {}".trimIndent()
         ) as DartFile
-        return createDummyFile.originalElement.firstChild.node.findChildByType(DartTokenTypes.SEALED)?.psi
+        return createDummyFile.originalElement.firstChild.node.findChildByType(DartTokenTypes.SEALED)?.psi!!
     }
 
 
-    fun createAbstractPsiElement(project: Project): PsiElement? {
+    fun createAbstractPsiElement(project: Project): PsiElement {
         val createDummyFile = DartElementGenerator.createDummyFile(
             project, """
             abstract class Test {}
         """.trimIndent()
         ) as DartFile
-        return createDummyFile.originalElement.firstChild.node.findChildByType(DartTokenTypes.ABSTRACT)?.psi
+        return createDummyFile.originalElement.firstChild.node.findChildByType(DartTokenTypes.ABSTRACT)?.psi!!
     }
 }
 

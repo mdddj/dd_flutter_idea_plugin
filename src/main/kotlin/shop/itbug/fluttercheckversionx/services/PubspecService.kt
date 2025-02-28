@@ -7,10 +7,13 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.vfs.VirtualFileEvent
-import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
-import kotlinx.coroutines.*
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
 import shop.itbug.fluttercheckversionx.common.yaml.PubspecYamlFileTools
 import shop.itbug.fluttercheckversionx.util.DartVersionType
@@ -31,18 +34,18 @@ class PubspecStartActivity : ProjectActivity, DumbAware {
  * 仅检测主pubspec.yaml
  */
 @Service(Service.Level.PROJECT)
-class PubspecService(val project: Project) : Disposable, CoroutineScope {
+class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFileListener {
 
     private val job = Job()
     private var dependenciesNames = listOf<String>()
     private var details = listOf<DartYamlModel>()
-    private val listen = MyPubspecServiceListenFileChange(this, project)
 
     fun getAllDependencies(): List<String> = dependenciesNames
 
     init {
-        VirtualFileManager.getInstance().addVirtualFileListener(listen)
+        project.messageBus.connect(parentDisposable = this).subscribe(VirtualFileManager.VFS_CHANGES, this)
     }
+
 
     /**
      * 读取项目使用了哪些包?
@@ -104,9 +107,7 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
     }
 
     override fun dispose() {
-        println("-----dispose--------PubspecService")
         job.cancel()
-        VirtualFileManager.getInstance().removeVirtualFileListener(listen)
         dependenciesNames = emptyList()
         details = emptyList()
     }
@@ -114,25 +115,13 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
 
-}
-
-
-///监听 pubspec.yaml文件的变化，【PubspecService】重新检查
-class MyPubspecServiceListenFileChange(val coroutineScope: CoroutineScope, val project: Project) : VirtualFileListener {
-    override fun contentsChanged(event: VirtualFileEvent) {
-        super.contentsChanged(event)
-        if (event.fileName == "pubspec.yaml") {
-            coroutineScope.launch {
-                handleFileChanged(event)
-            }
+    override fun after(events: List<VFileEvent>) {
+        events.find { it.file?.name == "pubspec.yaml" } ?: return
+        launch(Dispatchers.IO) {
+            startCheck()
         }
-    }
-
-    private suspend fun handleFileChanged(event: VirtualFileEvent) {
-        withContext(Dispatchers.IO) {
-            println("文件发生变化，重新检测包管理服务")
-            PubspecService.getInstance(project).startCheck()
-        }
+        super.after(events)
     }
 
 }
+

@@ -84,7 +84,7 @@ class StatefulToConsumerAction : AnAction() {
             if (methods.isNotEmpty()) {
                 val findCreateStateMethod = methods.find { it.componentName?.name == "createState" }
                 if (findCreateStateMethod != null) {
-                    val newReturnType = project.createReturnType("${className}")
+                    val newReturnType = project.createReturnType("$className")
                     WriteCommandAction.runWriteCommandAction(project) {
                         findCreateStateMethod.returnType?.replace(newReturnType)
                     }
