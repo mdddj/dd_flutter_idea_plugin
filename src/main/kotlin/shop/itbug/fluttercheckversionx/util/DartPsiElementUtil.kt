@@ -4,12 +4,15 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import com.jetbrains.lang.dart.psi.impl.DartTypeImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
+import shop.itbug.fluttercheckversionx.manager.myManagerFun
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.covertDartClassPropertyModel
 
@@ -106,7 +109,23 @@ object DartPsiElementUtil {
             findParentElementOfType(parent, parentClass)
         }
     }
-    
+
+    //获取所有的 freezed class
+    fun findAllFreezedClass(file: VirtualFile, project: Project): List<DartClassDefinitionImpl> {
+        val file = PsiManager.getInstance(project).findFile(file) ?: return emptyList()
+        val classList = PsiTreeUtil.findChildrenOfType(file, DartClassDefinitionImpl::class.java)
+        if (classList.isEmpty()) return emptyList()
+        return classList.filter { it.myManagerFun().hasFreezeMetadata() }
+    }
+
+    //获取所有不是 freezed 3.0的 class
+    fun findAllFreezedClassNot3Version(file: VirtualFile, project: Project): List<DartClassDefinitionImpl> {
+        val find = findAllFreezedClass(file, project)
+        if (find.isEmpty()) return emptyList()
+
+        return find.filter { it.myManagerFun().isFreezed3Class().not() }
+    }
+
 
 }
 

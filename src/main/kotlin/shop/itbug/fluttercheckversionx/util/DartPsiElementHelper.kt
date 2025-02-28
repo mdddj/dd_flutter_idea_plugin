@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression
 import com.jetbrains.lang.dart.psi.impl.DartArgumentListImpl
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
@@ -87,7 +88,7 @@ object DartPsiElementHelper {
 
         fun findFileResult(ele: DartStringLiteralExpressionImpl): FileResult? {
             val dir = ele.project.guessProjectDir() ?: return null
-            val url = ele.text.replace("\'", "").replace("\"", "")
+            val url = ele.string ?: return null
             val filePath = dir.path + File.separator + url
             val file = File(filePath)
             if (file.exists() && isImageFile(file)) {
@@ -130,23 +131,18 @@ object DartPsiElementHelper {
             width = (width * scale).roundToInt()
         }
         val url = URI("file", null, fileResult.full, null).toString()
-        val img = HtmlChunk.tag("img")
-            .attr("src", url)
-            .attr("width", width)
-            .attr("height", height)
+        val img = HtmlChunk.tag("img").attr("src", url).attr("width", width).attr("height", height)
 
 
         val len = fileResult.file.length()
         val infos = MySimpleInfoChunk().body {
             addLink("Path", url, fileResult.basePath)
             addKeyValue(
-                "Size",
-                "${width}x$height"
+                "Size", "${width}x$height"
             )
             addKeyValue(
                 "Aspect ratio", calculateAspectRatio(
-                    width,
-                    height
+                    width, height
                 )
             )
             addKeyValue("Length", formatSize(len))
@@ -156,10 +152,14 @@ object DartPsiElementHelper {
 
         }
 
-        val html = HtmlBuilder()
-            .append(img).br().append(HtmlChunk.div().addRaw(infos.toString()))
-            .toString()
+        val html = HtmlBuilder().append(img).br().append(HtmlChunk.div().addRaw(infos.toString())).toString()
         return html
+    }
+
+    //获取字符串
+    fun findDartString(element: DartStringLiteralExpressionImpl): String? {
+        val ele = element.node.findChildByType(DartTokenTypes.REGULAR_STRING_PART) ?: return null
+        return if (ele.text.isNotEmpty()) ele.text else null
     }
 
 }
@@ -213,7 +213,14 @@ class MySimpleInfoChunk(title: String? = null, value: String? = null) {
     override fun toString(): String {
         return sb.toString()
     }
+
+
 }
+
+
+// 获取字符串
+val DartStringLiteralExpressionImpl.string get() = DartPsiElementHelper.findDartString(this)
+
 
 inline fun MySimpleInfoChunk.body(block: MySimpleInfoChunk.() -> Unit): MySimpleInfoChunk {
     bodyHeader()

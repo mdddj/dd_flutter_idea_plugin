@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.components.JBLabel
+import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
@@ -33,6 +34,25 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
         className = psiElement.componentName.name ?: "",
         psiElement = psiElement
     )
+
+
+    //是否为抽象类
+    fun isAbstract(): Boolean {
+        val abs = psiElement.node.findChildByType(DartTokenTypes.ABSTRACT)
+        return abs != null
+    }
+
+    //是否为 sealed
+    fun isSealed(): Boolean {
+        val sealed = psiElement.node.findChildByType(DartTokenTypes.SEALED)
+        return sealed != null
+    }
+
+
+    //是否为 freezed 3 的 class
+    fun isFreezed3Class(): Boolean {
+        return isSealed() || isAbstract()
+    }
 
 
     /**

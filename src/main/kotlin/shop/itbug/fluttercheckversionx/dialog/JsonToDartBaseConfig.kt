@@ -8,6 +8,9 @@ import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.tools.FreezedClassConfig
+import shop.itbug.fluttercheckversionx.tools.FreezedClassType
+import shop.itbug.fluttercheckversionx.tools.FreezedVersion
 import shop.itbug.fluttercheckversionx.util.VerifyFileDir
 import kotlin.reflect.KMutableProperty0
 
@@ -45,6 +48,9 @@ fun Panel.nameRuleConfig(onChange: NameRuleConfig, init: OnInit? = null): Collap
 }
 
 
+// freezed新版本的设置
+
+
 data class SaveToDirectoryModelOnChange(
     val onDirectoryChange: KMutableProperty0<String>,
     val onFilenameChange: KMutableProperty0<String>,
@@ -78,7 +84,20 @@ fun Row.saveToDirectoryConfig(
             otherWidget?.invoke(this)
         }
     }
+}
 
+object FreezedNewSetting {
+    fun setting(project: Project, config: FreezedClassConfig, panel: Panel) {
+        val box = ComboBox<FreezedVersion>(FreezedVersion.entries.toTypedArray())
+        val box2 = ComboBox<FreezedClassType>(FreezedClassType.entries.toTypedArray())
+        panel.row("Freezed Setting") {
+            cell(box).bindItem({ config.freezedVersion }, {
+                config.freezedVersion = it ?: FreezedVersion.DefaultVersion
+            })
+            cell(box2).bindItem({ config.freezedClassType },
+                { config.freezedClassType = it ?: FreezedClassType.Sealed })
+        }
+    }
 }
 
 

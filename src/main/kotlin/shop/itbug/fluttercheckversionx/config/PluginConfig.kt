@@ -33,7 +33,10 @@ data class PluginSetting(
     var showRewardAction: Boolean = true,
 
     //是否加入了开发版本更新
-    var isJoinDevVersion: Boolean = RepositoryHelper.getCustomPluginRepositoryHosts().contains(ideaPluginStoreUrl)
+    var isJoinDevVersion: Boolean = RepositoryHelper.getCustomPluginRepositoryHosts().contains(ideaPluginStoreUrl),
+
+    //是否启用 freezed3快速修复面板
+    var showFreezed3FixNotification: Boolean = true,
 ) : BaseState()
 
 @Service(Service.Level.PROJECT)

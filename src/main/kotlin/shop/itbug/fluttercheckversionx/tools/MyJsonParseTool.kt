@@ -31,6 +31,28 @@ enum class FormJsonType(val value: String) {
     }
 }
 
+//freezed版本
+enum class FreezedVersion(val version: String) {
+    // 2.x版本
+    DefaultVersion("2.x"),
+
+    // 3.0版本，添加
+    ThreeVersion("3.x");
+
+    override fun toString(): String {
+        return version
+    }
+}
+
+// 是密封类还是抽象类
+enum class FreezedClassType(var type: String) {
+    Sealed("sealed"), Abstract("abstract");
+
+    override fun toString(): String {
+        return type
+    }
+}
+
 data class DartArrayValue(var className: String) : MyDartType("List<${className}>", "[]")
 data class MyDartProperties(var name: String, var type: MyDartType, var index: Int)
 sealed class DartType
@@ -70,6 +92,11 @@ data class FreezedClassConfig(
     //命名规则raw
     var classNameRaw: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
     var propertyNameRaw: NameFormatRule? = NameFormatRule.LOWER_CAMEL,
+    //freezed版本
+    var freezedVersion: FreezedVersion = FreezedVersion.DefaultVersion,
+    //freezed对象类型
+    var freezedClassType: FreezedClassType = FreezedClassType.Sealed
+
 ) : DartClassGenerateConfig()
 
 fun FreezedClassConfig.mainClassRun(mainCall: VoidCallback, otherRun: VoidCallback? = null) {
@@ -275,7 +302,16 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
         sb.appendLine("@HiveType(typeId: $id)")
     }
 
-    sb.appendLine("class $className with _\$$className {")
+
+    // freezed 3.x
+    var freezedPre = ""
+    when (config.freezedVersion) {
+        FreezedVersion.DefaultVersion -> {}
+        FreezedVersion.ThreeVersion -> {
+            freezedPre = config.freezedClassType.type + " "
+        }
+    }
+    sb.appendLine("${freezedPre}class $className with _\$$className {")
     if (config.addStructureFunction) {
         sb.appendLine("\tconst $className._();")
         sb.appendLine("")

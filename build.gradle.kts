@@ -1,4 +1,5 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.LocalDateTime
@@ -13,7 +14,7 @@ val pluginVersion: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.10"
-    id("org.jetbrains.intellij.platform") version "2.2.1"
+    id("org.jetbrains.intellij.platform") version "2.3.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
@@ -48,7 +49,10 @@ if (sinceBuildVersion.toInt() >= 243) {
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
+    testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
     intellijPlatform {
+        testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
             "243" -> {
                 local("/Applications/IntelliJ IDEA Ultimate.app")
@@ -59,7 +63,8 @@ dependencies {
             }
 
             else -> {
-                local("/Applications/Android Studio.app")
+//                local("/Applications/Android Studio.app")
+                androidStudio("2024.2.2.13")
             }
         }
         bundledPlugins(bPlugins)
@@ -67,6 +72,7 @@ dependencies {
         pluginVerifier()
         zipSigner()
         javaCompiler()
+
     }
 
 }
@@ -279,3 +285,24 @@ tasks.clean {
 }
 
 
+
+intellijPlatformTesting {
+    runIde {
+        register("runIdeForUiTests") {
+            task {
+                jvmArgumentProviders += CommandLineArgumentProvider {
+                    listOf(
+                        "-Drobot-server.port=8082",
+                        "-Dide.mac.message.dialogs.as.sheets=false",
+                        "-Djb.privacy.policy.text=<!--999.999-->",
+                        "-Djb.consents.confirmation.enabled=false",
+                    )
+                }
+            }
+
+            plugins {
+                robotServerPlugin()
+            }
+        }
+    }
+}

@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.form.socket
 
 import com.intellij.ui.ColoredListCellRenderer
+import com.intellij.ui.JBColor
+import com.intellij.ui.TextIcon
 import com.intellij.ui.components.JBLabel
 import shop.itbug.fluttercheckversionx.dsl.requestDetailLayout
 import java.awt.Component
@@ -20,6 +22,7 @@ class MyCustomItemRender : ColoredListCellRenderer<Request>() {
             return JBLabel()
         }
 
+
         val dialog = requestDetailLayout(value, selected)
         return dialog
     }
@@ -31,7 +34,7 @@ class MyCustomItemRender : ColoredListCellRenderer<Request>() {
         selected: Boolean,
         hasFocus: Boolean
     ) {
-        
+
     }
 
 }

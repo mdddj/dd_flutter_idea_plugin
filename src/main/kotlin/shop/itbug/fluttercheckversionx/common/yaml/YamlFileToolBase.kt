@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.common.yaml
 
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.yaml.psi.YAMLFile
@@ -38,6 +39,9 @@ abstract class YamlFileToolBase(val file: YAMLFile) {
 
 suspend inline fun <reified T : PsiElement> PsiElement?.findChild() =
     readAction { PsiTreeUtil.getChildOfType(this, T::class.java) }
+
+inline fun <reified T : PsiElement> PsiElement?.findChild2() =
+    runReadAction { PsiTreeUtil.getChildOfType(this, T::class.java) }
 
 suspend inline fun <reified T : PsiElement> PsiElement?.chs() =
     readAction { PsiTreeUtil.getChildrenOfType(this, T::class.java)?.toList()?.filterIsInstance<T>() } ?: emptyList()

@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## [5.3.0] - 2025-02-28
+
+* New features: Added assets asset path detection mark (dart)
+* New features: If a package is marked by the author and stopped updating, it will be marked in the configuration file (
+  yaml)
+* New features: Added freezed 3.0 class quick repair tool (dart)
+
+## [5.2.4] - 2025-02-26
+
+* New: json to freezed class tool (Supports version 3.0.0)
+
 ## [5.2.3] - 2025-02-13
 
 * Replaced flutter version update record link
