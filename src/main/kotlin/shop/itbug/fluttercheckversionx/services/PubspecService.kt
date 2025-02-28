@@ -7,8 +7,17 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.vfs.VirtualFileEvent
+import com.intellij.openapi.vfs.VirtualFileListener
+import com.intellij.openapi.vfs.VirtualFileManager
+import kotlinx.coroutines.*
+import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
 import shop.itbug.fluttercheckversionx.common.yaml.PubspecYamlFileTools
+import shop.itbug.fluttercheckversionx.util.DartVersionType
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
+import shop.itbug.fluttercheckversionx.util.Version
+import shop.itbug.fluttercheckversionx.util.isVersionGreaterThanThree
+import kotlin.coroutines.CoroutineContext
 
 
 class PubspecStartActivity : ProjectActivity, DumbAware {
@@ -22,12 +31,18 @@ class PubspecStartActivity : ProjectActivity, DumbAware {
  * 仅检测主pubspec.yaml
  */
 @Service(Service.Level.PROJECT)
-class PubspecService(val project: Project) : Disposable {
+class PubspecService(val project: Project) : Disposable, CoroutineScope {
 
+    private val job = Job()
     private var dependenciesNames = listOf<String>()
-
+    private var details = listOf<DartYamlModel>()
+    private val listen = MyPubspecServiceListenFileChange(this, project)
 
     fun getAllDependencies(): List<String> = dependenciesNames
+
+    init {
+        VirtualFileManager.getInstance().addVirtualFileListener(listen)
+    }
 
     /**
      * 读取项目使用了哪些包?
@@ -37,6 +52,7 @@ class PubspecService(val project: Project) : Disposable {
         if (file != null) {
             val tool = PubspecYamlFileTools.create(file)
             val all = tool.allDependencies()
+            details = all
             dependenciesNames = all.map { it.name }
         }
     }
@@ -51,6 +67,19 @@ class PubspecService(val project: Project) : Disposable {
         )
     }
 
+
+    //是否使用了 freezed包
+    fun hasFreezed(): Boolean {
+        return hasDependencies("freezed")
+    }
+
+    //判断 freezed使用的版本号是不是大于 3 或者等于 3
+    fun freezedVersionIsThan3(): Boolean {
+        if (!hasFreezed()) return false
+        val version = details.find { it.name == "freezed" } ?: return false
+        if (version.versionType == DartVersionType.Any) return true
+        return isVersionGreaterThanThree(version.version, Version.parse("3.0.0"))
+    }
 
     /**
      * 项目是否使用 provider 包
@@ -67,6 +96,7 @@ class PubspecService(val project: Project) : Disposable {
         return dependenciesNames.contains(pluginName)
     }
 
+
     companion object {
         fun getInstance(project: Project): PubspecService {
             return project.service<PubspecService>()
@@ -75,8 +105,34 @@ class PubspecService(val project: Project) : Disposable {
 
     override fun dispose() {
         println("-----dispose--------PubspecService")
+        job.cancel()
+        VirtualFileManager.getInstance().removeVirtualFileListener(listen)
         dependenciesNames = emptyList()
+        details = emptyList()
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Default
 
 }
 
+
+///监听 pubspec.yaml文件的变化，【PubspecService】重新检查
+class MyPubspecServiceListenFileChange(val coroutineScope: CoroutineScope, val project: Project) : VirtualFileListener {
+    override fun contentsChanged(event: VirtualFileEvent) {
+        super.contentsChanged(event)
+        if (event.fileName == "pubspec.yaml") {
+            coroutineScope.launch {
+                handleFileChanged(event)
+            }
+        }
+    }
+
+    private suspend fun handleFileChanged(event: VirtualFileEvent) {
+        withContext(Dispatchers.IO) {
+            println("文件发生变化，重新检测包管理服务")
+            PubspecService.getInstance(project).startCheck()
+        }
+    }
+
+}

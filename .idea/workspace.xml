@@ -5,13 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.2.3">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/PubspecPackageDiscontinuedAnnotator.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/freezed/Freezed3ClassFixAction.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/DartFreezedClassFixNotification.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DartVersionTool.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubVersionDataModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubVersionDataModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/PubspecPackageDiscontinuedAnnotator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/PubspecPackageDiscontinuedAnnotator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubspecService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubspecService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/MyJsonParseTool.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/MyJsonParseTool.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyPsiElementUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyPsiElementUtil.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,9 +91,9 @@
         <option value="JUnit4 Test Class" />
         <option value="Dart File" />
         <option value="Kotlin Object" />
-        <option value="Action" />
         <option value="InspectionDescription" />
         <option value="Kotlin Class" />
+        <option value="Action" />
       </list>
     </option>
   </component>
@@ -292,6 +305,7 @@
     "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
     "org.rust.first.attach.projects": "true",
     "project.structure.last.edited": "模块",
     "project.structure.proportion": "0.15",
@@ -1542,7 +1556,8 @@
       <workItem from="1740536358154" duration="3828000" />
       <workItem from="1740562983672" duration="1951000" />
       <workItem from="1740620952801" duration="5037000" />
-      <workItem from="1740626108434" duration="1211000" />
+      <workItem from="1740626108434" duration="1913000" />
+      <workItem from="1740708098241" duration="12449000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>

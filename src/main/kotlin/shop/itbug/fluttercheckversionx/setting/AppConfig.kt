@@ -105,9 +105,17 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
 
             }
 
+
+            group("freezed 3.0 ${PluginBundle.get("tool")}") {
+                row {
+                    checkBox("Enable").bindSelected(pluginConfig::showFreezed3FixNotification)
+                        .comment(PluginBundle.get("freezed3_setting_tooltip"))
+                }
+            }
+
             //显示打赏action
             group(PluginBundle.get("reward")) {
-                row("Enable") {
+                row {
                     checkBox(PluginBundle.get("setting_show_reward_action")).bindSelected(pluginConfig::showRewardAction)
                         .comment(PluginBundle.get("setting_show_reward_action_tip"))
                 }

@@ -124,6 +124,8 @@
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
+        <editorNotificationProvider
+                implementation="shop.itbug.fluttercheckversionx.notif.DartFreezedClassFixNotification"/>
 
 
         <!--        插件新版本检测-->
@@ -342,6 +344,18 @@
                 text="Xcode" description="XCode">
             <add-to-group group-id="RevealGroup" anchor="last"/>
         </action>
+        <action id="Freezed3ClassFixActionWithSealed"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.Freezed3ClassFixBySealed"
+                text="freezed class add `sealed`"/>
+
+        <action id="Freezed3ClassFixActionWitAbstract"
+                class="shop.itbug.fluttercheckversionx.actions.freezed.Freezed3ClassFixByAbstract"
+                text="freezed class add `abstract`"/>
+
+        <group id="Fix Freezed Class Tool" popup="true">
+            <reference id="Freezed3ClassFixActionWithSealed"/>
+            <reference id="Freezed3ClassFixActionWitAbstract"/>
+        </group>
     </actions>
 
     <actions>

@@ -308,10 +308,10 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
     when (config.freezedVersion) {
         FreezedVersion.DefaultVersion -> {}
         FreezedVersion.ThreeVersion -> {
-            freezedPre = config.freezedClassType.type
+            freezedPre = config.freezedClassType.type + " "
         }
     }
-    sb.appendLine("$freezedPre class $className with _\$$className {")
+    sb.appendLine("${freezedPre}class $className with _\$$className {")
     if (config.addStructureFunction) {
         sb.appendLine("\tconst $className._();")
         sb.appendLine("")

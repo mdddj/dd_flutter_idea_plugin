@@ -11,7 +11,10 @@ import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
 
 /**
+ *
+ * yaml文件
  * 检查包是否已经停止更新
+ *
  */
 class PubspecPackageDiscontinuedAnnotator : Annotator {
 
