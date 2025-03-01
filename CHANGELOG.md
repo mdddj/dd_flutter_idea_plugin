@@ -5,6 +5,7 @@
 ## [5.3.1] - 2025-03-01
 
 * Fix: dart function comment generator tool error (dart comment)
+* Fix: dart assets hover document preview bug (with image) (dart assets preview)
 
 ## [5.3.0] - 2025-02-28
 
