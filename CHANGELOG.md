@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.3.1] - 2025-03-01
+
+* Fix: dart function comment generator tool error (dart comment)
+
 ## [5.3.0] - 2025-02-28
 
 * New features: Added assets asset path detection mark (dart)

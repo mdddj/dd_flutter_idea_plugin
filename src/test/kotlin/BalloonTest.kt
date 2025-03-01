@@ -22,7 +22,7 @@ class BalloonTest : HeavyPlatformTestCase() {
 
     @Throws(Exception::class)
     fun testBalloonCreationAndVisibility() {
-        // 在EDT中执行Balloon创建和显示
+
         ApplicationManager.getApplication().invokeAndWait {
             val content = JLabel("Test Balloon Content")
             balloon = JBPopupFactory.getInstance()

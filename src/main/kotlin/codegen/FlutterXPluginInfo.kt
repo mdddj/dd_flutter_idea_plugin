@@ -1,7 +1,7 @@
 package codegen
 
 object FlutterXPluginInfo {
-    const val Version: String = "5.3.0.242"
+    const val Version: String = "5.3.0.243"
     const val Changelog: String = """
 <h2>5.3.0 - 2025-02-28</h2>
 

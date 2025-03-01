@@ -94,7 +94,8 @@ object FreezedNewSetting {
             cell(box).bindItem({ config.freezedVersion }, {
                 config.freezedVersion = it ?: FreezedVersion.DefaultVersion
             })
-            cell(box2).bindItem({ config.freezedClassType },
+            cell(box2).bindItem(
+                { config.freezedClassType },
                 { config.freezedClassType = it ?: FreezedClassType.Sealed })
         }
     }
@@ -103,27 +104,10 @@ object FreezedNewSetting {
 
 private object MyRowBuild {
     /// 2024.3
-//    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
-//        row.textFieldWithBrowseButton(
-//            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-//            project,
-//        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
-//            VerifyFileDir.validDirByComponent(it)
-//        }.validationOnInput {
-//            if (VerifyFileDir.validDirByComponent(it)) {
-//                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-//            }
-//            return@validationOnInput null
-//        }
-//    }
-
-    /// 2023.2
     fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
         row.textFieldWithBrowseButton(
-            PluginBundle.get("select_a_folder"),
-            project,
             FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-            { it.path },
+            project,
         ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
             VerifyFileDir.validDirByComponent(it)
         }.validationOnInput {
@@ -133,6 +117,23 @@ private object MyRowBuild {
             return@validationOnInput null
         }
     }
+
+    /// 2023.2
+//    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
+//        row.textFieldWithBrowseButton(
+//            PluginBundle.get("select_a_folder"),
+//            project,
+//            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+//            { it.path },
+//        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+//            VerifyFileDir.validDirByComponent(it)
+//        }.validationOnInput {
+//            if (VerifyFileDir.validDirByComponent(it)) {
+//                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+//            }
+//            return@validationOnInput null
+//        }
+//    }
 }
 
 enum class NameFormatRule(val format: CaseFormat, val eg: String) {
