@@ -49,10 +49,9 @@ fun Panel.nameRuleConfig(onChange: NameRuleConfig, init: OnInit? = null): Collap
 
 
 // freezed新版本的设置
-
-
 data class SaveToDirectoryModelOnChange(
-    val onDirectoryChange: KMutableProperty0<String>,
+    val directoryGet: () -> String,
+    val directorySet: (string: String) -> Unit,
     val onFilenameChange: KMutableProperty0<String>,
     val onOpenInEditor: KMutableProperty0<Boolean>,
 )
@@ -76,7 +75,7 @@ fun Row.saveToDirectoryConfig(
                     }
             }
             row(PluginBundle.get("g.3")) {
-                MyRowBuild.folder(this, onChange.onDirectoryChange, project)
+                MyRowBuild.folder(this, onChange.directoryGet, onChange.directorySet, project)
             }
             row {
                 checkBox(PluginBundle.get("freezed.gen.base.open.in.editor")).bindSelected(onChange.onOpenInEditor)
@@ -102,13 +101,13 @@ object FreezedNewSetting {
 }
 
 
-private object MyRowBuild {
+object MyRowBuild {
     /// 2024.3
-    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
+    fun folder(row: Row, getter: () -> String, setter: (String) -> Unit, project: Project) {
         row.textFieldWithBrowseButton(
             FileChooserDescriptorFactory.createSingleFolderDescriptor(),
             project,
-        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+        ).bindText(getter, setter).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
             VerifyFileDir.validDirByComponent(it)
         }.validationOnInput {
             if (VerifyFileDir.validDirByComponent(it)) {

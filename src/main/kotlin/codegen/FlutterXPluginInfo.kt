@@ -1,13 +1,12 @@
 package codegen
 
 object FlutterXPluginInfo {
-    const val Version: String = "5.3.0.243"
+    const val Version: String = "5.3.1.243"
     const val Changelog: String = """
-<h2>5.3.0 - 2025-02-28</h2>
+<h2>5.3.1 - 2025-03-01</h2>
 
-<ul><li>New features: Added assets asset path detection mark (dart)</li><li>New features: If a package is marked by the author and stopped updating, it will be marked in the configuration file (
-  yaml)</li><li>New features: Added freezed 3.0 class quick repair tool (dart)</li></ul>
+<ul><li>Fix: dart function comment generator tool error (dart comment)</li></ul>
 """
 
-    const val BuildDate: String = "2025-02-28"
+    const val BuildDate: String = "2025-03-01"
 }

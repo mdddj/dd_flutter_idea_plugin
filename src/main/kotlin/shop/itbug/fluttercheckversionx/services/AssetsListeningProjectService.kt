@@ -85,7 +85,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     return
                 }
                 val projectPath = project.basePath
-                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
                 if (!setting.autoListenFileChange) {
                     return
                 }

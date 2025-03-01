@@ -86,7 +86,10 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                 ///保存到目录
                 saveToDirectoryConfig(
                     project, SaveToDirectoryModelOnChange(
-                        generateConfig::saveDirectory, generateConfig::saveFileName, generateConfig::openInEditor
+                        { generateConfig.saveDirectory },
+                        { generateConfig.saveDirectory = it },
+                        generateConfig::saveFileName,
+                        generateConfig::openInEditor
                     )
                 ) {
                     row {

@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.JBColor
 import com.intellij.ui.awt.RelativePoint
@@ -16,6 +17,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.constance.Links
+import shop.itbug.fluttercheckversionx.dialog.MyRowBuild
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import javax.swing.BorderFactory
@@ -30,17 +32,19 @@ typealias GeneraAssetsSettingPanelIsModified = (value: Boolean) -> Unit
  * 生成资产文件的设置面板
  */
 class GeneraAssetsSettingPanel(
+    project: Project,
     var settingModel: GenerateAssetsClassConfigModel,
     val parentDisposable: Disposable,
-    modified: GeneraAssetsSettingPanelIsModified
-) :
+    modified: GeneraAssetsSettingPanelIsModified,
+
+    ) :
     BorderLayoutPanel() {
 
     //忽略的文件
-    private val igFilesWidget = IgFileList()
+    private val igFilesWidget = IgFileList(project)
 
 
-    private val dialogPanel = getGeneraAssetsPanel(settingModel, parentDisposable, modified)
+    private val dialogPanel = getGeneraAssetsPanel(project, settingModel, parentDisposable, modified)
 
 
     init {
@@ -111,6 +115,7 @@ class GeneraAssetsSettingPanel(
  * 设置面板
  */
 fun getGeneraAssetsPanel(
+    project: Project,
     settingModel: GenerateAssetsClassConfigModel,
     parentDisposable: Disposable,
     isModified: GeneraAssetsSettingPanelIsModified
@@ -124,22 +129,20 @@ fun getGeneraAssetsPanel(
         }
 
         row(PluginBundle.get("g.1")) {
-            textField().bindText({ settingModel.className }, {
-                GenerateAssetsClassConfig.getGenerateAssetsSetting().className = it
-            })
+            textField().bindText({ settingModel.className ?: "" }, { settingModel.className = it })
         }
+
+
         row(PluginBundle.get("g.2")) {
-            textField().bindText({ settingModel.fileName }, {
-                GenerateAssetsClassConfig.getGenerateAssetsSetting().fileName = it
+            textField().bindText({ settingModel.fileName ?: "" }, {
+                settingModel.fileName = it
             })
         }
         row(PluginBundle.get("g.3")) {
-            textField().bindText({ settingModel.path }, {
-                GenerateAssetsClassConfig.getGenerateAssetsSetting().path = it
-            })
+            MyRowBuild.folder(this, { settingModel.path ?: "" }, { settingModel.path = it }, project)
         }.contextHelp(PluginBundle.get("g.3.t"), PluginBundle.get("g.3.t1"))
         row(PluginBundle.get("g.4")) {
-            textField().bindText(settingModel::replaceTags)
+            textField().bindText({ settingModel.replaceTags ?: "" }, { settingModel.replaceTags = it })
         }.contextHelp(PluginBundle.get("g.4.1"), PluginBundle.get("g.4"))
         row(PluginBundle.get("g.5.1")) {
             checkBox(PluginBundle.get("g.5.2")).bindSelected(settingModel::firstChatUpper)
@@ -156,9 +159,9 @@ fun getGeneraAssetsPanel(
         row(PluginBundle.get("g.9.1")) {
             checkBox(PluginBundle.get("g.9.2")).bindSelected(settingModel::autoListenFileChange)
         }
-        row(PluginBundle.get("g.10.1")) {
-            checkBox(PluginBundle.get("g.10.2")).bindSelected(settingModel::showImageIconInEditor)
-        }
+//        row(PluginBundle.get("g.10.1")) {
+//            checkBox(PluginBundle.get("g.10.2")).bindSelected(settingModel::showImageIconInEditor)
+//        }
     }
 
     val alarm = Alarm(parentDisposable)
@@ -184,12 +187,12 @@ fun getGeneraAssetsPanel(
 /**
  * 忽略的文件或者后缀
  */
-class IgFileList : JBList<String>() {
+class IgFileList(val project: Project) : JBList<String>() {
 
     init {
         cellRenderer = DefaultListCellRenderer()
         model = DefaultListModel<String?>().apply {
-            addAll(GenerateAssetsClassConfig.getGenerateAssetsSetting().igFiles)
+            addAll(GenerateAssetsClassConfig.getGenerateAssetsSetting(project).igFiles)
         }
         border = BorderFactory.createLineBorder(JBColor.border())
         emptyText.appendText(PluginBundle.get("g.12"))
@@ -197,12 +200,12 @@ class IgFileList : JBList<String>() {
 
     fun addItemString(name: String) {
         (model as DefaultListModel).addElement(name)
-        GenerateAssetsClassConfig.getGenerateAssetsSetting().igFiles.add(name)
+        GenerateAssetsClassConfig.getGenerateAssetsSetting(project).addIgFiles(name)
     }
 
     fun removeItem(name: String) {
         (model as DefaultListModel).removeElement(name)
-        GenerateAssetsClassConfig.getGenerateAssetsSetting().igFiles.remove(name)
+        GenerateAssetsClassConfig.getGenerateAssetsSetting(project).removeIgFiles(name)
     }
 
 }

@@ -99,11 +99,11 @@ object MyDartPsiElementUtil {
     fun createDartFileWithElement(
         project: Project, element: PsiElement, path: String, filename: String, onSuccess: CreatePsiFileSuccess?
     ): PsiFile? {
-        val findFileByPath = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
+        val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path)
         if (findFileByPath != null) {
             val findDirectory = PsiManager.getInstance(project).findDirectory(findFileByPath)
             if (findDirectory != null) {
-                checkFileIsExits(project, "$path/$filename") {
+                checkFileIsExits(project, "$path${File.separator}$filename") {
                     it.delete()
                 }
                 val dartFile = PsiFileFactory.getInstance(project)
@@ -128,7 +128,7 @@ object MyDartPsiElementUtil {
     private fun checkFileIsExits(
         project: Project, path: String, existenceHandle: (psiFile: PsiFile) -> Unit
     ): Boolean {
-        val file = LocalFileSystem.getInstance().findFileByPath(project.basePath + "/" + path)
+        val file = LocalFileSystem.getInstance().findFileByPath(path)
         if (file != null) {
             val findFile = PsiManager.getInstance(project).findFile(file)
             if (findFile != null) {
@@ -170,7 +170,7 @@ object MyDartPsiElementUtil {
         project: Project,
         name: String,
         auto: Boolean = false,
-        userSetting: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+        userSetting: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
     ) {
 
         val names: MutableList<String> = mutableListOf()
@@ -195,7 +195,7 @@ object MyDartPsiElementUtil {
 
 
             //进行特殊字符替换
-            val split = setting.replaceTags.split(",")
+            val split = (setting.replaceTags ?: "").split(",")
             split.forEach {
                 initFilename = initFilename.replace(it, "_")
             }
@@ -226,7 +226,7 @@ object MyDartPsiElementUtil {
             return initFilename
         }
 
-        val classElement = createDartClassBodyFromClassName(project, userSetting.className)
+        val classElement = createDartClassBodyFromClassName(project, userSetting.className ?: "")
 
         classElement.classBody?.classMembers?.let { classMembers ->
             MyFileUtil.onFolderEachWithProject(project, name) { virtualFile ->
@@ -251,7 +251,7 @@ object MyDartPsiElementUtil {
         project.reformat(classElement)
 
         createDartFileWithElement(
-            project, classElement, "lib", "${userSetting.fileName}.dart", null
+            project, classElement, "${userSetting.path}", "${userSetting.fileName}.dart", null
         )
         names.clear()
         if (auto) {

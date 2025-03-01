@@ -103,7 +103,8 @@ class DartMacroDialog(val project: Project, json: String) : DialogWrapper(projec
                 saveToDirectoryConfig(
                     project, SaveToDirectoryModelOnChange(
                         onFilenameChange = classConfig::filename,
-                        onDirectoryChange = classConfig::saveDir,
+                        directoryGet = { classConfig.saveDir },
+                        directorySet = { classConfig.saveDir = it },
                         onOpenInEditor = classConfig::openInEditor
                     )
                 ).align(Align.FILL)
