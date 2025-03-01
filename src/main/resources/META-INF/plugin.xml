@@ -97,10 +97,6 @@
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument"
                                     language="yaml" order="first"/>
 
-        <lang.documentationProvider language="Dart"
-                                    implementationClass="shop.itbug.fluttercheckversionx.document.DartImageDocumentProvider"
-                                    order="first"/>
-
         <!--    dart文档的HTML实现    -->
         <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
                                     language="Dart"
