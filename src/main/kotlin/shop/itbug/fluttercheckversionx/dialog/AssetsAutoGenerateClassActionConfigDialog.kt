@@ -3,19 +3,18 @@ package shop.itbug.fluttercheckversionx.dialog
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.dsl.builder.BottomGap
-import com.intellij.ui.dsl.builder.bindSelected
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
+import shop.itbug.fluttercheckversionx.constance.Links
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import javax.swing.Action
 import javax.swing.JComponent
 
 //生成资产文件的配置弹窗
-class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrapper(project) {
+class AssetsAutoGenerateClassActionConfigDialog(val project: Project) : DialogWrapper(project) {
 
-    private val configModel: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getInstance().state
+    private val configModel: GenerateAssetsClassConfigModel = GenerateAssetsClassConfig.getInstance(project).state
 
     init {
         super.init()
@@ -29,29 +28,32 @@ class AssetsAutoGenerateClassActionConfigDialog(project: Project) : DialogWrappe
 
     val ui: DialogPanel
         get() : DialogPanel {
-            val p : DialogPanel = panel {
-                row("类    名") {
-                    textField().bindText(configModel::className)
+            val p: DialogPanel = panel {
+                row(PluginBundle.get("g.1")) {
+                    textField().bindText({ configModel.className ?: "" }, { configModel.className = it })
                 }
-                row("文件名") {
-                    textField().bindText(configModel::fileName)
+                row(PluginBundle.get("g.2")) {
+                    textField().bindText({ configModel.fileName ?: "" }, { configModel.fileName = it })
                 }
-                row("目    录") {
-                    textField().bindText(configModel::path)
+                row(PluginBundle.get("g.3")) {
+                    MyRowBuild.folder(this, { configModel.path ?: "" }, { configModel.path = it }, project)
                 }
                 row {
-                    checkBox("保存且不再提醒").bindSelected(configModel::dontTip)
-                }.contextHelp("可在设置中再次配置")
+                    checkBox(PluginBundle.get("dot_show_again_this") + " this dialog").bindSelected(configModel::dontTip)
+                }
                 row {
-                    checkBox("监听文件变化自动更新").bindSelected(configModel::autoListenFileChange)
+                    checkBox(PluginBundle.get("g.9.1")).bindSelected(configModel::autoListenFileChange)
                 }.bottomGap(BottomGap.SMALL)
+
                 row {
-                    button("生成") {
+                    button(PluginBundle.get("assets.gen")) {
                         ui.apply()
-                        println(configModel)
-                        GenerateAssetsClassConfig.getInstance().loadState(configModel)
+                        GenerateAssetsClassConfig.getInstance(project).loadState(configModel)
                         super.doOKAction()
-                    }
+                    }.align(Align.FILL)
+                }
+                row {
+                    comment(Links.generateDocCommit(Links.assets)).align(AlignX.RIGHT)
                 }
             }
             return p

@@ -1,51 +1,58 @@
 package shop.itbug.fluttercheckversionx.config
 
 import com.intellij.openapi.components.*
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
+import java.io.File
 
-data class GenerateAssetsClassConfigModel(
-    //dart class 类型
-    var className: String = "Assets",
-    //文件名
-    var fileName: String = "assets",
-    //保存路径
-    var path: String = "lib",
-    //不再提醒
-    var dontTip: Boolean = false,
-    //是否监听自动提醒
-    var autoListenFileChange: Boolean = false,
-    //忽略的文件名
-    var igFiles: MutableList<String> = mutableListOf("test.json", "demo.png"),
-    //添加文件夹前缀
-    var addFolderNamePrefix: Boolean = false,
-    //命名添加文件类型后缀: test.jpg => testJpg
-    var addFileTypeSuffix: Boolean = false,
-    //如果文件名里面有特殊字符,需要将其忽略
-    var replaceTags: String = ".,-,!,@,#,$,%,^,&,*,(,),+,=,?,/,<,>,~",
-    //文件名首字符大写
-    var firstChatUpper: Boolean = true,
-    //是否在编辑器中显示图标预览
-    var showImageIconInEditor: Boolean = true
-)
+class GenerateAssetsClassConfigModel() : BaseState() {
+    var className by string("Assets")
+    var fileName by string("assets")
+    var path by string()
+    var dontTip by property(false)
+    var autoListenFileChange by property(false)
+    var igFiles by list<String>()
+    var addFolderNamePrefix by property(false)
+    var addFileTypeSuffix by property(false)
+    var replaceTags by string(".,-,!,@,#,$,%,^,&,*,(,),+,=,?,/,<,>,~")
+    var firstChatUpper by property(true)
 
-@State(name = "DDGenerateAssetsClassConfig", storages = [Storage("DDGenerateAssetsClassConfig.xml")])
-@Service(Service.Level.APP)
-class GenerateAssetsClassConfig private constructor() : PersistentStateComponent<GenerateAssetsClassConfigModel> {
-    private var model = GenerateAssetsClassConfigModel()
-    override fun getState(): GenerateAssetsClassConfigModel {
-        return model
+    @Deprecated("弃用，被其他设置替代")
+    var showImageIconInEditor by property(true)
+    fun addIgFiles(name: String) {
+        igFiles.add(name)
+        incrementModificationCount()
     }
 
-    override fun loadState(state: GenerateAssetsClassConfigModel) {
-        model = state
+    fun removeIgFiles(name: String) {
+        igFiles.remove(name)
+        incrementModificationCount()
     }
 
-    companion object {
-        fun getInstance(): GenerateAssetsClassConfig {
-            return service()
+    fun initProjectPath(project: Project) {
+        if (path == null || path?.isBlank() == true) {
+            val initPath = project.guessProjectDir()?.path + File.separator + "lib"
+            path = initPath
         }
 
-        fun getGenerateAssetsSetting(): GenerateAssetsClassConfigModel {
-            return getInstance().state
+    }
+}
+
+@State(name = "DDGenerateAssetsClassConfig", storages = [Storage("DDGenerateAssetsClassConfig.xml")])
+@Service(Service.Level.PROJECT)
+class GenerateAssetsClassConfig() :
+    SimplePersistentStateComponent<GenerateAssetsClassConfigModel>(GenerateAssetsClassConfigModel()) {
+
+    companion object {
+        fun getInstance(project: Project): GenerateAssetsClassConfig {
+            val ser = project.service<GenerateAssetsClassConfig>()
+            ser.state.initProjectPath(project)
+            return ser
+        }
+
+
+        fun getGenerateAssetsSetting(project: Project): GenerateAssetsClassConfigModel {
+            return getInstance(project).state
         }
     }
 }

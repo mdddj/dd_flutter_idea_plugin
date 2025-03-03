@@ -34,6 +34,7 @@ class PluginChangelogCache : SimplePersistentStateComponent<PluginChangelogState
 
     // 开始显示更新日志
     fun startShow(project: Project) {
+        println("开始显示版本更新记录")
         if (!state.has(version)) {
             val n = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(
                 changelog, null, JBColor.foreground(),

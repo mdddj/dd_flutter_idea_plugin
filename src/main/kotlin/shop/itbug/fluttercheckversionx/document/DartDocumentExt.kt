@@ -1,19 +1,26 @@
 package shop.itbug.fluttercheckversionx.document
 
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.ExternalDocumentationHandler
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.HtmlChunk
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
 import org.dartlang.analysis.server.protocol.HoverInformation
 import shop.itbug.fluttercheckversionx.document.MarkdownRender.Companion.appendTag
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.util.DartPsiElementHelper
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
+import java.io.File
+import java.net.URI
 
 /**
  * dart 文件的文档注释扩展
@@ -23,6 +30,18 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
+
+
+        //判断是不是资产
+        val strElement = DartPsiElementHelper.findTargetFilePsiElement(element)
+        if (strElement != null) {
+            val result = DartPsiElementHelper.generateLocalImageDocument(element)
+            if (result != null) {
+                return result
+            }
+        }
+
+        //生成普通的文档
 
         val reference = element.parent?.parent?.reference?.resolve()
         val file = element.containingFile.virtualFile ?: return null
@@ -200,13 +219,35 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
         context ?: return null
         psiManager ?: return null
         link ?: return null
-        println("getDocumentationElementForLink: $link  ${context.text} ")
         return MyDartPsiElementUtil.searchClassByText(context.project, link)
+    }
+
+
+    override fun getCustomDocumentationElement(
+        editor: Editor,
+        file: PsiFile,
+        contextElement: PsiElement?,
+        targetOffset: Int
+    ): PsiElement? {
+        contextElement ?: return null
+        return DartPsiElementHelper.findTargetFilePsiElement(contextElement)
     }
 
 
     override fun handleExternalLink(psiManager: PsiManager?, link: String?, context: PsiElement?): Boolean {
         println("handleExternalLink: $link  $context")
+        if (link != null && context != null && psiManager != null && link.startsWith("file:")) {
+            try {
+                val project = context.project
+                val uri = URI.create(link)
+                val file = runReadAction { LocalFileSystem.getInstance().findFileByIoFile(File(uri.path)) }
+                if (file != null) {
+                    ProjectView.getInstance(project).select(null, file, true) //文件浏览器中打开
+                    return true
+                }
+            } catch (_: Exception) {
+            }
+        }
         return super.handleExternalLink(psiManager, link, context)
     }
 

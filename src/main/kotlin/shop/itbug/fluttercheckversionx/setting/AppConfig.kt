@@ -17,6 +17,7 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import javax.swing.JComponent
 
+//
 class AppConfig(val project: Project) : Configurable, Disposable, SearchableConfigurable {
 
     var model = PluginStateService.appSetting
@@ -24,11 +25,12 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
     val pluginConfig: PluginSetting = PluginConfig.getState(project)
 
     private var dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
-    private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+    private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
     private var generaAssetsSettingPanelModelIs = false
     private var generateSettingPanel =
         GeneraAssetsSettingPanel(
-            settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig
+            project,
+            settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig,
         ) {
             generaAssetsSettingPanelModelIs = it
         }
@@ -147,7 +149,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
         pluginConfigPanel.apply()
         PluginStateService.getInstance().loadState(model)
         DioListingUiConfig.getInstance().loadState(dioSetting)
-        GenerateAssetsClassConfig.getInstance().loadState(generaAssetsSettingPanel)
+        GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
         PluginConfig.changeState(project) { pluginConfig }
     }
 

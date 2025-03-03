@@ -22,6 +22,7 @@ import shop.itbug.fluttercheckversionx.socket.formatSize
 import java.io.File
 import java.net.URI
 import java.net.URLConnection
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -47,22 +48,8 @@ object DartPsiElementHelper {
             if (this is LeafPsiElement && this.parent is DartStringLiteralExpression) {
                 return parent as DartStringLiteralExpressionImpl
             }
-            return null
+            return element as? DartStringLiteralExpressionImpl
         }
-
-
-        //获取指向
-//        fun PsiElement.getRf(): DartStringLiteralExpressionImpl? {
-//            if (this is LeafPsiElement && this.parent.parent is DartReferenceExpressionImpl) {
-//                val ref = this.parent.parent as DartReferenceExpressionImpl
-//                val resolvePsi = ref.resolve() ?: return null
-//                if (resolvePsi is DartComponentNameImpl) {
-//                    val findDartStringLiteralInParent = findDartStringLiteralInParent(resolvePsi)
-//                    return findDartStringLiteralInParent
-//                }
-//            }
-//            return null
-//        }
 
         val first = element.getTarget()
         if (first != null) {
@@ -131,12 +118,12 @@ object DartPsiElementHelper {
             width = (width * scale).roundToInt()
         }
         val url = URI("file", null, fileResult.full, null).toString()
-        val img = HtmlChunk.tag("img").attr("src", url).attr("width", width).attr("height", height)
+        val img = HtmlChunk.tag("img").attr("src", url).attr("width", "${width}px").attr("height", "${height}px")
 
 
         val len = fileResult.file.length()
         val infos = MySimpleInfoChunk().body {
-            addLink("Path", url, fileResult.basePath)
+            //addLink("Path", url, fileResult.basePath)
             addKeyValue(
                 "Size", "${width}x$height"
             )
@@ -147,13 +134,16 @@ object DartPsiElementHelper {
             )
             addKeyValue("Length", formatSize(len))
             if (PluginConfig.getState(element.project).showRewardAction) {
-                addLink(PluginBundle.get("reward"), "https://itbug.shop/static/ds.68eb4cac.jpg", "❤️投喂梁典典咖啡")
+                addLink(PluginBundle.get("reward"), "https://itbug.shop/static/ds.68eb4cac.jpg", "请梁典典咖啡")
             }
 
         }
 
-        val html = HtmlBuilder().append(img).br().append(HtmlChunk.div().addRaw(infos.toString())).toString()
-        return html
+        val html = HtmlBuilder()
+            .append(img).br()
+            .append(HtmlChunk.div().addRaw(infos.toString())).toString()
+        //包裹一层 html
+        return "<html style='width:${max(maxImageSize, imageInfo.width) + 40}px'>${html}</html>"
     }
 
     //获取字符串

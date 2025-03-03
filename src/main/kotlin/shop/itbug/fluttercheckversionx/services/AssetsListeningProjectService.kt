@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
@@ -36,7 +37,10 @@ import shop.itbug.fluttercheckversionx.util.Util
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
-        PluginChangelogCache.getInstance().startShow(project)
+        DumbService.getInstance(project).runWhenSmart {
+            PluginChangelogCache.getInstance().startShow(project)
+        }
+
     }
 }
 
@@ -85,7 +89,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     return
                 }
                 val projectPath = project.basePath
-                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting()
+                val setting = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
                 if (!setting.autoListenFileChange) {
                     return
                 }
