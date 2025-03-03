@@ -238,6 +238,13 @@ val generateFlutterPluginInfo by tasks.registering {
     group = "codegen"
     description = "Generates FlutterPluginInfo class with version info"
 
+    println(
+        """
+        changelog : \n
+        ${currentVersionChangelog.get()}
+    """.trimIndent()
+    )
+
     // 定义输出目录和文件路径
     val outputDir = file("src/main/kotlin/codegen")
     val outputFile = File(outputDir, "FlutterXPluginInfo.kt")
