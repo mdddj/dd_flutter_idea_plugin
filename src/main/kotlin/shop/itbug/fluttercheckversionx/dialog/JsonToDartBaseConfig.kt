@@ -103,10 +103,27 @@ object FreezedNewSetting {
 
 object MyRowBuild {
     /// 2024.3
+//    fun folder(row: Row, getter: () -> String, setter: (String) -> Unit, project: Project) {
+//        row.textFieldWithBrowseButton(
+//            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+//            project,
+//        ).bindText(getter, setter).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
+//            VerifyFileDir.validDirByComponent(it)
+//        }.validationOnInput {
+//            if (VerifyFileDir.validDirByComponent(it)) {
+//                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
+//            }
+//            return@validationOnInput null
+//        }
+//    }
+
+    /// 2023.2
     fun folder(row: Row, getter: () -> String, setter: (String) -> Unit, project: Project) {
         row.textFieldWithBrowseButton(
-            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+            PluginBundle.get("select_a_folder"),
             project,
+            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+            { it.path },
         ).bindText(getter, setter).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
             VerifyFileDir.validDirByComponent(it)
         }.validationOnInput {
@@ -116,23 +133,6 @@ object MyRowBuild {
             return@validationOnInput null
         }
     }
-
-    /// 2023.2
-//    fun folder(row: Row, onChange: KMutableProperty0<String>, project: Project) {
-//        row.textFieldWithBrowseButton(
-//            PluginBundle.get("select_a_folder"),
-//            project,
-//            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-//            { it.path },
-//        ).bindText(onChange).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
-//            VerifyFileDir.validDirByComponent(it)
-//        }.validationOnInput {
-//            if (VerifyFileDir.validDirByComponent(it)) {
-//                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-//            }
-//            return@validationOnInput null
-//        }
-//    }
 }
 
 enum class NameFormatRule(val format: CaseFormat, val eg: String) {

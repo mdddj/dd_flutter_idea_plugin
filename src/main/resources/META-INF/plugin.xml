@@ -9,6 +9,9 @@
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.json</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.gradle</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

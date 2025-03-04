@@ -17,6 +17,7 @@ import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
+import shop.itbug.fluttercheckversionx.window.android.FlutterXAndroidMigrateWindow
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
 import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
@@ -32,7 +33,6 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
         val socketRequestForm = SocketRequestForm(project, toolWindow)
         val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
         createContent.setDisposer(socketRequestForm) //销毁监听
-
         toolWindow.contentManager.addContent(createContent)
 
         val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
@@ -80,6 +80,15 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
         )
         toolWindow.contentManager.addContent(privacyContent)
 
+
+        //android gradle 适配窗口
+        val androidMigrateWindow = FlutterXAndroidMigrateWindow(project, toolWindow)
+        val androidMigrateWindowContent = instance.createContent(
+            androidMigrateWindow,
+            "Android Gradle Migrate Tool",
+            false
+        )
+        toolWindow.contentManager.addContent(androidMigrateWindowContent)
 
         FlutterXVMService.getInstance(project).addListener(this)
 

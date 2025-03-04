@@ -156,6 +156,7 @@ class SocketRequestForm(val project: Project, private val toolWindow: ToolWindow
         println("dispose.....SocketRequestForm")
         apiPanel.model.removeListDataListener(this)
         apiPanel.removeOnChangeConfigListen(this)
+        DioApiService.getInstance().dispose()
         super.dispose()
     }
 

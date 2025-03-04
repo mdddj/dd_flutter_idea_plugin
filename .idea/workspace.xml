@@ -5,10 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.2.3">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/FlutterAndroidMigrateManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/android/MigrateWindow.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioRequestBodyToFreezedAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioRequestBodyToFreezedAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/macro/EnterJsonToDartMacroDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/macro/EnterJsonToDartMacroDialog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/components/MyButtonAnAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/components/MyButtonAnAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/JsonToDartBaseConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/JsonToDartBaseConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/SocketRequestForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/SocketRequestForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/dartfile/DartTypeClickActionHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/dartfile/DartTypeClickActionHandle.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,6 +55,17 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="intellij platform" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -238,6 +258,7 @@
     &quot;Gradle.dd_flutter_idea_plugin [initializeIntellijPlatformPlugin].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [jarSearchableOptions].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [listBundledPlugins].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.dd_flutter_idea_plugin [mainClasses].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [pingIdeaPublisherServer].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [prepareTest].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [printBundledPlugins].executor&quot;: &quot;Run&quot;,
@@ -350,35 +371,14 @@
     <option name="myCommands">
       <command value="gradle check" />
       <command value="gradle :ldd-idea-publisher:plugin:pingServer" />
+      <command value="gradle mainClasses" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
       </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="dd_flutter_idea_plugin [buildPlugin]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="buildPlugin" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [generateFlutterPluginInfo]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -403,7 +403,29 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="dd_flutter_idea_plugin [getChangelog]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="dd_flutter_idea_plugin [mainClasses]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="mainClasses" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="dd_flutter_idea_plugin [printBundledPlugins]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -414,7 +436,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="getChangelog" />
+            <option value="printBundledPlugins" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -476,27 +498,27 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [mainClasses]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo]" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [getChangelog]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [mainClasses]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [getChangelog]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23536.34" />
-        <option value="bundled-js-predefined-d6986cc7102b-45be767fe593-JavaScript-IU-251.23536.34" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.39" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.39" />
       </set>
     </attachedChunks>
   </component>
@@ -1540,7 +1562,10 @@
       <workItem from="1740966105557" duration="44000" />
       <workItem from="1740970225008" duration="240000" />
       <workItem from="1740970483910" duration="54000" />
-      <workItem from="1740970622697" duration="189000" />
+      <workItem from="1740970622697" duration="5889000" />
+      <workItem from="1740981579996" duration="8079000" />
+      <workItem from="1740990000106" duration="6654000" />
+      <workItem from="1741076881004" duration="2552000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>

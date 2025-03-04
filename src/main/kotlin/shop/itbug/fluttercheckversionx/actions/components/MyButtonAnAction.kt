@@ -9,4 +9,5 @@ abstract class MyButtonAnAction(val text: String) : AnAction(text), CustomCompon
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }
+
 }
