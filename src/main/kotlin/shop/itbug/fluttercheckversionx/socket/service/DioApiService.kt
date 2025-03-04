@@ -28,6 +28,7 @@ class DioApiService {
 
     private val sessions = mutableSetOf<AioSession>()
     private val messageProcessor = MyMessageProcessor
+    private var aioServer: AioQuickServer? = null
 
     ///添加消息处理程序
     fun addHandle(processor: NativeMessageProcessing) {
@@ -117,6 +118,7 @@ class DioApiService {
         val server = AioQuickServer(port, StringProtocol(), messageProcessor)
         server.setBannerEnabled(false)
         server.setReadBufferSize(10485760 * 2)
+        aioServer = server
         return server
     }
 
@@ -127,6 +129,13 @@ class DioApiService {
                 .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
         }
 
+    fun dispose() {
+        sessions.forEach {
+            it.close()
+        }
+        sessions.clear()
+        aioServer?.shutdown()
+    }
 }
 
 object MyMessageProcessor : AbstractMessageProcessor<String>() {

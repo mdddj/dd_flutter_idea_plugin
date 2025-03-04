@@ -9,6 +9,9 @@
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.json</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.gradle</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -207,13 +210,13 @@
         <action id="DioRequestBodyToFreezedAction"
                 class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
                 icon="/icons/freezed.svg"/>
-        <action id="JsonToDartMacroRightMenuAction"
-                class="shop.itbug.fluttercheckversionx.actions.JsonToDartMacroRightMenuAction"
-                text="Json to Dart Macro"/>
+        <!--        <action id="JsonToDartMacroRightMenuAction"-->
+        <!--                class="shop.itbug.fluttercheckversionx.actions.JsonToDartMacroRightMenuAction"-->
+        <!--                text="Json to Dart Macro"/>-->
         <!--     dio 接口窗口顶部的操作区域   -->
         <group id="FlutterX Window Top Actions">
             <!--            <reference id="DioApiSearchAction"/>-->
-            <reference id="DioRequestBodyToFreezedAction"/>
+            <!--            <reference id="DioRequestBodyToFreezedAction"/>-->
             <reference id="Dio.Request.Item.Render.Option"/>
             <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
             <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
@@ -296,8 +299,8 @@
         <action id="GoToDocumentAction"
                 class="shop.itbug.fluttercheckversionx.actions.bar.GoToDocumentAction"
         />
-        <action id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"
-                class="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction" text="Json to Dart Macro"/>
+        <!--        <action id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"-->
+        <!--                class="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction" text="Json to Dart Macro"/>-->
         <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenAndroidProjectOnASAction"
                 id="OpenAndroidProjectOnASAction"/>
         <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenIosProjectInXcodeAction"
@@ -308,7 +311,7 @@
             <reference id="SearchPubPluginAction"/>
             <reference id="FlutterRunBuilderCommandAction"/>
             <separator/>
-            <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>
+            <!--            <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>-->
             <reference id="StatusBarJsonToFreezedClass"/>
             <separator/>
             <reference id="GoToQQGroupAction"/>
@@ -422,7 +425,7 @@
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
             <separator/>
             <reference id="DioRequestBodyToFreezedAction"/>
-            <reference id="JsonToDartMacroRightMenuAction"/>
+            <!--            <reference id="JsonToDartMacroRightMenuAction"/>-->
         </group>
     </actions>
 

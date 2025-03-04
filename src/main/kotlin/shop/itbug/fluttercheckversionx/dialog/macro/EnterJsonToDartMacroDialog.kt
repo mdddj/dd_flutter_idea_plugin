@@ -1,9 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog.macro
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
@@ -205,17 +202,18 @@ private class ClassCodeEditor(
 }
 
 
-class DartMacroAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        EnterJsonToDartMacroDialog(e.project!!).show()
-    }
-
-    override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.project != null
-        super.update(e)
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
-}
+//弃用。dart已经放弃支持
+//class DartMacroAction : AnAction() {
+//    override fun actionPerformed(e: AnActionEvent) {
+//        EnterJsonToDartMacroDialog(e.project!!).show()
+//    }
+//
+//    override fun update(e: AnActionEvent) {
+//        e.presentation.isEnabled = e.project != null
+//        super.update(e)
+//    }
+//
+//    override fun getActionUpdateThread(): ActionUpdateThread {
+//        return ActionUpdateThread.BGT
+//    }
+//}

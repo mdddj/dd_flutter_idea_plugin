@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [5.3.2] - 2025-03-04
+
+* New: `flutter android gradle` Migration Tools (android tool)
+* Fix: `dio` The problem of listening server not being destroyed (dio tool)
+
 ## [5.3.1] - 2025-03-03
 
 * Fix: dart function comment generator tool error (dart comment)
