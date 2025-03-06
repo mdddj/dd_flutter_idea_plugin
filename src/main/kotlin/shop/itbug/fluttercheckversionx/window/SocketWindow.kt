@@ -82,7 +82,7 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
 
         //android gradle 适配窗口
-        val androidMigrateWindow = FlutterXAndroidMigrateWindow(project, toolWindow)
+        val androidMigrateWindow = FlutterXAndroidMigrateWindow(project)
         val androidMigrateWindowContent = instance.createContent(
             androidMigrateWindow,
             "Android Gradle Migrate Tool",

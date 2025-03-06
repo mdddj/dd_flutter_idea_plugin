@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
-import com.intellij.openapi.wm.ToolWindow
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.OnePixelSplitter
@@ -38,7 +37,6 @@ import javax.swing.event.ListSelectionListener
 
 
 sealed class AndroidMigrateFile(open val file: VirtualFile) {
-    var newFile: VirtualFile? = null
     fun findRelativePath(project: Project): String {
         if (project.isDisposed) return file.path
         val projectBasePath = project.guessProjectDir() ?: return file.path
@@ -59,7 +57,7 @@ sealed class AndroidMigrateFile(open val file: VirtualFile) {
                 try {
                     val content = file.readText()
                     LightVirtualFile(file.name, file.fileType, content)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     null
                 }
             }
@@ -73,16 +71,15 @@ sealed class AndroidMigrateFile(open val file: VirtualFile) {
     abstract fun updatePsi(project: Project, file: VirtualFile)
 }
 
-class AndroidBuildFile(val androidBuildFile: VirtualFile) : AndroidMigrateFile(androidBuildFile) {
+class AndroidBuildFile(androidBuildFile: VirtualFile) : AndroidMigrateFile(androidBuildFile) {
 
     override fun updatePsi(project: Project, vf: VirtualFile) {
         FlutterAndroidMigrateManager.getInstance(project).getNewAndroidBuildFile(vf)
     }
-
-
 }
 
-class AndroidAppBuildFile(val androidAppBuildFile: VirtualFile) : AndroidMigrateFile(androidAppBuildFile) {
+
+class AndroidAppBuildFile(androidAppBuildFile: VirtualFile) : AndroidMigrateFile(androidAppBuildFile) {
 
     override fun updatePsi(project: Project, vf: VirtualFile) {
         FlutterAndroidMigrateManager.getInstance(project).getNewAppBuildFile(vf)
@@ -101,7 +98,7 @@ class AndroidSettingsFile(override val file: VirtualFile) : AndroidMigrateFile(f
  * android 适配窗口
  *
  */
-class FlutterXAndroidMigrateWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayoutPanel(),
+class FlutterXAndroidMigrateWindow(val project: Project) : BorderLayoutPanel(),
     ListSelectionListener {
 
     private val androidService = FlutterAndroidMigrateManager.getInstance(project)
