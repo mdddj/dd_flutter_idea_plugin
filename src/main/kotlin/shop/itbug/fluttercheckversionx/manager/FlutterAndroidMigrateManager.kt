@@ -13,7 +13,6 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightVirtualFile
@@ -62,7 +61,7 @@ class FlutterAndroidMigrateManager(val project: Project) : Disposable {
         WriteCommandAction.runWriteCommandAction(project) {
             val psiFile = PsiManager.getInstance(project).findFile(vf) as? GroovyFile ?: return@runWriteCommandAction
             psiFile.fileDocument.setText(newSettingFile.readText())
-            PsiDocumentManager.getInstance(project).commitDocument(psiFile.fileDocument)
+//            PsiDocumentManager.getInstance(project).commitDocument(psiFile.fileDocument)
         }
     }
 
