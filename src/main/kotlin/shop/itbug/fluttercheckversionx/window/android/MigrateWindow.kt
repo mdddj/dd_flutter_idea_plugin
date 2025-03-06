@@ -90,6 +90,7 @@ class AndroidSettingsFile(override val file: VirtualFile) : AndroidMigrateFile(f
 
 /**
  * android 适配窗口
+ *
  */
 class FlutterXAndroidMigrateWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayoutPanel(),
     ListSelectionListener {

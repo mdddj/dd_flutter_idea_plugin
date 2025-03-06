@@ -41,7 +41,6 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.terminal",
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
-    "org.jetbrains.kotlin",
     "com.intellij.gradle",
     "org.jetbrains.plugins.gradle"
 )

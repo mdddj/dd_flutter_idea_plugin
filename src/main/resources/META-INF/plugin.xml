@@ -5,7 +5,6 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends>Dart</depends>
-    <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.json</depends>
