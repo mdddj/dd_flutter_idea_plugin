@@ -52,7 +52,7 @@ if (sinceBuildVersion.toInt() >= 243) {
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:4.13.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.0")
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
