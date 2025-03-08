@@ -22,7 +22,6 @@ import shop.itbug.fluttercheckversionx.socket.formatSize
 import java.io.File
 import java.net.URI
 import java.net.URLConnection
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -105,27 +104,31 @@ object DartPsiElementHelper {
      * 生成本机图片类型的文档html
      */
     fun generateLocalImageDocument(element: PsiElement): String? {
-        val maxImageSize = 300
+        val maxImageSize = 200
         val fileResult = checkHasFile(element) ?: return null
         val vf = LocalFileSystem.getInstance().findFileByIoFile(fileResult.file) ?: return null
         val imageInfo = ImageInfoIndex.getInfo(vf, element.project) ?: return null
         var width = imageInfo.width
         var height = imageInfo.height
         val maxSize = width.coerceAtLeast(height)
-        if (maxSize > maxImageSize) {
-            val scale = maxImageSize.toDouble() / maxSize.toDouble()
-            height = (height * scale).roundToInt()
-            width = (width * scale).roundToInt()
+        val scale = if (maxSize > maxImageSize) {
+            maxImageSize.toDouble() / maxSize
+        } else {
+            1.0 // 无需缩放
         }
+        width = (width * scale).roundToInt()
+        height = (height * scale).roundToInt()
         val url = URI("file", null, fileResult.full, null).toString()
-        val img = HtmlChunk.tag("img").attr("src", url).attr("width", "${width}px").attr("height", "${height}px")
+
+        val img = HtmlChunk.tag("img").attr("src", url)
+            .attr("width", width).attr("height", height)
 
 
         val len = fileResult.file.length()
         val infos = MySimpleInfoChunk().body {
             //addLink("Path", url, fileResult.basePath)
             addKeyValue(
-                "Size", "${width}x$height"
+                "Size", "${imageInfo.width}x${imageInfo.height}"
             )
             addKeyValue(
                 "Aspect ratio", calculateAspectRatio(
@@ -143,7 +146,7 @@ object DartPsiElementHelper {
             .append(img).br()
             .append(HtmlChunk.div().addRaw(infos.toString())).toString()
         //包裹一层 html
-        return "<html style='width:${max(maxImageSize, imageInfo.width) + 40}px'>${html}</html>"
+        return html
     }
 
     //获取字符串

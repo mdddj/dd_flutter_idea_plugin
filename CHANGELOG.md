@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.3.3] - 2025-03-08
+
+* fix:
+
 ## [5.3.2] - 2025-03-05
 
 * New: `flutter android gradle` Migration Tools (android tool)
