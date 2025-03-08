@@ -88,7 +88,7 @@ class FreezedActionInlay : CodeVisionProviderBase() {
                     WidgetUtil.getTextEditorPopup(
                         PluginBundle.get("create_a_new_class_name"),
                         className, className,
-                        { it.show(RelativePoint.fromScreen(mouseEvent.locationOnScreen)) }) {
+                        null, { it.show(RelativePoint.fromScreen(mouseEvent.locationOnScreen)) }) {
                         val project = psiElement.project
                         val newClassName = it
                         val newCom: DartComponentNameImpl =

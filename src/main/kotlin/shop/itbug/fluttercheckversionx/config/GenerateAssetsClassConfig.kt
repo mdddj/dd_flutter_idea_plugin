@@ -17,8 +17,6 @@ class GenerateAssetsClassConfigModel() : BaseState() {
     var replaceTags by string(".,-,!,@,#,$,%,^,&,*,(,),+,=,?,/,<,>,~")
     var firstChatUpper by property(true)
 
-    @Deprecated("弃用，被其他设置替代")
-    var showImageIconInEditor by property(true)
     fun addIgFiles(name: String) {
         igFiles.add(name)
         incrementModificationCount()

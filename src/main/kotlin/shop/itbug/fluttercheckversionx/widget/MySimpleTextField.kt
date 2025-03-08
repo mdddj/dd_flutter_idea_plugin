@@ -12,12 +12,13 @@ class MySimpleTextField(
     placeholder: String = "Please enter content",
     initValue: String? = null,
     onSubmit: MySimpleTextFieldSubmit,
-) :
-    ExtendableTextField() {
+) : ExtendableTextField("") {
 
     init {
-        border = BorderFactory.createEmptyBorder()
+        border = BorderFactory.createEmptyBorder(0, 0, 1, 0)
         emptyText.text = placeholder
+        isRequestFocusEnabled = true
+        requestFocus()
         addKeyListener(object : KeyAdapter() {
             override fun keyPressed(e: KeyEvent?) {
                 super.keyPressed(e)

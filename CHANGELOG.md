@@ -4,7 +4,7 @@
 
 ## [5.3.3] - 2025-03-08
 
-* fix:
+* fix: The problem of jitter in asset images exceeding a certain size (document preview)
 
 ## [5.3.2] - 2025-03-05
 

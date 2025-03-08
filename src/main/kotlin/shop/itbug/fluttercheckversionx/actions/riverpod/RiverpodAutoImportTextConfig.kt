@@ -19,7 +19,7 @@ class RiverpodAutoImportTextConfig : AnAction() {
                 title,
                 state.autoImportRiverpodText,
                 state.autoImportRiverpodText,
-                {
+                null, {
                     it.showCenteredInCurrentWindow(project)
                 }) {
                 PluginConfig.changeState(project) { s ->

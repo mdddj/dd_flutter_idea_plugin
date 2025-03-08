@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -12,12 +13,14 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import shop.itbug.fluttercheckversionx.constance.discordUrl
+import shop.itbug.fluttercheckversionx.dialog.MyTextDialog
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.toast
 import java.awt.Component
 import java.awt.Point
+import javax.swing.JComponent
 
 
 object WidgetUtil {
@@ -29,6 +32,7 @@ object WidgetUtil {
         title: String,
         placeholder: String,
         initValue: String? = null,
+        preferableFocusComponent: JComponent? = null,
         show: (popup: JBPopup) -> Unit,
         onSubmit: MySimpleTextFieldSubmit,
     ) {
@@ -38,12 +42,13 @@ object WidgetUtil {
                 .createComponentPopupBuilder(MySimpleTextField(placeholder = placeholder, initValue) {
                     onSubmit.invoke(it)
                     popup.cancel()
-                }, null)
-                .setRequestFocus(true)
+                }, preferableFocusComponent)
                 .setTitle(title)
                 .setCancelKeyEnabled(true)
-                .setResizable(false)
+                .setResizable(true)
                 .setMovable(true)
+                .setRequestFocus(true)
+                .setFocusable(true)
                 .createPopup()
         show.invoke(popup)
     }
@@ -57,6 +62,24 @@ object WidgetUtil {
         )
         return ActionManager.getInstance()
             .createActionToolbar(name, DefaultActionGroup(*createRightActions()), true)
+    }
+
+
+    /**
+     * 输入弹窗
+     */
+    fun configTextFieldModal(
+        project: Project,
+        labelText: String,
+        comment: String? = null,
+        handle: (text: String) -> Unit
+    ) {
+        val dialog = MyTextDialog(
+            project = project, label = labelText,
+            comment = comment,
+            handle
+        )
+        dialog.show()
     }
 
     /**
