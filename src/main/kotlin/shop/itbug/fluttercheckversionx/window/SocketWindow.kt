@@ -19,6 +19,7 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.window.android.FlutterXAndroidMigrateWindow
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
+import shop.itbug.fluttercheckversionx.window.preview.ImagesPreviewWindow
 import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
@@ -90,7 +91,15 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
         )
         toolWindow.contentManager.addContent(androidMigrateWindowContent)
 
+
+        // 资产图片拷贝窗口
+        val imagesPreviewWindow = ImagesPreviewWindow(project)
+        val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
+        toolWindow.contentManager.addContent(imagesPreviewContent)
+
+
         FlutterXVMService.getInstance(project).addListener(this)
+
 
     }
 

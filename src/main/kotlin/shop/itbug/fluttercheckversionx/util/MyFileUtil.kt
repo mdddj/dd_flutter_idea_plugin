@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,6 +20,7 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileIndex
 import com.jetbrains.lang.dart.DartFileType
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.util.filetool.VisitFolderCheckResult
@@ -49,6 +51,15 @@ object MyFileUtil {
                 virtualFileHandle(folder, handle)
             }
         }
+    }
+
+
+    /**
+     * 获取virtualFile 的 root 目录
+     */
+    fun getRootVirtualFile(virtualFile: VirtualFile, project: Project): VirtualFile? {
+        return ProjectFileIndex.getInstance(project).getContentRootForFile(virtualFile)
+            ?: WorkspaceFileIndex.getInstance(project).getContentFileSetRoot(virtualFile, false)
     }
 
     /**
@@ -106,26 +117,24 @@ object MyFileUtil {
      * 检查文件是否被索引?
      */
     fun checkFileIsIndex(project: Project, file: VirtualFile): Boolean {
-        try {
+        return try {
             val file = runReadAction { PsiManager.getInstance(project).findFile(file) }
-            return file != null
+            file != null
         } catch (_: Exception) {
-            return false
+            false
         }
-        return false
     }
 
     /**
      * 检查文件是否被索引,协程版本
      */
     suspend fun checkFileIsIndexByXc(project: Project, file: VirtualFile): Boolean {
-        try {
+        return try {
             val file = readAction { PsiManager.getInstance(project).findFile(file) }
-            return file != null
+            file != null
         } catch (_: Exception) {
-            return false
+            false
         }
-        return false
     }
 
     /**

@@ -13,7 +13,7 @@ val pluginVersion: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.0.0"
     id("org.jetbrains.intellij.platform") version "2.3.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
@@ -107,7 +107,6 @@ kotlin {
         freeCompilerArgs.add("-Xwhen-guards")
         freeCompilerArgs.add("-Xnon-local-break-continue")
         freeCompilerArgs.add("-Xmulti-dollar-interpolation")
-        extraWarnings.set(true)
     }
 }
 
@@ -250,13 +249,17 @@ val generateFlutterPluginInfo by tasks.registering {
     // 定义输出目录和文件路径
     val outputDir = file("src/main/kotlin/codegen")
     val outputFile = File(outputDir, "FlutterXPluginInfo.kt")
+    if (outputFile.exists()) {
+        outputFile.delete()
+    }
+    if (outputDir.exists().not()) {
+        outputDir.mkdirs()
+    }
 
     // 设置输入和输出以支持增量构建
-    inputs.property("version", project.version)
     outputs.file(outputFile)
 
     doLast {
-        outputDir.mkdirs()
         val q = "\"\"\"\n"
         outputFile.writeText(
             """

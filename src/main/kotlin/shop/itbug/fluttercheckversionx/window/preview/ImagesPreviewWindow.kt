@@ -1,0 +1,213 @@
+package shop.itbug.fluttercheckversionx.window.preview
+
+import com.intellij.ide.actions.CopyReferencePopup
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataSink
+import com.intellij.openapi.actionSystem.UiDataProvider
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.ui.JBColor
+import com.intellij.ui.PopupHandler
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBPanel
+import com.intellij.ui.scale.JBUIScale
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.WrapLayout
+import com.intellij.util.ui.components.BorderLayoutPanel
+import shop.itbug.fluttercheckversionx.common.scroll
+import shop.itbug.fluttercheckversionx.util.ImageFileUtil
+import shop.itbug.fluttercheckversionx.util.calculateAspectRatio
+import java.awt.Container
+import java.awt.Cursor
+import java.awt.Dimension
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.swing.BorderFactory
+import javax.swing.JComponent
+import javax.swing.SwingConstants
+import javax.swing.SwingUtilities
+import javax.swing.event.PopupMenuEvent
+import javax.swing.event.PopupMenuListener
+
+/**
+ * 资产图片预览窗口
+ */
+class ImagesPreviewWindow(val project: Project) : BorderLayoutPanel() {
+
+
+    private val assetsDirector: VirtualFile?
+        get() = ApplicationManager.getApplication().executeOnPooledThread<VirtualFile?> {
+            return@executeOnPooledThread project.guessProjectDir()?.findChild("assets")
+        }.get()
+    private val visitor = FileVisitor()
+    val panel = ImagePanel()
+
+    init {
+
+        addToCenter(panel.scroll().apply {
+            border = JBUI.Borders.empty(12)
+        })
+        SwingUtilities.invokeLater {
+            startLoadAssets()
+        }
+    }
+
+
+    private val onImageAssetVisitor: (VirtualFile) -> Unit
+        get() = {
+            //获取到的图片文件，添加到网格里面去
+            panel.addImageAsset(it)
+        }
+
+    private fun startLoadAssets() {
+        assetsDirector?.let {
+            VfsUtil.visitChildrenRecursively(it, visitor)
+        }
+
+    }
+
+
+    // 访问图片
+    inner class FileVisitor() : VirtualFileVisitor<VirtualFile>() {
+        override fun visitFileEx(file: VirtualFile): Result {
+            if (ImageFileUtil.isImageFile(file)) {
+                this@ImagesPreviewWindow.onImageAssetVisitor(file)
+            }
+            return CONTINUE
+        }
+    }
+
+    // 面板 ui
+    inner class ImagePanel() : JBPanel<ImagePanel>(WaterfallLayout()) {
+
+        //添加图片资产
+        fun addImageAsset(asset: VirtualFile) {
+            add(AssetFileLayout(project, asset))
+        }
+    }
+}
+
+private class AssetFileLayout(project: Project, val file: VirtualFile) : BorderLayoutPanel(), UiDataProvider {
+    val image = ImageFileUtil.getIcon(file)
+    val imageSize = ImageFileUtil.getSize(file, project)
+    val nameLabel = JBLabel(
+        "${file.name} (${imageSize.width}x${imageSize.height},${
+            calculateAspectRatio(
+                imageSize.width, imageSize.height
+            )
+        })", UIUtil.ComponentStyle.MINI
+    ).apply {
+        horizontalAlignment = SwingConstants.CENTER
+        border = JBUI.Borders.empty(5, 0)
+    }
+    private var highlightEnabled = false
+
+    init {
+        addToCenter(JBLabel(image))
+        addToBottom(nameLabel)
+        installPopup(this)
+        addMouseListener(object : MouseAdapter() {
+
+            // 右键点击保持高亮
+            override fun mousePressed(e: MouseEvent) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    highlightEnabled = true
+                    updateBorder()
+                }
+            }
+
+            override fun mouseEntered(e: MouseEvent) {
+                cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+            }
+
+            override fun mouseExited(e: MouseEvent) {
+                cursor = Cursor.getDefaultCursor()
+            }
+        })
+        border = itemBorder
+    }
+
+    private fun installPopup(comp: JComponent) {
+        PopupHandler.installPopupMenu(
+            comp,
+            ActionManager.getInstance().getAction("FlutterXAssetsImagePreviewPopup") as CopyReferencePopup,
+            "Copy With",
+            object : PopupMenuListener {
+                override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
+                }
+
+                override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {
+                    highlightEnabled = false
+                    updateBorder()
+                }
+
+                override fun popupMenuCanceled(e: PopupMenuEvent?) {
+                    highlightEnabled = false
+                    updateBorder()
+                }
+
+            })
+    }
+
+    override fun uiDataSnapshot(sink: DataSink) {
+        sink[CommonDataKeys.VIRTUAL_FILE] = file
+    }
+
+    private fun updateBorder() {
+        border = if (highlightEnabled) highlightBorder else itemBorder
+        repaint() // 触发重绘
+    }
+
+
+}
+
+//瀑布流布局
+private class WaterfallLayout : WrapLayout() {
+    private val gaps = JBUIScale.scale(5)
+    private val columnWidth = JBUIScale.scale(200)
+
+    override fun layoutContainer(target: Container) {
+        val width = target.width
+        val columnCount = (width / (columnWidth + gaps)).coerceAtLeast(1)
+        val heights = IntArray(columnCount) { 0 }
+
+        target.components.forEachIndexed { index, comp ->
+            val column = index % columnCount
+            val x = column * (columnWidth + gaps)
+            val y = heights[column]
+            comp.setBounds(x, y, columnWidth, comp.preferredSize.height)
+            heights[column] += comp.height + gaps
+        }
+    }
+
+    override fun preferredLayoutSize(target: Container): Dimension {
+        val widths = target.width
+        val columnCount = (widths / (columnWidth + gaps)).coerceAtLeast(1)
+        val heights = IntArray(columnCount) { 0 }
+
+        target.components.forEachIndexed { index, comp ->
+            val column = index % columnCount
+            heights[column] += comp.preferredSize.height + gaps
+        }
+
+        val maxHeight = heights.maxOrNull() ?: 0
+        return Dimension(widths, maxHeight)
+    }
+
+}
+
+private val itemBorder = BorderFactory.createCompoundBorder(
+    JBUI.Borders.customLine(JBColor.border(), 1), JBUI.Borders.empty(5)
+)
+
+private val highlightBorder = JBUI.Borders.compound(
+    JBUI.Borders.customLine(JBColor.blue, 1),// 高亮颜色
+    JBUI.Borders.empty(5)
+)
+

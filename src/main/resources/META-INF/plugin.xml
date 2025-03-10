@@ -359,6 +359,28 @@
             <reference id="Freezed3ClassFixActionWithSealed"/>
             <reference id="Freezed3ClassFixActionWitAbstract"/>
         </group>
+
+        <action id="FlutterXCopyAssetPathAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXCopyAssetPathAction"
+                text="Copy Path"/>
+        <action id="FlutterXAssetsCopyImageComponentAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsCopyImageComponentAction"
+                text="Copy Image.asset"/>
+        <action id="FlutterXAssetsOpenFileAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsOpenFileAction"
+                text="Open..."/>
+
+        <group id="FlutterXAssetsImagePreviewPopup" popup="true" class="com.intellij.ide.actions.CopyReferencePopup">
+            <reference id="FlutterXCopyAssetPathAction"/>
+            <reference id="FlutterXAssetsCopyImageComponentAction"/>
+            <separator/>
+            <reference id="CopyReferencePopupGroup"/>
+            <reference id="RevealGroup"/>
+            <separator/>
+            <reference id="FlutterXAssetsOpenFileAction"/>
+        </group>
+
+
     </actions>
 
     <actions>

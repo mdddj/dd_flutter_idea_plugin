@@ -147,10 +147,12 @@ class FlutterAndroidMigrateManager(val project: Project) : Disposable {
 }
 
 
+private val i = "includeBuild(\"\$flutterSdkPath/packages/flutter_tools/gradle\")"
+
 private val newSettingFile: VirtualFile
     get() {
         return LightVirtualFile(
-            "settings.gradle", FileTypeRegistry.getInstance().getFileTypeByExtension("gradle"), $$"""
+            "settings.gradle", FileTypeRegistry.getInstance().getFileTypeByExtension("gradle"), """
                 pluginManagement {
                     def flutterSdkPath = {
                         def properties = new Properties()
@@ -160,7 +162,7 @@ private val newSettingFile: VirtualFile
                         return flutterSdkPath
                     }()
 
-                    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+                    $i
 
                     repositories {
                         google()

@@ -222,7 +222,7 @@ inline fun MySimpleInfoChunk.body(block: MySimpleInfoChunk.() -> Unit): MySimple
     return this
 }
 
-private fun calculateAspectRatio(width: Int, height: Int): String {
+fun calculateAspectRatio(width: Int, height: Int): String {
     val aspectRatio = width.toDouble() / height.toDouble()
     return String.format("%.2f", aspectRatio)
 }

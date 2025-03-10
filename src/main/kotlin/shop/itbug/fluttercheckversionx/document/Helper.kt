@@ -1,6 +1,6 @@
 package shop.itbug.fluttercheckversionx.document
 
-import java.awt.Toolkit
+import com.intellij.openapi.ide.CopyPasteManager
 import java.awt.datatransfer.StringSelection
 
 ///渲染文档帮助类
@@ -71,9 +71,7 @@ class Helper {
          * 把文本设置到剪贴板（复制）
          */
         fun setClipboardString(text: String) {
-            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-            val trans = StringSelection(text)
-            clipboard.setContents(trans, null)
+            CopyPasteManager.getInstance().setContents(StringSelection(text))
         }
     }
 }
@@ -81,6 +79,6 @@ class Helper {
 /**
  * 将string字符串复制到剪贴板
  */
-fun String.copyTextToClipboard(){
+fun String.copyTextToClipboard() {
     Helper.setClipboardString(this)
 }

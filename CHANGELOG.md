@@ -2,9 +2,11 @@
 
 ## Unreleased
 
-## [5.3.3] - 2025-03-08
+## [5.3.3] - 2025-03-10
 
 * fix: The problem of jitter in asset images exceeding a certain size (document preview)
+* fix: assets code generate tool setting errors
+* Some other problems solved
 
 ## [5.3.2] - 2025-03-05
 
