@@ -458,7 +458,7 @@ object MyDartPsiElementUtil {
      */
     fun addRiverpodHookImport(psiFile: PsiFile, project: Project) {
         val config = PluginConfig.getState(project)
-        val packageText = config.autoImportRiverpodText
+        val packageText = config.autoImportRiverpodText ?: ""
         val exist = checkImportIsExist(
             psiFile, packageText
         )

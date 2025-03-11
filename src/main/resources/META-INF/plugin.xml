@@ -369,10 +369,14 @@
         <action id="FlutterXAssetsOpenFileAction"
                 class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsOpenFileAction"
                 text="Open..."/>
+        <action id="FlutterXAssetsSvgCopyAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsSvgCopyAction"
+                text="Copy SvgPicture.asset"/>
 
         <group id="FlutterXAssetsImagePreviewPopup" popup="true" class="com.intellij.ide.actions.CopyReferencePopup">
             <reference id="FlutterXCopyAssetPathAction"/>
             <reference id="FlutterXAssetsCopyImageComponentAction"/>
+            <reference id="FlutterXAssetsSvgCopyAction"/>
             <separator/>
             <reference id="CopyReferencePopupGroup"/>
             <reference id="RevealGroup"/>
@@ -381,6 +385,14 @@
         </group>
 
 
+        <action id="FlutterXAssetsPanelRefreshAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterXAssetsPanelRefreshAction"
+                text="Refresh"/>
+
+        <group id="FlutterXAssetsImagePreviewToolBar"
+               class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup">
+            <reference id="FlutterXAssetsPanelRefreshAction"/>
+        </group>
     </actions>
 
     <actions>

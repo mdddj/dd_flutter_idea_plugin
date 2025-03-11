@@ -20,7 +20,6 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
-import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileIndex
 import com.jetbrains.lang.dart.DartFileType
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.util.filetool.VisitFolderCheckResult
@@ -58,8 +57,11 @@ object MyFileUtil {
      * 获取virtualFile 的 root 目录
      */
     fun getRootVirtualFile(virtualFile: VirtualFile, project: Project): VirtualFile? {
-        return ProjectFileIndex.getInstance(project).getContentRootForFile(virtualFile)
-            ?: WorkspaceFileIndex.getInstance(project).getContentFileSetRoot(virtualFile, false)
+        val contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(virtualFile)
+        if (contentRoot != null) {
+            return contentRoot
+        }
+        return project.guessProjectDir()
     }
 
     /**

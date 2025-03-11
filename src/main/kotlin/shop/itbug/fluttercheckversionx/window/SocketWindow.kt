@@ -30,6 +30,7 @@ import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        toolWindow.title = "FlutterX"
         val instance = ContentFactory.getInstance()
         val socketRequestForm = SocketRequestForm(project, toolWindow)
         val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
@@ -93,11 +94,10 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
 
         // 资产图片拷贝窗口
-        val imagesPreviewWindow = ImagesPreviewWindow(project)
+        val imagesPreviewWindow = ImagesPreviewWindow(project, toolWindow)
         val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
         toolWindow.contentManager.addContent(imagesPreviewContent)
-
-
+        imagesPreviewContent.setDisposer(imagesPreviewWindow)
         FlutterXVMService.getInstance(project).addListener(this)
 
 

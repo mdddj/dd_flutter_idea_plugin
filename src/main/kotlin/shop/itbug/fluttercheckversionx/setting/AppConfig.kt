@@ -5,13 +5,12 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
 import shop.itbug.fluttercheckversionx.config.*
 import shop.itbug.fluttercheckversionx.constance.Links
-import shop.itbug.fluttercheckversionx.constance.ideaPluginStoreUrl
+import shop.itbug.fluttercheckversionx.dialog.MyRowBuild
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.PluginStateService
@@ -41,18 +40,6 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
     override fun createComponent(): JComponent {
         pluginConfigPanel = panel {
 
-            group(PluginBundle.get("use_dev_version_plugin_title")) {
-                row {
-                    checkBox(PluginBundle.get("use_dev_version_plugin")).bindSelected(pluginConfig::isJoinDevVersion)
-                        .onChanged {
-                            if (it.isSelected) {
-                                UpdateSettings.getInstance().storedPluginHosts.add(ideaPluginStoreUrl)
-                            } else {
-                                UpdateSettings.getInstance().storedPluginHosts.remove(ideaPluginStoreUrl)
-                            }
-                        }
-                }
-            }
 
             group("Riverpod Class Tool") {
                 row {
@@ -62,7 +49,9 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                     textField()
                         .align(Align.FILL)
                         .label(PluginBundle.get("setting_riverpod_import_text_title"), LabelPosition.TOP)
-                        .bindText(pluginConfig::autoImportRiverpodText)
+                        .bindText(
+                            { pluginConfig.autoImportRiverpodText ?: "" },
+                            { pluginConfig.autoImportRiverpodText = it })
                 }
                 row {
                     comment(Links.generateDocCommit(Links.riverpod))
@@ -112,6 +101,23 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 row {
                     checkBox("Enable").bindSelected(pluginConfig::showFreezed3FixNotification)
                         .comment(PluginBundle.get("freezed3_setting_tooltip"))
+                }
+            }
+
+            group("Assets Image Preview Window") {
+                row {
+                    checkBox("Enable").bindSelected(pluginConfig::enableAssetsPreviewAction)
+                }
+                row("Image Item Width And Height") {
+                    intTextField().bindIntText(pluginConfig::assetsPreviewImageSize)
+                }
+                row("Assets directory") {
+                    MyRowBuild.folder(
+                        this,
+                        { pluginConfig.assetDirectory ?: "" },
+                        { pluginConfig.assetDirectory = it },
+                        project
+                    )
                 }
             }
 

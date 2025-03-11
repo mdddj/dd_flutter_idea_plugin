@@ -4,6 +4,7 @@
 
 ## [5.3.3] - 2025-03-10
 
+* New: add assets preview window
 * fix: The problem of jitter in asset images exceeding a certain size (document preview)
 * fix: assets code generate tool setting errors
 * Some other problems solved

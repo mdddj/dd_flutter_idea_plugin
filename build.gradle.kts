@@ -51,8 +51,8 @@ if (sinceBuildVersion.toInt() >= 243) {
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
-    testImplementation("junit:junit:4.13.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.0")
+    testImplementation("junit:junit:latest.release")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
@@ -155,7 +155,7 @@ tasks {
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOf("-Didea.kotlin.plugin.use.k2=true")
+            listOf("-Didea.kotlin.plugin.use.k2=true", "-Didea.log.level=DEBUG")
         }
     }
 
@@ -318,3 +318,29 @@ intellijPlatformTesting {
         }
     }
 }
+
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+val integrationTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.testImplementation.get())
+}
+
+dependencies {
+    integrationTestImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    integrationTestImplementation("org.kodein.di:kodein-di-jvm:7.20.2")
+    integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
+}
+
+val integrationTest = tasks.register<Test>("integrationTest", fun Test.() {
+    val integrationTestSourceSet = sourceSets.getByName("integrationTest")
+    testClassesDirs = integrationTestSourceSet.output.classesDirs
+    classpath = integrationTestSourceSet.runtimeClasspath
+    systemProperty("./build", tasks.prepareSandbox.get().pluginDirectory.get().asFile)
+    useJUnitPlatform()
+    dependsOn(tasks.prepareSandbox)
+})
