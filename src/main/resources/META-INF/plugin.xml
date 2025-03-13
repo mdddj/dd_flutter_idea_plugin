@@ -388,10 +388,15 @@
         <action id="FlutterXAssetsPanelRefreshAction"
                 class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterXAssetsPanelRefreshAction"
                 text="Refresh"/>
+        <action id="FlutterXAssetsPanelWindowOpenDocAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterXAssetsPanelWindowOpenDocAction"
+                text="Refresh"/>
 
         <group id="FlutterXAssetsImagePreviewToolBar"
                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup">
             <reference id="FlutterXAssetsPanelRefreshAction"/>
+            <reference id="FlutterXAssetsPanelWindowOpenDocAction"/>
+            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
     </actions>
 

@@ -17,7 +17,7 @@ class PluginSetting : BaseState() {
     var showRewardAction by property(true)
     var showFreezed3FixNotification by property(true)
     var enableAssetsPreviewAction by property(true)
-    var assetsPreviewImageSize by property(60)
+    var assetsPreviewImageSize by property(120)
     var assetDirectory by string()
 }
 
@@ -26,16 +26,20 @@ class PluginSetting : BaseState() {
 class PluginConfig(val project: Project) : SimplePersistentStateComponent<PluginSetting>(PluginSetting()) {
 
 
-    override fun loadState(state: PluginSetting) {
-        if (state.assetDirectory == null) {
-            state.assetDirectory = project.guessProjectDir()?.findChild("assets")?.path
+    fun initAssetsDirectory() {
+        if (state.assetDirectory.isNullOrBlank()) {
+            state.assetDirectory =
+                (project.guessProjectDir()?.findChild("assets")?.path) ?: project.guessProjectDir()?.path
+            loadState(state)
         }
-        super.loadState(state)
     }
+
 
     companion object {
         fun getInstance(project: Project): PluginConfig {
-            return project.service<PluginConfig>()
+            val config = project.service<PluginConfig>()
+            config.initAssetsDirectory()
+            return config
         }
 
         fun getState(project: Project) = getInstance(project).state

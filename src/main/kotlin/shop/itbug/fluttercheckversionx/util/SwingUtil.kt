@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.util.ImageLoader
+import com.intellij.util.ui.ImageUtil
 import com.intellij.util.ui.JBImageIcon
 import java.awt.*
 import java.io.File
@@ -81,7 +82,7 @@ object SwingUtil {
     /**
      * 文件转icon
      */
-    fun fileToIcon(file: File, scaleSize: Int = 16): JBImageIcon? {
+    fun fileToIcon(file: File, scaleSize: Int? = 16): JBImageIcon? {
 
         val isFile = DartPsiElementHelper.isImageFile(file)
         if (!isFile) return null
@@ -93,17 +94,16 @@ object SwingUtil {
         if (image.getWidth(null) <= 0 || image.getHeight(null) <= 0) {
             return null
         }
-
         var width = image.getWidth(null)
         var height = image.getHeight(null)
-        val maxSize = width.coerceAtLeast(height)
-        if (maxSize > scaleSize) {
+        if (scaleSize != null) {
+            val maxSize = width.coerceAtLeast(height)
             val scale = scaleSize.toDouble() / maxSize.toDouble()
             height = (height * scale).roundToInt()
             width = (width * scale).roundToInt()
         }
 
-        image = ImageLoader.scaleImage(image, width, height)
+        image = if (scaleSize != null) ImageUtil.scaleImage(image, width, height) else image
         val scaledIcon = JBImageIcon(image)
         return scaledIcon
     }

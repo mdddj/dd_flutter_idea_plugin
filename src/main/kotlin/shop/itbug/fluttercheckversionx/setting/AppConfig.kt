@@ -119,6 +119,9 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                         project
                     )
                 }
+                row {
+                    comment(Links.generateDocCommit(Links.assetsPreviewDoc))
+                }
             }
 
             //显示打赏action

@@ -2,12 +2,11 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ui.JBImageIcon
 import org.intellij.images.index.ImageInfoIndex
 import java.awt.Dimension
-import java.awt.Image
+import java.io.File
 import java.util.*
-import javax.imageio.ImageIO
-import javax.swing.ImageIcon
 
 
 object ImageFileUtil {
@@ -28,8 +27,9 @@ object ImageFileUtil {
     }
 
 
-    fun getIcon(file: VirtualFile): ImageIcon {
-        return ImageIcon(ImageIO.read(file.inputStream))
+    fun getIcon(file: VirtualFile, scaleSize: Int?): JBImageIcon? {
+
+        return SwingUtil.fileToIcon(File(file.path), if (scaleSize != null && scaleSize <= 10) null else scaleSize)
     }
 
     fun getSize(file: VirtualFile, project: Project): Dimension {
@@ -39,29 +39,4 @@ object ImageFileUtil {
         return Dimension(width, height)
     }
 
-    fun resizeImageIconCover(imageIcon: ImageIcon, targetWidth: Int, targetHeight: Int): ImageIcon {
-        val originalImage = imageIcon.image
-        val originalWidth = originalImage.getWidth(null)
-        val originalHeight = originalImage.getHeight(null)
-
-        if (originalWidth <= 0 || originalHeight <= 0 || targetWidth <= 0 || targetHeight <= 0) {
-            return imageIcon // 如果原始图片或目标尺寸无效，则返回原始 ImageIcon 或考虑返回空 ImageIcon
-        }
-
-        // 计算宽度和高度的缩放比例
-        val widthRatio = targetWidth.toDouble() / originalWidth.toDouble()
-        val heightRatio = targetHeight.toDouble() / originalHeight.toDouble()
-
-        // 选择较大的缩放比例，以确保图片能够 cover 目标区域
-        val scaleRatio = widthRatio.coerceAtLeast(heightRatio)
-
-        // 计算缩放后的宽度和高度
-        val scaledWidth = (originalWidth * scaleRatio).toInt()
-        val scaledHeight = (originalHeight * scaleRatio).toInt()
-
-        // 使用 Image.SCALE_SMOOTH 算法进行高质量的缩放
-        val scaledImage = originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH)
-
-        return ImageIcon(scaledImage)
-    }
 }

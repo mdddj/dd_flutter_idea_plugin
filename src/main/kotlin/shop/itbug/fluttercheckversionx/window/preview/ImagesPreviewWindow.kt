@@ -17,6 +17,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.Alarm
+import com.intellij.util.ui.JBImageIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.WrapLayout
@@ -33,7 +34,10 @@ import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.JComponent
+import javax.swing.SwingConstants
+import javax.swing.SwingUtilities
 import javax.swing.event.PopupMenuEvent
 import javax.swing.event.PopupMenuListener
 
@@ -59,10 +63,10 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
 
 
     val toolbar = ActionManager.getInstance().createActionToolbar(
-        "Assets Preview Toolbar",
-        FlutterAssetsPreviewPanelToolbarActionGroup.getActionGroup(), true
+        "Assets Preview Toolbar", FlutterAssetsPreviewPanelToolbarActionGroup.getActionGroup(), true
     ).apply {
-        targetComponent = toolWindow.component
+        targetComponent = this@ImagesPreviewWindow
+
     }
 
     val scp = panel.scroll()
@@ -139,7 +143,7 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
     }
 
     override fun uiDataSnapshot(sink: DataSink) {
-        sink[KEY] = this
+        sink.lazy(KEY) { return@lazy this }
     }
 
     companion object {
@@ -147,10 +151,12 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
     }
 
 
+    //刷新列表
     fun refreshItems() {
         panel.removeAll()
+        searchField.text = ""
+        fileComps.clear()
         startLoadAssets()
-        println("刷新")
     }
 
     override fun dispose() {
@@ -182,11 +188,14 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
 
 class AssetFileLayout(project: Project, val file: VirtualFile) : BorderLayoutPanel(), UiDataProvider {
     val pluginConfig = PluginConfig.getState(project)
-    val image: ImageIcon
-        get() = ApplicationManager.getApplication().executeOnPooledThread<ImageIcon> { ImageFileUtil.getIcon(file) }
-            .get()
     val imageItemSize = pluginConfig.assetsPreviewImageSize
-    val resizeIcon = ImageFileUtil.resizeImageIconCover(image, imageItemSize, imageItemSize)
+    val image: JBImageIcon?
+        get() = ApplicationManager.getApplication().executeOnPooledThread<JBImageIcon?> {
+            ImageFileUtil.getIcon(
+                file, if (imageItemSize >= 10) (imageItemSize / 2) else null
+            )
+        }.get()
+
     val imageSize = ImageFileUtil.getSize(file, project)
     val nameLabel = JBLabel(
         "${file.name} (${imageSize.width}x${imageSize.height},${
@@ -200,11 +209,11 @@ class AssetFileLayout(project: Project, val file: VirtualFile) : BorderLayoutPan
     }
     private var highlightEnabled = false
 
-    private val imageLabel = JBLabel(resizeIcon).apply {
-
-    }
+    private val imageLabel = JBLabel(image)
 
     init {
+
+
         addToCenter(imageLabel)
         addToBottom(nameLabel)
         installPopup(this)
@@ -227,6 +236,10 @@ class AssetFileLayout(project: Project, val file: VirtualFile) : BorderLayoutPan
             }
         })
         border = itemBorder
+        if (imageItemSize >= 10) {
+            preferredSize = Dimension(imageItemSize, imageItemSize)
+        }
+        minimumSize = Dimension(120, 120)
     }
 
     private fun installPopup(comp: JComponent) {

@@ -1,22 +1,36 @@
 package shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.DumbAwareAction
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.window.preview.ImagesPreviewWindow
 
-class FlutterXAssetsPanelRefreshAction : DumbAwareAction(AllIcons.General.Refresh) {
+class FlutterXAssetsPanelRefreshAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        e.getData(ImagesPreviewWindow.KEY)?.refreshItems()
+        val comp = e.getData(ImagesPreviewWindow.KEY)
+        comp?.refreshItems()
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.getData(ImagesPreviewWindow.KEY) != null
+        e.presentation.icon = AllIcons.General.Refresh
         super.update(e)
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
+        return ActionUpdateThread.EDT
+    }
+}
+
+
+class FlutterXAssetsPanelWindowOpenDocAction : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        BrowserUtil.browse(Links.assetsPreviewDoc)
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.icon = AllIcons.Actions.Help
     }
 }
