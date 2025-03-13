@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.util
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.json.JsonFileType
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
@@ -10,7 +9,9 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
@@ -21,19 +22,10 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.lang.dart.DartFileType
 import org.jetbrains.yaml.psi.YAMLFile
+import shop.itbug.fluttercheckversionx.util.filetool.VisitFolderCheckResult
 import java.io.File
 import java.nio.file.Path
-import javax.swing.SwingUtilities
 
-
-///重新启用分析
-fun Project.restartAnalyzer() {
-    SwingUtilities.invokeLater {
-        runReadAction {
-            DaemonCodeAnalyzer.getInstance(this).restart()
-        }
-    }
-}
 
 typealias HandleVirtualFile = (virtualFile: VirtualFile) -> Unit
 
@@ -51,27 +43,32 @@ object MyFileUtil {
      * @param handle 处理遍历到的文件
      */
     fun onFolderEachWithProject(project: Project, folderName: String, handle: HandleVirtualFile) {
-        val path = project.basePath + "/$folderName"
-        val findFileByPath = LocalFileSystem.getInstance().findFileByPath(path)
-        findFileByPath?.apply {
-            virtualFileHandle(this, handle)
+        val projectPath = project.guessProjectDir()
+        if (projectPath != null) {
+            val folder = projectPath.findFileByRelativePath(folderName)
+            if (folder != null) {
+                virtualFileHandle(folder, handle)
+            }
         }
+    }
+
+
+    /**
+     * 获取virtualFile 的 root 目录
+     */
+    fun getRootVirtualFile(virtualFile: VirtualFile, project: Project): VirtualFile? {
+        val contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(virtualFile)
+        if (contentRoot != null) {
+            return contentRoot
+        }
+        return project.guessProjectDir()
     }
 
     /**
      *
      */
     private fun virtualFileHandle(file: VirtualFile, handle: HandleVirtualFile) {
-        if (file.isDirectory) {
-            val cs = file.children.toList()
-            cs.forEach { f ->
-                if (f.isDirectory) {
-                    virtualFileHandle(f, handle)
-                } else {
-                    handle.invoke(f)
-                }
-            }
-        }
+        VfsUtilCore.visitChildrenRecursively(file, VisitFolderCheckResult(handle))
     }
 
     fun fileIsExists(path: String): Boolean {
@@ -90,9 +87,7 @@ object MyFileUtil {
      */
     fun getPubspecVirtualFile(project: Project): VirtualFile? {
         val dir = project.guessProjectDir() ?: return null
-        val filePath = dir.path + File.separator + "pubspec.yaml"
-        val file = VirtualFileManager.getInstance().findFileByNioPath(Path.of(filePath)) ?: return null
-        return file
+        return dir.findFileByRelativePath("pubspec.yaml")
     }
 
     /**
@@ -124,26 +119,24 @@ object MyFileUtil {
      * 检查文件是否被索引?
      */
     fun checkFileIsIndex(project: Project, file: VirtualFile): Boolean {
-        try {
+        return try {
             val file = runReadAction { PsiManager.getInstance(project).findFile(file) }
-            return file != null
+            file != null
         } catch (_: Exception) {
-            return false
+            false
         }
-        return false
     }
 
     /**
      * 检查文件是否被索引,协程版本
      */
     suspend fun checkFileIsIndexByXc(project: Project, file: VirtualFile): Boolean {
-        try {
+        return try {
             val file = readAction { PsiManager.getInstance(project).findFile(file) }
-            return file != null
+            file != null
         } catch (_: Exception) {
-            return false
+            false
         }
-        return false
     }
 
     /**

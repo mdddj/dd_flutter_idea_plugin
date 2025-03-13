@@ -19,6 +19,7 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.window.android.FlutterXAndroidMigrateWindow
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
+import shop.itbug.fluttercheckversionx.window.preview.ImagesPreviewWindow
 import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
 import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 
@@ -29,6 +30,7 @@ import shop.itbug.fluttercheckversionx.window.sp.SpWindow
 class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        toolWindow.title = "FlutterX"
         val instance = ContentFactory.getInstance()
         val socketRequestForm = SocketRequestForm(project, toolWindow)
         val createContent = instance.createContent(socketRequestForm, PluginBundle.get("window.idea.dio.title"), false)
@@ -82,7 +84,7 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
 
         //android gradle 适配窗口
-        val androidMigrateWindow = FlutterXAndroidMigrateWindow(project, toolWindow)
+        val androidMigrateWindow = FlutterXAndroidMigrateWindow(project)
         val androidMigrateWindowContent = instance.createContent(
             androidMigrateWindow,
             "Android Gradle Migrate Tool",
@@ -90,7 +92,14 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
         )
         toolWindow.contentManager.addContent(androidMigrateWindowContent)
 
+
+        // 资产图片拷贝窗口
+        val imagesPreviewWindow = ImagesPreviewWindow(project, toolWindow)
+        val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
+        toolWindow.contentManager.addContent(imagesPreviewContent)
+        imagesPreviewContent.setDisposer(imagesPreviewWindow)
         FlutterXVMService.getInstance(project).addListener(this)
+
 
     }
 

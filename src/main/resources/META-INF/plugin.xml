@@ -5,7 +5,6 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
     <depends>Dart</depends>
-    <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.json</depends>
@@ -359,6 +358,45 @@
         <group id="Fix Freezed Class Tool" popup="true">
             <reference id="Freezed3ClassFixActionWithSealed"/>
             <reference id="Freezed3ClassFixActionWitAbstract"/>
+        </group>
+
+        <action id="FlutterXCopyAssetPathAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXCopyAssetPathAction"
+                text="Copy Path"/>
+        <action id="FlutterXAssetsCopyImageComponentAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsCopyImageComponentAction"
+                text="Copy Image.asset"/>
+        <action id="FlutterXAssetsOpenFileAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsOpenFileAction"
+                text="Open..."/>
+        <action id="FlutterXAssetsSvgCopyAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsSvgCopyAction"
+                text="Copy SvgPicture.asset"/>
+
+        <group id="FlutterXAssetsImagePreviewPopup" popup="true" class="com.intellij.ide.actions.CopyReferencePopup">
+            <reference id="FlutterXCopyAssetPathAction"/>
+            <reference id="FlutterXAssetsCopyImageComponentAction"/>
+            <reference id="FlutterXAssetsSvgCopyAction"/>
+            <separator/>
+            <reference id="CopyReferencePopupGroup"/>
+            <reference id="RevealGroup"/>
+            <separator/>
+            <reference id="FlutterXAssetsOpenFileAction"/>
+        </group>
+
+
+        <action id="FlutterXAssetsPanelRefreshAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterXAssetsPanelRefreshAction"
+                text="Refresh"/>
+        <action id="FlutterXAssetsPanelWindowOpenDocAction"
+                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterXAssetsPanelWindowOpenDocAction"
+                text="Refresh"/>
+
+        <group id="FlutterXAssetsImagePreviewToolBar"
+               class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup">
+            <reference id="FlutterXAssetsPanelRefreshAction"/>
+            <reference id="FlutterXAssetsPanelWindowOpenDocAction"/>
+            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
     </actions>
 

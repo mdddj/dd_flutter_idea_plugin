@@ -17,9 +17,9 @@ class RiverpodAutoImportTextConfig : AnAction() {
             val state = PluginConfig.getState(project)
             WidgetUtil.getTextEditorPopup(
                 title,
+                state.autoImportRiverpodText ?: "",
                 state.autoImportRiverpodText,
-                state.autoImportRiverpodText,
-                {
+                null, {
                     it.showCenteredInCurrentWindow(project)
                 }) {
                 PluginConfig.changeState(project) { s ->

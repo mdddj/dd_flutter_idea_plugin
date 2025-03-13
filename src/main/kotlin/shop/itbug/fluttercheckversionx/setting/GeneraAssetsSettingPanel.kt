@@ -1,13 +1,11 @@
 package shop.itbug.fluttercheckversionx.setting
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
-import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
@@ -20,10 +18,7 @@ import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.dialog.MyRowBuild
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
-import javax.swing.BorderFactory
-import javax.swing.DefaultListCellRenderer
-import javax.swing.DefaultListModel
-import javax.swing.SwingUtilities
+import javax.swing.*
 
 
 typealias GeneraAssetsSettingPanelIsModified = (value: Boolean) -> Unit
@@ -32,77 +27,54 @@ typealias GeneraAssetsSettingPanelIsModified = (value: Boolean) -> Unit
  * 生成资产文件的设置面板
  */
 class GeneraAssetsSettingPanel(
-    project: Project,
+    val project: Project,
     var settingModel: GenerateAssetsClassConfigModel,
     val parentDisposable: Disposable,
     modified: GeneraAssetsSettingPanelIsModified,
 
-    ) :
-    BorderLayoutPanel() {
+    ) : BorderLayoutPanel() {
 
     //忽略的文件
-    private val igFilesWidget = IgFileList(project)
+    private val igFilesWidget = IgFileList(project).apply {
+        border = BorderFactory.createEmptyBorder()
+    }
 
 
     private val dialogPanel = getGeneraAssetsPanel(project, settingModel, parentDisposable, modified)
 
 
     init {
-        addToTop(createToolBar())
-        addToCenter(igFilesWidget)
+        addToCenter(createTopActionsPanel())
         addToRight(createRightSettingPanel())
+    }
+
+    private fun createTopActionsPanel(): JPanel {
+        return ToolbarDecorator.createDecorator(igFilesWidget).setAddAction {
+            WidgetUtil.configTextFieldModal(
+                project = project, labelText = PluginBundle.get("g.13"), comment = "eg: test.json"
+            ) {
+                this@GeneraAssetsSettingPanel.igFilesWidget.addItemString(it)
+            }
+        }.setRemoveAction {
+            val selectedValue = igFilesWidget.selectedValue
+            if (selectedValue.isNotEmpty()) {
+                this@GeneraAssetsSettingPanel.igFilesWidget.removeItem(selectedValue)
+            }
+        }.addExtraAction(
+            WidgetUtil.getHelpAnAction { it ->
+                it.inputEvent?.let {
+                    WidgetUtil.showTopBalloon(it.component, PluginBundle.get("g.14"))
+                }
+
+            },
+        ).createPanel()
+
     }
 
     private fun createRightSettingPanel() = BorderLayoutPanel().apply {
         addToCenter(dialogPanel)
         border = BorderFactory.createEmptyBorder(12, 12, 12, 12)
     }
-
-    private fun createToolBar() = BorderLayoutPanel().apply {
-        val actionGroup = DefaultActionGroup(*createActions())
-        val toolbar =
-            ActionManager.getInstance().createActionToolbar("GenerateAssetsIgFileToolbar", actionGroup, true).apply {
-                targetComponent = igFilesWidget
-            }
-
-        addToLeft(toolbar.component)
-    }
-
-    private fun createActions(): Array<AnAction> = arrayOf(
-        object : DumbAwareAction(AllIcons.General.Add) {
-            override fun actionPerformed(e: AnActionEvent) {
-                WidgetUtil.getTextEditorPopup(PluginBundle.get("g.13"), "", null, {
-                    it.show(RelativePoint.fromScreen(igFilesWidget.locationOnScreen))
-                }) {
-                    this@GeneraAssetsSettingPanel.igFilesWidget.addItemString(it)
-                }
-            }
-        },
-        object : DumbAwareAction(AllIcons.General.Remove) {
-            override fun actionPerformed(e: AnActionEvent) {
-                val selectedValue = igFilesWidget.selectedValue
-                if (selectedValue != null) {
-                    this@GeneraAssetsSettingPanel.igFilesWidget.removeItem(selectedValue)
-                }
-            }
-
-            override fun update(e: AnActionEvent) {
-                e.presentation.isEnabled = igFilesWidget.selectedValue != null
-                super.update(e)
-            }
-
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.BGT
-            }
-
-        },
-        WidgetUtil.getHelpAnAction { it ->
-            it.inputEvent?.let {
-                WidgetUtil.showTopBalloon(it.component, PluginBundle.get("g.14"))
-            }
-
-        },
-    )
 
 
     fun doApply() {
@@ -171,7 +143,7 @@ fun getGeneraAssetsPanel(
         alarm.addRequest({
             isModified.invoke(p.isModified())
             initValidation()
-        }, 1000)
+        }, 400)
     }
 
     SwingUtilities.invokeLater {
@@ -190,7 +162,7 @@ fun getGeneraAssetsPanel(
 class IgFileList(val project: Project) : JBList<String>() {
 
     init {
-        cellRenderer = DefaultListCellRenderer()
+        cellRenderer = ItemRender()
         model = DefaultListModel<String?>().apply {
             addAll(GenerateAssetsClassConfig.getGenerateAssetsSetting(project).igFiles)
         }
@@ -199,6 +171,7 @@ class IgFileList(val project: Project) : JBList<String>() {
     }
 
     fun addItemString(name: String) {
+
         (model as DefaultListModel).addElement(name)
         GenerateAssetsClassConfig.getGenerateAssetsSetting(project).addIgFiles(name)
     }
@@ -208,5 +181,19 @@ class IgFileList(val project: Project) : JBList<String>() {
         GenerateAssetsClassConfig.getGenerateAssetsSetting(project).removeIgFiles(name)
     }
 
+
 }
 
+private class ItemRender : ColoredListCellRenderer<String>() {
+    override fun customizeCellRenderer(
+        p0: JList<out String?>,
+        p1: String?,
+        p2: Int,
+        p3: Boolean,
+        p4: Boolean
+    ) {
+        p1?.let {
+            append(it)
+        }
+    }
+}

@@ -15,7 +15,7 @@ import shop.itbug.fluttercheckversionx.util.string
 class AssetReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
-            PlatformPatterns.psiElement<DartStringLiteralExpressionImpl>(DartStringLiteralExpressionImpl::class.java),
+            PlatformPatterns.psiElement(DartStringLiteralExpressionImpl::class.java),
             AssetReferenceProvider()
         )
     }
@@ -38,7 +38,7 @@ internal class AssetReferenceProvider : PsiReferenceProvider() {
 
 internal class AssetPsiReference(
     element: DartStringLiteralExpressionImpl,
-    val fileResult: DartStringIconShowInlay.FileResult
+    private val fileResult: DartStringIconShowInlay.FileResult
 ) :
     PsiReferenceBase<PsiElement?>(element, TextRange(1, element.string!!.length + 1)) {
     override fun resolve(): PsiElement? {

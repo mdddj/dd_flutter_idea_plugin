@@ -13,7 +13,7 @@ val pluginVersion: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.0.0"
     id("org.jetbrains.intellij.platform") version "2.3.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
@@ -41,7 +41,6 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.terminal",
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
-    "org.jetbrains.kotlin",
     "com.intellij.gradle",
     "org.jetbrains.plugins.gradle"
 )
@@ -52,8 +51,8 @@ if (sinceBuildVersion.toInt() >= 243) {
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
-    testImplementation("junit:junit:4.13.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("junit:junit:latest.release")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
@@ -108,7 +107,6 @@ kotlin {
         freeCompilerArgs.add("-Xwhen-guards")
         freeCompilerArgs.add("-Xnon-local-break-continue")
         freeCompilerArgs.add("-Xmulti-dollar-interpolation")
-        extraWarnings.set(true)
     }
 }
 
@@ -157,7 +155,7 @@ tasks {
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOf("-Didea.kotlin.plugin.use.k2=true")
+            listOf("-Didea.kotlin.plugin.use.k2=true", "-Didea.log.level=DEBUG")
         }
     }
 
@@ -251,13 +249,17 @@ val generateFlutterPluginInfo by tasks.registering {
     // 定义输出目录和文件路径
     val outputDir = file("src/main/kotlin/codegen")
     val outputFile = File(outputDir, "FlutterXPluginInfo.kt")
+    if (outputFile.exists()) {
+        outputFile.delete()
+    }
+    if (outputDir.exists().not()) {
+        outputDir.mkdirs()
+    }
 
     // 设置输入和输出以支持增量构建
-    inputs.property("version", project.version)
     outputs.file(outputFile)
 
     doLast {
-        outputDir.mkdirs()
         val q = "\"\"\"\n"
         outputFile.writeText(
             """
@@ -316,3 +318,29 @@ intellijPlatformTesting {
         }
     }
 }
+
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+val integrationTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.testImplementation.get())
+}
+
+dependencies {
+    integrationTestImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    integrationTestImplementation("org.kodein.di:kodein-di-jvm:7.20.2")
+    integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
+}
+
+val integrationTest = tasks.register<Test>("integrationTest", fun Test.() {
+    val integrationTestSourceSet = sourceSets.getByName("integrationTest")
+    testClassesDirs = integrationTestSourceSet.output.classesDirs
+    classpath = integrationTestSourceSet.runtimeClasspath
+    systemProperty("./build", tasks.prepareSandbox.get().pluginDirectory.get().asFile)
+    useJUnitPlatform()
+    dependsOn(tasks.prepareSandbox)
+})

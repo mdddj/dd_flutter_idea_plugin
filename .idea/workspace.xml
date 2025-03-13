@@ -4,10 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.2.3">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.3.2">
+      <change afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/imagePreview/toolbar/FlutterXAssetsPanelRefreshAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/imagePreview/toolbar/FlutterXAssetsPanelRefreshAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/constance/StringConstance.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/constance/StringConstance.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/ImageFileUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/ImageFileUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/SwingUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/SwingUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/preview/ImagesPreviewWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/preview/ImagesPreviewWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +58,18 @@
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="codegen" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="intellij platform" type="c8890929:TasksNode$1" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -80,7 +100,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="5.3.0" />
+        <entry key="$PROJECT_DIR$" value="5.3.1" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -239,6 +259,7 @@
     &quot;Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [getChangelog].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [initializeIntellijPlatformPlugin].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.dd_flutter_idea_plugin [integrationTest].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [jarSearchableOptions].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [listBundledPlugins].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [mainClasses].executor&quot;: &quot;Run&quot;,
@@ -258,12 +279,14 @@
     &quot;Gradle.下载 IntelliJ 平台源….executor&quot;: &quot;Run&quot;,
     &quot;Gradle.下载源代码.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.构建 dd_flutter_idea_plugin.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BalloonTest.testBalloonCreationAndVisibility.executor&quot;: &quot;Run&quot;,
     &quot;Kotlin.YamlExtendsKt.executor&quot;: &quot;Run&quot;,
     &quot;Project.color&quot;: &quot;2a2f05&quot;,
     &quot;RunOnceActivity.Enable generate summary features in internal mode&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;ToolWindowDio Request.ShowToolbar&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
@@ -271,7 +294,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4&quot;: &quot;&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;5.3.1&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;5.3.2&quot;,
     &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -286,11 +309,12 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
     &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/docs/flutterx-doc/node_modules/prettier&quot;,
     &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2945874&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;setting.flutterx&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
@@ -355,9 +379,11 @@
       <command value="gradle check" />
       <command value="gradle :ldd-idea-publisher:plugin:pingServer" />
       <command value="gradle mainClasses" />
+      <command value="gradle classes" />
+      <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [buildPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -386,29 +412,7 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="dd_flutter_idea_plugin [mainClasses]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="mainClasses" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="dd_flutter_idea_plugin [printBundledPlugins]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="dd_flutter_idea_plugin [generateFlutterPluginInfo]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -419,7 +423,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="printBundledPlugins" />
+            <option value="generateFlutterPluginInfo" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -457,13 +461,35 @@
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="-Didea.log.level=DEBUG" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
             <option value="runIde" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="dd_flutter_idea_plugin [verifyPlugin]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="verifyPlugin" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -482,26 +508,26 @@
     </configuration>
     <list>
       <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [mainClasses]" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [mainClasses]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.39" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.39" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
       </set>
     </attachedChunks>
   </component>
@@ -1548,7 +1574,32 @@
       <workItem from="1740970622697" duration="5889000" />
       <workItem from="1740981579996" duration="8079000" />
       <workItem from="1740990000106" duration="6654000" />
-      <workItem from="1741076881004" duration="3298000" />
+      <workItem from="1741076881004" duration="3550000" />
+      <workItem from="1741080671643" duration="111000" />
+      <workItem from="1741159309417" duration="603000" />
+      <workItem from="1741233204207" duration="5449000" />
+      <workItem from="1741341598751" duration="492000" />
+      <workItem from="1741397471598" duration="1432000" />
+      <workItem from="1741398919651" duration="5415000" />
+      <workItem from="1741404567745" duration="3678000" />
+      <workItem from="1741573527999" duration="2283000" />
+      <workItem from="1741576228563" duration="5241000" />
+      <workItem from="1741586410479" duration="84000" />
+      <workItem from="1741586558737" duration="43000" />
+      <workItem from="1741586612191" duration="1609000" />
+      <workItem from="1741588238905" duration="2784000" />
+      <workItem from="1741591127472" duration="32000" />
+      <workItem from="1741591168587" duration="327000" />
+      <workItem from="1741591676855" duration="55000" />
+      <workItem from="1741591741080" duration="5819000" />
+      <workItem from="1741597891287" duration="3402000" />
+      <workItem from="1741655589357" duration="6109000" />
+      <workItem from="1741662145866" duration="284000" />
+      <workItem from="1741662465373" duration="3336000" />
+      <workItem from="1741672149031" duration="7270000" />
+      <workItem from="1741679878934" duration="1235000" />
+      <workItem from="1741829001778" duration="2761000" />
+      <workItem from="1741831794681" duration="3817000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -1893,7 +1944,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="383" />
+    <option name="localTasksCounter" value="384" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1955,7 +2006,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="修复 class name 更改后不执行代码更新的问题" />
     <MESSAGE value="修复版本自动修复功能" />
     <MESSAGE value="release 4.8.0" />
     <MESSAGE value="修复json view 查看器没有格式化显示问题" />
@@ -1980,7 +2030,8 @@
     <MESSAGE value="release5.0.4" />
     <MESSAGE value="release5.1.0" />
     <MESSAGE value="release5.2.3" />
-    <option name="LAST_COMMIT_MESSAGE" value="release5.2.3" />
+    <MESSAGE value="release5.3.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="release5.3.2" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">

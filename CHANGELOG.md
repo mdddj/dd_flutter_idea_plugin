@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-## [5.3.2] - 2025-03-04
+## [5.3.3] - 2025-03-10
+
+* New: add assets preview window
+* fix: The problem of jitter in asset images exceeding a certain size (document preview)
+* fix: assets code generate tool setting errors
+* Some other problems solved
+
+## [5.3.2] - 2025-03-05
 
 * New: `flutter android gradle` Migration Tools (android tool)
 * Fix: `dio` The problem of listening server not being destroyed (dio tool)

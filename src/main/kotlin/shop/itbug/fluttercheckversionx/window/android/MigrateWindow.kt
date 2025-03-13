@@ -12,13 +12,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
-import com.intellij.openapi.wm.ToolWindow
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.OnePixelSplitter
@@ -37,7 +37,6 @@ import javax.swing.event.ListSelectionListener
 
 
 sealed class AndroidMigrateFile(open val file: VirtualFile) {
-    var newFile: VirtualFile? = null
     fun findRelativePath(project: Project): String {
         if (project.isDisposed) return file.path
         val projectBasePath = project.guessProjectDir() ?: return file.path
@@ -52,28 +51,35 @@ sealed class AndroidMigrateFile(open val file: VirtualFile) {
         }
     }
 
-    fun createBackFile(): VirtualFile {
-        newFile = runReadAction {
-            LightVirtualFile(
-                file.name, file.fileType, file.readText()
-            )
+    fun createBackFile(callback: (VirtualFile?) -> Unit) {
+        ApplicationManager.getApplication().executeOnPooledThread {
+            val virtualFile = runReadAction {
+                try {
+                    val content = file.readText()
+                    LightVirtualFile(file.name, file.fileType, content)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            // 切换回 EDT 执行回调
+            ApplicationManager.getApplication().invokeLater({
+                callback(virtualFile)
+            }, ModalityState.defaultModalityState())
         }
-        return newFile!!
     }
 
     abstract fun updatePsi(project: Project, file: VirtualFile)
 }
 
-class AndroidBuildFile(val androidBuildFile: VirtualFile) : AndroidMigrateFile(androidBuildFile) {
+class AndroidBuildFile(androidBuildFile: VirtualFile) : AndroidMigrateFile(androidBuildFile) {
 
     override fun updatePsi(project: Project, vf: VirtualFile) {
         FlutterAndroidMigrateManager.getInstance(project).getNewAndroidBuildFile(vf)
     }
-
-
 }
 
-class AndroidAppBuildFile(val androidAppBuildFile: VirtualFile) : AndroidMigrateFile(androidAppBuildFile) {
+
+class AndroidAppBuildFile(androidAppBuildFile: VirtualFile) : AndroidMigrateFile(androidAppBuildFile) {
 
     override fun updatePsi(project: Project, vf: VirtualFile) {
         FlutterAndroidMigrateManager.getInstance(project).getNewAppBuildFile(vf)
@@ -90,8 +96,9 @@ class AndroidSettingsFile(override val file: VirtualFile) : AndroidMigrateFile(f
 
 /**
  * android 适配窗口
+ *
  */
-class FlutterXAndroidMigrateWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayoutPanel(),
+class FlutterXAndroidMigrateWindow(val project: Project) : BorderLayoutPanel(),
     ListSelectionListener {
 
     private val androidService = FlutterAndroidMigrateManager.getInstance(project)
@@ -111,17 +118,18 @@ class FlutterXAndroidMigrateWindow(val project: Project, val toolWindow: ToolWin
 
 
     init {
-        ApplicationManager.getApplication().invokeAndWait({
-            tryGetFiles()
-        }, ModalityState.defaultModalityState())
-        sp.splitterProportionKey = "FlutterXAndroidMigrateWindow"
-        sp.firstComponent = JBScrollPane(list).apply {
-            preferredSize = Dimension(240, list.height)
-            border = BorderFactory.createEmptyBorder()
+        DumbService.getInstance(project).runWhenSmart {
+            ApplicationManager.getApplication().invokeAndWait({
+                tryGetFiles()
+            }, ModalityState.defaultModalityState())
+            sp.splitterProportionKey = "FlutterXAndroidMigrateWindow"
+            sp.firstComponent = JBScrollPane(list).apply {
+                preferredSize = Dimension(240, list.height)
+                border = BorderFactory.createEmptyBorder()
+            }
         }
         addToCenter(sp)
     }
-
 
     //获取相关文件
     private fun tryGetFiles() {
@@ -157,21 +165,23 @@ class FlutterXAndroidMigrateWindow(val project: Project, val toolWindow: ToolWin
 
     ///显示 diff 窗口
     private fun showDiffWindow(file: AndroidMigrateFile) {
-        val newFile = file.createBackFile()
-        val request =
-            DiffRequestFactory.getInstance().createFromFiles(project, file.file, newFile)
-        val panel = DiffManager.getInstance().createRequestPanel(project, androidService, null)
-        request.putUserData(DiffUserDataKeysEx.CONTEXT_ACTIONS, createActionsList())
-        request.putUserData(FlutterAndroidMigrateManager.FILE, file)
-        file.updatePsi(project, newFile)
-
-        panel.setRequest(request)
-        if (diffPanel == null) {
-            diffPanel = panel
-            sp.secondComponent = panel.component
-        } else {
-            diffPanel!!.setRequest(request)
+        file.createBackFile { newFile ->
+            newFile?.let {
+                val request = DiffRequestFactory.getInstance().createFromFiles(project, file.file, newFile)
+                val panel = DiffManager.getInstance().createRequestPanel(project, androidService, null)
+                request.putUserData(DiffUserDataKeysEx.CONTEXT_ACTIONS, createActionsList())
+                request.putUserData(FlutterAndroidMigrateManager.FILE, file)
+                file.updatePsi(project, newFile)
+                panel.setRequest(request)
+                if (diffPanel == null) {
+                    diffPanel = panel
+                    sp.secondComponent = panel.component
+                } else {
+                    diffPanel!!.setRequest(request)
+                }
+            }
         }
+
     }
 
     private fun createActionsList(): List<AnAction> {

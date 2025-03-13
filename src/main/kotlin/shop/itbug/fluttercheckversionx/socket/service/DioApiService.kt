@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.socket.service
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import org.smartboot.socket.StateMachineEnum
@@ -19,7 +20,7 @@ import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.APP)
-class DioApiService {
+class DioApiService : Disposable {
 
     companion object {
         fun getInstance() = service<DioApiService>()
@@ -129,13 +130,12 @@ class DioApiService {
                 .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
         }
 
-    fun dispose() {
-        sessions.forEach {
-            it.close()
-        }
+    override fun dispose() {
+        sessions.map(AioSession::close)
         sessions.clear()
         aioServer?.shutdown()
     }
+
 }
 
 object MyMessageProcessor : AbstractMessageProcessor<String>() {
@@ -214,7 +214,7 @@ private class MyHeartCommon : MyHeartPlugin<String>(15, TimeUnit.SECONDS) {
         msg?.let {
             val json = Gson().fromJson(it, HashMap::class.java)
             if (json["type"] == "ping") {
-                MyLoggerEvent.fire(MyLogInfo(message = "$msg", key = LogKeys.ping))
+                MyLoggerEvent.fire(MyLogInfo(message = msg, key = LogKeys.ping))
                 return true
             }
         }
