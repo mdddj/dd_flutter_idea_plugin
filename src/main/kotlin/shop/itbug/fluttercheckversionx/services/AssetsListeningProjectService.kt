@@ -195,7 +195,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             createNotification.addAction(object : DumbAwareAction("What's New") {
                 override fun actionPerformed(e: AnActionEvent) {
                     val version = release.version.replace(".", "")
-                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/3.27.4/CHANGELOG.md#$version")
+                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/${release.version}/CHANGELOG.md#$version")
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {
