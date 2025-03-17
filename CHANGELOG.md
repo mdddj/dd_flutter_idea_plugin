@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.3.3] - 2025-03-10
+## [5.3.3] - 2025-03-13
 
 * New: add assets preview window
 * fix: The problem of jitter in asset images exceeding a certain size (document preview)
