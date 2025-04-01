@@ -175,6 +175,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
                 Helper.addKeyValueHeader(sb)
                 sb.appendTag(
                     MyMarkdownDocRenderObject(text = simpleText, project = project),
+                    project,
                     PluginBundle.get("element")
                 )
             }
@@ -200,7 +201,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
                 text = info.dartdoc,
                 project = element.project
             )
-            sb.appendTag(obj, PluginBundle.get("doc"))
+            sb.appendTag(obj, project, PluginBundle.get("doc"))
         }
         Helper.addKeyValueFoot(sb)
 

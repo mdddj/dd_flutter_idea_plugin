@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.json.JsonFileType
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -128,31 +127,10 @@ object MyFileUtil {
     }
 
     /**
-     * 检查文件是否被索引,协程版本
-     */
-    suspend fun checkFileIsIndexByXc(project: Project, file: VirtualFile): Boolean {
-        return try {
-            val file = readAction { PsiManager.getInstance(project).findFile(file) }
-            file != null
-        } catch (_: Exception) {
-            false
-        }
-    }
-
-    /**
      * 重新索引指定文件
      */
     fun reIndexFile(project: Project, file: VirtualFile) {
         if (checkFileIsIndex(project, file)) {
-            FileBasedIndex.getInstance().requestReindex(file)
-        }
-    }
-
-    /**
-     * 重新索引指定文件,协程版本
-     */
-    suspend fun reIndexFileByXc(project: Project, file: VirtualFile) {
-        if (checkFileIsIndexByXc(project, file)) {
             FileBasedIndex.getInstance().requestReindex(file)
         }
     }

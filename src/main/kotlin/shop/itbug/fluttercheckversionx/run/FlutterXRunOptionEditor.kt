@@ -6,9 +6,9 @@ import com.intellij.ui.dsl.builder.panel
 import javax.swing.JComponent
 
 
-class FlutterXRunOptionEditor(val factory: FlutterXRunConfiguration) : SettingsEditor<FlutterXRunConfiguration>() {
+class FlutterXRunOptionEditor(factory: FlutterXRunConfiguration) : SettingsEditor<FlutterXRunConfiguration>() {
 
-    val state: FlutterXRunConfigOptions = factory.getMyOptions();
+    val state: FlutterXRunConfigOptions = factory.getMyOptions()
 
     private val myPanel = panel {
         row("Run Flutter App") {

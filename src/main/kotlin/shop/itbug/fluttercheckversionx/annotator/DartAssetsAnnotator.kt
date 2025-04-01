@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.string
 
-private val dartClass = arrayOf<String>("Image.asset", "ExtendedImage.asset", "SvgPicture.asset")
+private val dartClass = arrayOf("Image.asset", "ExtendedImage.asset", "SvgPicture.asset")
 
 /**
  * 检查 asset资产文件是否存在

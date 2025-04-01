@@ -40,10 +40,10 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (it.component.parent == null) return@Function null
             val psiFile = PsiManager.getInstance(project).findFile(file) ?: return@Function null
             if (file.name == "pubspec.yaml" && psiFile is YAMLFile) {
-                log.warn("start check is flutter project")
+                log().warn("start check is flutter project")
                 val isFlutterProject =
                     runBlocking(Dispatchers.IO) { PubspecYamlFileTools.create(psiFile).isFlutterProject() }
-                log.warn("is a flutter project: $isFlutterProject")
+                log().warn("is a flutter project: $isFlutterProject")
                 if (!isFlutterProject) return@Function null
                 val panel = YamlFileNotificationPanel(it, psiFile, project)
                 return@Function panel

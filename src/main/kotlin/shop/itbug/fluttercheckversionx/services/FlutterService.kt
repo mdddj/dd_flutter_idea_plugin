@@ -61,6 +61,3 @@ data class Release(
 )
 
 
-val testRelease = Release(
-    "", "3.25.0", "3.5.4", "2024-10-24T17:38:00.719363Z", "", ""
-)

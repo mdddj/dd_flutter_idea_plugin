@@ -2,8 +2,6 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 val dartVersion: String by project
 val sinceBuildVersion: String by project
@@ -13,8 +11,8 @@ val pluginVersion: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.3.0"
+    kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.intellij.platform") version "2.4.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
@@ -42,11 +40,13 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
     "com.intellij.gradle",
-    "org.jetbrains.plugins.gradle"
+    "org.jetbrains.plugins.gradle",
+    "org.intellij.groovy"
 )
 
 if (sinceBuildVersion.toInt() >= 243) {
     bPlugins.add("com.intellij.modules.json")
+    bPlugins.add("com.intellij.platform.images")
 }
 
 dependencies {
@@ -57,16 +57,11 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
             "243" -> {
-                local("/Applications/IntelliJ IDEA Ultimate.app")
+                intellijIdeaCommunity("2024.3.5")
             }
 
             "251" -> {
-                local("/Applications/IntelliJ IDEA Ultimate 2025.1 EAP.app")
-            }
-
-            else -> {
-//                local("/Applications/Android Studio.app")
-                androidStudio("2024.2.2.13")
+                local("/Applications/IntelliJ IDEA Ultimate 2025.1 Beta.app")
             }
         }
         bundledPlugins(bPlugins)
@@ -89,11 +84,7 @@ intellijPlatform {
                 }
 
                 "251" -> {
-                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 EAP.app")
-                }
-
-                else -> {
-                    local("/Applications/Android Studio.app")
+                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 Beta.app")
                 }
             }
         }
@@ -124,8 +115,6 @@ val currentVersionChangelog = provider {
             .withEmptySections(false), Changelog.OutputType.HTML
     )
 }
-
-val currentTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.compilerOptions {
@@ -268,7 +257,6 @@ val generateFlutterPluginInfo by tasks.registering {
             |object FlutterXPluginInfo {
             |    const val Version: String = "${project.version}"
             |    const val Changelog: String = $q${currentVersionChangelog.get()}$q
-            |    const val BuildDate: String = "$currentTime"
             |}
             |""".trimMargin().trimIndent()
         )
@@ -336,11 +324,3 @@ dependencies {
     integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
 }
 
-val integrationTest = tasks.register<Test>("integrationTest", fun Test.() {
-    val integrationTestSourceSet = sourceSets.getByName("integrationTest")
-    testClassesDirs = integrationTestSourceSet.output.classesDirs
-    classpath = integrationTestSourceSet.runtimeClasspath
-    systemProperty("./build", tasks.prepareSandbox.get().pluginDirectory.get().asFile)
-    useJUnitPlatform()
-    dependsOn(tasks.prepareSandbox)
-})

@@ -7,8 +7,6 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 
 
-typealias UpdateJsonToFreezedSettingModelState = (old: JsonToFreezedSettingModel) -> JsonToFreezedSettingModel
-
 /**
  * json 转换成 freezed 类的设置
  */
@@ -34,13 +32,6 @@ class JsonToFreezedSettingModelConfig : PersistentStateComponent<JsonToFreezedSe
 
     override fun loadState(state: JsonToFreezedSettingModel) {
         stateModel = state
-    }
-
-    /**
-     * 更改状态
-     */
-    fun changeState(update: UpdateJsonToFreezedSettingModelState) {
-        loadState(update.invoke(stateModel))
     }
 
     companion object {

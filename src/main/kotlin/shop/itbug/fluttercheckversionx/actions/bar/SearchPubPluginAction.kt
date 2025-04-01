@@ -165,7 +165,7 @@ class OpenAndroidProjectOnASAction : AnAction() {
             e.presentation.isEnabled = tool.isAndroidStudioInstalled
         }
         e.presentation.icon = MyIcons.androidStudio
-        e.presentation.text = "Open android project"
+        e.presentation.text = "Open Android Project"
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
@@ -192,7 +192,7 @@ class OpenIosProjectInXcodeAction : AnAction() {
             e.presentation.isVisible =
                 e.project != null && tool.isMacos && tool.iosDirIsExist && config.openIosDirectoryInXcode
         }
-        e.presentation.text = "Open ios project"
+        e.presentation.text = "Open Ios Project"
         e.presentation.icon = MyIcons.xcode
         super.update(e)
     }
@@ -221,7 +221,7 @@ class OpenMacosProjectInXcodeAction : AnAction() {
             e.presentation.isVisible =
                 e.project != null && tool.isMacos && tool.macosDirIsExist && config.openMacosDirectoryInXcode
         }
-        e.presentation.text = "Open macos project"
+        e.presentation.text = "Open Macos Project"
         e.presentation.icon = MyIcons.xcode
         super.update(e)
     }

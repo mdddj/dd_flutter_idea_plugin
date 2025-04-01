@@ -190,6 +190,10 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                 },
             )
 
+            createNotification.addAction(NotShowFlutterCheckVersionAction {
+                createNotification.hideBalloon()
+                createNotification.expire()
+            })
 
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
@@ -202,6 +206,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     return ActionUpdateThread.BGT
                 }
             })
+
 
             ///关闭
             createNotification.addAction(object : DumbAwareAction("Cancel") {
@@ -216,6 +221,17 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             })
             createNotification.isSuggestionType = true
             createNotification.notify(project)
+        }
+    }
+}
+
+//不检测新版本操作
+private class NotShowFlutterCheckVersionAction(val onActioned: () -> Unit) :
+    DumbAwareAction(PluginBundle.get("ig.version.check")) {
+    override fun actionPerformed(p0: AnActionEvent) {
+        p0.project?.let {
+            DioListingUiConfig.changeSetting { setting -> setting.copy(checkFlutterVersion = false) }
+            onActioned.invoke()
         }
     }
 }

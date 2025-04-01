@@ -20,7 +20,7 @@ class DioWindowAutoScrollToMaxAction : MyToggleAction(PluginBundle.getLazyMessag
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-        val panel = e.getData<ApiListPanel?>(ApiListPanel.PANEL_DATA_KEY)
+        val panel = e.getData(ApiListPanel.PANEL_DATA_KEY)
         panel?.let {
             it.autoscrolls = state
         }

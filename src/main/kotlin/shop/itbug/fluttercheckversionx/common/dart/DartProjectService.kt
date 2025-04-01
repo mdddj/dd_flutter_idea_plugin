@@ -23,7 +23,7 @@ class FlutterXVMService(val project: Project) : Disposable {
 
     companion object {
         fun getInstance(project: Project) = project.service<FlutterXVMService>()
-        val TOPIC = Topic.create<Listener>("FlutterXVMListener", Listener::class.java)
+        val TOPIC = Topic.create("FlutterXVMListener", Listener::class.java)
     }
 
     /**

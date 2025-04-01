@@ -2,9 +2,7 @@ package shop.itbug.fluttercheckversionx.common
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
-import kotlinx.serialization.json.JsonElement
 import shop.itbug.fluttercheckversionx.dialog.freezed.StringToFreezedDialog
-import shop.itbug.fluttercheckversionx.util.toastWithError
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
@@ -28,15 +26,3 @@ fun Project.jsonToFreezedRun(jsonText: String) {
 }
 
 
-private fun Project.jsonToFreezedRun2(jsonObject: JsonElement) {
-    try {
-
-//        val jsonObjectToFreezedCovertModelList =
-//            ModelToFreezedModelServiceImpl().jsonObjectToFreezedCovertModelList(jsonObject)
-//        FreezedClassesGenerateDialog(this, jsonObjectToFreezedCovertModelList).show()
-    } catch (e: Exception) {
-        println("json to freezed error:$e")
-        toastWithError("$e")
-        e.printStackTrace()
-    }
-}

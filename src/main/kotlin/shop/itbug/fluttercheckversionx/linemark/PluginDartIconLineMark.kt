@@ -78,7 +78,7 @@ class PluginDartIconActionMenuList(val element: PsiElement, val file: YAMLFile) 
 
     private val menus: MutableList<PluginDartIconActionMenuItem>
         get() {
-            val arr = mutableListOf<PluginDartIconActionMenuItem>(
+            val arr = mutableListOf(
                 PluginDartIconActionMenuItem(
                     title = "${PluginBundle.get("nav.to")} pub.dev",
                     type = "navToPub",

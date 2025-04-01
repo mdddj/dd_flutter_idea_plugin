@@ -50,7 +50,7 @@ class YamlDocument : DocumentationProvider {
             }
 
         }
-        return super.generateDoc(element, originalElement) ?: (element?.text?.toString() ?: "")
+        return super.generateDoc(element, originalElement) ?: (element?.text ?: "")
     }
 
     /**

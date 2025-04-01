@@ -22,7 +22,6 @@ abstract class MyAction : AnAction {
 }
 
 abstract class MyDumbAwareAction : DumbAwareAction {
-    constructor()
 
     constructor(name: Supplier<String>) : super(name)
     constructor(icon: Icon) : super(icon)

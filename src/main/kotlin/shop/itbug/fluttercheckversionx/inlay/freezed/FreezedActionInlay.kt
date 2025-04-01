@@ -95,7 +95,7 @@ class FreezedActionInlay : CodeVisionProviderBase() {
                             MyDartPsiElementUtil.createDartNamePsiElement(newClassName, project)
                         val newDartType = MyDartPsiElementUtil.createDartTypeImplElement("_$newClassName", project)
                         val newFunBody = MyDartPsiElementUtil.createFunBody(
-                            "factory ${newClassName}.fromJson(Map<String, dynamic> json) => _\$${newClassName}FromJson(json);",
+                            "factory ${newClassName}.fromJson(Map<String, dynamic> json) => _$${newClassName}FromJson(json);",
                             project
                         )
                         val newMixin = MyDartPsiElementUtil.createMixin("_$${newClassName}", project)

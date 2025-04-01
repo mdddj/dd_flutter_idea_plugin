@@ -121,25 +121,6 @@ fun generateClassByNames(
 }
 
 
-private fun generateClassText(
-    className: String, requiredParams: List<String>? = emptyList(), optionParams: List<String>? = emptyList()
-): String {
-    return """
-class $className(
-${
-        if (!requiredParams.isNullOrEmpty()) requiredParams.joinToString(",", prefix = "".prependIndent("\t")) {
-            it
-        } else ""
-    }${if (!requiredParams.isNullOrEmpty()) "," else ""}{
-${
-        optionParams?.joinToString(separator = ",\n") {
-            it.prependIndent("\t")
-        }
-    }
-})
-    """.trimIndent()
-}
-
 ///组成一个类
 val DartNamedConstructorDeclarationImpl.getClassText
     get() = generateClassByNames(
@@ -186,22 +167,10 @@ val DartClassDefinitionImpl.getDefinition: String
         return t
     }
 
-///函数类型的定义
-val DartMethodDeclarationImpl.getDocumentText: String
-    get() {
-        val bodyText = children.find { it is DartFunctionBodyImpl }?.text ?: ""
-        return text.replace(bodyText, "")
-    }
-
 
 ///获取dart类型
 fun PsiElement.getDartElementType(): String? {
     return getDartInfo()?.staticType
-}
-
-/// 获取文档
-fun PsiElement.getDartElementDocument(): String? {
-    return getDartInfo()?.dartdoc
 }
 
 

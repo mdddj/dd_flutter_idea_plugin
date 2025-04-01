@@ -1,8 +1,5 @@
 package shop.itbug.fluttercheckversionx.manager
 
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.Balloon
@@ -15,7 +12,6 @@ import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
 import com.jetbrains.lang.dart.psi.impl.DartMetadataImpl
-import shop.itbug.fluttercheckversionx.common.MyDumbAwareAction
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -65,8 +61,6 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
         addFromJson = true,
         properties = "String? text"
     )
-
-    private val project = psiElement.project
 
     /**
      * 添加freezed fromJson函数
@@ -124,13 +118,6 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
             .show(relative, Balloon.Position.above)
     }
 
-    /**
-     * 查找mata data psi 节点
-     */
-    fun findMataDataByText(text: String): DartMetadataImpl? {
-        return findTypesByPsiElement<DartMetadataImpl>().find { it.referenceExpression.text == text }
-    }
-
     fun findFreezedMetadata(): DartMetadataImpl? {
         return findTypesByPsiElement<DartMetadataImpl>().lastOrNull { frs.contains(it.referenceExpression.text) }
     }
@@ -178,31 +165,5 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
         }
     }
 
-
-    /**
-     * //Todo v1.6.0 自动添加Hive注解
-     **/
-    fun generateHiveMate() {
-        val constructor = findTypesByPsiElement<DartFactoryConstructorDeclarationImpl>().filter {
-            val manager = it.manager()
-            return@filter manager.hasProperties() && manager.hasHiveMate().not()
-        }
-        if (constructor.isNotEmpty()) {
-            val popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                "Choose One", DefaultActionGroup().apply {
-                    constructor.forEach { ele ->
-                        val name = ele.componentNameList.joinToString(".") { it.text }
-                        add(object : MyDumbAwareAction({ name }) {
-                            override fun actionPerformed(e: AnActionEvent) {
-
-                            }
-                        })
-                    }
-                },
-                DataContext.EMPTY_CONTEXT, JBPopupFactory.ActionSelectionAid.MNEMONICS, true
-            )
-            popup.showCenteredInCurrentWindow(project)
-        }
-    }
 
 }

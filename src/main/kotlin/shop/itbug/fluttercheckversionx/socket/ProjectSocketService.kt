@@ -6,40 +6,13 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.actions.getDataJson
 import shop.itbug.fluttercheckversionx.config.DioCopyAllKey
-import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.util.toHexString
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-data class TestRequestBody(
-    var hello: String = "test",
-    var test: Int = 1,
-    var floatValue: Float = 1.2f,
-    var longValue: Long = 12000L,
-    var boolValue: Boolean = true,
-)
-
-
 class ProjectSocketService {
-    companion object {
-        fun getTestApi(): Request {
-            return Request(
-                data = mapOf("testInt" to 1, "testDouble" to 100.2, "testBool" to false, "object" to TestRequestBody()),
-                method = "GET",
-                queryParams = emptyMap(),
-                url = "https://itbug.shop:6666/api/test?hello=1&test=true",
-                statusCode = 200,
-                body = null,
-                headers = emptyMap(),
-                responseHeaders = emptyMap(),
-                timestamp = 300,
-                projectName = "Test Request",
-                createDate = LocalDateTime.now().toString(),
-            )
-        }
-    }
 
     /**
      * 解析flutter发送过来的模型

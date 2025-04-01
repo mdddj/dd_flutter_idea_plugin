@@ -10,7 +10,7 @@ import java.util.*
 
 
 object ImageFileUtil {
-    val IMAGE_EXTENSIONS: MutableSet<String?> = mutableSetOf<String?>(
+    val IMAGE_EXTENSIONS: MutableSet<String?> = mutableSetOf(
         "png", "jpg", "jpeg", "gif", "bmp", "svg", "webp", "ico", "tiff", "tif"
     )
 
@@ -21,7 +21,7 @@ object ImageFileUtil {
         if (file == null || file.isDirectory) {
             return false
         }
-        val extension = file.getExtension()
+        val extension = file.extension
         // 检查扩展名是否在图片扩展名列表中
         return extension != null && IMAGE_EXTENSIONS.contains(extension.lowercase(Locale.getDefault()))
     }

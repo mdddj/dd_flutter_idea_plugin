@@ -73,12 +73,12 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                         row {
                             checkBox(PluginBundle.get("freezed.gen.base.set.default.value")).bindSelected(generateConfig.propsConfig::setDefaultValue)
                         }
-                        val box = ComboBox<FormJsonType>(FormJsonType.entries.toTypedArray())
+                        val box = ComboBox(FormJsonType.entries.toTypedArray())
                         row("fromJson ${PluginBundle.get("freezed.gen.formatname.fromjson.type")}") {
                             cell(box).bindItem(generateConfig::formJsonType)
                         }
                         // freezed新版本设置
-                        FreezedNewSetting.setting(project, generateConfig, this)
+                        FreezedNewSetting.setting(generateConfig, this)
                     }
                 }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
 

@@ -94,7 +94,7 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
 
 
         // 资产图片拷贝窗口
-        val imagesPreviewWindow = ImagesPreviewWindow(project, toolWindow)
+        val imagesPreviewWindow = ImagesPreviewWindow(project)
         val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
         toolWindow.contentManager.addContent(imagesPreviewContent)
         imagesPreviewContent.setDisposer(imagesPreviewWindow)

@@ -47,6 +47,6 @@ class YamlFileIgDartPackageCache : SimplePersistentStateComponent<YamlFileIgPack
 
     companion object {
         fun getInstance(project: Project): YamlFileIgDartPackageCache =
-            project.getService<YamlFileIgDartPackageCache>(YamlFileIgDartPackageCache::class.java)
+            project.getService(YamlFileIgDartPackageCache::class.java)
     }
 }

@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.document
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationMarkup.*
+import com.intellij.markdown.utils.doc.DocMarkdownToHtmlConverter
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -42,10 +43,11 @@ class MarkdownRender {
 
     companion object {
 
-        fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, title: String) {
+        fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, project: Project, title: String) {
             if (tag != null) {
                 appendSection(title) {
-                    val m = markdownToHtml(tag)
+//                    val m = markdownToHtml(tag)
+                    val m = DocMarkdownToHtmlConverter.convert(project, tag.getContent())
                     append(m)
                 }
             }
@@ -359,7 +361,7 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
 
 private fun getSaturationFactor(): Float {
     val result = Registry.intValue("documentation.component.highlighting.saturation.for.rendered.docs")
-    return MathUtil.clamp(result, 0, 100) * 0.01F;
+    return MathUtil.clamp(result, 0, 100) * 0.01F
 }
 
 private fun StringBuilder.appendStyledSpan(

@@ -221,7 +221,7 @@ class DartNoUsedCheckService(val project: Project) {
             r.map {
                 async {
                     val path = it.getPath() ?: return@async null
-                    packages.find { isFileInDirectory(path, it.packageDirectory) }
+                    packages.find { it -> isFileInDirectory(path, it.packageDirectory) }
                 }
             }.awaitAll()
         }.filterNotNull().toHashSet()

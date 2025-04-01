@@ -27,11 +27,6 @@ class VerifyFileDir : DialogValidation.WithParameter<TextFieldWithBrowseButton> 
     }
 
     companion object {
-        fun validateDir(path: String): Pair<Boolean, String>? {
-            VirtualFileManager.getInstance().findFileByNioPath(Path(path))
-                ?: return Pair(false, PluginBundle.get("freezed.gen.base.file.dir.error"))
-            return null
-        }
 
         val ERROR_MSG = PluginBundle.get("freezed.gen.base.file.dir.error")
         val ENTER_YOU_FILE_NAME = PluginBundle.get("freezed.gen.create.enter.you.file.name")

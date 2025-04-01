@@ -152,7 +152,7 @@ object DartPsiElementHelper {
     //获取字符串
     fun findDartString(element: DartStringLiteralExpressionImpl): String? {
         val ele = element.node.findChildByType(DartTokenTypes.REGULAR_STRING_PART) ?: return null
-        return if (ele.text.isNotEmpty()) ele.text else null
+        return ele.text.ifEmpty { null }
     }
 
 }

@@ -174,10 +174,6 @@ private class HiveKeysList(private val boxList: JBList<String>) : JBList<String>
 
     }
 
-    fun clean() {
-        model = ItemModel(emptyList())
-    }
-
     override fun dispose() {
         removeMessageProcess()
     }

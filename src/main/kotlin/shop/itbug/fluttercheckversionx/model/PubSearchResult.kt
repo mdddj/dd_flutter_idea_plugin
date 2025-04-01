@@ -10,9 +10,6 @@ data class Package(
 )
 
 
-fun Package.psiElementString(): String = "${`package`}: any"
-
-
 ///插件评分
 data class PubPackageScore(val likeCount: Int)
 

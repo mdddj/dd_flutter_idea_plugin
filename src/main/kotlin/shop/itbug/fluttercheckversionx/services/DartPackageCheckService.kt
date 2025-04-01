@@ -12,7 +12,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
@@ -71,10 +70,6 @@ data class MyDartPackage(
         } catch (e: Exception) {
             return PubPackage(this.copy(error = e.localizedMessage), null)
         }
-    }
-
-    fun getDartPluginVersionName(): DartPluginVersionName {
-        return detail
     }
 
 
@@ -200,13 +195,6 @@ class DartPackageCheckService(val project: Project) : Disposable {
     fun startResetIndex(params: DartPackageTaskParam = DartPackageTaskParam()) {
         scope.launch {
             resetIndex(params)
-        }
-    }
-
-
-    fun reIndexFile(file: VirtualFile) {
-        scope.launch {
-            MyFileUtil.reIndexFileByXc(project, file)
         }
     }
 

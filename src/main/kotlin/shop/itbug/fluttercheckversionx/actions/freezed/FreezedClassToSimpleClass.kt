@@ -4,12 +4,9 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
-import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.manager.DartDefaultFormalNamedParameterActionManager
 import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclarationImplManager
 import shop.itbug.fluttercheckversionx.manager.constr_type_string
@@ -72,16 +69,20 @@ private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: 
     private val setting = SettingModel(
         className = manager.getClassName, generateClass = args.generateClassString(manager.getClassName)
     )
-    private val editor = DartEditorTextPanel(project, setting.generateClass)
+    val editor = DartEditorTextPanel(project, setting.generateClass)
 
     init {
 
         super.init()
-        super.setTitle("freezed to simple class")
+        super.setTitle("Freezed To Simple Class")
     }
 
     override fun createCenterPanel(): JComponent {
-        return Layout()
+        return object : BorderLayoutPanel() {
+            init {
+                addToCenter(editor)
+            }
+        }
     }
 
 
@@ -90,21 +91,5 @@ private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: 
     }
 
 
-    ///布局
-    private inner class Layout : BorderLayoutPanel() {
-
-
-
-        init {
-            addToCenter(editor.scroll().apply {
-                this.maximumSize = Dimension(500, -1)
-            })
-            addToLeft(panel {
-                row("class name") {
-                    textField().bindText(setting::className)
-                }
-            })
-        }
-    }
 }
 

@@ -25,10 +25,6 @@ class RightDetailPanel(project: Project) : JsonValueRender(project) {
         changeValue(detail.data)
     }
 
-    fun clean() {
-        changeValue("")
-    }
-
 }
 
 

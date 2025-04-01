@@ -39,7 +39,7 @@ class FreezedPartAutoComplicate : CompletionContributor() {
                         val className = cls.getDartClassName()
                         className?.let {
                             result.withPrefixMatcher("ff").addElement(
-                                LookupElementBuilder.create("factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);")
+                                LookupElementBuilder.create("factory $className.fromJson(Map<String, dynamic> json) => _$${className}FromJson(json);")
                                     .withIcon(MyIcons.flutter)
                             )
 

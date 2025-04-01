@@ -140,7 +140,7 @@ private class Panel(val project: Project, val file: DartFile) : EditorNotificati
 
     //修复项目中全部的 freezed class
     private fun fixAll() {
-        JBPopupFactory.getInstance().createPopupChooserBuilder<String>(listOf("sealed", "abstract"))
+        JBPopupFactory.getInstance().createPopupChooserBuilder(listOf("sealed", "abstract"))
             .setItemChosenCallback {
                 println("选择了:$it")
                 askOk(it)

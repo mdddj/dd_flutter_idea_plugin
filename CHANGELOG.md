@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [5.4.0] - 2025-04-01
+
+* fix some bugs
+
+## [5.3.4] - 2025-03-17
+
+* fix known bugs
+
 ## [5.3.3] - 2025-03-13
 
 * New: add assets preview window

@@ -19,9 +19,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
     //socket服务是否正常启动
     private var socketIsInit = false
 
-    //项目名称列表
-    var projectNames: List<String> = emptyList()
-
 
     //当前选中的项目
     var currentSelectName: AtomicReference<String?> = AtomicReference<String?>(null)
@@ -51,13 +48,6 @@ class AppService : DioApiService.HandleFlutterApiModel {
         register()
     }
 
-
-    /**
-     * 添加测试api接口
-     */
-    private fun addTestRequestItem() {
-        addRequest(ProjectSocketService.getTestApi())
-    }
 
     /**
      * 设置dio接口监听状态

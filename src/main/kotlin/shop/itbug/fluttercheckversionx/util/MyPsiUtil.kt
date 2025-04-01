@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.project.stateStore
@@ -11,17 +10,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.childrenOfType
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
-import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
-import shop.itbug.fluttercheckversionx.constance.igFlutterPlugin
-import shop.itbug.fluttercheckversionx.model.FlutterPluginElementModel
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
-import shop.itbug.fluttercheckversionx.services.PubspecService
 import java.io.File
 
 
@@ -93,58 +87,6 @@ class MyPsiElementUtil {
             return null
         }
 
-        /**
-         * 获取项目的所有插件
-         */
-        fun getAllPlugins(project: Project): List<String> {
-            return project.service<PubspecService>().getAllDependencies()
-        }
-
-
-        fun getAllPluginsString(project: Project, key: String = "dependencies"): List<String> {
-            val yamlFile = project.getPubspecYAMLFile()
-            yamlFile?.let { file ->
-                val deps = YAMLUtil.getQualifiedKeyInFile(file, key)
-                if (deps != null) {
-                    return deps.children.first().children.mapNotNull { (it as? YAMLKeyValueImpl)?.keyText }
-                }
-            }
-            return emptyList()
-        }
-
-        /**
-         * 获取项目插件列表
-         */
-        fun getAllFlutters(project: Project): MutableMap<FlutterPluginType, List<FlutterPluginElementModel>> {
-            val yamlFile = project.getPubspecYAMLFile()
-            val map = mutableMapOf<FlutterPluginType, List<FlutterPluginElementModel>>()
-            yamlFile?.let { yaml ->
-                val coreElement = yaml.firstChild.firstChild
-                val coreElementChildren = coreElement.childrenOfType<YAMLKeyValueImpl>()
-                if (coreElementChildren.isNotEmpty()) {
-                    FlutterPluginType.entries.forEach { type ->
-                        val l = coreElementChildren.filter { it.keyText == type.type }.toList()
-                        if (l.isNotEmpty()) {
-                            val pluginDevs = l.first()
-                            if (pluginDevs.childrenOfType<YAMLBlockMappingImpl>().isNotEmpty()) {
-                                val mapping = pluginDevs.childrenOfType<YAMLBlockMappingImpl>().first()
-                                var psis = mapping.childrenOfType<YAMLKeyValueImpl>()
-                                val igs = igFlutterPlugin.igPlugins
-                                psis = psis.filter { p -> !igs.contains(p.keyText) }
-                                map[type] = psis.map { psi ->
-                                    FlutterPluginElementModel(
-                                        name = psi.keyText,
-                                        type = type,
-                                        element = psi
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return map
-        }
 
         fun modifyPsiElementText(psiElement: PsiElement, newText: String) {
             // 使用WriteCommandAction来执行修改操作

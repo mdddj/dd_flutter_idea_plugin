@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.DartTokenTypes
@@ -88,7 +87,7 @@ object MyDartPsiElementUtil {
      */
     fun createDartClassBodyFromClassName(project: Project, className: String): DartClassDefinitionImpl {
         val file = DartElementGenerator.createDummyFile(
-            project, "class $className{\n" + "\n}"
+            project, "class $className{\n\n}"
         )
         return PsiTreeUtil.getChildOfType(file, DartClassDefinitionImpl::class.java)!!
     }
@@ -140,24 +139,6 @@ object MyDartPsiElementUtil {
         }
         return false
 
-    }
-
-
-    /**
-     * 检测是否有相同的PsiElement
-     * 返回true 表示有相同的
-     * false 则没有
-     */
-    fun <T : PsiElement> checkElementEqName(
-        project: Project, element: PsiElement, text: String, type: Class<T>
-    ): Boolean {
-        println(element.children.size)
-        val file = DartElementGenerator.createDummyFile(project, element.text)
-        val childrenOfAnyType = PsiTreeUtil.getChildrenOfAnyType(file.originalElement, type)
-        println(">>${childrenOfAnyType.size}")
-        return childrenOfAnyType.any {
-            it.text.equals(text)
-        }
     }
 
 
@@ -261,14 +242,9 @@ object MyDartPsiElementUtil {
 
     fun generateDartMetadata(name: String, project: Project): DartMetadataImpl {
         val createDummyFile = DartElementGenerator.createDummyFile(
-            project, "@$name\n" + "class A{}"
+            project, "@$name\nclass A{}"
         )
         return PsiTreeUtil.findChildOfType(createDummyFile, DartMetadataImpl::class.java)!!
-    }
-
-    fun generateSpace(project: Project, text: String = "\n"): PsiWhiteSpaceImpl {
-        val createDummyFile = DartElementGenerator.createDummyFile(project, text)
-        return PsiTreeUtil.findChildOfType(createDummyFile, PsiWhiteSpaceImpl::class.java)!!
     }
 
 
@@ -282,12 +258,6 @@ object MyDartPsiElementUtil {
     }
 
 
-    fun generateMixins(project: Project, name: String): DartMixinsImpl {
-        val createDummyFile = DartElementGenerator.createDummyFile(project, "class A with $name")
-        return PsiTreeUtil.findChildOfType(createDummyFile, DartMixinsImpl::class.java)!!
-    }
-
-
     fun genFreezedClass(
         project: Project,
         className: String,
@@ -297,21 +267,10 @@ object MyDartPsiElementUtil {
     ): PsiFile {
         return DartElementGenerator.createDummyFile(
             project,
-            "@freezed\n" + "class $className with _\$$className {\n" + (if (addConstructor) "  const $className._();\n\n" else "") +
+            "@freezed\n" + "class $className with _$$className {\n" + (if (addConstructor) "  const $className._();\n\n" else "") +
 
-                    "  const factory $className({\n$properties    }) = _$className;\n" + (if (addFromJson) "  \n  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);\n\n" else "") + "}"
+                    "  const factory $className({\n$properties    }) = _$className;\n" + (if (addFromJson) "  \n  factory $className.fromJson(Map<String, dynamic> json) => _$${className}FromJson(json);\n\n" else "") + "}"
         )
-    }
-
-
-    /**
-     * 生成可空的属性
-     */
-    fun getNullProperties(type: String, name: String, project: Project): DartDefaultFormalNamedParameterImpl {
-        val createDummyFile = DartElementGenerator.createDummyFile(
-            project, "class B {\n" + "  B({$type $name});\n" + "}"
-        )
-        return PsiTreeUtil.getChildOfType(createDummyFile, DartDefaultFormalNamedParameterImpl::class.java)!!
     }
 
 
@@ -339,7 +298,7 @@ object MyDartPsiElementUtil {
      */
     fun createDartTypeImplElement(name: String, project: Project): DartTypeImpl {
         val dummy = DartElementGenerator.createDummyFile(
-            project, "class Test {\n" + "  factory Test() = $name;\n" + "}"
+            project, "class Test {\n  factory Test() = $name;\n}"
         )
         val elements = MyPsiElementUtil.findAllMatchingElements(dummy) { _: String, psiElement: PsiElement ->
             psiElement is DartTypeImpl
@@ -354,7 +313,7 @@ object MyDartPsiElementUtil {
      */
     fun createFunBody(name: String, project: Project): DartFactoryConstructorDeclarationImpl {
         val dummy = DartElementGenerator.createDummyFile(
-            project, "class Test {\n" + "  $name\n" + "}"
+            project, "class Test {\n  $name\n}"
         )
         val elements = MyPsiElementUtil.findAllMatchingElements(dummy) { _: String, psiElement: PsiElement ->
             psiElement is DartFactoryConstructorDeclarationImpl
@@ -377,29 +336,6 @@ object MyDartPsiElementUtil {
         }
         return elements.firstOrNull() as? DartTypeListImpl
             ?: throw CreatePsiElementException("MyDartPsiElementUtil.createMixin Not working properly")
-    }
-
-    fun createDartDartReferenceExpressionImplPsiElement(
-        name: String, project: Project
-    ): DartReferenceExpressionImpl {
-        val file = DartElementGenerator.createDummyFile(
-            project, "class $name{" + "}" + "var b = $name();"
-        )!!
-        return PsiTreeUtil.getChildOfType(file, DartReferenceExpressionImpl::class.java)!!
-
-    }
-
-
-    ///生成一个单例类
-    fun genClassConstructor(project: Project, className: String): PsiFile? {
-        val text = """
-                class $className {
-                  $className._();
-                  static $className get _instance => $className._();
-                  factory $className() => _instance;
-                }
-            """.trimIndent()
-        return DartElementGenerator.createDummyFile(project, text)
     }
 
 

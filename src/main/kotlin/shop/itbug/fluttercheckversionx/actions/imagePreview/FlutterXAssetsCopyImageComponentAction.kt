@@ -11,6 +11,7 @@ import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 class FlutterXAssetsCopyImageComponentAction : FlutterXAssetsVFAction() {
     override fun handleAction(project: Project, file: VirtualFile, e: AnActionEvent) {
         createCopyText(project, file)?.copyTextToClipboard()
+
     }
 
 

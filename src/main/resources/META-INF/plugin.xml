@@ -10,7 +10,9 @@
     <depends>com.intellij.modules.json</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>com.intellij.gradle</depends>
+    <depends>com.intellij.platform.images</depends>
     <depends>org.jetbrains.plugins.gradle</depends>
+    <depends>org.intellij.groovy</depends>
     <resource-bundle>messages.pluginBundle</resource-bundle>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -398,6 +400,9 @@
             <reference id="FlutterXAssetsPanelWindowOpenDocAction"/>
             <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
+        <action id="TestActionWithShowNewVersionPopup"
+                class="shop.itbug.fluttercheckversionx.actions.test.TestActionWithShowNewVersionPopup"
+                text="测试:新版本提示"/>
     </actions>
 
     <actions>
