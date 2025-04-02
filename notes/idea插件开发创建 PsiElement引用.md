@@ -1,17 +1,20 @@
-package shop.itbug.fluttercheckversionx.reference
+# 需求
 
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.util.TextRange
-import com.intellij.patterns.PlatformPatterns
-import com.intellij.psi.*
-import com.intellij.util.ProcessingContext
-import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
-import shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay
-import shop.itbug.fluttercheckversionx.util.DartPsiElementHelper
-import shop.itbug.fluttercheckversionx.util.string
+按住ctrl+点击资产字符串打开这个文件
 
+# 扩展点
 
+```xml
+
+<psi.referenceContributor
+        implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor"
+        language="Dart"
+/>
+```
+
+# 实现
+
+```kotlin
 class AssetReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
@@ -49,3 +52,5 @@ internal class AssetPsiReference(
         return runReadAction { PsiManager.getInstance(project).findFile(targetFile) }
     }
 }
+
+```

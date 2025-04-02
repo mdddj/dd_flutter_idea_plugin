@@ -146,11 +146,6 @@
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
 
         <!--        <navbar implementation="shop.itbug.fluttercheckversionx.navbar.DartStructureAwareNavbar"/>-->
-
-
-        <psi.referenceContributor
-                implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor"
-                language="Dart"/>
     </extensions>
 
     <projectListeners>
