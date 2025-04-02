@@ -29,7 +29,7 @@ class PubspecPackageDiscontinuedAnnotator : Annotator {
         val pubData = pluginInfo.pubData ?: return
         if (pubData.isDiscontinued == true) {
             holder.newAnnotation(
-                HighlightSeverity.ERROR,
+                HighlightSeverity.WARNING,
                 "FlutterX: This package has been marked to stop updating. Please replace it with another package "
             )
                 .range(keyEle)
