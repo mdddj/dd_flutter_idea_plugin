@@ -144,7 +144,12 @@ tasks {
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOf("-Didea.kotlin.plugin.use.k2=true", "-Didea.log.level=DEBUG")
+            listOf(
+                "-Didea.kotlin.plugin.use.k2=true",
+                "-Didea.log.level=DEBUG",
+                "-Didea.log.debug=true",
+                "-Didea.log.verbose=true"
+            )
         }
     }
 
@@ -253,10 +258,10 @@ val generateFlutterPluginInfo by tasks.registering {
         outputFile.writeText(
             """
             |package codegen
-            |
+            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
             |object FlutterXPluginInfo {
-            |    const val Version: String = "${project.version}"
-            |    const val Changelog: String = $q${currentVersionChangelog.get()}$q
+            |    const val VERSION: String = "${project.version}"
+            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
             |}
             |""".trimMargin().trimIndent()
         )

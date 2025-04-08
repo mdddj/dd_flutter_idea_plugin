@@ -40,14 +40,10 @@ class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<Da
 
     override fun doAnnotate(collectedInfo: PubspecYamlFileTools?): List<DartYamlModel>? {
         collectedInfo ?: return null
-        log().warn("进来了.......")
         var details = runBlocking(Dispatchers.IO) { collectedInfo.getAllDependenciesList() }
-        log().warn("START:put user data to file")
         collectedInfo.file.putUserData(YAML_DART_PACKAGE_INFO_KEY, details) //数据存储到文件中
         collectedInfo.file.putUserData(YAML_FILE_IS_FLUTTER_PROJECT, runBlocking { collectedInfo.isFlutterProject() })
-        log().warn("END: put data to file")
         details = details.filter { it.hasNewVersion() } //只返回收有新版本的
-        log().warn("has new version len :${details.size}")
         return details
     }
 

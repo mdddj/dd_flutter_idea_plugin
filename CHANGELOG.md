@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.4.1] - 2025-04-08
+
+* fix some bugs
+
 ## [5.4.0] - 2025-04-01
 
 * fix some bugs

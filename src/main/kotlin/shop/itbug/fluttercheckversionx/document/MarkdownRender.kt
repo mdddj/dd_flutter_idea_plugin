@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.document
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.Language
 import com.intellij.lang.documentation.DocumentationMarkup.*
-import com.intellij.markdown.utils.doc.DocMarkdownToHtmlConverter
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -46,8 +45,8 @@ class MarkdownRender {
         fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, project: Project, title: String) {
             if (tag != null) {
                 appendSection(title) {
-//                    val m = markdownToHtml(tag)
-                    val m = DocMarkdownToHtmlConverter.convert(project, tag.getContent())
+                    val m = markdownToHtml(tag)
+//                    val m = DocMarkdownToHtmlConverter.convert(project, tag.getContent())
                     append(m)
                 }
             }
@@ -180,7 +179,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.SHORT_REFERENCE_LINK -> {
                 if (node.text.startsWith("[") && node.text.endsWith("]")) {
                     val r = node.text.removeSuffix("]").removePrefix("[")
-                    DocumentationManagerUtil.createHyperlink(sb, r, r, false)
+                    DocumentationManagerUtil.createHyperlink(sb, r, r, true)
                 } else {
                     sb.append(node.text)
                 }
