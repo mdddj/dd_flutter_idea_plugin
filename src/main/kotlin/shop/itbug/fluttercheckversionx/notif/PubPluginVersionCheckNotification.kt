@@ -130,7 +130,7 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
 
 
 ///计算pub cache 占用大小
-private class MyCheckPubCacheSizeComponent(val project: Project) : HyperlinkLabel(), PubCacheSizeCalcService.Listener,
+private class MyCheckPubCacheSizeComponent(project: Project) : HyperlinkLabel(), PubCacheSizeCalcService.Listener,
     Disposable, BulkFileListener {
     val cacheService = PubCacheSizeCalcService.getInstance(project)
 

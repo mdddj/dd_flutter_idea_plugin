@@ -160,7 +160,6 @@
         </action>
         <action id="AssetsAutoGenerateClassAction"
                 class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction"
-                icon="AllIcons.General.Refresh"
         >
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
@@ -185,7 +184,7 @@
 
         <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">
             <separator key="ui.render"/>
-            <reference id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"/>
+            <reference ref="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"/>
             <separator key="dio.apis.option.title"/>
             <group id="Dio.Request.UI" class="shop.itbug.fluttercheckversionx.form.components.DioUIShowActionGroup"/>
         </group>
@@ -205,26 +204,20 @@
         <action id="DioRequestBodyToFreezedAction"
                 class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
                 icon="/icons/freezed.svg"/>
-        <!--        <action id="JsonToDartMacroRightMenuAction"-->
-        <!--                class="shop.itbug.fluttercheckversionx.actions.JsonToDartMacroRightMenuAction"-->
-        <!--                text="Json to Dart Macro"/>-->
-        <!--     dio 接口窗口顶部的操作区域   -->
         <group id="FlutterX Window Top Actions">
-            <!--            <reference id="DioApiSearchAction"/>-->
-            <!--            <reference id="DioRequestBodyToFreezedAction"/>-->
-            <reference id="Dio.Request.Item.Render.Option"/>
-            <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
-            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
-            <reference id="FlutterProjects"/>
+            <reference ref="Dio.Request.Item.Render.Option"/>
+            <reference ref="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
+            <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference ref="FlutterProjects"/>
         </group>
 
 
         <!--        左侧操作菜单-->
         <group id="FlutterX window Left Action">
-            <reference id="Dio.Request.Item.Render.Option"/>
+            <reference ref="Dio.Request.Item.Render.Option"/>
             <separator/>
-            <reference id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
-            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference ref="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
+            <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
 
 
@@ -237,8 +230,8 @@
 
         <!--        hive 的操作工具栏-->
         <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup">
-            <reference id="FlutterProjects"/>
-            <reference id="GetHiveBoxList"/>
+            <reference ref="FlutterProjects"/>
+            <reference ref="GetHiveBoxList"/>
             <!--            <reference id="HiveTutorialHelp"/>-->
         </group>
 
@@ -267,10 +260,10 @@
 
         ////
         <group id="WidgetToRiverpod">
-            <reference id="StatelessToConsumer"/>
-            <reference id="StatefulToConsumer"/>
+            <reference ref="StatelessToConsumer"/>
+            <reference ref="StatefulToConsumer"/>
             <separator/>
-            <reference id="RiverpodActionsSetting"/>
+            <reference ref="RiverpodActionsSetting"/>
         </group>
 
 
@@ -303,21 +296,21 @@
         <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenMacosProjectInXcodeAction"
                 id="OpenMacosProjectInXcodeAction"/>
         <group id="status_bar_actions">
-            <reference id="SearchPubPluginAction"/>
-            <reference id="FlutterRunBuilderCommandAction"/>
+            <reference ref="SearchPubPluginAction"/>
+            <reference ref="FlutterRunBuilderCommandAction"/>
             <separator/>
             <!--            <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>-->
-            <reference id="StatusBarJsonToFreezedClass"/>
+            <reference ref="StatusBarJsonToFreezedClass"/>
             <separator/>
-            <reference id="GoToQQGroupAction"/>
-            <reference id="GoToDiscordAction"/>
-            <reference id="GoToDocumentAction"/>
+            <reference ref="GoToQQGroupAction"/>
+            <reference ref="GoToDiscordAction"/>
+            <reference ref="GoToDocumentAction"/>
             <separator/>
-            <reference id="StatusBarOpenSettingAction"/>
+            <reference ref="StatusBarOpenSettingAction"/>
             <separator text="Open With"/>
-            <reference id="OpenAndroidProjectOnASAction"/>
-            <reference id="OpenIosProjectInXcodeAction"/>
-            <reference id="OpenMacosProjectInXcodeAction"/>
+            <reference ref="OpenAndroidProjectOnASAction"/>
+            <reference ref="OpenIosProjectInXcodeAction"/>
+            <reference ref="OpenMacosProjectInXcodeAction"/>
         </group>
         <!--    status bar widgets  end   -->
         <action id="SimpleClassToFreezedAction"
@@ -352,8 +345,8 @@
                 text="freezed class add `abstract`"/>
 
         <group id="Fix Freezed Class Tool" popup="true">
-            <reference id="Freezed3ClassFixActionWithSealed"/>
-            <reference id="Freezed3ClassFixActionWitAbstract"/>
+            <reference ref="Freezed3ClassFixActionWithSealed"/>
+            <reference ref="Freezed3ClassFixActionWitAbstract"/>
         </group>
 
         <action id="FlutterXCopyAssetPathAction"
@@ -370,14 +363,14 @@
                 text="Copy SvgPicture.asset"/>
 
         <group id="FlutterXAssetsImagePreviewPopup" popup="true" class="com.intellij.ide.actions.CopyReferencePopup">
-            <reference id="FlutterXCopyAssetPathAction"/>
-            <reference id="FlutterXAssetsCopyImageComponentAction"/>
-            <reference id="FlutterXAssetsSvgCopyAction"/>
+            <reference ref="FlutterXCopyAssetPathAction"/>
+            <reference ref="FlutterXAssetsCopyImageComponentAction"/>
+            <reference ref="FlutterXAssetsSvgCopyAction"/>
             <separator/>
-            <reference id="CopyReferencePopupGroup"/>
-            <reference id="RevealGroup"/>
+            <reference ref="CopyReferencePopupGroup"/>
+            <reference ref="RevealGroup"/>
             <separator/>
-            <reference id="FlutterXAssetsOpenFileAction"/>
+            <reference ref="FlutterXAssetsOpenFileAction"/>
         </group>
 
 
@@ -390,13 +383,11 @@
 
         <group id="FlutterXAssetsImagePreviewToolBar"
                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup">
-            <reference id="FlutterXAssetsPanelRefreshAction"/>
-            <reference id="FlutterXAssetsPanelWindowOpenDocAction"/>
-            <reference id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference ref="FlutterXAssetsPanelRefreshAction"/>
+            <reference ref="FlutterXAssetsPanelWindowOpenDocAction"/>
+            <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
-        <action id="TestActionWithShowNewVersionPopup"
-                class="shop.itbug.fluttercheckversionx.actions.test.TestActionWithShowNewVersionPopup"
-                text="测试:新版本提示"/>
+
     </actions>
 
     <actions>
@@ -430,20 +421,19 @@
             <reference ref="FreezedClassToSimpleClass"/>
             <reference ref="SimpleClassToFreezedAction"/>
             <separator/>
-            <reference id="StatelessToConsumer"/>
-            <reference id="StatefulToConsumer"/>
+            <reference ref="StatelessToConsumer"/>
+            <reference ref="StatefulToConsumer"/>
             <add-to-group group-id="EditorPopupMenu"/>
-            <reference id="RiverpodActionsSetting"/>
+            <reference ref="RiverpodActionsSetting"/>
         </group>
     </actions>
     <actions>
         <group id="dio-window-view-params">
             <action id="DioWindowShowDetailPanel"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowAutoScrollToMaxAction"/>
-            <reference id="DioApiSortToggleAction"/>
+            <reference ref="DioApiSortToggleAction"/>
             <separator/>
-            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"
-                    icon="/icons/copy.svg"/>
+            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"/>
             <action id="ApiCopyPathAction"
                     class="shop.itbug.fluttercheckversionx.actions.ApiCopyPathAction"/>
             <action id="ApiCopyAll"
@@ -461,10 +451,18 @@
             <action id="DioWindowViewPostParamsAction"
                     class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
             <separator/>
-            <reference id="DioRequestBodyToFreezedAction"/>
-            <!--            <reference id="JsonToDartMacroRightMenuAction"/>-->
+            <reference ref="DioRequestBodyToFreezedAction"/>
         </group>
     </actions>
 
+
+    <actions>
+        <action id="HurlCopyBaseActionImpl"
+                class="shop.itbug.fluttercheckversionx.actions.dio.hurl.HurlCopyBaseActionImpl" text="Copy Base"/>
+        <group id="HurlGenerateActions" popup="true" text="Hurl Generate">
+            <reference ref="HurlCopyBaseActionImpl"/>
+            <add-to-group group-id="dio-window-view-params" anchor="last"/>
+        </group>
+    </actions>
 </idea-plugin>
 

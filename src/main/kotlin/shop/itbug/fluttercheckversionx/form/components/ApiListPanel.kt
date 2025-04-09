@@ -20,12 +20,11 @@ import shop.itbug.fluttercheckversionx.config.*
 import shop.itbug.fluttercheckversionx.dialog.RewardDialog
 import shop.itbug.fluttercheckversionx.dsl.formatUrl
 import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
-import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
 import shop.itbug.fluttercheckversionx.services.PluginStateService
-import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
+import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
@@ -156,10 +155,10 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
             }
             appendLine(
                 "IP:${
-                Util.resolveLocalAddresses()
-                    .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
-                    .map { it.hostAddress }
-            }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
+                    Util.resolveLocalAddresses()
+                        .filter { it.hostAddress.split('.').size == 4 && it.hostAddress.split(".")[2] != "0" }
+                        .map { it.hostAddress }
+                }", SimpleTextAttributes.GRAYED_ATTRIBUTES) {}
 
         }
     }
@@ -178,7 +177,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
         val SELECT_ITEM = DataKey.create<Request>("select-api")
     }
 
-    override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+    override fun handleModel(model: Request) {
         if (project.isDisposed) return
         if (appService.getCurrentSelectProjectName() == model.projectName) {
             showNewApiTips(model)

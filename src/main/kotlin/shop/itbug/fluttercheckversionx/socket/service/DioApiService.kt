@@ -12,7 +12,7 @@ import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
-import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
+import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService.Companion.getInstance
 import shop.itbug.fluttercheckversionx.window.logger.LogKeys
@@ -95,7 +95,7 @@ class DioApiService : Disposable {
 
     ///flutter api 接口模型
     interface HandleFlutterApiModel : NativeMessageProcessing {
-        fun handleModel(model: ProjectSocketService.SocketResponseModel) {}
+        fun handleModel(model: Request) {}
 
         fun covertJsonError(e: Exception, aio: AioSession?) {}
 
@@ -104,7 +104,7 @@ class DioApiService : Disposable {
                 if (jsonObject != null && jsonObject["projectName"] != null) {
 
                     val model =
-                        getInstance().gson.fromJson(nativeMessage, ProjectSocketService.SocketResponseModel::class.java)
+                        getInstance().gson.fromJson(nativeMessage, Request::class.java)
                     handleModel(model)
                 }
             } catch (e: Exception) {

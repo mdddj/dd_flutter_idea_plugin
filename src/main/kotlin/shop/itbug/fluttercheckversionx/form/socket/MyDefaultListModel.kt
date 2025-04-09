@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.form.socket
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.components.JBLabel
 import shop.itbug.fluttercheckversionx.dsl.requestDetailLayout
+import shop.itbug.fluttercheckversionx.socket.Request
 import java.awt.Component
 import javax.swing.JList
 

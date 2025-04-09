@@ -4,21 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.3.2">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.4.1">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.kotlin/sessions/kotlin-compiler-5303961397342926744.salive" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/test/TestActionWithShowNewVersionPopup.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DartDocumentExt.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/DartDocumentExt.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/MarkdownRender.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/document/MarkdownRender.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/PluginChangelogManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/PluginChangelogManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/icons/MyIcons.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/icons/MyIcons.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/ApiCopyAll.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/ApiCopyAll.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/AssetsAutoGenerateClassAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/AssetsAutoGenerateClassAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowAnActionEx.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowAnActionEx.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowCopyAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowCopyAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioJsonCopyToClipboard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioJsonCopyToClipboard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/bus/FlutterApiClickBus.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/bus/FlutterApiClickBus.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/RequestItemLayout.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/RequestItemLayout.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/components/ApiListPanel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/components/ApiListPanel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/components/RightDetailPanel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/components/RightDetailPanel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/MyDefaultListModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/MyDefaultListModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/SocketRequestForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/SocketRequestForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/PluginChangelogManager.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/PubPluginVersionCheckNotification.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/PubPluginVersionCheckNotification.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubCacheSizeCalcService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubCacheSizeCalcService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/DartPluginVersionCheckV2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/DartPluginVersionCheckV2.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/ProjectSocketService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/ProjectSocketService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/AppService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/AppService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/icons/copy.svg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,7 +120,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="5.3.3" />
+        <entry key="$PROJECT_DIR$" value="5.3.4" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -311,7 +322,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4&quot;: &quot;&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;5.3.4&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;5.4.1&quot;,
     &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -357,14 +368,21 @@
     &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
   }
 }</component>
+  <component name="QodanaHighlightedReportService">
+    <option name="localRunNotPublishedPersistedInfo">
+      <LocalReportPersistedInfo>
+        <option name="path" value="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output/qodana.sarif.json" />
+        <option name="reportGuid" value="7f9bfffc-3c8e-4997-b387-13831df6a095" />
+        <option name="reportName" value="FlutterX/qodana/2025-04-09" />
+      </LocalReportPersistedInfo>
+    </option>
+  </component>
+  <component name="QodanaIsSelectedPersistenceService">
+    <option name="selectedOrLoading" value="true" />
+  </component>
   <component name="QodanaReportsService">
     <option name="descriptions">
-      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output10/qodana.sarif.json" reportGuid="626514a4-cddc-4c48-aee2-ce6fdce99c38" reportId="FlutterX/qodana/2025-04-01" />
-      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output/qodana.sarif.json" reportGuid="3f02873e-a40c-48e6-bac0-ecb1dbd6058b" reportId="FlutterX/qodana/2025-04-01" />
-      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output6/qodana.sarif.json" reportGuid="1a1beeb4-bad4-4cf9-abd5-a449e6c5a0f5" reportId="FlutterX/qodana/2025-04-01" />
-      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output1/qodana.sarif.json" reportGuid="f84c7f0f-459f-46cb-b057-ae0c5e0474f2" reportId="FlutterX/qodana/2025-04-01" />
-      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output2/qodana.sarif.json" reportGuid="e6bfdcaf-efb1-491b-9d9f-1103f56397d5" reportId="FlutterX/qodana/2025-04-01" />
-      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output8/qodana.sarif.json" reportGuid="c779b84e-5080-424d-b7f3-17c3f83574d6" reportId="FlutterX/qodana/2025-04-01" />
+      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output/qodana.sarif.json" reportGuid="7f9bfffc-3c8e-4997-b387-13831df6a095" reportId="FlutterX/qodana/2025-04-09" />
     </option>
   </component>
   <component name="RebelAgentSelection">
@@ -410,7 +428,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -542,8 +560,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
@@ -553,8 +571,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.200" />
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.200" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.318" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.318" />
       </set>
     </attachedChunks>
   </component>
@@ -1657,7 +1675,8 @@
       <workItem from="1743644042377" duration="956000" />
       <workItem from="1743645030323" duration="975000" />
       <workItem from="1744017757772" duration="7037000" />
-      <workItem from="1744100159958" duration="3523000" />
+      <workItem from="1744100159958" duration="3563000" />
+      <workItem from="1744161129372" duration="6720000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2002,7 +2021,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="384" />
+    <option name="localTasksCounter" value="385" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2064,7 +2083,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="修复版本自动修复功能" />
     <MESSAGE value="release 4.8.0" />
     <MESSAGE value="修复json view 查看器没有格式化显示问题" />
     <MESSAGE value="修复pubspec.yaml工具条可能引发的线程问题" />
@@ -2089,7 +2107,8 @@
     <MESSAGE value="release5.1.0" />
     <MESSAGE value="release5.2.3" />
     <MESSAGE value="release5.3.2" />
-    <option name="LAST_COMMIT_MESSAGE" value="release5.3.2" />
+    <MESSAGE value="release5.4.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="release5.4.1" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">

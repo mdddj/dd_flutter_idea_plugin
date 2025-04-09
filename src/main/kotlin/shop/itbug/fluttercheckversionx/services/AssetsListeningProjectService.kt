@@ -11,7 +11,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
@@ -27,7 +26,6 @@ import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.manager.PluginChangelogCache
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
@@ -37,10 +35,6 @@ import shop.itbug.fluttercheckversionx.util.Util
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
-        DumbService.getInstance(project).runWhenSmart {
-            PluginChangelogCache.getInstance().startShow(project)
-        }
-
     }
 }
 

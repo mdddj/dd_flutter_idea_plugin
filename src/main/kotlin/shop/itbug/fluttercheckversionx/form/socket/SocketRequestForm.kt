@@ -19,13 +19,11 @@ import shop.itbug.fluttercheckversionx.dialog.validParseToFreezed
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
-import shop.itbug.fluttercheckversionx.socket.ProjectSocketService.SocketResponseModel
+import shop.itbug.fluttercheckversionx.socket.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import javax.swing.event.ListDataEvent
 import javax.swing.event.ListDataListener
 
-
-typealias Request = SocketResponseModel
 
 ///是否可以转换到 json 对象
 fun SocketResponseModel.isParseToJson(): Boolean {

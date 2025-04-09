@@ -118,7 +118,7 @@ val currentVersionChangelog = provider {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.compilerOptions {
-    freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation"))
+    freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation", "-Xwhen-guards"))
 }
 
 tasks {

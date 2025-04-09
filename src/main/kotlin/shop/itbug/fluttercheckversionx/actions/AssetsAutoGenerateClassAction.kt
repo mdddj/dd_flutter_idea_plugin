@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import shop.itbug.fluttercheckversionx.common.MyAction
@@ -30,6 +31,7 @@ class AssetsAutoGenerateClassAction : MyAction() {
         val vf = e.getData(CommonDataKeys.VIRTUAL_FILE)
         e.presentation.isEnabledAndVisible = vf != null && vf.isDirectory && e.project != null
         e.presentation.text = PluginBundle.get("assets.gen")
+        e.presentation.icon = AllIcons.Actions.Refresh
         super.update(e)
     }
 

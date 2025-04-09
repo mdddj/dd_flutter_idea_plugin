@@ -7,9 +7,8 @@ import com.intellij.openapi.project.Project
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.bus.DioWindowCleanRequests
-import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
-import shop.itbug.fluttercheckversionx.socket.ProjectSocketService
+import shop.itbug.fluttercheckversionx.socket.Request
 import java.util.concurrent.atomic.AtomicReference
 
 @Service
@@ -114,7 +113,7 @@ class AppService : DioApiService.HandleFlutterApiModel {
         fun getInstance() = service<AppService>()
     }
 
-    override fun handleModel(model: ProjectSocketService.SocketResponseModel) {
+    override fun handleModel(model: Request) {
         addRequest(model)
     }
 

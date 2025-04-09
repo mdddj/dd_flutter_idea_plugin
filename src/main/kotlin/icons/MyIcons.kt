@@ -8,9 +8,6 @@ object MyImages {
     @JvmField
     val wx: Icon = load("/images/wx.png")
 
-    @JvmField
-    val test: Icon = load("/images/test.png")
-
 
     @JvmField
     val ignore: Icon = load("/icons/ignore.svg")
