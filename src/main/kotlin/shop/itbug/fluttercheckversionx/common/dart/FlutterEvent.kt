@@ -35,3 +35,10 @@ data class FlutterEventParams(
 )
 
 
+///获取 ws 地址,eg: ws://127.0.0.1:59388/4u508VtYUpY=/ws
+fun FlutterEvent.tryGetWSUrl(): String? {
+    if (event == "app.debugPort") {
+        return params?.wsUri
+    }
+    return null
+}

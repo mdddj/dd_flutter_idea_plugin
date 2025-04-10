@@ -1,14 +1,11 @@
 package shop.itbug.fluttercheckversionx.window
 
-import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
-import shop.itbug.fluttercheckversionx.common.dart.FlutterEvent
-import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -27,7 +24,7 @@ import shop.itbug.fluttercheckversionx.window.sp.SpWindow
  * dio 的请求监听窗口, 在这个窗口中,会将手机里面的一系列请求在这个窗口中显示,并可以查看详细信息
  * 梁典典: 2022年04月29日11:12:51
  */
-class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
+class FlutterXSocketWindow : ToolWindowFactory {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         toolWindow.title = "FlutterX"
@@ -98,14 +95,7 @@ class FlutterXSocketWindow : ToolWindowFactory, FlutterXVMService.Listener {
         val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
         toolWindow.contentManager.addContent(imagesPreviewContent)
         imagesPreviewContent.setDisposer(imagesPreviewWindow)
-        FlutterXVMService.getInstance(project).addListener(this)
 
-
-    }
-
-
-    ///监听flutter项目启动
-    override fun processFlutterEvent(project: Project, flutterEvent: FlutterEvent, event: ProcessEvent) {
 
     }
 

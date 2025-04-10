@@ -388,6 +388,7 @@
             <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
 
+
     </actions>
 
     <actions>
@@ -457,10 +458,13 @@
 
 
     <actions>
+        <action id="HurlCopyAllAction" class="shop.itbug.fluttercheckversionx.actions.dio.hurl.HurlCopyAllAction"
+                text="Copy All Request Hurl Base"/>
         <action id="HurlCopyBaseActionImpl"
                 class="shop.itbug.fluttercheckversionx.actions.dio.hurl.HurlCopyBaseActionImpl" text="Copy Base"/>
         <group id="HurlGenerateActions" popup="true" text="Hurl Generate">
             <reference ref="HurlCopyBaseActionImpl"/>
+            <reference ref="HurlCopyAllAction"/>
             <add-to-group group-id="dio-window-view-params" anchor="last"/>
         </group>
     </actions>

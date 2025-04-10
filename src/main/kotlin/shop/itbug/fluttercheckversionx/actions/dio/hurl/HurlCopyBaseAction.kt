@@ -8,6 +8,7 @@ import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.socket.HurlGenerate
 import shop.itbug.fluttercheckversionx.socket.Request
+import shop.itbug.fluttercheckversionx.socket.service.AppService
 
 
 abstract class HurlCopyBaseAction : AnAction() {
@@ -22,6 +23,7 @@ abstract class HurlCopyBaseAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.icon = AllIcons.Actions.Copy
+        e.presentation.isEnabled = e.api() != null
         super.update(e)
     }
 
@@ -44,3 +46,26 @@ class HurlCopyBaseActionImpl : HurlCopyBaseAction() {
     }
 }
 
+
+///hurl  拷贝全部
+class HurlCopyAllAction : AnAction() {
+
+    override fun actionPerformed(e: AnActionEvent) {
+
+        val allRequest = AppService.getInstance().getCurrentProjectAllRequest()
+        val string = allRequest.joinToString("\n") {
+            it.hurlGenerate.base()
+        }
+        string.copyTextToClipboard()
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.icon = AllIcons.Actions.Copy
+        e.presentation.isEnabled = AppService.getInstance().getCurrentProjectAllRequest().isNotEmpty()
+        super.update(e)
+    }
+}

@@ -33,12 +33,26 @@ class DartAssetsAnnotator : Annotator {
         val argList = args.argumentList ?: return
         val assetStringElement = argList.firstChild as? DartStringLiteralExpressionImpl ?: return
         val assetUrl = assetStringElement.string ?: return
+        if (assetUrl.isBlank()) return
+        if (hasPackageAttr(element)) return
+        if (isPackageAssets(assetUrl)) return //判断是不是第三方包里面的资产图片
         val hasFile = MyFileUtil.hasFileInAssetPath(assetUrl, element.project)
         if (!hasFile) {
-            p1.newAnnotation(HighlightSeverity.ERROR, "FlutterX: Unresolved assets path")
+            p1.newAnnotation(HighlightSeverity.WARNING, "FlutterX: Unresolved assets path")
                 .range(assetStringElement)
-                .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+                .highlightType(ProblemHighlightType.GENERIC_ERROR)
                 .create()
         }
+    }
+
+    //检测使用使用的第三方包里面的资产图片
+    fun isPackageAssets(url: String): Boolean {
+        return url.startsWith("package:") || url.startsWith("packages/")
+    }
+
+    //检测是不是有 package属性
+    fun hasPackageAttr(element: DartCallExpressionImpl): Boolean {
+        val al = element.arguments?.argumentList?.namedArgumentList ?: return false
+        return al.any { it.parameterReferenceExpression.text == "package" }
     }
 }
