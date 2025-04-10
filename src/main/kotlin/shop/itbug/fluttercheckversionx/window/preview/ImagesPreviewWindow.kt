@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.JBColor
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBLabel
@@ -44,7 +43,7 @@ import javax.swing.event.PopupMenuListener
 /**
  * 资产图片预览窗口
  */
-class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayoutPanel(), UiDataProvider,
+class ImagesPreviewWindow(val project: Project) : BorderLayoutPanel(), UiDataProvider,
     Disposable {
 
     val pluginConfig = PluginConfig.getState(project)
@@ -122,7 +121,7 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
     private fun addNullDirectoryTips() {
         val dir = pluginConfig.assetDirectory
         if (dir.isNullOrBlank()) {
-            addToCenter(JBLabel("Assets Preview Directory Not Found\nPlease set in the settings").apply {
+            addToCenter(JBLabel(PluginBundle.get("assets_preview_directory_not_found")).apply {
                 horizontalAlignment = SwingConstants.CENTER
             })
         }

@@ -2,8 +2,8 @@ package shop.itbug.fluttercheckversionx.form.components
 
 import com.intellij.openapi.project.Project
 import shop.itbug.fluttercheckversionx.bus.FlutterApiClickBus
-import shop.itbug.fluttercheckversionx.form.socket.Request
 import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
+import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 
 /**
@@ -23,10 +23,6 @@ class RightDetailPanel(project: Project) : JsonValueRender(project) {
 
     private fun changeShowValue(detail: Request) {
         changeValue(detail.data)
-    }
-
-    fun clean() {
-        changeValue("")
     }
 
 }

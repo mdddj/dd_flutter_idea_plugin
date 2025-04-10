@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
-import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 
 // ApiCopyAll类继承自AnAction，用于处理复制所有API相关操作的逻辑

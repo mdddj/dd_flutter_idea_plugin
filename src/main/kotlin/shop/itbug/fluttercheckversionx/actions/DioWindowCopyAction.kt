@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.common.MyAction
@@ -18,7 +19,8 @@ class DioWindowCopyAction : MyAction(PluginBundle.getLazyMessage("window.idea.di
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled =  e.api() != null
+        e.presentation.isEnabled = e.api() != null
+        e.presentation.icon = AllIcons.Actions.Copy
         super.update(e)
     }
 

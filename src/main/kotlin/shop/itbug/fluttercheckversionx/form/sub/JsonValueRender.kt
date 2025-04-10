@@ -1,27 +1,12 @@
 package shop.itbug.fluttercheckversionx.form.sub
 
-import com.google.gson.*
+import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
-import java.lang.reflect.Type
 
-
-internal class GsonIntAdapter : JsonSerializer<Int?>, JsonDeserializer<Int?> {
-    override fun serialize(p0: Int?, p1: Type?, p2: JsonSerializationContext?): JsonElement {
-        return JsonPrimitive(p0)
-    }
-
-    override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Int {
-        try {
-            println("类型:$typeOfT")
-            return json.asInt
-        } catch (e: NumberFormatException) {
-            throw JsonParseException("Failed to parse Integer value: " + json.asString, e)
-        }
-    }
-}
 
 /**
  * json viewer
@@ -50,7 +35,7 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
         try {
             JsonParser.parseString(jsonString)
             return true
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             return false
         }
     }

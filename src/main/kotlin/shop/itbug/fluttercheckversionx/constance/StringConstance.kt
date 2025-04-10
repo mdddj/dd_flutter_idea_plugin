@@ -68,9 +68,6 @@ object Links {
         return "<a href='$link'>${PluginBundle.doc}</a>"
     }
 
-    fun generateDocCommit(link: String, text: String): String {
-        return "<a href='$link'>${text}</a>"
-    }
 }
 
 fun Panel.documentCommentRow(link: String) {

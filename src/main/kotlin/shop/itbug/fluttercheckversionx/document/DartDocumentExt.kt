@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.document
 
-import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.ExternalDocumentationHandler
@@ -175,6 +174,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
                 Helper.addKeyValueHeader(sb)
                 sb.appendTag(
                     MyMarkdownDocRenderObject(text = simpleText, project = project),
+                    project,
                     PluginBundle.get("element")
                 )
             }
@@ -185,8 +185,10 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
         if (info.staticType != null) {
             val t = info.staticType
             val tsb = StringBuilder()
-            DocumentationManagerUtil.createHyperlink(tsb, t, t, false)
-            Helper.addKeyValueSection(PluginBundle.get("type"), tsb.toString(), sb)
+            //eg: <a href="psi_element://String">String</a>
+//            DocumentationManagerUtil.createHyperlink(tsb, t, t, true)
+            println("type: $tsb")
+            Helper.addKeyValueSection(PluginBundle.get("type"), t, sb)
         }
         if (referenceElement != null) {
             Helper.addKeyValueSection(
@@ -200,7 +202,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
                 text = info.dartdoc,
                 project = element.project
             )
-            sb.appendTag(obj, PluginBundle.get("doc"))
+            sb.appendTag(obj, project, PluginBundle.get("doc"))
         }
         Helper.addKeyValueFoot(sb)
 

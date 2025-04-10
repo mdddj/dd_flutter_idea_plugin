@@ -2,10 +2,14 @@ package shop.itbug.fluttercheckversionx.notif
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
@@ -40,10 +44,10 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (it.component.parent == null) return@Function null
             val psiFile = PsiManager.getInstance(project).findFile(file) ?: return@Function null
             if (file.name == "pubspec.yaml" && psiFile is YAMLFile) {
-                log.warn("start check is flutter project")
+                log().warn("start check is flutter project")
                 val isFlutterProject =
                     runBlocking(Dispatchers.IO) { PubspecYamlFileTools.create(psiFile).isFlutterProject() }
-                log.warn("is a flutter project: $isFlutterProject")
+                log().warn("is a flutter project: $isFlutterProject")
                 if (!isFlutterProject) return@Function null
                 val panel = YamlFileNotificationPanel(it, psiFile, project)
                 return@Function panel
@@ -62,6 +66,7 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
 
     init {
 
+        Disposer.register(fileEditor, pubCacheSizeComponent)
         myLinksPanel.add(pubCacheSizeComponent)
 
         icon(MyIcons.dartPluginIcon)
@@ -125,26 +130,35 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
 
 
 ///计算pub cache 占用大小
-private class MyCheckPubCacheSizeComponent(val project: Project) : HyperlinkLabel(), PubCacheSizeCalcService.Listener,
-    Disposable {
+private class MyCheckPubCacheSizeComponent(project: Project) : HyperlinkLabel(), PubCacheSizeCalcService.Listener,
+    Disposable, BulkFileListener {
+    val cacheService = PubCacheSizeCalcService.getInstance(project)
+
     init {
-        project.messageBus.connect(PubCacheSizeCalcService.getInstance(project)).subscribe(TOPIC, this)
-        Disposer.register(PubCacheSizeCalcService.getInstance(project), this)
+        project.messageBus.connect(cacheService).subscribe(TOPIC, this)
+        project.messageBus.connect(parentDisposable = this).subscribe(
+            VirtualFileManager.VFS_CHANGES,
+            this
+        )
+        Disposer.register(cacheService, this)
         SwingUtilities.invokeLater {
             setDefaultText()
         }
         ToolTipManager.sharedInstance().registerComponent(this)
-        toolTipText = PubCacheSizeCalcService.getInstance(project).getPubCacheDirPathString()
+        toolTipText = cacheService.getPubCacheDirPathString()
+        ApplicationManager.getApplication().invokeLater {
+            cacheService.refreshCheck()
+        }
     }
 
     override fun fireHyperlinkEvent(inputEvent: InputEvent?) {
-        PubCacheSizeCalcService.getInstance(project).openDir()
+        cacheService.openDir()
         super.fireHyperlinkEvent(inputEvent)
     }
 
 
     private fun setDefaultText() {
-        setHyperlinkText("Pub Cache Size: " + PubCacheSizeCalcService.getInstance(project).getCurrentSizeFormatString())
+        setHyperlinkText("Pub Cache Size: " + cacheService.getCurrentSizeFormatString())
     }
 
     override fun calcComplete(len: Long, formatString: String) {
@@ -152,6 +166,18 @@ private class MyCheckPubCacheSizeComponent(val project: Project) : HyperlinkLabe
     }
 
     override fun dispose() {
+        println("dispose pub cache size widget")
         ToolTipManager.sharedInstance().unregisterComponent(this)
     }
+
+    override fun after(events: List<VFileEvent>) {
+        val cachePath = cacheService.getCachePath()
+        if (events.isNotEmpty() && cachePath.isNullOrBlank()
+                .not() && events.any { it.file?.path?.startsWith(cachePath) == true }
+        ) {
+            cacheService.refreshCheck()
+        }
+        super.after(events)
+    }
 }
+

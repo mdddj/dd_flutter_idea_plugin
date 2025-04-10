@@ -6,7 +6,6 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -14,15 +13,8 @@ import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.socket.formatSize
 import shop.itbug.fluttercheckversionx.tools.DartPubTools
+import shop.itbug.fluttercheckversionx.tools.log
 
-
-class PubCacheSizeCalcPostStart : ProjectActivity {
-    override suspend fun execute(project: Project) {
-        PubCacheSizeCalcService.getInstance(project).startCheck()
-//        val list = UpdateSettings.getInstance().storedPluginHosts
-//        list.add("https://ide.itbug.shop")
-    }
-}
 
 @Service(Service.Level.PROJECT)
 class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<VirtualFile>(), Disposable {
@@ -30,17 +22,34 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var size: Long = 0
     private var cachePath: String? = null
+    private var cacheFileName: String? = null
+    fun getCachePath() = cachePath
     suspend fun startCheck() {
+        if (size != 0L) {
+            size = 0
+        }
         val dartPubCacheDir = DartPubTools.getPubCacheDir()
         cachePath = dartPubCacheDir?.path
+        cacheFileName = dartPubCacheDir?.name
         if (dartPubCacheDir != null) {
             println("缓存目录cache dir: ${dartPubCacheDir.path}")
-            VfsUtilCore.visitChildrenRecursively(dartPubCacheDir, this)
+            try {
+                VfsUtilCore.visitChildrenRecursively(dartPubCacheDir, this)
+            } catch (e: Exception) {
+                log().warn("计算缓存大小失败", e)
+            }
         } else {
             println("没有找到缓存目录.")
         }
     }
 
+    //刷新
+    fun refreshCheck() {
+        size = 0
+        scope.launch(Dispatchers.IO) {
+            startCheck()
+        }
+    }
 
     override fun visitFile(file: VirtualFile): Boolean {
         size += file.length
@@ -60,15 +69,17 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
     }
 
     override fun afterChildrenVisited(file: VirtualFile) {
-        project.messageBus.syncPublisher(TOPIC).calcComplete(size, formatSize(size))
+        if (file.name == cacheFileName) {
+            project.messageBus.syncPublisher(TOPIC).calcComplete(size, formatSize(size))
+        }
         super.afterChildrenVisited(file)
     }
+
 
     fun getCurrentSizeFormatString(): String = if (size > 0L) formatSize(size) else ""
     fun getPubCacheDirPathString(): String = if (cachePath != null) cachePath!! else ""
 
     override fun dispose() {
-        println("PubCacheSizeCalcService -- dispose")
         scope.cancel()
     }
 

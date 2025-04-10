@@ -23,9 +23,7 @@ import javax.swing.event.ListSelectionListener
 data class MyLogKey(val key: String)
 data class MyLogInfo(val message: String, val time: LocalDateTime? = LocalDateTime.now(), val key: MyLogKey)
 object LogKeys {
-    val dioLog = MyLogKey(key = "Dio Listen")
     val ping = MyLogKey(key = "Socket Ping")
-    val checkPlugin = MyLogKey(key = "check plugins")
 }
 
 ///日志窗口

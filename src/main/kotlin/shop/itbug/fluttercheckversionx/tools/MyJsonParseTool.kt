@@ -311,7 +311,7 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
             freezedPre = config.freezedClassType.type + " "
         }
     }
-    sb.appendLine("${freezedPre}class $className with _\$$className {")
+    sb.appendLine("${freezedPre}class $className with _$$className {")
     if (config.addStructureFunction) {
         sb.appendLine("\tconst $className._();")
         sb.appendLine("")
@@ -347,13 +347,13 @@ fun MyChildObject.getFreezedClass(config: FreezedClassConfig = FreezedClassConfi
 
     //添加 fromJson
     if (config.addFromJsonFunction) {
-        sb.appendLine("\tfactory $className.fromJson(${(config.formJsonType ?: FormJsonType.DynamicMap).value} json) => _\$$className" + "FromJson(json);")
+        sb.appendLine("\tfactory $className.fromJson(${(config.formJsonType ?: FormJsonType.DynamicMap).value} json) => _$$className" + "FromJson(json);")
         sb.appendLine("")
     }
 
     if (config.useIsar) {
         config.mainClassRun({
-            sb.appendLine("\tId get \$id => isarId; ")
+            sb.appendLine($$"\tId get $id => isarId; ")
             sb.appendLine("")
         })
     }

@@ -41,7 +41,7 @@ abstract class FlutterXAssetsVFAction : AnAction() {
         if (showFlutterXIcon) {
             e.presentation.icon = MyIcons.flutter
         }
-        e.presentation.putClientProperty<Boolean>(ActionUtil.SUPPRESS_SUBMENU, true)
+        e.presentation.putClientProperty(ActionUtil.SUPPRESS_SUBMENU, true)
 
         super.update(e)
     }

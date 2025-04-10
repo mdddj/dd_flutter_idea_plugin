@@ -3,7 +3,7 @@ package shop.itbug.fluttercheckversionx.actions
 import com.google.gson.Gson
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
-import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.socket.Request
 
 
 fun Request.getDataJson(): Any? {

@@ -27,16 +27,6 @@ class Helper {
             sb.append("</table>")
         }
 
-        // markdown表格类型
-        fun addTablevalue(key: String, value: String, sb: java.lang.StringBuilder) {
-            sb.append("| ")
-            sb.append(key)
-            sb.append("| ")
-            sb.split(value)
-            sb.append(" |")
-            sb.append("\n")
-        }
-
         // markdown转成html
         fun markdown2Html(markdownText: MyMarkdownDocRenderObject): String {
             return MarkdownRender.markdownToHtml(markdownText)
@@ -55,15 +45,6 @@ class Helper {
                 divStr += " ---- | "
             }
             sb.append(divStr)
-            sb.append("\n")
-        }
-
-        fun addMarkdownTableLine(vararg values: String, sb: java.lang.StringBuilder) {
-            var headerStr = "|"
-            values.forEach {
-                headerStr += " $it |"
-            }
-            sb.append(headerStr)
             sb.append("\n")
         }
 

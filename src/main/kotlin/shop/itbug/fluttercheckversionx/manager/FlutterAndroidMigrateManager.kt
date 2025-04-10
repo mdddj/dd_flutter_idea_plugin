@@ -147,7 +147,7 @@ class FlutterAndroidMigrateManager(val project: Project) : Disposable {
 }
 
 
-private val i = "includeBuild(\"\$flutterSdkPath/packages/flutter_tools/gradle\")"
+private const val i = $$"includeBuild(\"$flutterSdkPath/packages/flutter_tools/gradle\")"
 
 private val newSettingFile: VirtualFile
     get() {

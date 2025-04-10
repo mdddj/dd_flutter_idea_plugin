@@ -11,10 +11,8 @@ object MyIcons {
     var add = IconLoader.getIcon("/icons/add.svg", MyIcons::class.java)
     var setting = IconLoader.getIcon("/icons/setting.svg", MyIcons::class.java)
     var freezed = IconLoader.getIcon("/icons/freezed.svg", MyIcons::class.java)
-    var money = IconLoader.getIcon("/icons/money.svg", MyIcons::class.java)
     val score = IconLoader.getIcon("/icons/score.svg", MyIcons::class.java)
     var collect = IconLoader.getIcon("/icons/collect.svg", MyIcons::class.java)
-    val discord = IconLoader.getIcon("/icons/discord.svg", MyIcons::class.java)
     val androidStudio = IconLoader.getIcon("/icons/as.svg", MyIcons::class.java)
     val xcode = IconLoader.getIcon("/icons/xcode.svg", MyIcons::class.java)
 }

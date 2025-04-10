@@ -67,6 +67,3 @@ private fun PsiElement.getUsagesCount(): Int {
 }
 
 
-private fun PsiElement.findUsagesCount(): Int {
-    return 0
-}

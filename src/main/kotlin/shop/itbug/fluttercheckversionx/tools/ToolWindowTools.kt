@@ -6,7 +6,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 
 object MyToolWindowTools {
 
-    val windowId: String = "Dio Request"
+    const val windowId: String = "Dio Request"
     fun getMyToolWindow(project: Project): ToolWindow? {
         return ToolWindowManager.getInstance(project = project).getToolWindow(windowId)
     }

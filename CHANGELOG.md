@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## [5.4.2] - 2025-04-10
+
+* fix: Repair asset image detection logic
+* new feature: dio api generate hurl code
+* Update: dart assets check level error to warning
+
+## [5.4.1] - 2025-04-08
+
+* fix some bugs
+
+## [5.4.0] - 2025-04-01
+
+* fix some bugs
+
+## [5.3.4] - 2025-03-17
+
+* fix known bugs
+
 ## [5.3.3] - 2025-03-13
 
 * New: add assets preview window

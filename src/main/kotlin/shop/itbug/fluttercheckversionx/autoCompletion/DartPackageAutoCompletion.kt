@@ -36,7 +36,7 @@ class DartPackageAutoCompletion : CompletionContributor() {
 }
 
 
-///提供者
+///dart package 提供者
 private class Provider : CompletionProvider<CompletionParameters>() {
 
     override fun addCompletions(
@@ -46,6 +46,7 @@ private class Provider : CompletionProvider<CompletionParameters>() {
     ) {
         val text = parameters.originalPosition?.text ?: ""
         if (text.isNotBlank()) {
+            ProgressManager.checkCanceled()
             val packages = ApplicationUtil.runWithCheckCanceled(
                 {
                     val r = PubService.search(text)?.packages ?: emptyList()

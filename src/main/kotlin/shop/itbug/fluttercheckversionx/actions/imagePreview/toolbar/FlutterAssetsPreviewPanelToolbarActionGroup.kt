@@ -17,18 +17,18 @@ class FlutterAssetsPreviewPanelToolbarActionGroup : DefaultActionGroup() {
 
 class PreviewSearchTextField(val onChange: (str: String) -> Unit) : SearchTextField(), DocumentListener {
     override fun insertUpdate(e: DocumentEvent?) {
-        e.handle()
+        handle()
     }
 
     override fun removeUpdate(e: DocumentEvent?) {
-        e.handle()
+        handle()
     }
 
     override fun changedUpdate(e: DocumentEvent?) {
-        e.handle()
+        handle()
     }
 
-    private fun DocumentEvent?.handle() {
+    private fun handle() {
         onChange.invoke(text)
     }
 

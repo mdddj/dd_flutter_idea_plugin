@@ -42,10 +42,11 @@ class MarkdownRender {
 
     companion object {
 
-        fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, title: String) {
+        fun StringBuilder.appendTag(tag: MyMarkdownDocRenderObject?, project: Project, title: String) {
             if (tag != null) {
                 appendSection(title) {
                     val m = markdownToHtml(tag)
+//                    val m = DocMarkdownToHtmlConverter.convert(project, tag.getContent())
                     append(m)
                 }
             }
@@ -178,7 +179,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.SHORT_REFERENCE_LINK -> {
                 if (node.text.startsWith("[") && node.text.endsWith("]")) {
                     val r = node.text.removeSuffix("]").removePrefix("[")
-                    DocumentationManagerUtil.createHyperlink(sb, r, r, false)
+                    DocumentationManagerUtil.createHyperlink(sb, r, r, true)
                 } else {
                     sb.append(node.text)
                 }
@@ -359,7 +360,7 @@ private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
 
 private fun getSaturationFactor(): Float {
     val result = Registry.intValue("documentation.component.highlighting.saturation.for.rendered.docs")
-    return MathUtil.clamp(result, 0, 100) * 0.01F;
+    return MathUtil.clamp(result, 0, 100) * 0.01F
 }
 
 private fun StringBuilder.appendStyledSpan(

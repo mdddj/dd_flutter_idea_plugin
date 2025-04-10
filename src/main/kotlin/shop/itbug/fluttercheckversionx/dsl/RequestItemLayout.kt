@@ -7,7 +7,7 @@ import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DioRequestUIStyle
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
-import shop.itbug.fluttercheckversionx.form.socket.Request
+import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.util.MyFontUtil
 import java.awt.Dimension
 import java.net.URI

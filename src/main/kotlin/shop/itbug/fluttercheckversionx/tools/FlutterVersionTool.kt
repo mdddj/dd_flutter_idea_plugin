@@ -8,7 +8,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-
+///读取 flutter 版本号
 data class MyFlutterVersion(val version: String?)
 
 object FlutterVersionTool {

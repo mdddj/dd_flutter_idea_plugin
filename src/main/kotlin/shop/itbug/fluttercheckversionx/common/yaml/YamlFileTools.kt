@@ -1,13 +1,10 @@
 package shop.itbug.fluttercheckversionx.common.yaml
 
-import com.intellij.openapi.application.readAction
-import com.intellij.openapi.project.Project
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
-import shop.itbug.fluttercheckversionx.util.MyFileUtil
 
 /**
  * flutter yaml 操作相关工具函数
@@ -56,10 +53,6 @@ class PubspecYamlFileTools private constructor(yaml: YAMLFile) : YamlFileToolBas
 
     companion object {
         fun create(file: YAMLFile) = PubspecYamlFileTools(file)
-        suspend fun withRootPubspec(project: Project): PubspecYamlFileTools? {
-            val file = readAction { MyFileUtil.getPubspecFile(project) } ?: return null
-            return create(file)
-        }
     }
 
 }

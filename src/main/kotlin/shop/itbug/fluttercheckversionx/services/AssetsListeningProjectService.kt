@@ -11,7 +11,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
@@ -27,7 +26,6 @@ import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.manager.PluginChangelogCache
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
@@ -37,10 +35,6 @@ import shop.itbug.fluttercheckversionx.util.Util
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
-        DumbService.getInstance(project).runWhenSmart {
-            PluginChangelogCache.getInstance().startShow(project)
-        }
-
     }
 }
 
@@ -190,6 +184,10 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                 },
             )
 
+            createNotification.addAction(NotShowFlutterCheckVersionAction {
+                createNotification.hideBalloon()
+                createNotification.expire()
+            })
 
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
@@ -202,6 +200,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     return ActionUpdateThread.BGT
                 }
             })
+
 
             ///关闭
             createNotification.addAction(object : DumbAwareAction("Cancel") {
@@ -216,6 +215,17 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             })
             createNotification.isSuggestionType = true
             createNotification.notify(project)
+        }
+    }
+}
+
+//不检测新版本操作
+private class NotShowFlutterCheckVersionAction(val onActioned: () -> Unit) :
+    DumbAwareAction(PluginBundle.get("ig.version.check")) {
+    override fun actionPerformed(p0: AnActionEvent) {
+        p0.project?.let {
+            DioListingUiConfig.changeSetting { setting -> setting.copy(checkFlutterVersion = false) }
+            onActioned.invoke()
         }
     }
 }

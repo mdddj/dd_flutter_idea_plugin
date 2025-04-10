@@ -12,13 +12,15 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.ImageUtil
 import shop.itbug.fluttercheckversionx.widget.JsonEditorTextPanel
-import java.awt.*
+import java.awt.AlphaComposite
+import java.awt.Font
+import java.awt.RenderingHints
+import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.awt.image.BufferedImage
 import java.io.IOException
-import kotlin.math.max
 
 
 data class CopyImageConfig(var useShadow: Boolean = false, var shadowSize: Int = 20)
@@ -31,80 +33,6 @@ object CopyImageToClipboard {
         val transferableImage = TransferableImage(image)
         val clipboard = Toolkit.getDefaultToolkit().systemClipboard
         clipboard.setContents(transferableImage, null)
-    }
-
-    fun saveStringAsImageToClipboard(text: String) {
-        require(text.isNotEmpty()) { "Text cannot be null or empty." }
-
-
-        // 按行分割文本
-        val lines: List<String> = text.split("\n")
-
-
-        // 创建一个临时的 BufferedImage 以便获取 FontMetrics
-        val tempImage = ImageUtil.createImage(1, 1, BufferedImage.TYPE_INT_ARGB)
-        val g2dTemp = tempImage.createGraphics()
-        g2dTemp.font = getFont() // 使用等宽字体确保格式化的文本对齐
-
-
-        // 获取最长行的宽度
-        var textWidth = 0
-        for (line in lines) {
-            val lineWidth = g2dTemp.fontMetrics.stringWidth(line)
-            if (lineWidth > textWidth) {
-                textWidth = lineWidth
-            }
-        }
-
-
-        // 获取行高
-        val textHeight = g2dTemp.fontMetrics.height
-
-
-        // 释放临时 Graphics 对象
-        g2dTemp.dispose()
-
-
-        // 确保宽度和高度为正数
-        val imageWidth = max((textWidth + 20).toDouble(), 1.0).toInt()
-        val imageHeight = max(((textHeight * lines.size) + 20).toDouble(), 1.0).toInt()
-
-
-        // 根据文本大小创建合适大小的 BufferedImage
-        val image = ImageUtil.createImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB)
-        val g2d = image.createGraphics()
-
-
-        // 设置抗锯齿
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-
-
-        // 设置背景颜色为白色，并填充整个图像
-        g2d.color = JBColor.WHITE
-        g2d.fillRect(0, 0, image.width, image.height)
-
-
-        // 设置字体和颜色
-        g2d.font = getFont()
-        g2d.color = JBColor.BLACK
-
-
-        // 逐行绘制字符串
-        val x = 10 // X 坐标偏移
-        var y = 10 + textHeight // Y 坐标偏移，10 用于上方留空
-        for (line in lines) {
-            g2d.drawString(line, x, y)
-            y += textHeight // 移动到下一行
-        }
-
-
-        // 释放 Graphics 对象
-        g2d.dispose()
-
-
-        // 将图像复制到剪贴板
-        copyImageToClipboard(image)
-        println("拷贝完成..")
     }
 
     fun saveJsonStringAsImageToClipboard(project: Project, text: String, config: CopyImageConfig = CopyImageConfig()) {
@@ -133,7 +61,7 @@ object CopyImageToClipboard {
         val image = ImageUtil.createImage(width, height, BufferedImage.TYPE_INT_ARGB)
         val g2d = image.createGraphics()
         if (useShadow) {
-            g2d.color = Color.WHITE
+            g2d.color = JBColor.WHITE
             for (i in shadowSize downTo 1) {
                 g2d.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * (shadowSize - i) / shadowSize)
                 g2d.fillRoundRect(i, i, size.width + shadowSize, size.height + shadowSize, shadowSize, shadowSize)

@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.3.2">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.4.1">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartProjectListenService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/DartAssetsAnnotator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/DartAssetsAnnotator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/FlutterEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/FlutterEvent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,12 +61,6 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="codegen" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="FlutterX" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="intellij platform" type="c8890929:TasksNode$1" />
               </path>
             </expand>
@@ -93,7 +93,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="5.3.2" />
+        <entry key="$PROJECT_DIR$" value="5.3.4" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -105,7 +105,15 @@
   }
 }</component>
   <component name="GitHubPullRequestState">{
-  &quot;prStates&quot;: []
+  &quot;prStates&quot;: [
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOF0G6_M6O1xbf&quot;,
+        &quot;number&quot;: 70
+      },
+      &quot;lastSeen&quot;: 1742173737026
+    }
+  ]
 }</component>
   <component name="GitLabMergeRequestsSettings">{}</component>
   <component name="GitToolBoxStore">
@@ -213,7 +221,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
     <option name="sortBySeverity" value="false" />
   </component>
   <component name="ProjectColorInfo">{
@@ -278,6 +286,7 @@
     &quot;RunOnceActivity.Enable generate summary features in internal mode&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;ToolWindowDio Request.ShowToolbar&quot;: &quot;false&quot;,
@@ -287,7 +296,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4&quot;: &quot;&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;5.3.3&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;5.4.1&quot;,
     &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -333,6 +342,11 @@
     &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
   }
 }</component>
+  <component name="QodanaReportsService">
+    <option name="descriptions">
+      <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output/qodana.sarif.json" reportGuid="7f9bfffc-3c8e-4997-b387-13831df6a095" reportId="FlutterX/qodana/2025-04-09" />
+    </option>
+  </component>
   <component name="RebelAgentSelection">
     <selection>jr</selection>
   </component>
@@ -405,7 +419,7 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="dd_flutter_idea_plugin [generateFlutterPluginInfo]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="dd_flutter_idea_plugin [printBundledPlugins]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -416,7 +430,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="generateFlutterPluginInfo" />
+            <option value="printBundledPlugins" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -454,7 +468,7 @@
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="-Didea.log.level=DEBUG" />
+        <option name="scriptParameters" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -500,18 +514,18 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo]" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
       </list>
     </recent_temporary>
@@ -519,8 +533,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.318" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.318" />
       </set>
     </attachedChunks>
   </component>
@@ -1595,7 +1609,39 @@
       <workItem from="1741831794681" duration="3887000" />
       <workItem from="1741835889884" duration="208000" />
       <workItem from="1741836101635" duration="33000" />
-      <workItem from="1741935453292" duration="132000" />
+      <workItem from="1741935453292" duration="1945000" />
+      <workItem from="1742031918067" duration="1300000" />
+      <workItem from="1742173439167" duration="1196000" />
+      <workItem from="1742178483555" duration="15000" />
+      <workItem from="1742181371952" duration="37000" />
+      <workItem from="1742346236747" duration="3746000" />
+      <workItem from="1742353013686" duration="525000" />
+      <workItem from="1742376450287" duration="154000" />
+      <workItem from="1742450192480" duration="703000" />
+      <workItem from="1742523929241" duration="616000" />
+      <workItem from="1742952239239" duration="1533000" />
+      <workItem from="1742959946587" duration="226000" />
+      <workItem from="1742960600544" duration="999000" />
+      <workItem from="1742977701303" duration="535000" />
+      <workItem from="1743037273514" duration="51000" />
+      <workItem from="1743037343844" duration="182000" />
+      <workItem from="1743037837193" duration="117000" />
+      <workItem from="1743390278809" duration="531000" />
+      <workItem from="1743390816424" duration="133000" />
+      <workItem from="1743473630454" duration="496000" />
+      <workItem from="1743474138180" duration="2276000" />
+      <workItem from="1743476532889" duration="776000" />
+      <workItem from="1743558991698" duration="3369000" />
+      <workItem from="1743575796671" duration="721000" />
+      <workItem from="1743642953343" duration="1064000" />
+      <workItem from="1743644042377" duration="956000" />
+      <workItem from="1743645030323" duration="975000" />
+      <workItem from="1744017757772" duration="7037000" />
+      <workItem from="1744100159958" duration="3563000" />
+      <workItem from="1744161129372" duration="9964000" />
+      <workItem from="1744176605224" duration="3779000" />
+      <workItem from="1744180971408" duration="135000" />
+      <workItem from="1744252053985" duration="1838000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -1940,7 +1986,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="384" />
+    <option name="localTasksCounter" value="385" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2002,7 +2048,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="修复版本自动修复功能" />
     <MESSAGE value="release 4.8.0" />
     <MESSAGE value="修复json view 查看器没有格式化显示问题" />
     <MESSAGE value="修复pubspec.yaml工具条可能引发的线程问题" />
@@ -2027,7 +2072,8 @@
     <MESSAGE value="release5.1.0" />
     <MESSAGE value="release5.2.3" />
     <MESSAGE value="release5.3.2" />
-    <option name="LAST_COMMIT_MESSAGE" value="release5.3.2" />
+    <MESSAGE value="release5.4.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="release5.4.1" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">

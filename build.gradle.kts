@@ -2,8 +2,6 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 val dartVersion: String by project
 val sinceBuildVersion: String by project
@@ -13,8 +11,8 @@ val pluginVersion: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.3.0"
+    kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.intellij.platform") version "2.4.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
@@ -42,11 +40,13 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
     "com.intellij.gradle",
-    "org.jetbrains.plugins.gradle"
+    "org.jetbrains.plugins.gradle",
+    "org.intellij.groovy"
 )
 
 if (sinceBuildVersion.toInt() >= 243) {
     bPlugins.add("com.intellij.modules.json")
+    bPlugins.add("com.intellij.platform.images")
 }
 
 dependencies {
@@ -57,16 +57,11 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
         when (sinceBuildVersion) {
             "243" -> {
-                local("/Applications/IntelliJ IDEA Ultimate.app")
+                intellijIdeaCommunity("2024.3.5")
             }
 
             "251" -> {
-                local("/Applications/IntelliJ IDEA Ultimate 2025.1 EAP.app")
-            }
-
-            else -> {
-//                local("/Applications/Android Studio.app")
-                androidStudio("2024.2.2.13")
+                local("/Applications/IntelliJ IDEA Ultimate 2025.1 Release Candidate.app")
             }
         }
         bundledPlugins(bPlugins)
@@ -89,11 +84,7 @@ intellijPlatform {
                 }
 
                 "251" -> {
-                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 EAP.app")
-                }
-
-                else -> {
-                    local("/Applications/Android Studio.app")
+                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 Beta.app")
                 }
             }
         }
@@ -125,11 +116,9 @@ val currentVersionChangelog = provider {
     )
 }
 
-val currentTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.compilerOptions {
-    freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation"))
+    freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation", "-Xwhen-guards"))
 }
 
 tasks {
@@ -155,7 +144,12 @@ tasks {
     runIde {
         jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOf("-Didea.kotlin.plugin.use.k2=true", "-Didea.log.level=DEBUG")
+            listOf(
+                "-Didea.kotlin.plugin.use.k2=true",
+                "-Didea.log.level=DEBUG",
+                "-Didea.log.debug=true",
+                "-Didea.log.verbose=true"
+            )
         }
     }
 
@@ -264,11 +258,10 @@ val generateFlutterPluginInfo by tasks.registering {
         outputFile.writeText(
             """
             |package codegen
-            |
+            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
             |object FlutterXPluginInfo {
-            |    const val Version: String = "${project.version}"
-            |    const val Changelog: String = $q${currentVersionChangelog.get()}$q
-            |    const val BuildDate: String = "$currentTime"
+            |    const val VERSION: String = "${project.version}"
+            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
             |}
             |""".trimMargin().trimIndent()
         )
@@ -334,13 +327,6 @@ dependencies {
     integrationTestImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
     integrationTestImplementation("org.kodein.di:kodein-di-jvm:7.20.2")
     integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
+
 }
 
-val integrationTest = tasks.register<Test>("integrationTest", fun Test.() {
-    val integrationTestSourceSet = sourceSets.getByName("integrationTest")
-    testClassesDirs = integrationTestSourceSet.output.classesDirs
-    classpath = integrationTestSourceSet.runtimeClasspath
-    systemProperty("./build", tasks.prepareSandbox.get().pluginDirectory.get().asFile)
-    useJUnitPlatform()
-    dependsOn(tasks.prepareSandbox)
-})

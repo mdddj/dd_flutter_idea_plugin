@@ -40,8 +40,6 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFil
     private var dependenciesNames = listOf<String>()
     private var details = listOf<DartYamlModel>()
 
-    fun getAllDependencies(): List<String> = dependenciesNames
-
     init {
         project.messageBus.connect(parentDisposable = this).subscribe(VirtualFileManager.VFS_CHANGES, this)
     }
@@ -82,13 +80,6 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFil
         val version = details.find { it.name == "freezed" } ?: return false
         if (version.versionType == DartVersionType.Any) return true
         return isVersionGreaterThanThree(version.version, Version.parse("3.0.0"))
-    }
-
-    /**
-     * 项目是否使用 provider 包
-     */
-    fun hasProvider(): Boolean {
-        return hasDependencies("provider")
     }
 
 

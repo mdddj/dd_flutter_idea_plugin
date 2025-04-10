@@ -25,7 +25,7 @@ class DioJsonCopyToClipboard : AnAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.text = PluginBundle.get("copy_api_to_clipboard")
-        e.presentation.icon = AllIcons.General.InlineCopy
+        e.presentation.icon = AllIcons.General.Copy
         e.presentation.isEnabled = e.api() != null
         super.update(e)
     }

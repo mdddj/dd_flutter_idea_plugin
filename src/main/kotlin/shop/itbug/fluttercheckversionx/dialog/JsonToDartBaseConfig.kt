@@ -87,9 +87,9 @@ fun Row.saveToDirectoryConfig(
 
 // freeze 新的设置
 object FreezedNewSetting {
-    fun setting(project: Project, config: FreezedClassConfig, panel: Panel) {
-        val box = ComboBox<FreezedVersion>(FreezedVersion.entries.toTypedArray())
-        val box2 = ComboBox<FreezedClassType>(FreezedClassType.entries.toTypedArray())
+    fun setting(config: FreezedClassConfig, panel: Panel) {
+        val box = ComboBox(FreezedVersion.entries.toTypedArray())
+        val box2 = ComboBox(FreezedClassType.entries.toTypedArray())
         panel.row("Freezed Setting") {
             cell(box).bindItem({ config.freezedVersion }, {
                 config.freezedVersion = it ?: FreezedVersion.DefaultVersion
@@ -171,8 +171,8 @@ object NameStylePanelBuilder {
         rightLabel: String,
         rightBind: KMutableProperty0<NameFormatRule?>
     ) {
-        val box = ComboBox<NameFormatRule>(NameFormatRule.entries.toTypedArray())
-        val box2 = ComboBox<NameFormatRule>(NameFormatRule.entries.toTypedArray())
+        val box = ComboBox(NameFormatRule.entries.toTypedArray())
+        val box2 = ComboBox(NameFormatRule.entries.toTypedArray())
         fun htmlBuild(item: NameFormatRule): String {
             return HtmlChunk.div().children(
                 HtmlChunk.text(item.name).bold(),

@@ -18,6 +18,7 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import javax.swing.JComponent
@@ -45,8 +46,8 @@ class IosFrameworkScanActionDialog(val project: Project, val e: AnActionEvent) :
                 textField().bindText(model::extension)
             }
 
-            row("是否目录") {
-                checkBox("是否为目录").bindSelected({ model.isDirection }, { model.isDirection = it })
+            row {
+                checkBox(PluginBundle.get("is_dir")).bindSelected({ model.isDirection }, { model.isDirection = it })
             }
 
         }
@@ -61,7 +62,7 @@ class IosFrameworkScanActionDialog(val project: Project, val e: AnActionEvent) :
     }
 
     private fun startTask() {
-        val task = object : Task.Backgroundable(project, "正在扫描中ios Framework") {
+        val task = object : Task.Backgroundable(project, PluginBundle.get("scaning") + " - ios Framework") {
             override fun run(indicator: ProgressIndicator) {
                 startTask(project, e)
             }

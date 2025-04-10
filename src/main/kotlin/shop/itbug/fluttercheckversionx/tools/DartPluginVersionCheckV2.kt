@@ -32,7 +32,7 @@ private val EDITOR = Key.create<Editor>("FLUTTERX EDITOR")
 class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<DartYamlModel>>() {
 
     override fun collectInformation(file: PsiFile, editor: Editor, hasErrors: Boolean): PubspecYamlFileTools? {
-        log.warn("chllect info mation start")
+        log().warn("chllect info mation start")
         val yamlFile = file as? YAMLFile ?: return null
         file.putUserData(EDITOR, editor)
         return PubspecYamlFileTools.create(yamlFile)
@@ -40,22 +40,18 @@ class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<Da
 
     override fun doAnnotate(collectedInfo: PubspecYamlFileTools?): List<DartYamlModel>? {
         collectedInfo ?: return null
-        log.warn("进来了.......")
         var details = runBlocking(Dispatchers.IO) { collectedInfo.getAllDependenciesList() }
-        log.warn("START:put user data to file")
         collectedInfo.file.putUserData(YAML_DART_PACKAGE_INFO_KEY, details) //数据存储到文件中
         collectedInfo.file.putUserData(YAML_FILE_IS_FLUTTER_PROJECT, runBlocking { collectedInfo.isFlutterProject() })
-        log.warn("END: put data to file")
         details = details.filter { it.hasNewVersion() } //只返回收有新版本的
-        log.warn("has new version len :${details.size}")
         return details
     }
 
     override fun apply(file: PsiFile, annotationResult: List<DartYamlModel>?, holder: AnnotationHolder) {
-        log.warn("apply init")
+        log().warn("apply init")
         val list = annotationResult ?: emptyList()
-        log.warn("有多少个插件有新版本?${list.size}")
-        log.info("有多少个插件有新版本?${list.size}")
+        log().warn("有多少个插件有新版本?${list.size}")
+        log().info("有多少个插件有新版本?${list.size}")
         list.forEach {
             val lastVersion = it.getLastVersionText()
             val ele = it.element.element
