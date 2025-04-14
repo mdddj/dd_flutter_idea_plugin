@@ -133,6 +133,7 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
 private class MyCheckPubCacheSizeComponent(project: Project) : HyperlinkLabel(), PubCacheSizeCalcService.Listener,
     Disposable, BulkFileListener {
     val cacheService = PubCacheSizeCalcService.getInstance(project)
+    private var isDisposed = false
 
     init {
         project.messageBus.connect(cacheService).subscribe(TOPIC, this)
@@ -162,11 +163,18 @@ private class MyCheckPubCacheSizeComponent(project: Project) : HyperlinkLabel(),
     }
 
     override fun calcComplete(len: Long, formatString: String) {
-        setHyperlinkText("Pub Cache Size: $formatString")
+        SwingUtilities.invokeLater {
+            if (!isDisposed) {
+                setHyperlinkText("Pub Cache Size: $formatString")
+            }
+
+        }
+
     }
 
     override fun dispose() {
         println("dispose pub cache size widget")
+        isDisposed = true
         ToolTipManager.sharedInstance().unregisterComponent(this)
     }
 
