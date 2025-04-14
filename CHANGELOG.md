@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [5.4.3] - 2025-04-14
+
+* fix: `StringIndexOutOfBoundsException`
+* Performance optimization
+
 ## [5.4.2] - 2025-04-10
 
 * fix: Repair asset image detection logic

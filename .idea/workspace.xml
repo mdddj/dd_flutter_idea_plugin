@@ -4,17 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.4.1">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/DartProjectListenService.kt" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release5.4.2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/DartAssetsAnnotator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/annotator/DartAssetsAnnotator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/FlutterEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/FlutterEvent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/PubPluginVersionCheckNotification.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/notif/PubPluginVersionCheckNotification.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubCacheSizeCalcService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubCacheSizeCalcService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -523,8 +518,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
       </list>
@@ -1641,7 +1636,9 @@
       <workItem from="1744161129372" duration="9964000" />
       <workItem from="1744176605224" duration="3779000" />
       <workItem from="1744180971408" duration="135000" />
-      <workItem from="1744252053985" duration="1838000" />
+      <workItem from="1744252053985" duration="1879000" />
+      <workItem from="1744437311802" duration="637000" />
+      <workItem from="1744615612359" duration="2034000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -1986,7 +1983,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="385" />
+    <option name="localTasksCounter" value="386" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2048,7 +2045,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="release 4.8.0" />
     <MESSAGE value="修复json view 查看器没有格式化显示问题" />
     <MESSAGE value="修复pubspec.yaml工具条可能引发的线程问题" />
     <MESSAGE value="add json 2 dart macro tool" />
@@ -2073,7 +2069,8 @@
     <MESSAGE value="release5.2.3" />
     <MESSAGE value="release5.3.2" />
     <MESSAGE value="release5.4.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="release5.4.1" />
+    <MESSAGE value="release5.4.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="release5.4.2" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">

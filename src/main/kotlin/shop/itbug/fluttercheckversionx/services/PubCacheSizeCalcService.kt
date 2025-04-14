@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -23,6 +24,7 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
     private var size: Long = 0
     private var cachePath: String? = null
     private var cacheFileName: String? = null
+    private var checkJob: Job? = null
     fun getCachePath() = cachePath
     suspend fun startCheck() {
         if (size != 0L) {
@@ -46,7 +48,11 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
     //刷新
     fun refreshCheck() {
         size = 0
-        scope.launch(Dispatchers.IO) {
+        if (checkJob?.isActive == true) {
+            checkJob?.cancel()
+        }
+        ProgressManager.checkCanceled()
+        checkJob = scope.launch(Dispatchers.IO) {
             startCheck()
         }
     }
