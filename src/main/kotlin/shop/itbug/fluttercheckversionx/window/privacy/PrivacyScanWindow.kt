@@ -225,13 +225,11 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
 
 
 private fun VirtualFile.findPrivacyFile(): VirtualFile? {
-    val iosDir = this.findChild("ios")!!
-    var privacyFile = runReadAction { iosDir.findChild(privacyFileName) }
-    if (privacyFile == null) {
-        ///去resource/目录下面兆
-        iosDir.findChild("Resources")?.let { resources ->
-            privacyFile = resources.findChild(privacyFileName)
-        }
+    val iosDir = runReadAction { this.findChild("ios")!! }
+    var privacyFile = runReadAction { iosDir.findChild(privacyFileName) } ?: return null
+    ///去resource/目录下面兆
+    iosDir.findChild("Resources")?.let { resources ->
+        privacyFile = resources.findChild(privacyFileName) ?: return null
     }
     return privacyFile
 }
