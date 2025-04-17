@@ -61,7 +61,7 @@ dependencies {
             }
 
             "251" -> {
-                local("/Applications/IntelliJ IDEA Ultimate 2025.1 Release Candidate.app")
+                local("/Applications/IntelliJ IDEA Ultimate.app")
             }
         }
         bundledPlugins(bPlugins)

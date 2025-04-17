@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="新能优化&#10;bug修复&#10;release5.4.3">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/privacy/PrivacyScanWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/privacy/PrivacyScanWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/ImageFileUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/ImageFileUtil.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,111 +232,111 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Gradle.BalloonTest.testBalloonCreationAndVisibility.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build dd_flutter_idea_plugin.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartPluginVersionTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartPluginVersionTest.test.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartPluginVersionTest.testVersion.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download IntelliJ Platform sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:functionalTestClasses].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:pingServer].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [buildPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [buildSearchableOptions].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [check].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [classes].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [downloadAndroidStudioProductReleasesXml].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [getChangelog].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [initializeIntellijPlatformPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [integrationTest].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [jarSearchableOptions].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [listBundledPlugins].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [mainClasses].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [pingIdeaPublisherServer].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [prepareTest].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [printBundledPlugins].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [printProductsReleases].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [publishAllPublicationsToSonatypeRepository].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [publishPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [publish].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [runIde].executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [setupDependencies].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [verifyPluginConfiguration].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [verifyPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin:service [verifyPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.下载 IntelliJ 平台源.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.下载 IntelliJ 平台源….executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.下载源代码.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.构建 dd_flutter_idea_plugin.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.BalloonTest.testBalloonCreationAndVisibility.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.YamlExtendsKt.executor&quot;: &quot;Run&quot;,
-    &quot;Project.color&quot;: &quot;2a2f05&quot;,
-    &quot;RunOnceActivity.Enable generate summary features in internal mode&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ToolWindowDio Request.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit4&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4&quot;: &quot;&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;5.4.3&quot;,
-    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;ktor.last.update.timestamp&quot;: &quot;1687769586955&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/docs/flutterx-doc/node_modules/prettier&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2945874&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;setting.flutterx&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Gradle.BalloonTest.testBalloonCreationAndVisibility.executor": "Run",
+    "Gradle.Build dd_flutter_idea_plugin.executor": "Run",
+    "Gradle.DartPluginVersionTest.executor": "Run",
+    "Gradle.DartPluginVersionTest.test.executor": "Run",
+    "Gradle.DartPluginVersionTest.testVersion.executor": "Run",
+    "Gradle.Download IntelliJ Platform sources.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:clean].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:functionalTestClasses].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:pingServer].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [buildPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [buildSearchableOptions].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [check].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [classes].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [clean].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [downloadAndroidStudioProductReleasesXml].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [getChangelog].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [initializeIntellijPlatformPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [integrationTest].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [jarSearchableOptions].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [listBundledPlugins].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [mainClasses].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [pingIdeaPublisherServer].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [prepareTest].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [printBundledPlugins].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [printProductsReleases].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [publishAllPublicationsToSonatypeRepository].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [publishPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [publish].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [runIde].executor": "Debug",
+    "Gradle.dd_flutter_idea_plugin [setupDependencies].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [verifyPluginConfiguration].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [verifyPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin:service [verifyPlugin].executor": "Run",
+    "Gradle.下载 IntelliJ 平台源.executor": "Run",
+    "Gradle.下载 IntelliJ 平台源….executor": "Run",
+    "Gradle.下载源代码.executor": "Run",
+    "Gradle.构建 dd_flutter_idea_plugin.executor": "Run",
+    "JUnit.BalloonTest.testBalloonCreationAndVisibility.executor": "Run",
+    "Kotlin.YamlExtendsKt.executor": "Run",
+    "Project.color": "2a2f05",
+    "RunOnceActivity.Enable generate summary features in internal mode": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ToolWindowDio Request.ShowToolbar": "false",
+    "WebServerToolWindowFactoryState": "false",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit4",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4": "",
+    "dart.analysis.tool.window.visible": "false",
+    "full.screen.before.presentation.mode": "false",
+    "git-widget-placeholder": "5.4.3",
+    "ignore.preview.features.used": "true",
+    "jdk.selected.JAVA_MODULE": "jbrsdk_jcef-17",
+    "kotlin-language-version-configured": "true",
+    "ktor.last.update.timestamp": "1687769586955",
+    "last_opened_file_path": "/Users/hlx/github/dd_flutter_idea_plugin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "prettierjs.PrettierConfiguration.Package": "/Users/hlx/github/dd_flutter_idea_plugin/docs/flutterx-doc/node_modules/prettier",
+    "project.structure.last.edited": "SDK",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2945874",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "show.migrate.to.gradle.popup": "false",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlite&quot;,
-      &quot;hsqldb&quot;,
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite",
+      "hsqldb",
+      "mysql"
     ],
-    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
-      &quot;directory&quot;,
-      &quot;module&quot;,
-      &quot;repository&quot;
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
     ],
-    &quot;beansoft.intellij.ide.scratch.LRUPopupBuilderEx$3/新笔记&quot;: [
-      &quot;dart.id&quot;,
-      &quot;kt.id&quot;,
-      &quot;md.id&quot;
+    "beansoft.intellij.ide.scratch.LRUPopupBuilderEx$3/新笔记": [
+      "dart.id",
+      "kt.id",
+      "md.id"
     ],
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/新建临时文件&quot;: [
-      &quot;JSON&quot;
+    "com.intellij.ide.scratch.ScratchImplUtil$2/新建临时文件": [
+      "JSON"
     ],
-    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
+    "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
   }
-}</component>
+}]]></component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/38/gnsjhhqs4q5btxzrmv9wmtx40000gn/T/qodana_output/qodana.sarif.json" reportGuid="7f9bfffc-3c8e-4997-b387-13831df6a095" reportId="FlutterX/qodana/2025-04-09" />
@@ -525,8 +528,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.318" />
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.318" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
       </set>
     </attachedChunks>
   </component>
@@ -1636,7 +1639,9 @@
       <workItem from="1744252053985" duration="1879000" />
       <workItem from="1744437311802" duration="637000" />
       <workItem from="1744615612359" duration="2373000" />
-      <workItem from="1744618341644" duration="257000" />
+      <workItem from="1744618341644" duration="295000" />
+      <workItem from="1744851909064" duration="335000" />
+      <workItem from="1744870430444" duration="226000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
