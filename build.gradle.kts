@@ -61,7 +61,7 @@ dependencies {
             }
 
             "251" -> {
-                local("/Applications/IntelliJ IDEA Ultimate.app")
+                intellijIdeaCommunity("2025.1")
             }
         }
         bundledPlugins(bPlugins)
@@ -80,7 +80,7 @@ intellijPlatform {
         ides {
             when (sinceBuildVersion) {
                 "243" -> {
-                    local("/Applications/IntelliJ IDEA Ultimate.app")
+                    local("/Applications/Android Studio.app")
                 }
 
                 "251" -> {
@@ -122,7 +122,6 @@ compileKotlin.compilerOptions {
 }
 
 tasks {
-
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)

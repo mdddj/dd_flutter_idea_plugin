@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -37,6 +38,9 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
             println("缓存目录cache dir: ${dartPubCacheDir.path}")
             try {
                 VfsUtilCore.visitChildrenRecursively(dartPubCacheDir, this)
+            } catch (ex: ProcessCanceledException) {
+                log().warn("处理已经关闭")
+                throw ex
             } catch (e: Exception) {
                 log().warn("计算缓存大小失败", e)
             }
@@ -53,7 +57,11 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
         }
         ProgressManager.checkCanceled()
         checkJob = scope.launch(Dispatchers.IO) {
-            startCheck()
+            try {
+                startCheck()
+            } catch (e: Exception) {
+                log().warn("检查失败：$e")
+            }
         }
     }
 
@@ -75,6 +83,7 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
     }
 
     override fun afterChildrenVisited(file: VirtualFile) {
+        checkJob?.ensureActive()
         if (file.name == cacheFileName) {
             project.messageBus.syncPublisher(TOPIC).calcComplete(size, formatSize(size))
         }

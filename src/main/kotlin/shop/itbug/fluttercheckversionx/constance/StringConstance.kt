@@ -37,6 +37,9 @@ object Links {
     const val assetsPreviewDoc =
         "https://flutterx.itbug.shop/%E8%B5%84%E4%BA%A7%E9%A2%84%E8%A7%88%E7%AA%97%E5%8F%A3.html"
 
+    // l10n
+    const val l10nDoc = "https://flutterx.itbug.shop/l10n-editor.html"
+
 
     //新版本检查
     const val checkFlutterVersion =

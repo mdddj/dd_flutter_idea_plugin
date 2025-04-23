@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.setting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.ToolbarDecorator
@@ -32,7 +33,7 @@ class GeneraAssetsSettingPanel(
     val parentDisposable: Disposable,
     modified: GeneraAssetsSettingPanelIsModified,
 
-    ) : BorderLayoutPanel() {
+    ) : BorderLayoutPanel(), Disposable {
 
     //忽略的文件
     private val igFilesWidget = IgFileList(project).apply {
@@ -40,12 +41,13 @@ class GeneraAssetsSettingPanel(
     }
 
 
-    private val dialogPanel = getGeneraAssetsPanel(project, settingModel, parentDisposable, modified)
+    private val dialogPanel = getGeneraAssetsPanel(project, settingModel, this, modified)
 
 
     init {
         addToCenter(createTopActionsPanel())
         addToRight(createRightSettingPanel())
+        Disposer.register(parentDisposable, this)
     }
 
     private fun createTopActionsPanel(): JPanel {
@@ -79,6 +81,10 @@ class GeneraAssetsSettingPanel(
 
     fun doApply() {
         dialogPanel.apply()
+    }
+
+    override fun dispose() {
+
     }
 }
 
@@ -136,7 +142,8 @@ fun getGeneraAssetsPanel(
 //        }
     }
 
-    val alarm = Alarm(parentDisposable)
+    val newDisposable = Disposer.newDisposable(parentDisposable)
+    val alarm = Alarm(newDisposable)
 
 
     fun initValidation() {

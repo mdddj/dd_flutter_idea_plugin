@@ -15,6 +15,7 @@ import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.window.android.FlutterXAndroidMigrateWindow
+import shop.itbug.fluttercheckversionx.window.l10n.L10nWindow
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
 import shop.itbug.fluttercheckversionx.window.preview.ImagesPreviewWindow
 import shop.itbug.fluttercheckversionx.window.privacy.PrivacyScanWindow
@@ -96,6 +97,12 @@ class FlutterXSocketWindow : ToolWindowFactory {
         toolWindow.contentManager.addContent(imagesPreviewContent)
         imagesPreviewContent.setDisposer(imagesPreviewWindow)
 
+
+        // l10n多语言窗口
+        val l10nWindow = L10nWindow(project)
+        val l10nWindowContent = instance.createContent(l10nWindow, "l10n", false)
+        toolWindow.contentManager.addContent(l10nWindowContent)
+        l10nWindowContent.setDisposer(l10nWindow)
 
     }
 

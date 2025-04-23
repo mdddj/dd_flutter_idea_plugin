@@ -35,6 +35,7 @@ import shop.itbug.fluttercheckversionx.util.Util
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
+        FlutterL10nService.getInstance(project).checkAllKeys()
     }
 }
 
