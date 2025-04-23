@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## [5.5.1] - 2025-04-23
+
+* New features:  add run `flutter gen-l10n` command action (l10n)
+* New features: Extract string to l10n key,
+  see [document](https://flutterx.itbug.shop/l10n-editor.html#extract-l10n-key)
+* fix some bugs
+
+## [5.5.0] - 2025-04-19
+
+* fix: Solve the incorrect usage of `Disposer` in settings
+* New: flutter `l10n` editor tool, [See Document](https://flutterx.itbug.shop/l10n-editor.html)
+
 ## [5.4.3] - 2025-04-14
 
 * fix: `StringIndexOutOfBoundsException`

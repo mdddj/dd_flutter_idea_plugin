@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
@@ -104,8 +105,13 @@ object FreezedNewSetting {
 
 object MyRowBuild {
     /// 2024.3
-    fun folder(row: Row, getter: () -> String, setter: (String) -> Unit, project: Project) {
-        row.textFieldWithBrowseButton(
+    fun folder(
+        row: Row,
+        getter: () -> String,
+        setter: (String) -> Unit,
+        project: Project
+    ): Cell<TextFieldWithBrowseButton> {
+        val browse = row.textFieldWithBrowseButton(
             FileChooserDescriptorFactory.createSingleFolderDescriptor(),
             project,
         ).bindText(getter, setter).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
@@ -116,24 +122,8 @@ object MyRowBuild {
             }
             return@validationOnInput null
         }
+        return browse
     }
-
-    /// 2023.2
-//    fun folder(row: Row, getter: () -> String, setter: (String) -> Unit, project: Project) {
-//        row.textFieldWithBrowseButton(
-//            PluginBundle.get("select_a_folder"),
-//            project,
-//            FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-//            { it.path },
-//        ).bindText(getter, setter).align(Align.FILL).addValidationRule(VerifyFileDir.ERROR_MSG) {
-//            VerifyFileDir.validDirByComponent(it)
-//        }.validationOnInput {
-//            if (VerifyFileDir.validDirByComponent(it)) {
-//                return@validationOnInput ValidationInfoBuilder(it.textField).error(VerifyFileDir.ERROR_MSG)
-//            }
-//            return@validationOnInput null
-//        }
-//    }
 }
 
 enum class NameFormatRule(val format: CaseFormat, val eg: String) {

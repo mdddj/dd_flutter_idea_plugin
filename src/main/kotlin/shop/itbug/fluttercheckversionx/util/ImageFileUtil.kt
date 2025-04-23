@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBImageIcon
@@ -33,7 +34,7 @@ object ImageFileUtil {
     }
 
     fun getSize(file: VirtualFile, project: Project): Dimension {
-        val imageInfo = ImageInfoIndex.getInfo(file, project) ?: return Dimension()
+        val imageInfo = runReadAction { ImageInfoIndex.getInfo(file, project) } ?: return Dimension()
         val width = imageInfo.width
         val height = imageInfo.height
         return Dimension(width, height)

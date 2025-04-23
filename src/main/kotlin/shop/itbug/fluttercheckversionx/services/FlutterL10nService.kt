@@ -1,0 +1,294 @@
+package shop.itbug.fluttercheckversionx.services
+
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.util.ExecUtil
+import com.intellij.json.JsonLanguage
+import com.intellij.json.psi.*
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.markup.HighlighterLayer
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.readText
+import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
+import com.intellij.ui.JBColor
+import com.intellij.util.messages.Topic
+import kotlinx.coroutines.*
+import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.tools.JsonPsiFactory
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
+
+
+data class L10nKeyItem(
+    val key: String, val value: String, val property: SmartPsiElementPointer<JsonProperty>, val file: ArbFile
+) {
+    override fun toString(): String {
+        return "$key:$value"
+    }
+}
+
+data class ArbFile(val file: VirtualFile, var psiFile: PsiFile, val project: Project) {
+    override fun toString(): String {
+        return file.name
+    }
+}
+
+@Service(Service.Level.PROJECT)
+class FlutterL10nService(val project: Project) : Disposable {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val config = PluginConfig.getState(project)
+
+    private suspend fun keys(): List<L10nKeyItem> =
+        arbFiles.map { scope.async { it.readAllKeys() } }.awaitAll().toList().flatten()
+
+    var arbFiles = mutableListOf<ArbFile>() //所有 arb files
+
+
+    //检测 l18n所有的 key
+    suspend fun checkAllKeys() {
+        val folder = config.l10nFolder ?: return
+        val file = readAction { LocalFileSystem.getInstance().findFileByPath(folder) } ?: return
+        val directory = ApplicationManager.getApplication().executeOnPooledThread<PsiDirectory?> {
+            return@executeOnPooledThread runReadAction { PsiManager.getInstance(project).findDirectory(file) }
+        }.get()
+        if (directory != null) {
+            val files = readAction { directory.files }
+            for (element in files) {
+                val vf = readAction { element.virtualFile }
+                if (vf.extension == "arb") {
+                    arbFiles.add(ArbFile(vf, element, project))
+                }
+            }
+        }
+        pushTopic()
+    }
+
+    fun handleKeys(call: (keyList: List<String>) -> Unit) {
+        scope.launch {
+            val keys = keys()
+            call(getAllKeyTexts(keys))
+        }
+    }
+
+    ///获取所有的 key (去重过)
+    fun getAllKeyTexts(items: List<L10nKeyItem>): List<String> {
+        return items.map { it.key }.distinct()
+    }
+
+
+    fun runWriteThread(run: suspend () -> Unit) {
+        scope.launch(Dispatchers.IO) {
+            run()
+        }
+    }
+
+    fun runEdtThread(run: suspend () -> Unit) {
+        scope.launch(Dispatchers.Main) {
+            run.invoke()
+        }
+    }
+
+    // 执行 flutter gen-l10n命令
+    fun runFlutterGenL10nCommand() {
+        val commandLine = GeneralCommandLine("flutter", "gen-l10n")
+        commandLine.workDirectory = project.guessProjectDir()?.toNioPath()?.toFile()
+        scope.launch {
+            try {
+                ExecUtil.execAndReadLine(commandLine)
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    //插入新的 key键
+    fun insetNewKey(newKey: String) {
+        scope.launch {
+            arbFiles.map {
+                scope.async(Dispatchers.IO) {
+                    it.insetNewKey(newKey)
+                }
+            }.awaitAll()
+            //刷新ui中的 key
+            pushTopic()
+        }
+    }
+
+    fun refreshKeys() {
+        pushTopic()
+    }
+
+    private fun pushTopic() {
+        scope.launch {
+            val items = keys()
+            project.messageBus.syncPublisher(ListenKeysChanged).onKeysChanged(items, getAllKeyTexts(items), project)
+        }
+    }
+
+    //更新了 l10n配置
+    fun configEndTheL10nFolder() {
+        val folder = PluginConfig.getState(project).l10nFolder ?: return
+        if (folder.isNotBlank()) {
+            arbFiles.clear()
+            scope.launch {
+                checkAllKeys()
+            }
+        }
+    }
+
+
+    override fun dispose() {
+        scope.cancel()
+    }
+
+    interface OnL10nKeysChangedListener {
+        fun onKeysChanged(items: List<L10nKeyItem>, keysString: List<String>, project: Project)
+    }
+
+    interface OnArbFileChangedListener {
+        fun onArbFileChanged(arbFile: ArbFile)
+    }
+
+    companion object {
+        fun getInstance(project: Project) = project.service<FlutterL10nService>()
+        val ListenKeysChanged =
+            Topic<OnL10nKeysChangedListener>.create("ListenKeysChanged", OnL10nKeysChangedListener::class.java)
+        val ArbFileChanged =
+            Topic<OnArbFileChangedListener>.create("ArbFileChanged", OnArbFileChangedListener::class.java)
+    }
+}
+
+suspend fun ArbFile.readAllKeys(): List<L10nKeyItem> {
+    val props = allJsonProperties()
+    return readAction {
+        props.map { property ->
+            return@map L10nKeyItem(
+                key = property.nameString(),
+                value = property.valueString(),
+                file = this,
+                property = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(property)
+            )
+        }.toList()
+    }
+}
+
+
+fun ArbFile.allJsonProperties(): List<JsonProperty> {
+    return runReadAction {
+        val jsonFile = toJsonFile()
+        val jsonObject = jsonFile.topLevelValue as JsonObject
+        val pros = jsonObject.propertyList
+        pros
+    }
+}
+
+fun ArbFile.toJsonFile(): JsonFile {
+    psiFile = PsiFileFactory.getInstance(project).createFileFromText(JsonLanguage.INSTANCE, file.readText()) as JsonFile
+    return psiFile as JsonFile
+}
+
+
+//读取 key对应的值
+fun ArbFile.readValue(key: String): String {
+    val props = allJsonProperties()
+    return props.find { it.nameString() == key }?.valueString() ?: ""
+}
+
+//重新写入 key value
+suspend fun ArbFile.reWriteKeyValue(key: String, newValue: String) {
+    val item = readAllKeys().find { it.key == key }
+    if (item == null) {
+        //插入新key
+        insetNewKey(key, newValue)
+    }
+    if (item != null) {
+        val jsonProp = readAction { item.property.element } ?: return
+        val valueEle = readAction { jsonProp.value } as? JsonStringLiteral ?: return
+        val newEle = readAction { JsonPsiFactory.createJsonStringLiteral(project, newValue) }
+        WriteCommandAction.runWriteCommandAction(project) {
+            valueEle.replace(newEle)
+            reWriteFile()
+        }
+    }
+}
+
+
+suspend fun ArbFile.hasKey(key: String): Boolean {
+    return readAllKeys().any { it.key == key }
+}
+
+//插入新的 key
+suspend fun ArbFile.insetNewKey(newKey: String, value: String = "") {
+    //判断是不是已经存在这个 key
+    if (hasKey(newKey)) {
+        println("已经存在这个$newKey,忽略")
+        return
+    }
+    val topObj = readAction { (psiFile as JsonFile).topLevelValue as? JsonObject } ?: return
+    val newEle = readAction { JsonPsiFactory.createNewJsonProp(project, newKey, value) }
+    WriteCommandAction.runWriteCommandAction(project) {
+        JsonPsiUtil.addProperty(topObj, newEle, false)
+        reWriteFile()
+    }
+}
+
+
+private fun ArbFile.reWriteFile() {
+    CodeStyleManager.getInstance(project).reformat(psiFile)
+    val document = runReadAction { psiFile.fileDocument }
+    FileDocumentManager.getInstance().saveDocument(document)
+    VfsUtil.saveText(file, psiFile.text)
+    //重新替换 psiFile
+    toJsonFile()
+    project.messageBus.syncPublisher(FlutterL10nService.ArbFileChanged).onArbFileChanged(this)
+}
+
+
+fun ArbFile.moveToOffset(key: String, editor: Editor) {
+    FlutterL10nService.getInstance(project).runEdtThread {
+        val keys = readAllKeys()
+        val find = keys.find { it.key == key } ?: return@runEdtThread
+        val ele = readAction { find.property.element } ?: return@runEdtThread
+        val markup = editor.markupModel
+        editor.caretModel.moveToOffset(ele.startOffset)
+        val highlighter = markup.addRangeHighlighter(
+            ele.startOffset,
+            ele.endOffset,
+            HighlighterLayer.CARET_ROW + 1,
+            TextAttributes().apply {
+                backgroundColor = JBColor.blue
+            },
+            HighlighterTargetArea.EXACT_RANGE
+        )
+        Timer().scheduleAtFixedRate(0, 1000) {
+            markup.removeHighlighter(highlighter)
+            this.cancel()
+        }
+    }
+
+}
+
+private fun JsonProperty.nameString(): String {
+    return name.replace("\"", "")
+}
+
+
+private fun JsonProperty.valueString(): String {
+    return (value as? JsonStringLiteral)?.value?.replace("\"", "") ?: ""
+}

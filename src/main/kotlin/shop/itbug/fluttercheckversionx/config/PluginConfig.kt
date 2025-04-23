@@ -19,6 +19,7 @@ class PluginSetting : BaseState() {
     var enableAssetsPreviewAction by property(true)
     var assetsPreviewImageSize by property(120)
     var assetDirectory by string()
+    var l10nFolder by string("") //flutter多语言 arb 目录
 }
 
 @Service(Service.Level.PROJECT)
@@ -34,11 +35,21 @@ class PluginConfig(val project: Project) : SimplePersistentStateComponent<Plugin
         }
     }
 
+    fun initL10nFolder() {
+        if (state.l10nFolder.isNullOrBlank()) {
+            state.l10nFolder =
+                project.guessProjectDir()?.findChild("lib")?.findChild("l10n")?.path ?: (project.guessProjectDir()
+                    ?.findChild("lib")?.path ?: project.guessProjectDir()?.path)
+            loadState(state)
+        }
+    }
+
 
     companion object {
         fun getInstance(project: Project): PluginConfig {
             val config = project.service<PluginConfig>()
             config.initAssetsDirectory()
+            config.initL10nFolder()
             return config
         }
 

@@ -65,8 +65,8 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
     private val pubCacheSizeComponent = MyCheckPubCacheSizeComponent(project)
 
     init {
+        Disposer.register(PubCacheSizeCalcService.getInstance(project), pubCacheSizeComponent)
 
-        Disposer.register(fileEditor, pubCacheSizeComponent)
         myLinksPanel.add(pubCacheSizeComponent)
 
         icon(MyIcons.dartPluginIcon)

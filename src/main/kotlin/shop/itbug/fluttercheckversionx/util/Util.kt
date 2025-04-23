@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessNotCreatedException
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -66,10 +67,39 @@ fun PsiFile.findPsiElementByText(findText: String): PsiElement? {
 }
 
 fun PsiElement.getRelativePoint(editor: Editor): RelativePoint {
-    val startPoint: Point = editor.offsetToXY(textRange.startOffset)
-    val endPoint: Point = editor.offsetToXY(textRange.endOffset)
-    val x: Int = (startPoint.x + endPoint.x) / 2
-    val y: Int = startPoint.y
+    val startPoint = editor.offsetToXY(textRange.startOffset)
+    val endPoint = editor.offsetToXY(textRange.endOffset)
+    val lineHeight = editor.lineHeight
+
+    // 计算水平中点
+    val x = (startPoint.x + endPoint.x) / 2
+
+    // 计算垂直中点：起始 Y 坐标 + 半行高
+    val y = startPoint.y + lineHeight / 2
+
+    return RelativePoint(editor.contentComponent, Point(x, y))
+}
+
+///多行的情况
+fun PsiElement.getMultiLineRelativePoint(editor: Editor): RelativePoint {
+    val textRange = this.textRange
+    val startVisual = editor.offsetToVisualPosition(textRange.startOffset)
+    val endVisual = editor.offsetToVisualPosition(textRange.endOffset)
+
+    // 计算中间行位置
+    val midLine = (startVisual.line + endVisual.line) / 2
+    val midVisual = VisualPosition(midLine, 0)
+
+    // 获取该行中间列的 X 坐标
+    val midPoint = editor.visualPositionToXY(midVisual)
+    val lineEnd = editor.visualPositionToXY(VisualPosition(midLine, Int.MAX_VALUE))
+
+    // 计算行水平中点
+    val x = (midPoint.x + lineEnd.x) / 2
+
+    // 垂直中点
+    val y = midPoint.y + editor.lineHeight / 2
+
     return RelativePoint(editor.contentComponent, Point(x, y))
 }
 

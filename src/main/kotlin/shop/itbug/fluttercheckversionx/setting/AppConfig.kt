@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.setting
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
@@ -13,13 +12,15 @@ import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.dialog.MyRowBuild
 import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.services.FlutterL10nService
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import javax.swing.JComponent
 
 //
-class AppConfig(val project: Project) : Configurable, Disposable, SearchableConfigurable {
+class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
 
     var model = PluginStateService.appSetting
+    val disposer = Disposer.newDisposable()
 
     val pluginConfig: PluginSetting = PluginConfig.getState(project)
 
@@ -29,7 +30,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
     private var generateSettingPanel =
         GeneraAssetsSettingPanel(
             project,
-            settingModel = generaAssetsSettingPanel, parentDisposable = this@AppConfig,
+            settingModel = generaAssetsSettingPanel, parentDisposable = disposer,
         ) {
             generaAssetsSettingPanelModelIs = it
         }
@@ -124,6 +125,21 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
                 }
             }
 
+            //多语言设置
+            group("flutter l10n") {
+                row("arb file directory") {
+                    MyRowBuild.folder(
+                        this,
+                        { pluginConfig.l10nFolder ?: "" },
+                        { pluginConfig.l10nFolder = it },
+                        project
+                    )
+                }
+                row {
+                    comment(Links.generateDocCommit(Links.l10nDoc))
+                }
+            }
+
             //显示打赏action
             group(PluginBundle.get("reward")) {
                 row {
@@ -141,7 +157,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
         }
     }
 
-    val dialog: DialogPanel = settingPanel(project, model, dioSetting, this) {
+    val dialog: DialogPanel = settingPanel(project, model, dioSetting, disposer) {
         model = it
     }
 
@@ -160,6 +176,7 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
         DioListingUiConfig.getInstance().loadState(dioSetting)
         GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
         PluginConfig.changeState(project) { pluginConfig }
+        FlutterL10nService.getInstance(project).configEndTheL10nFolder()
     }
 
     override fun getDisplayName(): String {
@@ -176,13 +193,9 @@ class AppConfig(val project: Project) : Configurable, Disposable, SearchableConf
         pluginConfigPanel.reset()
     }
 
-    override fun dispose() {
-
-    }
-
 
     override fun disposeUIResources() {
-        Disposer.dispose(this)
-        super<Configurable>.disposeUIResources()
+        Disposer.dispose(disposer)
+        println("app config disposed...disposeUIResources()")
     }
 }

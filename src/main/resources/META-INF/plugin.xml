@@ -21,8 +21,13 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
+        <intentionAction>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.L10nKeyExtractIntentionAction</className>
+            <language>Dart</language>
+        </intentionAction>
 
         <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
+
         <annotator language="yaml"
                    implementationClass="shop.itbug.fluttercheckversionx.annotator.PubspecPackageDiscontinuedAnnotator"/>
 
@@ -388,6 +393,22 @@
             <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
         </group>
 
+
+        <action id="FlutterL10nWindowTreeRefreshAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nWindowTreeRefreshAction"
+                text="Refresh keys"/>
+        <action id="FlutterL10nSettingChangeAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nSettingChangeAction"
+                text="Change l10n folder"/>
+        <action id="FlutterL10nRunGenAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRunGenAction"
+                text="Run Flutter gen-l10n"/>
+        <group id="flutter-l10n-right-menu">
+            <reference ref="FlutterL10nRunGenAction"/>
+            <reference ref="FlutterL10nWindowTreeRefreshAction"/>
+            <separator/>
+            <reference ref="FlutterL10nSettingChangeAction"/>
+        </group>
 
     </actions>
 
