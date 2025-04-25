@@ -88,7 +88,11 @@ object SwingUtil {
         if (!isFile) return null
 
         // 使用 ImageIcon 读取图片并缩放
-        var image: Image = ImageLoader.loadCustomIcon(file) ?: return null
+        var image: Image = try {
+            ImageLoader.loadCustomIcon(file) ?: return null
+        } catch (_: Exception) {
+            return null
+        }
 
         // 确保图片的宽度和高度是正值
         if (image.getWidth(null) <= 0 || image.getHeight(null) <= 0) {

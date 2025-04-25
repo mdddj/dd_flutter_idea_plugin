@@ -410,6 +410,12 @@
             <reference ref="FlutterL10nSettingChangeAction"/>
         </group>
 
+        <action id="FlutterL10nOpenFileWithKeyAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nOpenFileWithKeyAction"
+                text="Show in file" icon="AllIcons.General.Locate"/>
+        <group id="FlutterL10nEditorPanelActionGroup">
+            <reference ref="FlutterL10nOpenFileWithKeyAction"/>
+        </group>
     </actions>
 
     <actions>

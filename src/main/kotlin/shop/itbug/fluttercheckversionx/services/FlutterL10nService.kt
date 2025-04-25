@@ -6,6 +6,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.json.psi.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
@@ -100,7 +101,7 @@ class FlutterL10nService(val project: Project) : Disposable {
     }
 
     fun runEdtThread(run: suspend () -> Unit) {
-        scope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.EDT) {
             run.invoke()
         }
     }
@@ -199,7 +200,8 @@ fun ArbFile.allJsonProperties(): List<JsonProperty> {
 }
 
 fun ArbFile.toJsonFile(): JsonFile {
-    psiFile = PsiFileFactory.getInstance(project).createFileFromText(JsonLanguage.INSTANCE, file.readText()) as JsonFile
+    val text = ApplicationManager.getApplication().executeOnPooledThread<String> { file.readText() }.get()
+    psiFile = PsiFileFactory.getInstance(project).createFileFromText(JsonLanguage.INSTANCE, text) as JsonFile
     return psiFile as JsonFile
 }
 
@@ -266,10 +268,12 @@ fun ArbFile.moveToOffset(key: String, editor: Editor) {
         val find = keys.find { it.key == key } ?: return@runEdtThread
         val ele = readAction { find.property.element } ?: return@runEdtThread
         val markup = editor.markupModel
-        editor.caretModel.moveToOffset(ele.startOffset)
+        val startOffset = readAction { ele.startOffset }
+        val endOffset = readAction { ele.endOffset }
+        editor.caretModel.moveToOffset(startOffset)
         val highlighter = markup.addRangeHighlighter(
-            ele.startOffset,
-            ele.endOffset,
+            startOffset,
+            endOffset,
             HighlighterLayer.CARET_ROW + 1,
             TextAttributes().apply {
                 backgroundColor = JBColor.blue
