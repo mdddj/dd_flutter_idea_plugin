@@ -1,10 +1,9 @@
-.ddtr.json
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-local.properties
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -36,12 +35,8 @@ bin/
 /nbdist/
 /.nb-gradle/
 
-extend/FlutterX-ai/build
-
 ### VS Code ###
 .vscode/
 
 ### Mac OS ###
 .DS_Store
-
-.intellijPlatform/

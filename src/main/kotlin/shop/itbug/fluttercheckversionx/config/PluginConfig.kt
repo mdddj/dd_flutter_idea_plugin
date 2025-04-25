@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.config
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -30,7 +31,9 @@ class PluginConfig(val project: Project) : SimplePersistentStateComponent<Plugin
     fun initAssetsDirectory() {
         if (state.assetDirectory.isNullOrBlank()) {
             state.assetDirectory =
-                (project.guessProjectDir()?.findChild("assets")?.path) ?: project.guessProjectDir()?.path
+                ApplicationManager.getApplication().executeOnPooledThread<String> {
+                    (project.guessProjectDir()?.findChild("assets")?.path) ?: project.guessProjectDir()?.path
+                }.get()
             loadState(state)
         }
     }
@@ -38,8 +41,10 @@ class PluginConfig(val project: Project) : SimplePersistentStateComponent<Plugin
     fun initL10nFolder() {
         if (state.l10nFolder.isNullOrBlank()) {
             state.l10nFolder =
-                project.guessProjectDir()?.findChild("lib")?.findChild("l10n")?.path ?: (project.guessProjectDir()
-                    ?.findChild("lib")?.path ?: project.guessProjectDir()?.path)
+                ApplicationManager.getApplication().executeOnPooledThread<String> {
+                    project.guessProjectDir()?.findChild("lib")?.findChild("l10n")?.path ?: (project.guessProjectDir()
+                        ?.findChild("lib")?.path ?: project.guessProjectDir()?.path)
+                }.get()
             loadState(state)
         }
     }

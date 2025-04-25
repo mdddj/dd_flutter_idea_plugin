@@ -12,7 +12,7 @@ val pluginVersion: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.4.0"
+    id("org.jetbrains.intellij.platform") version "2.5.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }

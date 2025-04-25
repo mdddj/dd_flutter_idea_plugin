@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [5.5.1] - 2025-04-23
+## [5.5.2] - 2025-04-23
 
 * New features:  add run `flutter gen-l10n` command action (l10n)
 * New features: Extract string to l10n key,

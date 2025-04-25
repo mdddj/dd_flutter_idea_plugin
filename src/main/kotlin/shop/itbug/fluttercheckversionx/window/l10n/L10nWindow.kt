@@ -1,26 +1,21 @@
 package shop.itbug.fluttercheckversionx.window.l10n
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.dnd.aware.DnDAwareTree
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.ui.customization.CustomizationUtil
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataSink
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.UiDataProvider
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.*
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.components.panels.VerticalLayout
-import com.intellij.ui.dsl.builder.*
-import com.intellij.util.Alarm
-import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.intellij.util.ui.tree.TreeUtil
@@ -31,10 +26,11 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.*
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
-import java.awt.Font
 import javax.swing.JPanel
 import javax.swing.JTree
 import javax.swing.SwingUtilities
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.event.TreeSelectionListener
 import javax.swing.tree.DefaultMutableTreeNode
@@ -45,9 +41,9 @@ import javax.swing.tree.DefaultTreeModel
  */
 class L10nWindow(val project: Project) : BorderLayoutPanel(), Disposable, FlutterL10nService.OnL10nKeysChangedListener,
     TreeSelectionListener, FlutterL10nService.OnArbFileChangedListener, UiDataProvider {
-    val panel = MyPanel()
-    val editorContainer = JBScrollPane(panel)
-    val myTree = MyL10nKeysTree(project)
+    private val panel = MyPanel()
+    private val editorContainer = JBScrollPane(panel)
+    private val myTree = MyL10nKeysTree(project)
     private val service = FlutterL10nService.getInstance(project)
     private val sp = JBSplitter().apply {
         firstComponent = myTree.actionToolbar(project).apply {
@@ -67,8 +63,6 @@ class L10nWindow(val project: Project) : BorderLayoutPanel(), Disposable, Flutte
         SwingUtilities.invokeLater {
             initTreeModel()
         }
-
-
     }
 
 
@@ -89,7 +83,9 @@ class L10nWindow(val project: Project) : BorderLayoutPanel(), Disposable, Flutte
     }
 
 
-    fun createTreeModel(keys: List<String>): DefaultTreeModel {
+    fun getTree() = myTree
+
+    private fun createTreeModel(keys: List<String>): DefaultTreeModel {
         val model = DefaultTreeModel(DefaultMutableTreeNode("l10n keys"))
         val root = model.root as DefaultMutableTreeNode
         keys.forEach {
@@ -99,10 +95,14 @@ class L10nWindow(val project: Project) : BorderLayoutPanel(), Disposable, Flutte
     }
 
     fun changeEditorPanel(key: String) {
+        panel.components.filterIsInstance<FlutterL10nKeyEditPanel>().forEach {
+            Disposer.dispose(it)
+        }
         panel.removeAll()
         val arbFiles = service.arbFiles
         arbFiles.forEach {
-            panel.add(editorPanel(it, key, this))
+//            panel.add(editorPanel(it, key, this))
+            panel.add(FlutterL10nKeyEditPanel(it, key, myTree, this))
         }
         panel.revalidate()
         panel.repaint()
@@ -173,71 +173,68 @@ class MyL10nKeysTree(project: Project) : DnDAwareTree(DefaultMutableTreeNode()),
         }
     }
 
-    companion object {
-    }
+    companion object {}
 }
 
 
-//编辑区域
-private fun editorPanel(arbFile: ArbFile, key: String, parentDisposable: Disposable): DialogPanel {
+///键编辑区域
+class FlutterL10nKeyEditPanel(
+    val arbFile: ArbFile,
+    val key: String,
+    val tree: MyL10nKeysTree,
+    parentDisposable: Disposable
+) :
+    BorderLayoutPanel(),
+    UiDataProvider, Disposable, DocumentListener {
     val vf = arbFile.file
     val project = arbFile.project
-    var valueString = arbFile.readValue(key)
+    val textArea = JBTextArea(arbFile.readValue(key)).apply {
+        rows = 3
+    }
+    val actionGroup = ActionManager.getInstance().getAction("FlutterL10nEditorPanelActionGroup") as DefaultActionGroup
+    val toolbar = ActionManager.getInstance().createActionToolbar("L10nEditPanel", actionGroup, true).apply {
+        targetComponent = this@FlutterL10nKeyEditPanel
+    }
+    val panel: JPanel = FormBuilder.createFormBuilder()
+        .addLabeledComponent(JBLabel(vf.name), textArea, true)
+        .addComponent(toolbar.component)
+        .panel
 
 
-    val showInProjectViewAction = object : DumbAwareAction("Show In Project View", "", AllIcons.General.Locate) {
-        override fun actionPerformed(e: AnActionEvent) {
-            ProjectView.getInstance(project).select(null, vf, true)
+    init {
+        Disposer.register(parentDisposable, this)
+        addToCenter(panel)
+        textArea.document.addDocumentListener(this)
+        PopupHandler.installPopupMenu(this, "FlutterL10nEditorPanelActionGroup", "L10nEditPanel")
+    }
+
+
+    override fun uiDataSnapshot(sink: DataSink) {
+
+    }
+
+    override fun dispose() {
+        textArea.document.removeDocumentListener(this)
+    }
+
+    fun reWriteTextToFile() {
+        FlutterL10nService.getInstance(project).runWriteThread {
+            arbFile.reWriteKeyValue(key, textArea.text)
         }
     }
-    val openFileAction = object : DumbAwareAction("Open File", "", AllIcons.General.Show) {
-        override fun actionPerformed(e: AnActionEvent) {
-            val editorArr = FileEditorManager.getInstance(project).openFile(vf, true)
-            if (editorArr.isNotEmpty()) {
-                val edit = editorArr.first() as? PsiAwareTextEditorImpl ?: return
-                arbFile.moveToOffset(key, edit.editor)
-            }
-        }
+
+    override fun insertUpdate(e: DocumentEvent?) {
+        reWriteTextToFile()
     }
 
-
-    val myPanel = panel {
-        row {
-            label(vf.name).component.apply {
-                font = JBFont.label().deriveFont(Font.BOLD)
-            }
-            actionButton(openFileAction)
-            actionButton(showInProjectViewAction)
-        }
-        row {
-            textArea().rows(4).align(Align.FILL).bindText({ valueString }, { valueString = it })
-        }
-
+    override fun removeUpdate(e: DocumentEvent?) {
+        reWriteTextToFile()
     }
 
-
-    val newDisposable = Disposer.newDisposable()
-    Disposer.register(parentDisposable, newDisposable)
-    myPanel.registerValidators(newDisposable)
-    val alarm = Alarm(newDisposable)
-    fun addListenValueChange() {
-        alarm.addRequest({
-            if (myPanel.isModified()) {
-                myPanel.apply()
-                FlutterL10nService.getInstance(project).runWriteThread {
-                    arbFile.reWriteKeyValue(key, valueString)
-                }
-            }
-            addListenValueChange()
-        }, 1000)
-
-    }
-    SwingUtilities.invokeLater {
-        addListenValueChange()
+    override fun changedUpdate(e: DocumentEvent?) {
+        reWriteTextToFile()
     }
 
-
-    return myPanel
 }
 
 
@@ -255,3 +252,5 @@ private fun MyL10nKeysTree.actionToolbar(project: Project): JPanel {
 
     return panel
 }
+
+
