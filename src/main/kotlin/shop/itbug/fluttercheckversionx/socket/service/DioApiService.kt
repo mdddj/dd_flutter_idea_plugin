@@ -11,12 +11,9 @@ import org.smartboot.socket.extension.processor.AbstractMessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
-import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
 import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService.Companion.getInstance
-import shop.itbug.fluttercheckversionx.window.logger.LogKeys
-import shop.itbug.fluttercheckversionx.window.logger.MyLogInfo
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.APP)
@@ -101,8 +98,8 @@ class DioApiService : Disposable {
 
         override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
             try {
+                // dio request
                 if (jsonObject != null && jsonObject["projectName"] != null) {
-
                     val model =
                         getInstance().gson.fromJson(nativeMessage, Request::class.java)
                     handleModel(model)
@@ -214,7 +211,6 @@ private class MyHeartCommon : MyHeartPlugin<String>(15, TimeUnit.SECONDS) {
         msg?.let {
             val json = Gson().fromJson(it, HashMap::class.java)
             if (json["type"] == "ping") {
-                MyLoggerEvent.fire(MyLogInfo(message = msg, key = LogKeys.ping))
                 return true
             }
         }

@@ -2,59 +2,51 @@ package shop.itbug.fluttercheckversionx.window.logger
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
+import org.smartboot.socket.transport.AioSession
+import shop.itbug.fluttercheckversionx.form.sub.JsonValueRender
 import shop.itbug.fluttercheckversionx.listeners.MyLoggerEvent
-import java.awt.Component
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import java.time.LocalDateTime
-import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
 import javax.swing.JList
-import javax.swing.ListCellRenderer
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 data class MyLogKey(val key: String)
-data class MyLogInfo(val message: String, val time: LocalDateTime? = LocalDateTime.now(), val key: MyLogKey)
-object LogKeys {
-    val ping = MyLogKey(key = "Socket Ping")
-}
+data class MyLogInfo(val message: Any?, val time: LocalDateTime? = LocalDateTime.now(), val key: MyLogKey)
+
 
 ///日志窗口
-class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionListener, Disposable {
-
-
-    ///日志列表
-    private val loggers = mutableListOf<MyLogInfo>()
+class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionListener, Disposable,
+    DioApiService.HandleFlutterApiModel {
 
 
     ///keys 窗口
-    private val keysPanel = JBList<MyLogKey>()
+    private val keysPanel = JBList(DefaultListModel<MyLogInfo>())
 
-    ///values 窗口
-    private val logPanel = JBList<MyLogInfo>()
+    private val jsonRender = JsonValueRender(project)
 
-
-    private val loggerGroup: Map<MyLogKey, List<MyLogInfo>> get() = loggers.groupBy { it.key }
 
     ///分割窗口
     private val sp = OnePixelSplitter().apply {
         firstComponent = JBScrollPane(keysPanel).apply {
             this.border = JBUI.Borders.customLine(JBColor.border(), 0, 0, 0, 0)
         }
-        secondComponent = JBScrollPane(logPanel).apply {
+        secondComponent = JBScrollPane(jsonRender).apply {
             this.border = JBUI.Borders.customLine(JBColor.border(), 0, 0, 0, 0)
         }
         splitterProportionKey = "logger-panel-key"
     }
 
     init {
+        register()
         addToCenter(sp)
         MyLoggerEvent.listen(this) {
             addLog(it)
@@ -63,47 +55,39 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
     }
 
 
+    private fun getModel() = keysPanel.model as DefaultListModel
+
     private fun addLog(log: MyLogInfo) {
-        loggers.add(log)
-        reSetPanel()
+        getModel().add(0, log)
+    }
+
+    override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
+        super.handleFlutterAppMessage(nativeMessage, jsonObject, aio)
+        val type = jsonObject?.get("type") as? String ?: return
+        if (type == "customJsonLog") {
+            val value = jsonObject["jsonDataString"] as? String ?: return
+            val obj = DioApiService.getInstance().gson.fromJson(value, Map::class.java)
+            val title = obj["title"] as? String ?: return
+            val data = obj["data"]
+            MyLoggerEvent.fire(MyLogInfo(message = data, key = MyLogKey(title)))
+
+        }
+
+
     }
 
 
     private fun initUi() {
         keysPanel.cellRenderer = MyLogKeysRenderUi()
-        logPanel.cellRenderer = LogRenderUI()
 
         keysPanel.addListSelectionListener(this)
-    }
-
-
-    private fun reSetPanel() {
-
-        val preSelect = keysPanel.selectedValue
-
-        keysPanel.model = DefaultListModel<MyLogKey>().apply {
-            addAll(loggerGroup.keys)
-        }
-        if (preSelect != null) {
-            keysPanel.setSelectedValue(preSelect, true)
-        }
-        refreshSelectLogs()
-
     }
 
 
     ///刷新右侧面板的日志列表
     private fun refreshSelectLogs() {
         val selectKey = keysPanel.selectedValue
-        if (selectKey != null) {
-            val logs = loggerGroup[selectKey]
-            if (logs?.isNotEmpty() == true) {
-                logPanel.model = DefaultListModel<MyLogInfo>().apply {
-                    addAll(logs)
-                }
-            }
-
-        }
+        jsonRender.changeValue(selectKey.message)
 
     }
 
@@ -117,47 +101,25 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
 
     override fun dispose() {
         println("log window disposed")
+        removeMessageProcess()
     }
 
 
 }
 
-private const val borderSize = 12
 
-class LogRenderUI : ListCellRenderer<MyLogInfo> {
-
-    override fun getListCellRendererComponent(
-        list: JList<out MyLogInfo>?,
-        value: MyLogInfo?,
-        index: Int,
-        isSelected: Boolean,
-        cellHasFocus: Boolean
-    ): Component {
-        return panel {
-            row {
-                label(value?.message ?: "")
-            }
-        }.withBorder(BorderFactory.createEmptyBorder(borderSize / 2, borderSize, borderSize / 2, borderSize)).apply {
-            background = if (isSelected) UIUtil.getListBackground(true, false) else UIUtil.getPanelBackground()
+class MyLogKeysRenderUi : ColoredListCellRenderer<MyLogInfo>() {
+    override fun customizeCellRenderer(
+        p0: JList<out MyLogInfo?>,
+        p1: MyLogInfo?,
+        p2: Int,
+        p3: Boolean,
+        p4: Boolean
+    ) {
+        p1?.let {
+            append(it.key.key)
         }
     }
-}
 
-class MyLogKeysRenderUi : ListCellRenderer<MyLogKey> {
 
-    override fun getListCellRendererComponent(
-        list: JList<out MyLogKey>?,
-        value: MyLogKey?,
-        index: Int,
-        isSelected: Boolean,
-        cellHasFocus: Boolean
-    ): Component {
-        return panel {
-            row {
-                label(value?.key ?: "")
-            }
-        }.withBorder(BorderFactory.createEmptyBorder(borderSize / 2, borderSize, borderSize / 2, borderSize)).apply {
-            background = if (isSelected) UIUtil.getListBackground(true, false) else UIUtil.getPanelBackground()
-        }
-    }
 }

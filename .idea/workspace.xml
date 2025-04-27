@@ -5,48 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="新能优化&#10;bug修复&#10;release5.4.3">
-      <change beforePath="$PROJECT_DIR$/.fleet/run.json" beforeDir="false" afterPath="$PROJECT_DIR$/.fleet/run.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/DDGenerateAssetsClassConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/FlutterxFullConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/kotlinc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/.run/Run IDE with Plugin.run.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/build.gradle.kts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/settings.gradle.kts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/src/main/kotlin/shop/itbug/flutterx/ai/flutterxai/config/AIDataManager.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/src/main/kotlin/shop/itbug/flutterx/ai/flutterxai/model/AIModel.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/src/main/resources/META-INF/plugin.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/extend/FlutterX-ai/src/main/resources/META-INF/pluginIcon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioRequestBodyToFreezedAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioRequestBodyToFreezedAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/context/HelpContextAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/context/HelpContextAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/imagePreview/toolbar/FlutterXAssetsPanelRefreshAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/imagePreview/toolbar/FlutterXAssetsPanelRefreshAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/tool/FlutterL10nOpenFileWithKeyAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/tool/FlutterL10nOpenFileWithKeyAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/constance/StringConstance.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/constance/StringConstance.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hive/widget.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hive/widget.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/FlutterL10nService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/FlutterL10nService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hive/component/HiveBoxListComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hive/component/HiveBoxListComponent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hive/component/HiveValueComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hive/component/HiveValueComponent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/android/MigrateWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/android/MigrateWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/preview/ImagesPreviewWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/preview/ImagesPreviewWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/privacy/PrivacyScanWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/privacy/PrivacyScanWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/logger/LoggerWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/logger/LoggerWindow.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/SpWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/SpWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1700,7 +1665,7 @@
       <workItem from="1745657656997" duration="331000" />
       <workItem from="1745732473497" duration="40000" />
       <workItem from="1745732527546" duration="7675000" />
-      <workItem from="1745740286066" duration="1960000" />
+      <workItem from="1745740286066" duration="7324000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>

@@ -63,10 +63,11 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
     }
 
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
-        if (jsonObject != null) {
+        val jsonDataString = jsonObject?.get("jsonDataString") as? String
+        if (jsonObject != null && jsonDataString != null) {
             val type = jsonObject["type"]
             if (type == SpManager.KEYS || type == SpManager.VALUE_GET) {
-                SpManager(nativeMessage).handle()
+                SpManager(jsonDataString).handle()
             }
         }
 

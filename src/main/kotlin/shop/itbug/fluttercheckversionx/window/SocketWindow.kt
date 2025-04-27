@@ -67,7 +67,6 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
         //logo 窗口
         val logWindow = LoggerWindow(project)
-
         val logContent = instance.createContent(logWindow, "Log", false)
         toolWindow.contentManager.addContent(logContent)
         logContent.setDisposer(logWindow)
