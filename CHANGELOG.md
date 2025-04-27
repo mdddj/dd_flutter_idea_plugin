@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.5.3] - 2025-04-25
+
+* Fix known bugs
+
 ## [5.5.2] - 2025-04-23
 
 * New features:  add run `flutter gen-l10n` command action (l10n)

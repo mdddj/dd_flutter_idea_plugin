@@ -36,19 +36,17 @@ class HiveWidget(project: Project, toolWindow: ToolWindow) : BorderLayoutPanel()
     private val toolbar = ActionManager.getInstance().createActionToolbar(
         "Hive Tool Bar",
         (ActionManager.getInstance()
-            .getAction("shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup") as DefaultActionGroup).apply {
-            add(HelpContextAction(SiteDocument.Hive))
-        },
+            .getAction("shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup") as DefaultActionGroup),
         true
-    ).apply {
-        targetComponent = toolWindow.component
-    }
+    )
 
     override fun dispose() {
         println("hive widget disposed")
     }
 
     init {
+        toolbar.targetComponent = toolWindow.component
+        putClientProperty(HelpContextAction.DataKey, SiteDocument.Hive)
         addToTop(toolbar.component)
         addToCenter(mainPanel)
         Disposer.register(this, boxAndKeys)

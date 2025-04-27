@@ -24,6 +24,7 @@ class FlutterL10nOpenFileWithKeyAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
+
         e.presentation.isVisible =
             e.getData(PlatformDataKeys.CONTEXT_COMPONENT) is FlutterL10nKeyEditPanel && e.project != null
     }

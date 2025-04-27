@@ -1,24 +1,19 @@
 package shop.itbug.fluttercheckversionx.window.privacy
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ColoredText
 import com.intellij.ui.SimpleTextAttributes
@@ -26,16 +21,15 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
+import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
-import javax.swing.DefaultListModel
-import javax.swing.JButton
-import javax.swing.JList
-import javax.swing.JToolBar
-
+import javax.swing.*
 
 private const val defaultPrivacyFileText = """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,13 +51,13 @@ private const val defaultPrivacyFileText = """
 private const val privacyFileName = "PrivacyInfo.xcprivacy"
 
 ///iOS隐私扫描工具
-class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
 
 
+class PrivacyScanWindow(val project: Project) : BorderLayoutPanel(), Disposable, ActionListener {
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val tipLabel = JBLabel(" " + PluginBundle.get("privacy_info_tips"))
 
-    private val pathList = JBList<VirtualFile>().apply {
-        model = ListModel(emptyList())
+    private val pathList = JBList(ListModel()).apply {
         cellRenderer = ListRender()
         addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
@@ -89,11 +83,10 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
     }
 
     init {
-
         addToTop(toolbar)
         addToCenter(pathList.scroll())
-        scanPackages()
-        button.addActionListener {
+        button.addActionListener(this)
+        SwingUtilities.invokeLater {
             scanPackages()
         }
     }
@@ -102,47 +95,102 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
      * 扫描第三方依赖包
      */
     private fun scanPackages() {
-        pathList.model = ListModel(emptyList())
-        val list = mutableListOf<VirtualFile>()
         val files = ProjectRootManager.getInstance(project).orderEntries().librariesOnly().roots(OrderRootType.CLASSES)
-        for (file in files.roots) {
-            if (file.isDirectory) {
-                ApplicationManager.getApplication().executeOnPooledThread {
-                    val iosDir = file.findChild("ios")
-                    ApplicationManager.getApplication().invokeLater {
-                        if (iosDir != null) {
-                            list.add(file)
-                            pathList.model = ListModel(list)
-                        }
-                    }
-                }
+        coroutineScope.launch {
+            files.roots.map { coroutineScope.async(Dispatchers.IO) { addPackageModel(it) } }.awaitAll()
+        }
+    }
 
+    private fun addPackageModel(file: VirtualFile) {
+        if (file.isDirectory) {
+            val packageRoot = FlutterPackageRoot(file)
+            val iosDir = packageRoot.getIosDirectory()
+            packageRoot.findPrivacyFile()
+            if (iosDir != null) {
+                getListModel().addElement(packageRoot)
             }
         }
     }
 
 
-    private inner class ListModel(val files: List<VirtualFile>) : DefaultListModel<VirtualFile>() {
-        init {
-            addAll(files)
+    private inner class ListModel() : DefaultListModel<FlutterPackageRoot>() {
+
+        fun getAllFiles(): List<FlutterPackageRoot> {
+            return this.elements().toList()
         }
     }
 
-    private inner class ListRender : ColoredListCellRenderer<VirtualFile>() {
+    private inner class FlutterPackageRoot(val file: VirtualFile) {
+        var privacyFile: VirtualFile? = null
+        var iosFolder: VirtualFile? = null
+
+        //获取 ios目录
+        fun getIosDirectory(): VirtualFile? {
+            iosFolder = file.readChild("ios")
+            return iosFolder
+        }
+
+
+        //在 ios目录下查找隐私文件
+        private fun findPrivacyFileInIosFolder(): VirtualFile? {
+            return getIosDirectory()?.readChild(privacyFileName)
+        }
+
+        //在 resource目录下查找隐私文件
+        private fun findPrivacyFileInResource(): VirtualFile? {
+            return getIosDirectory()?.readChild("Resources")?.readChild(privacyFileName)
+        }
+
+        // 查找隐私文件
+        fun findPrivacyFile(): VirtualFile? {
+            privacyFile = findPrivacyFileInIosFolder() ?: findPrivacyFileInResource()
+            return privacyFile
+        }
+
+        //创建隐私文件
+        suspend fun cratePrivacyFile() {
+            iosFolder?.let {
+                val iosPsiDirectory: PsiDirectory =
+                    readAction { PsiManager.getInstance(project).findDirectory(it) } ?: return
+                val privacyFile: PsiFile = readAction {
+                    PsiFileFactory.getInstance(project).createFileFromText(
+                        privacyFileName, PlainTextFileType.INSTANCE,
+                        defaultPrivacyFileText
+                    )
+                }
+                withContext(Dispatchers.EDT) {
+                    WriteAction.compute<PsiElement, Throwable> {
+                        iosPsiDirectory.add(privacyFile)
+                    }
+                    LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(file.path))
+                }
+
+            }
+        }
+
+        private fun VirtualFile.readChild(name: String): VirtualFile? =
+            ApplicationManager.getApplication().executeOnPooledThread<VirtualFile?> { this.findChild(name) }.get()
+
+
+    }
+
+    private inner class ListRender : ColoredListCellRenderer<FlutterPackageRoot>() {
         override fun customizeCellRenderer(
-            p0: JList<out VirtualFile>,
-            p1: VirtualFile?,
+            p0: JList<out FlutterPackageRoot?>,
+            p1: FlutterPackageRoot?,
             p2: Int,
             p3: Boolean,
             p4: Boolean
         ) {
-            p1?.let {
+
+            val vf = p1?.file ?: return
+            vf.let {
                 append(
                     it.name,
                     SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES
                 )
                 append("\t\t")
-                val privacyFile = it.findPrivacyFile()
+                val privacyFile = p1.privacyFile
                 if (privacyFile != null) {
                     //有隐私政策文件
                     val attr = SimpleTextAttributes(
@@ -172,7 +220,7 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
 
     private fun openOnEditor(index: Int) {
         val file = (this.pathList.model as ListModel).elementAt(index)
-        val pf = file.findPrivacyFile()
+        val pf = file.privacyFile
         pf?.let {
             FileEditorManager.getInstance(project).openFile(it)
         }
@@ -183,84 +231,39 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel() {
      * 批量插件默认的
      */
     private fun batchInsert() {
-        ApplicationManager.getApplication().invokeLater {
-            val result = Messages.showOkCancelDialog(
-                project,
-                PluginBundle.get("are_you_ok_betch_insert_privacy_file"),
-                PluginBundle.get("are_you_ok_betch_insert_privacy_file_title"),
-                PluginBundle.get("are_you_ok_betch_insert_privacy_file_ok"),
-                PluginBundle.get("are_you_ok_betch_insert_privacy_file_cancel"),
-                Messages.getQuestionIcon()
-            )
-            if (result == Messages.YES) {
-                ApplicationManager.getApplication().invokeLater {
-                    val dirs = (this.pathList.model as ListModel).files
-                    val notFoundPrivacyDirs = dirs.filter { it.findPrivacyFile() == null }
-                    val task = object : Task.Backgroundable(
-                        project,
-                        "${PluginBundle.get("are_you_ok_betch_insert_privacy_file_insert")}${privacyFileName}${
-                            PluginBundle.get(
-                                "are_you_ok_betch_insert_privacy_file_file"
-                            )
-                        }",
-                        true
-                    ) {
-                        override fun run(pi: ProgressIndicator) {
-                            var i = 0
-                            notFoundPrivacyDirs.forEach {
-                                pi.text = it.name
-                                createPrivacyFile(project, it)
-                                i++
-                                pi.fraction = (i / notFoundPrivacyDirs.size).toDouble()
-
-                            }
-                        }
-                    }
-                    ProgressManager.getInstance().run(task)
-                }
-            }
-        }
-    }
-}
-
-
-private fun VirtualFile.findPrivacyFile(): VirtualFile? {
-    val iosDir = runReadAction { this.findChild("ios")!! }
-    var privacyFile = runReadAction { iosDir.findChild(privacyFileName) } ?: return null
-    ///去resource/目录下面兆
-    iosDir.findChild("Resources")?.let { resources ->
-        privacyFile = resources.findChild(privacyFileName) ?: return null
-    }
-    return privacyFile
-}
-
-private fun createPrivacyFile(project: Project, baseDir: VirtualFile) {
-    // 获取虚拟文件管理器
-
-
-    val iosDir = baseDir.findChild("ios")!!
-    lateinit var privacyFile: PsiFile
-    runReadAction {
-        privacyFile = PsiFileFactory.getInstance(project).createFileFromText(
-            privacyFileName, PlainTextFileType.INSTANCE,
-            defaultPrivacyFileText
+        val result = Messages.showOkCancelDialog(
+            project,
+            PluginBundle.get("are_you_ok_betch_insert_privacy_file"),
+            PluginBundle.get("are_you_ok_betch_insert_privacy_file_title"),
+            PluginBundle.get("are_you_ok_betch_insert_privacy_file_ok"),
+            PluginBundle.get("are_you_ok_betch_insert_privacy_file_cancel"),
+            Messages.getQuestionIcon()
         )
-    }
-    // 将文件写入磁盘
-    WriteCommandAction.runWriteCommandAction(project) {
-        try {
-            // 将文件添加到文件系统
-            val dir: PsiDirectory? = PsiManager.getInstance(project).findDirectory(iosDir)
-            dir?.add(privacyFile)
-            // 刷新文件系统
-            iosDir.canonicalFile?.let { virtualFile ->
-                LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(virtualFile.path))
+        if (result == Messages.YES) {
+            val dirs = (this@PrivacyScanWindow.getListModel()).getAllFiles()
+            val notFoundPrivacyDirs = dirs.filter { it.privacyFile == null }
+            coroutineScope.launch {
+                notFoundPrivacyDirs.map { coroutineScope.async(Dispatchers.IO) { it.cratePrivacyFile() } }.awaitAll()
+                refreshListModel()
             }
-            VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
-        } catch (e: Exception) {
-            e.printStackTrace()
+
         }
     }
-    // 通知 IDE 文件已更改
 
+    private fun refreshListModel() {
+        getListModel().clear()
+        scanPackages()
+    }
+
+
+    override fun dispose() {
+        button.removeActionListener(this)
+        coroutineScope.cancel()
+    }
+
+    private fun getListModel() = pathList.model as ListModel
+    override fun actionPerformed(e: ActionEvent?) {
+        getListModel().clear()
+        scanPackages()
+    }
 }

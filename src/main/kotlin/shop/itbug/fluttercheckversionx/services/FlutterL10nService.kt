@@ -55,6 +55,8 @@ class FlutterL10nService(val project: Project) : Disposable {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val config = PluginConfig.getState(project)
+    private var writeJob: Job? = null
+    private var edtJob: Job? = null
 
     private suspend fun keys(): List<L10nKeyItem> =
         arbFiles.map { scope.async { it.readAllKeys() } }.awaitAll().toList().flatten()
@@ -95,13 +97,15 @@ class FlutterL10nService(val project: Project) : Disposable {
 
 
     fun runWriteThread(run: suspend () -> Unit) {
-        scope.launch(Dispatchers.IO) {
+        writeJob?.cancel(CancellationException("写入关闭"))
+        writeJob = scope.launch(Dispatchers.IO) {
             run()
         }
     }
 
     fun runEdtThread(run: suspend () -> Unit) {
-        scope.launch(Dispatchers.EDT) {
+        edtJob?.cancel(CancellationException("edt任务关闭"))
+        edtJob = scope.launch(Dispatchers.EDT) {
             run.invoke()
         }
     }
@@ -156,6 +160,7 @@ class FlutterL10nService(val project: Project) : Disposable {
 
     override fun dispose() {
         scope.cancel()
+        writeJob?.cancel()
     }
 
     interface OnL10nKeysChangedListener {
@@ -271,6 +276,7 @@ fun ArbFile.moveToOffset(key: String, editor: Editor) {
         val startOffset = readAction { ele.startOffset }
         val endOffset = readAction { ele.endOffset }
         editor.caretModel.moveToOffset(startOffset)
+        editor.scrollingModel.scrollToCaret(com.intellij.openapi.editor.ScrollType.CENTER)
         val highlighter = markup.addRangeHighlighter(
             startOffset,
             endOffset,
