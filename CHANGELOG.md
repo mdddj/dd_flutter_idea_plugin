@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [5.6.0] - 2025-04-28
+
+* Refactoring Log Panel, see [document](https://flutterx.itbug.shop/log.html)
+* Fix known bugs
+
 ## [5.5.3] - 2025-04-25
 
 * Fix known bugs

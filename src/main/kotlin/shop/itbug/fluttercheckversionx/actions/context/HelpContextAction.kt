@@ -17,7 +17,12 @@ enum class SiteDocument(val url: String) {
     Hive("https://flutterx.itbug.shop/hive%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7.html"),
     Sp("https://flutterx.itbug.shop/shared-preferences.html"),
     AssetsPreview("https://flutterx.itbug.shop/%E8%B5%84%E4%BA%A7%E9%A2%84%E8%A7%88%E7%AA%97%E5%8F%A3.html"),
-    L10n("https://flutterx.itbug.shop/l10n-editor.html")
+    L10n("https://flutterx.itbug.shop/l10n-editor.html"),
+    Log("https://flutterx.itbug.shop/log.html");
+
+    fun open() {
+        BrowserUtil.open(url)
+    }
 }
 
 ///文档按钮
