@@ -67,7 +67,6 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
         //logo 窗口
         val logWindow = LoggerWindow(project)
-
         val logContent = instance.createContent(logWindow, "Log", false)
         toolWindow.contentManager.addContent(logContent)
         logContent.setDisposer(logWindow)
@@ -78,6 +77,7 @@ class FlutterXSocketWindow : ToolWindowFactory {
         val privacyContent = instance.createContent(
             privacyPanel, "IOS ${PluginBundle.get("are_you_ok_betch_insert_privacy_file_window_title")}", false
         )
+        privacyContent.setDisposer(privacyPanel)
         toolWindow.contentManager.addContent(privacyContent)
 
 
@@ -92,14 +92,14 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
 
         // 资产图片拷贝窗口
-        val imagesPreviewWindow = ImagesPreviewWindow(project)
+        val imagesPreviewWindow = ImagesPreviewWindow(project, toolWindow)
         val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
         toolWindow.contentManager.addContent(imagesPreviewContent)
         imagesPreviewContent.setDisposer(imagesPreviewWindow)
 
 
         // l10n多语言窗口
-        val l10nWindow = L10nWindow(project)
+        val l10nWindow = L10nWindow(project, toolWindow)
         val l10nWindowContent = instance.createContent(l10nWindow, "l10n", false)
         toolWindow.contentManager.addContent(l10nWindowContent)
         l10nWindowContent.setDisposer(l10nWindow)

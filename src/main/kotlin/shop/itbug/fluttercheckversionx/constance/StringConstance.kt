@@ -33,10 +33,6 @@ object Links {
 
     const val dioImage = "https://flutterx.itbug.shop/%E6%8E%A5%E5%8F%A3%E4%BF%A1%E6%81%AF%E6%88%AA%E5%9B%BE.html"
 
-    //资产预览窗口
-    const val assetsPreviewDoc =
-        "https://flutterx.itbug.shop/%E8%B5%84%E4%BA%A7%E9%A2%84%E8%A7%88%E7%AA%97%E5%8F%A3.html"
-
     // l10n
     const val l10nDoc = "https://flutterx.itbug.shop/l10n-editor.html"
 

@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.putUserData
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.OnePixelSplitter
@@ -41,6 +42,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
             this.splitterProportionKey = "sp-window-key"
             border = emptyBorder
         })
+        putUserData(HelpContextAction.DataKey, SiteDocument.Sp)
         Disposer.register(this, right)
         Disposer.register(this, left)
     }
@@ -53,18 +55,19 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
     private fun createToolbar(): ActionToolbar {
         return ActionManager.getInstance().createActionToolbar("sp tool bar", DefaultActionGroup().apply {
             add(ActionManager.getInstance().getAction("FlutterProjects"))
-            this.add(ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"))
-            this.add(HelpContextAction(SiteDocument.Sp))
+            add(ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"))
+            add(ActionManager.getInstance().getAction("HelpAction"))
         }, true).apply {
             this.targetComponent = toolWindow.component
         }
     }
 
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
-        if (jsonObject != null) {
+        val jsonDataString = jsonObject?.get("jsonDataString") as? String
+        if (jsonObject != null && jsonDataString != null) {
             val type = jsonObject["type"]
             if (type == SpManager.KEYS || type == SpManager.VALUE_GET) {
-                SpManager(nativeMessage).handle()
+                SpManager(jsonDataString).handle()
             }
         }
 

@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
+import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.config.*
 import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.dialog.MyRowBuild
@@ -121,7 +122,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                     )
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.assetsPreviewDoc))
+                    comment(Links.generateDocCommit(SiteDocument.AssetsPreview.url))
                 }
             }
 

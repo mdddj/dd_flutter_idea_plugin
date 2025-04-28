@@ -5,11 +5,13 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.putUserData
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.JBColor
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBLabel
@@ -21,6 +23,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.WrapLayout
 import com.intellij.util.ui.components.BorderLayoutPanel
+import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
+import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup
 import shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.PreviewSearchTextField
 import shop.itbug.fluttercheckversionx.common.scroll
@@ -43,7 +47,7 @@ import javax.swing.event.PopupMenuListener
 /**
  * 资产图片预览窗口
  */
-class ImagesPreviewWindow(val project: Project) : BorderLayoutPanel(), UiDataProvider,
+class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayoutPanel(), UiDataProvider,
     Disposable {
 
     val pluginConfig = PluginConfig.getState(project)
@@ -64,8 +68,7 @@ class ImagesPreviewWindow(val project: Project) : BorderLayoutPanel(), UiDataPro
     val toolbar = ActionManager.getInstance().createActionToolbar(
         "Assets Preview Toolbar", FlutterAssetsPreviewPanelToolbarActionGroup.getActionGroup(), true
     ).apply {
-        targetComponent = this@ImagesPreviewWindow
-
+        targetComponent = toolWindow.component
     }
 
     val scp = panel.scroll()
@@ -104,7 +107,7 @@ class ImagesPreviewWindow(val project: Project) : BorderLayoutPanel(), UiDataPro
             addToRight(toolbar.component)
         })
         addToCenter(scp)
-
+        putUserData(HelpContextAction.DataKey, SiteDocument.AssetsPreview)
         SwingUtilities.invokeLater {
             if (pluginConfig.enableAssetsPreviewAction) {
                 startLoadAssets()

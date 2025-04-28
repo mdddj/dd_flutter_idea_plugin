@@ -67,6 +67,7 @@ class HiveBoxListComponent : OnePixelSplitter(), Disposable {
 
 ///盒子列表
 class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, ListSelectionListener, Disposable {
+    private val gson = DioApiService.getInstance().gson
 
     init {
         DioApiService.getInstance().addHandle(this)
@@ -78,14 +79,13 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
         jsonObject?.apply {
             val type = this["type"]
-            if (type == "getBoxList") {
-                val data = jsonObject["data"]
-                data?.let {
-                    if (data is ArrayList<*>) {
-                        model = ItemModel(data.map { it.toString() })
-                    }
+            val jsonDataString = jsonObject["jsonDataString"] as? String
+            if (type == "getBoxList" && jsonDataString != null) {
+                val json = gson.fromJson<Map<String, Any>>(jsonDataString, Map::class.java)
+                val data = json["data"] as? ArrayList<*>
+                if (data != null) {
+                    model = ItemModel(data.map { it.toString() })
                 }
-
             }
         }
     }
@@ -124,8 +124,9 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
 
 ///盒子里面的 key 列表
 private class HiveKeysList(private val boxList: JBList<String>) : JBList<String>(),
-    DioApiService.NativeMessageProcessing,
-    ListSelectionListener, Disposable {
+    DioApiService.NativeMessageProcessing, ListSelectionListener, Disposable {
+
+    private val gson = DioApiService.getInstance().gson
 
     init {
         cellRenderer = ItemRender()
@@ -136,11 +137,12 @@ private class HiveKeysList(private val boxList: JBList<String>) : JBList<String>
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
         jsonObject?.apply {
             val type = jsonObject["type"]
-            if (type == "getKeys") {
-                val data = jsonObject["data"]
-                if (data is ArrayList<*>) {
-                    model = ItemModel(data.map { it.toString() })
-                }
+            val jsonDataString = jsonObject["jsonDataString"] as? String ?: return
+            val obj = gson.fromJson(jsonDataString, Map::class.java)
+            val data = obj["data"] as? ArrayList<*>
+
+            if (type == "getKeys" && data != null) {
+                model = ItemModel(data.map { it.toString() })
             }
         }
     }

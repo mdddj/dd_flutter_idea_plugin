@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.window.android
 import com.intellij.diff.DiffManager
 import com.intellij.diff.DiffRequestFactory
 import com.intellij.diff.DiffRequestPanel
+import com.intellij.diff.requests.ContentDiffRequest
 import com.intellij.diff.tools.util.DiffDataKeys
 import com.intellij.diff.util.DiffUserDataKeysEx
 import com.intellij.icons.AllIcons
@@ -167,7 +168,9 @@ class FlutterXAndroidMigrateWindow(val project: Project) : BorderLayoutPanel(),
     private fun showDiffWindow(file: AndroidMigrateFile) {
         file.createBackFile { newFile ->
             newFile?.let {
-                val request = DiffRequestFactory.getInstance().createFromFiles(project, file.file, newFile)
+                val request = ApplicationManager.getApplication().executeOnPooledThread<ContentDiffRequest> {
+                    DiffRequestFactory.getInstance().createFromFiles(project, file.file, newFile)
+                }.get()
                 val panel = DiffManager.getInstance().createRequestPanel(project, androidService, null)
                 request.putUserData(DiffUserDataKeysEx.CONTEXT_ACTIONS, createActionsList())
                 request.putUserData(FlutterAndroidMigrateManager.FILE, file)

@@ -25,10 +25,11 @@ class HiveValueComponent(project: Project) : BorderLayoutPanel(), DioApiService.
     }
 
     override fun handleFlutterAppMessage(nativeMessage: String, jsonObject: Map<String, Any>?, aio: AioSession?) {
-        jsonObject?.apply {
-            if (get("data") != null && get("type") == "getValue") {
-                changeJsonValue(get("data"))
-            }
+        val jsonString = jsonObject?.get("jsonDataString") as? String ?: return
+        val obj = DioApiService.getInstance().gson.fromJson(jsonString, Map::class.java)
+        val data = obj["data"] ?: return
+        if (jsonObject["type"] == "getValue") {
+            changeJsonValue(data)
         }
     }
 
