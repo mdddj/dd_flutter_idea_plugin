@@ -5,9 +5,9 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.components.JBList
 import com.intellij.ui.dsl.builder.panel
+import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.services.MyDartPackage
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckResultModel
 import javax.swing.DefaultListModel
 import javax.swing.JComponent
@@ -20,18 +20,18 @@ import javax.swing.JList
  */
 class DartNoUsedResultModel(val project: Project, val result: DartNoUsedCheckResultModel) :
     DialogWrapper(project, true) {
-    private val list = JBList<MyDartPackage>().apply {
-        this.model = DefaultListModel<MyDartPackage>().apply { addAll(result.noUsedPackageList) }
-        this.cellRenderer = object : ColoredListCellRenderer<MyDartPackage>() {
+    private val list = JBList<DartYamlModel>().apply {
+        this.model = DefaultListModel<DartYamlModel>().apply { addAll(result.noUsedPackageList) }
+        this.cellRenderer = object : ColoredListCellRenderer<DartYamlModel>() {
             override fun customizeCellRenderer(
-                p0: JList<out MyDartPackage>,
-                p1: MyDartPackage?,
+                p0: JList<out DartYamlModel>,
+                p1: DartYamlModel?,
                 p2: Int,
                 p3: Boolean,
                 p4: Boolean
             ) {
                 icon = MyIcons.flutter
-                append(p1?.packageName ?: "-")
+                append(p1?.name ?: "-")
             }
 
         }

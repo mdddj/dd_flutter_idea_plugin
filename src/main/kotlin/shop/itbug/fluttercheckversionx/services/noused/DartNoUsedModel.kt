@@ -24,11 +24,13 @@ fun VirtualDirectoryImpl.getDartNoUsedModel(project: Project): DartNoUsedModel? 
     val packPath = if (name == "lib") parent.path else path
     val versionEle = YAMLUtil.getQualifiedKeyInFile(psi, "version")
     val version = versionEle?.valueText ?: ""
-    return DartNoUsedModel(
+    val model = DartNoUsedModel(
         packageName = packName,
         packageDirectory = packPath,
         version = version
     )
+    println("model is $model")
+    return model
 }
 
 /**
@@ -50,4 +52,8 @@ data class DartNoUsedModel(
      * 包的项目路径
      */
     var packageDirectory: String
-)
+) {
+    override fun toString(): String {
+        return "name=$packageName, version = $version"
+    }
+}

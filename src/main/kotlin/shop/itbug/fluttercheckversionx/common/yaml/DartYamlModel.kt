@@ -11,6 +11,7 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.model.getLastVersionText
 import shop.itbug.fluttercheckversionx.model.hasNewVersion
+import shop.itbug.fluttercheckversionx.services.MyPackageGroup
 import shop.itbug.fluttercheckversionx.services.PubService
 import shop.itbug.fluttercheckversionx.util.*
 
@@ -31,6 +32,7 @@ data class DartYamlModel(
     val element: SmartPsiElementPointer<YAMLKeyValueImpl>,
     val plainText: SmartPsiElementPointer<YAMLPlainTextImpl>,
     val pubData: PubVersionDataModel? = null,
+    val type: MyPackageGroup? = null
 ) {
 
     private fun getVersionModel() = DartPluginVersionName(name, version)
@@ -79,7 +81,7 @@ data class DartYamlModel(
                 val point = SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(element)
                 val plainText = SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(pt)
                 DartYamlModel(
-                    name, version, tryParseDartVersionType(version), point, plainText
+                    name, version, tryParseDartVersionType(version), point, plainText,
                 )
             }
         }

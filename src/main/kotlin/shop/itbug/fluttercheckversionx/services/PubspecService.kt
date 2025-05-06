@@ -45,6 +45,8 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFil
     }
 
 
+    fun getAllPackages() = details
+
     /**
      * 读取项目使用了哪些包?
      */

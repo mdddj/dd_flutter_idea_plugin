@@ -6,6 +6,7 @@
 
 * Refactoring Log Panel, see [document](https://flutterx.itbug.shop/log.html)
 * Fix known bugs
+* [Full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
 
 ## [5.5.3] - 2025-04-25
 

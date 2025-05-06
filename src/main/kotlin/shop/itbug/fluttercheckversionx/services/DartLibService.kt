@@ -20,6 +20,11 @@ data class DartPartLibModel(var file: VirtualFile, val libName: String)
 data class DartPartPath(var libName: String, var path: String, val file: VirtualFile)
 private data class FileAndElement(val file: VirtualFile, val element: DartLibraryStatementImpl)
 
+
+/**
+ * part of 工具
+ */
+
 @Service(Service.Level.PROJECT)
 class UserDartLibService(val project: Project) : DumbAware, Disposable {
 
