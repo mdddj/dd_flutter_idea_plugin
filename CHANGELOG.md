@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [5.6.1] - 2025-05-06
+
+* Unused package logic detection optimization [#78](https://github.com/mdddj/dd_flutter_idea_plugin/issues/78)
+* [full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
+
 ## [5.6.0] - 2025-04-28
 
 * Refactoring Log Panel, see [document](https://flutterx.itbug.shop/log.html)
