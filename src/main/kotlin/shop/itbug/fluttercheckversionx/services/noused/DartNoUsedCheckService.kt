@@ -19,13 +19,15 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
 import kotlinx.coroutines.*
+import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.DartPackageCheckService
 import shop.itbug.fluttercheckversionx.services.DartPackageTaskParam
-import shop.itbug.fluttercheckversionx.services.MyDartPackage
 import shop.itbug.fluttercheckversionx.services.MyPackageGroup
+import shop.itbug.fluttercheckversionx.services.PubspecService
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
+import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.widget.DartNoUsedResultModel
 import java.io.File
 import java.nio.file.Path
@@ -57,7 +59,7 @@ data class DartNoUsedCheckResultModel(
     /**
      * 没有被使用的包
      */
-    val noUsedPackageList: List<MyDartPackage>
+    val noUsedPackageList: List<DartYamlModel>
 )
 
 /**
@@ -80,6 +82,8 @@ class DartNoUsedCheckService(val project: Project) {
     private var collectImportPsiElementJobs: List<Deferred<MutableCollection<DartImportStatementImpl>?>>? = null
     private var analysisJobs: List<Deferred<PathModel>>? = null
     private var resultModel: DartNoUsedCheckResultModel? = null
+    private val pubspecService = PubspecService.getInstance(project)
+
 
     /**
      * 开始检测
@@ -92,6 +96,14 @@ class DartNoUsedCheckService(val project: Project) {
         runBlocking {
             getAllDartPackages(indicator)
         }
+
+
+        //过滤掉 dev
+        val allPackages = pubspecService.getAllPackages()
+        val devPackages = allPackages.filter { it.type == MyPackageGroup.DevDependencies }.map { it.name }
+        println("dev packages $devPackages")
+        packages = packages.filter { !devPackages.contains(it.packageName) }
+
         startCheckAllDartFile(indicator)
     }
 
@@ -106,13 +118,12 @@ class DartNoUsedCheckService(val project: Project) {
                 async {
                     readAction {
                         val vf = root as VirtualDirectoryImpl
-                        vf.getDartNoUsedModel(
-                            project
-                        )
+                        vf.getDartNoUsedModel(project)
                     }
                 }
             }.awaitAll()
         }.toList().filterNotNull().toHashSet().distinctBy { it.packageName }
+
         packages = localPackages
     }
 
@@ -148,10 +159,13 @@ class DartNoUsedCheckService(val project: Project) {
      * 模态框中运行任务
      */
     fun checkUnUsedPackaged() {
+
         packages = emptyList()
         resultModel = null
         val task = object : Task.Backgroundable(project, "Analyzing", true) {
             override fun run(indicator: ProgressIndicator) {
+                indicator.text = "Run flutter pub get"
+                RunUtil.runPubget(project)
                 startCheck(indicator)
             }
 
@@ -228,10 +242,10 @@ class DartNoUsedCheckService(val project: Project) {
 
 
         val allPackages =
-            DartPackageCheckService.getInstance(project).getPackageInfos()
-                .filter { it.group == MyPackageGroup.Dependencies }
+            pubspecService.getAllPackages()
+                .filter { it.type == MyPackageGroup.Dependencies }
         val unUsePackage =
-            allPackages.filter { !(usedPackages.map { u -> u.packageName }.contains(it.packageName)) }
+            allPackages.filter { !(usedPackages.map { u -> u.packageName }.contains(it.name)) }
 
         resultModel = DartNoUsedCheckResultModel(
             localPackageSize = packages.size,
@@ -239,7 +253,7 @@ class DartNoUsedCheckService(val project: Project) {
             packageImportSize = filterSize,
             noUsedPackageList = unUsePackage
         )
-        showNotification(unUsePackage.joinToString(",") { it.packageName })
+        showNotification(unUsePackage.joinToString(",") { it.name })
     }
 
 

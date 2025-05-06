@@ -5,6 +5,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
+import shop.itbug.fluttercheckversionx.services.MyPackageGroup
 
 /**
  * flutter yaml 操作相关工具函数
@@ -30,7 +31,15 @@ class PubspecYamlFileTools private constructor(yaml: YAMLFile) : YamlFileToolBas
      * 获取全部的插件模型
      */
     suspend fun allDependencies() =
-        (getDependencies() + getDevDependencies() + getDependencyOverrides()).mapNotNull { DartYamlModel.create(it) }
+        (getDependencies().map {
+            DartYamlModel.create(it)?.copy(
+                type = MyPackageGroup.Dependencies
+            )
+        } + getDevDependencies().map {
+            DartYamlModel.create(it)?.copy(type = MyPackageGroup.DevDependencies)
+        } + getDependencyOverrides().map {
+            DartYamlModel.create(it)?.copy(type = MyPackageGroup.DependencyOverrides)
+        }).filterNotNull()
 
     /**
      * 获取插件列表模型
