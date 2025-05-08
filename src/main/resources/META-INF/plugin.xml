@@ -150,6 +150,12 @@
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
 
         <!--        <navbar implementation="shop.itbug.fluttercheckversionx.navbar.DartStructureAwareNavbar"/>-->
+
+        <psi.referenceContributor
+                implementation="shop.itbug.fluttercheckversionx.reference.L10nReferenceContributor" language="Dart"/>
+
+        <!--        <psi.referenceContributor-->
+        <!--                implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor" language="Dart"/>-->
     </extensions>
 
     <projectListeners>
@@ -415,6 +421,7 @@
                 text="Show in file" icon="AllIcons.General.Locate"/>
         <group id="FlutterL10nEditorPanelActionGroup">
             <reference ref="FlutterL10nOpenFileWithKeyAction"/>
+            <reference ref="FlutterL10nRunGenAction"/>
         </group>
     </actions>
 

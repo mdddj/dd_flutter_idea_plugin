@@ -19,6 +19,8 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -37,14 +39,20 @@ import kotlin.concurrent.scheduleAtFixedRate
 
 
 data class L10nKeyItem(
-    val key: String, val value: String, val property: SmartPsiElementPointer<JsonProperty>, val file: ArbFile
-) {
+    val key: String, val value: String, val property: SmartPsiElementPointer<JsonProperty>, val file: ArbFile,
+
+    var range: TextRange? = null
+) : UserDataHolderBase() {
     override fun toString(): String {
         return "$key:$value"
     }
 }
 
-data class ArbFile(val file: VirtualFile, var psiFile: PsiFile, val project: Project) {
+data class ArbFile(
+    val file: VirtualFile, var psiFile: PsiFile, val project: Project,
+    var keyItems: List<L10nKeyItem> = emptyList(),
+    val originPsiFile: PsiFile,
+) : UserDataHolderBase() {
     override fun toString(): String {
         return file.name
     }
@@ -76,7 +84,7 @@ class FlutterL10nService(val project: Project) : Disposable {
             for (element in files) {
                 val vf = readAction { element.virtualFile }
                 if (vf.extension == "arb") {
-                    arbFiles.add(ArbFile(vf, element, project))
+                    arbFiles.add(ArbFile(vf, element, project, originPsiFile = element))
                 }
             }
         }
@@ -182,16 +190,19 @@ class FlutterL10nService(val project: Project) : Disposable {
 
 suspend fun ArbFile.readAllKeys(): List<L10nKeyItem> {
     val props = allJsonProperties()
-    return readAction {
+    val items = readAction {
         props.map { property ->
             return@map L10nKeyItem(
                 key = property.nameString(),
                 value = property.valueString(),
                 file = this,
-                property = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(property)
+                property = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(property),
+                range = property.textRange
             )
         }.toList()
     }
+    keyItems = items
+    return items
 }
 
 

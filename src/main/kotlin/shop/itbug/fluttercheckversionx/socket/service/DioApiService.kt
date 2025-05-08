@@ -3,17 +3,24 @@ package shop.itbug.fluttercheckversionx.socket.service
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
+import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindow
 import org.smartboot.socket.StateMachineEnum
 import org.smartboot.socket.extension.processor.AbstractMessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
+import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService.Companion.getInstance
+import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
+import shop.itbug.fluttercheckversionx.util.toastWithError
 import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.APP)
@@ -27,6 +34,25 @@ class DioApiService : Disposable {
     private val sessions = mutableSetOf<AioSession>()
     private val messageProcessor = MyMessageProcessor
     private var aioServer: AioQuickServer? = null
+
+
+    fun createServerRunner(project: Project, toolWindow: ToolWindow): Runnable = Runnable {
+        if (AppService.getInstance().dioIsStart) {
+            toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
+        } else {
+            val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
+            try {
+                getInstance().builder(port).start()
+                AppService.getInstance().setDioSocketState(true)
+                toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
+                println("dio 监听启动成功，端口: $port")
+
+            } catch (_: Exception) {
+                project.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
+            }
+        }
+
+    }
 
     ///添加消息处理程序
     fun addHandle(processor: NativeMessageProcessing) {
@@ -50,6 +76,16 @@ class DioApiService : Disposable {
         sessions.forEach {
             it.send(message)
         }
+    }
+
+
+    /**
+     * 重启dio监听
+     */
+    fun reset(project: Project) {
+        MyToolWindowTools.setToolWindowNullActive(project)
+        dispose()
+        MyToolWindowTools.resetDioRequestListenServer(project)
     }
 
     fun sendByAnyObject(obj: Any) {

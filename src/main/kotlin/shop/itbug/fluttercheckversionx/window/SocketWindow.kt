@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.window
 
-import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
@@ -9,11 +8,7 @@ import com.intellij.ui.content.ContentFactory
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.services.PluginStateService
-import shop.itbug.fluttercheckversionx.socket.service.AppService
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
-import shop.itbug.fluttercheckversionx.util.toastWithError
 import shop.itbug.fluttercheckversionx.window.android.FlutterXAndroidMigrateWindow
 import shop.itbug.fluttercheckversionx.window.l10n.L10nWindow
 import shop.itbug.fluttercheckversionx.window.logger.LoggerWindow
@@ -35,20 +30,7 @@ class FlutterXSocketWindow : ToolWindowFactory {
         createContent.setDisposer(socketRequestForm) //销毁监听
         toolWindow.contentManager.addContent(createContent)
 
-        val port = PluginStateService.appSetting.serverPort.toInt() // dio的监听端口
-        if (AppService.getInstance().dioIsStart.not()) {
-            toolWindow.activate {
-                try {
-                    DioApiService.getInstance().builder(port).start()
-                    toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
-                    AppService.getInstance().setDioSocketState(true)
-                } catch (_: Exception) {
-                    project.toastWithError("Flutter dio listening service failed to start. Please try changing the port and restarting")
-                }
-            }
-        } else {
-            toolWindow.setIcon(RunContentManagerImpl.getLiveIndicator(MyIcons.flutter))
-        }
+        initDioRequestServer(toolWindow, project) //启动服务器
 
         // sp工具
         val spWindow = SpWindow(project, toolWindow)
@@ -104,6 +86,11 @@ class FlutterXSocketWindow : ToolWindowFactory {
         toolWindow.contentManager.addContent(l10nWindowContent)
         l10nWindowContent.setDisposer(l10nWindow)
 
+    }
+
+
+    private fun initDioRequestServer(toolWindow: ToolWindow, project: Project) {
+        toolWindow.activate(DioApiService.getInstance().createServerRunner(project, toolWindow))
     }
 
 

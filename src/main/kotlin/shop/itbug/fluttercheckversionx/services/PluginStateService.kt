@@ -27,6 +27,11 @@ class PluginStateService private constructor() : PersistentStateComponent<AppSta
             return service<PluginStateService>()
         }
 
+        
+        fun changeState(onChange: (old: AppStateModel) -> AppStateModel) {
+            getInstance().loadState(onChange(appSetting))
+        }
+
 
         val appSetting: AppStateModel get() = getInstance().state ?: AppStateModel()
     }

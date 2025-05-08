@@ -4,6 +4,7 @@ import com.intellij.ide.actions.CopyReferencePopup
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.putUserData
 import com.intellij.openapi.util.text.StringUtil
@@ -110,7 +111,10 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
         putUserData(HelpContextAction.DataKey, SiteDocument.AssetsPreview)
         SwingUtilities.invokeLater {
             if (pluginConfig.enableAssetsPreviewAction) {
-                startLoadAssets()
+                DumbService.getInstance(project).runWhenSmart {
+                    startLoadAssets()
+                }
+
             } else {
                 addToCenter(JBLabel(PluginBundle.get("action_not_open_and_enable")).apply {
                     horizontalAlignment = SwingConstants.CENTER

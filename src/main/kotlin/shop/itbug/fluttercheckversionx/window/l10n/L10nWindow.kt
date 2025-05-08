@@ -25,6 +25,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import com.intellij.util.ui.tree.TreeUtil
 import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
 import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
+import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRunGenAction
 import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nSettingChangeAction
 import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nWindowTreeRefreshAction
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -165,7 +166,6 @@ class MyL10nKeysTree(project: Project) : DnDAwareTree(DefaultMutableTreeNode()),
     override fun uiDataSnapshot(sink: DataSink) {
     }
 
-    companion object {}
 }
 
 
@@ -236,6 +236,7 @@ private fun MyL10nKeysTree.actionToolbar(project: Project): JPanel {
             }
         }.addExtraAction(FlutterL10nWindowTreeRefreshAction.getAction())
         .addExtraAction(FlutterL10nSettingChangeAction.getInstance())
+        .addExtraAction(FlutterL10nRunGenAction.getInstance())
         .addExtraAction(HelpContextAction.ACTION)
         .setPanelBorder(emptyBorder())
         .setToolbarBorder(emptyBorder()).setScrollPaneBorder(emptyBorder())
