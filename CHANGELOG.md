@@ -4,8 +4,10 @@
 
 ## [5.6.2] - 2025-05-08
 
-* 新增 dio重启逻辑
-* 优化 l10n编辑面板，新增 preview text 选项，在 tree中预览文本
+* Add `dio` restart button (settings)
+* Optimize `l10n` editing panel, add preview text option, preview text in tree (l10n panel)
+* Add "delete l10n key" action, in right popup menu (l10n panel)
+* Add "Rename l10n key" action, in right popup menu (l10n panel)
 
 ## [5.6.1] - 2025-05-06
 
