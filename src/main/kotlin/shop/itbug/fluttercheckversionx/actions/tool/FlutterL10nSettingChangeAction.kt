@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.LabelPosition
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.config.PluginConfig
@@ -53,7 +54,7 @@ private class MySettingDialog(val project: Project) : DialogWrapper(null, true) 
 
     init {
         super.init()
-        title = "FlutterX Config l10n folder"
+        title = "FlutterX l10n settings"
     }
 
     override fun createCenterPanel(): JComponent? {
@@ -68,8 +69,16 @@ private class MySettingDialog(val project: Project) : DialogWrapper(null, true) 
                 )
                     .label("l10n folder", LabelPosition.TOP)
             }
+            row {
+                MyRowBuild.changeDefaultL10nFile(this, {
+                    config.l10nDefaultFileName ?: ""
+                }, {
+                    config.l10nDefaultFileName = it
+                }, project).label("Default preview text file", LabelPosition.TOP)
+                    .align(Align.FILL)
+            }
         }
-        myPanel.preferredSize = Dimension(600, -1)
+        myPanel.preferredSize = Dimension(400, -1)
         return myPanel
     }
 

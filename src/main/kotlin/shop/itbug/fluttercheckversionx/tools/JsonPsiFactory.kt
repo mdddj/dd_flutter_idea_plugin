@@ -4,10 +4,12 @@ import com.intellij.json.JsonFileType
 import com.intellij.json.JsonLanguage
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightVirtualFile
 
@@ -45,5 +47,18 @@ object JsonPsiFactory {
         )
         assert(psiFile != null)
         return psiFile!!
+    }
+
+
+}
+
+object MyJsonPsiUtil {
+    //删除节点，包括,号
+    fun removeJsonProperty(element: JsonProperty) {
+        val next = runReadAction { element.nextSibling }
+        if (next != null && next is LeafPsiElement && next.text == ",") {
+            next.delete()
+        }
+        element.delete()
     }
 }

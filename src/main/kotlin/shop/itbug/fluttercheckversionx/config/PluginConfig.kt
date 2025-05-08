@@ -21,6 +21,7 @@ class PluginSetting : BaseState() {
     var assetsPreviewImageSize by property(120)
     var assetDirectory by string()
     var l10nFolder by string("") //flutter多语言 arb 目录
+    var l10nDefaultFileName by string("") // 默认多语言文件名
 }
 
 @Service(Service.Level.PROJECT)

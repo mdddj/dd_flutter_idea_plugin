@@ -11,7 +11,9 @@ import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.constance.documentCommentRow
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.AppStateModel
+import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.setting.PubDevMirrorImageSetting
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.widget.FlutterVersionCheckPanel
 import javax.swing.SwingUtilities
 
@@ -51,8 +53,14 @@ fun settingPanel(
 
         group("Dio") {
             row("Dio ${PluginBundle.get("setting.listening.port")}") {
-                textField().bindText(model::serverPort)
-            }.comment(PluginBundle.get("setting.reset.tip"))
+                textField().bindText(model::serverPort).onChanged { component ->
+                    PluginStateService.changeState { it.copy(serverPort = component.text) }
+                }
+                button(PluginBundle.get("reset")) {
+                    DioApiService.getInstance().reset(project)
+                }
+            }
+            //.comment(PluginBundle.get("setting.reset.tip"))
 
 
 //            新接口弹出提醒

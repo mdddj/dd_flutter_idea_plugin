@@ -121,6 +121,10 @@ compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation", "-Xwhen-guards"))
 }
 
+
+
+
+
 tasks {
 
     patchPluginXml {
@@ -147,9 +151,11 @@ tasks {
                 "-Didea.kotlin.plugin.use.k2=true",
                 "-Didea.log.level=DEBUG",
                 "-Didea.log.debug=true",
-                "-Didea.log.verbose=true"
+                "-Didea.log.verbose=true",
+                "-Dlog4j.logger.shop.itbug.fluttercheckversionx=DEBUG"
             )
         }
+        systemProperty("idea.log.trace.categories", "shop.itbug.fluttercheckversionx")
     }
 
     compileKotlin {

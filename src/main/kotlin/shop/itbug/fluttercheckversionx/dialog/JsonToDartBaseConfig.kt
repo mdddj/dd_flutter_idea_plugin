@@ -5,14 +5,17 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.services.FlutterL10nService
 import shop.itbug.fluttercheckversionx.tools.FreezedClassConfig
 import shop.itbug.fluttercheckversionx.tools.FreezedClassType
 import shop.itbug.fluttercheckversionx.tools.FreezedVersion
 import shop.itbug.fluttercheckversionx.util.VerifyFileDir
+import javax.swing.DefaultComboBoxModel
 import kotlin.reflect.KMutableProperty0
 
 
@@ -123,6 +126,21 @@ object MyRowBuild {
             return@validationOnInput null
         }
         return browse
+    }
+
+    /**
+     * 配置默认显示的arb file
+     */
+    fun changeDefaultL10nFile(
+        row: Row,
+        getter: () -> String,
+        setter: (String?) -> Unit,
+        project: Project
+    ): Cell<ComboBox<@NlsSafe String?>> {
+        val arbFiles = FlutterL10nService.getInstance(project).arbFiles
+        val comboBox =
+            row.comboBox(DefaultComboBoxModel(arbFiles.map { it.file.name }.toTypedArray())).bindItem(getter, setter)
+        return comboBox
     }
 }
 

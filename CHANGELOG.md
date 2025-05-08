@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [5.6.2] - 2025-05-08
+
+* Add `dio` restart button (settings)
+* Optimize `l10n` editing panel, add preview text option, preview text in tree (l10n panel)
+* Add "delete l10n key" action, in right popup menu (l10n panel)
+* Add "Rename l10n key" action, in right popup menu (l10n panel)
+
 ## [5.6.1] - 2025-05-06
 
 * Unused package logic detection optimization [#78](https://github.com/mdddj/dd_flutter_idea_plugin/issues/78)
