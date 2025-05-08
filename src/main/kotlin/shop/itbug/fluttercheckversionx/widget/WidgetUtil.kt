@@ -55,11 +55,13 @@ object WidgetUtil {
         project: Project,
         labelText: String,
         comment: String? = null,
+        initValue: String? = null,
         handle: (text: String) -> Unit
     ) {
         val dialog = MyTextDialog(
             project = project, label = labelText,
             comment = comment,
+            initValue = initValue,
             handle
         )
         dialog.show()

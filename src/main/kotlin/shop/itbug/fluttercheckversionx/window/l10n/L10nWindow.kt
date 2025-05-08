@@ -28,12 +28,15 @@ import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
 import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRunGenAction
 import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nSettingChangeAction
 import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nWindowTreeRefreshAction
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.*
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
 import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import java.awt.Dimension
 import javax.swing.JPanel
+import javax.swing.JTree
+import javax.swing.SwingConstants
 import javax.swing.SwingUtilities
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.event.TreeSelectionListener
@@ -61,13 +64,13 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayou
     init {
         project.messageBus.connect(this).subscribe(FlutterL10nService.ListenKeysChanged, this)
         project.messageBus.connect(this).subscribe(FlutterL10nService.ArbFileChanged, this)
-        myTree.border = emptyBorder()
         myTree.addTreeSelectionListener(this)
         editorContainer.border = emptyBorder()
         addToCenter(sp)
         SwingUtilities.invokeLater {
             initTreeModel()
         }
+        Disposer.register(this, myTree)
     }
 
 
@@ -148,7 +151,13 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayou
 
 
 ///树
-class MyL10nKeysTree(project: Project) : DnDAwareTree(DefaultMutableTreeNode()), UiDataProvider {
+class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode()), UiDataProvider, Disposable,
+    FlutterL10nService.OnL10nKeysChangedListener {
+    private val service = FlutterL10nService.getInstance(project)
+    private val arbFiles get() = service.arbFiles
+    private val config get() = PluginConfig.getInstance(project).state
+    private val defaultFileName get() = config.l10nDefaultFileName
+    private val defaultUseArbFile get() = arbFiles.find { it.file.name == defaultFileName }
 
     init {
         TreeUIHelper.getInstance().installTreeSpeedSearch(this)
@@ -157,15 +166,66 @@ class MyL10nKeysTree(project: Project) : DnDAwareTree(DefaultMutableTreeNode()),
         isHorizontalAutoScrollingEnabled = false
         isOpaque = false
         emptyText.text = PluginBundle.get("l10n.empty.text")
+        border = emptyBorder()
         TreeUtil.installActions(this)
         CustomizationUtil.installPopupHandler(
             this, "flutter-l10n-right-menu", "Flutter l10n"
         )
+        this.cellRenderer = Render()
+        project.messageBus.connect(this).subscribe(FlutterL10nService.ListenKeysChanged, this)
+    }
+
+    fun selectValue(): String? {
+        val last = lastSelectedPathComponent as? DefaultMutableTreeNode ?: return null
+        if (last == last.root) return null
+        return last.userObject as? String
     }
 
     override fun uiDataSnapshot(sink: DataSink) {
     }
 
+    override fun dispose() {
+
+    }
+
+    override fun onKeysChanged(
+        items: List<L10nKeyItem>,
+        keysString: List<String>,
+        project: Project
+    ) {
+        SwingUtilities.invokeLater {
+            updateUI()
+        }
+
+    }
+
+    inner class Render : ColoredTreeCellRenderer() {
+        override fun customizeCellRenderer(
+            tree: JTree,
+            value: Any?,
+            selected: Boolean,
+            expanded: Boolean,
+            leaf: Boolean,
+            row: Int,
+            hasFocus: Boolean
+        ) {
+            val key = value?.toString() ?: return
+            append(key, SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES)
+            val useArbFile = defaultUseArbFile
+            useArbFile?.let { arbFile ->
+                val find = arbFile.keyItems.find { it.key == key }
+                if (find != null) {
+                    appendTextPadding(12, SwingConstants.CENTER)
+                    append("  " + find.value, SimpleTextAttributes.GRAY_SMALL_ATTRIBUTES, 12, SwingConstants.BOTTOM)
+                }
+            }
+
+
+        }
+    }
+
+    companion object {
+    }
 }
 
 

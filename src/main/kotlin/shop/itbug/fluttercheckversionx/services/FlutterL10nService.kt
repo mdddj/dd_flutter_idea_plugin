@@ -34,6 +34,7 @@ import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.tools.JsonPsiFactory
+import shop.itbug.fluttercheckversionx.tools.MyJsonPsiUtil
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -61,15 +62,17 @@ data class ArbFile(
 @Service(Service.Level.PROJECT)
 class FlutterL10nService(val project: Project) : Disposable {
 
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val config = PluginConfig.getState(project)
     private var writeJob: Job? = null
     private var edtJob: Job? = null
 
+    fun coroutineScope() = scope
     private suspend fun keys(): List<L10nKeyItem> =
         arbFiles.map { scope.async { it.readAllKeys() } }.awaitAll().toList().flatten()
 
-    var arbFiles = mutableListOf<ArbFile>() //所有 arb files
+    var arbFiles = listOf<ArbFile>() //所有 arb files
 
 
     //检测 l18n所有的 key
@@ -81,12 +84,17 @@ class FlutterL10nService(val project: Project) : Disposable {
         }.get()
         if (directory != null) {
             val files = readAction { directory.files }
-            for (element in files) {
-                val vf = readAction { element.virtualFile }
+            suspend fun handleArbFile(psiFile: PsiFile): ArbFile? {
+                val vf = readAction { psiFile.virtualFile }
                 if (vf.extension == "arb") {
-                    arbFiles.add(ArbFile(vf, element, project, originPsiFile = element))
+                    val arbFile = ArbFile(vf, psiFile, project, originPsiFile = psiFile)
+                    arbFile.readAllKeys()
+                    return arbFile
                 }
+                return null
             }
+
+            arbFiles = files.mapNotNull { file -> scope.async { handleArbFile(file) } }.awaitAll().filterNotNull()
         }
         pushTopic()
     }
@@ -158,7 +166,7 @@ class FlutterL10nService(val project: Project) : Disposable {
     fun configEndTheL10nFolder() {
         val folder = PluginConfig.getState(project).l10nFolder ?: return
         if (folder.isNotBlank()) {
-            arbFiles.clear()
+            arbFiles = emptyList()
             scope.launch {
                 checkAllKeys()
             }
@@ -267,14 +275,17 @@ suspend fun ArbFile.insetNewKey(newKey: String, value: String = "") {
 }
 
 
-private fun ArbFile.reWriteFile() {
+private fun ArbFile.reWriteFile(fireEvent: Boolean = true) {
     CodeStyleManager.getInstance(project).reformat(psiFile)
     val document = runReadAction { psiFile.fileDocument }
     FileDocumentManager.getInstance().saveDocument(document)
     VfsUtil.saveText(file, psiFile.text)
     //重新替换 psiFile
     toJsonFile()
-    project.messageBus.syncPublisher(FlutterL10nService.ArbFileChanged).onArbFileChanged(this)
+    if (fireEvent) {
+        project.messageBus.syncPublisher(FlutterL10nService.ArbFileChanged).onArbFileChanged(this)
+    }
+
 }
 
 
@@ -302,7 +313,46 @@ fun ArbFile.moveToOffset(key: String, editor: Editor) {
             this.cancel()
         }
     }
+}
 
+/**
+ * 删除$[key]
+ */
+suspend fun ArbFile.removeKey(key: String) {
+    val readAllKeys = readAllKeys()
+    val find = readAllKeys.find { it.key == key }
+    if (find != null) {
+        val ele = readAction { find.property.element }
+        if (ele != null) {
+            WriteCommandAction.runWriteCommandAction(project) {
+                MyJsonPsiUtil.removeJsonProperty(ele)
+                reWriteFile(false)
+            }
+
+        }
+    }
+}
+
+/**
+ * 重命名 key
+ */
+suspend fun ArbFile.renameKey(key: String, newKey: String) {
+    val readAllKeys = readAllKeys()
+    val find = readAllKeys.find { it.key == key }
+    if (find != null) {
+        val ele = readAction { find.property.element }
+        if (ele != null) {
+            ///重新命名
+            val newKeyEle = readAction { JsonPsiFactory.createJsonStringLiteral(project, newKey) }
+            val nameEle = ele.nameElement as? JsonStringLiteral
+            if (nameEle != null) {
+                WriteCommandAction.runWriteCommandAction(project) {
+                    nameEle.replace(newKeyEle)
+                    reWriteFile(false)
+                }
+            }
+        }
+    }
 }
 
 private fun JsonProperty.nameString(): String {

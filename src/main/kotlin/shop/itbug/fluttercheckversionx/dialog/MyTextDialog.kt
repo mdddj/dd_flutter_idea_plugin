@@ -11,11 +11,12 @@ import javax.swing.JComponent
 class MyTextDialog(
     project: Project, val label: String,
     val comment: String? = null,
+    val initValue: String? = null,
     val handle: (text: String) -> Unit
 ) :
     DialogWrapper(project, true) {
     lateinit var dialogPanel: DialogPanel
-    var text = ""
+    var text = initValue ?: ""
 
     init {
         super.init()
@@ -27,9 +28,10 @@ class MyTextDialog(
             row {
                 textField().bindText({ text }, {
                     text = it
-                }).label(label, LabelPosition.TOP).comment(comment).component.apply {
-                    requestFocus()
-                }
+                })
+                    .label(label, LabelPosition.TOP).comment(comment).component.apply {
+                        requestFocus()
+                    }
             }
         }
         return dialogPanel

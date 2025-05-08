@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [5.6.2] - 2025-05-08
+
+* 新增 dio重启逻辑
+* 优化 l10n编辑面板，新增 preview text 选项，在 tree中预览文本
+
 ## [5.6.1] - 2025-05-06
 
 * Unused package logic detection optimization [#78](https://github.com/mdddj/dd_flutter_idea_plugin/issues/78)
