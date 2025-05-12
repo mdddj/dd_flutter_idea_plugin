@@ -19,12 +19,13 @@
         <supportsKotlinPluginMode supportsK2="true"/>
     </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
 
+    <extensions defaultExtensionNs="com.intellij">
         <intentionAction>
             <className>shop.itbug.fluttercheckversionx.actions.internal.L10nKeyExtractIntentionAction</className>
             <language>Dart</language>
         </intentionAction>
+
 
         <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
 

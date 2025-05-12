@@ -35,6 +35,8 @@ import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.tools.JsonPsiFactory
 import shop.itbug.fluttercheckversionx.tools.MyJsonPsiUtil
+import shop.itbug.fluttercheckversionx.window.l10n.FlutterL10nKeyEditPanel
+import shop.itbug.fluttercheckversionx.window.l10n.MyL10nKeysTree
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -187,12 +189,19 @@ class FlutterL10nService(val project: Project) : Disposable {
         fun onArbFileChanged(arbFile: ArbFile)
     }
 
+    interface OnTreeKeyChanged {
+        fun onTreeKeyChanged(project: Project, key: String, tree: MyL10nKeysTree, panels: List<FlutterL10nKeyEditPanel>)
+    }
+
     companion object {
         fun getInstance(project: Project) = project.service<FlutterL10nService>()
         val ListenKeysChanged =
             Topic<OnL10nKeysChangedListener>.create("ListenKeysChanged", OnL10nKeysChangedListener::class.java)
         val ArbFileChanged =
             Topic<OnArbFileChangedListener>.create("ArbFileChanged", OnArbFileChangedListener::class.java)
+
+        //key选择发生变更
+        val TreeKeyChanged = Topic<OnTreeKeyChanged>.create("L10nKeysTreeShowOnChanged", OnTreeKeyChanged::class.java)
     }
 }
 

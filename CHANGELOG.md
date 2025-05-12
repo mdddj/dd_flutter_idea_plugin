@@ -8,6 +8,7 @@
 * Optimize `l10n` editing panel, add preview text option, preview text in tree (l10n panel)
 * Add "delete l10n key" action, in right popup menu (l10n panel)
 * Add "Rename l10n key" action, in right popup menu (l10n panel)
+* [full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
 
 ## [5.6.1] - 2025-05-06
 
