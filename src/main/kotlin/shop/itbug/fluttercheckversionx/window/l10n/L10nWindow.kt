@@ -278,12 +278,12 @@ class FlutterL10nKeyEditPanel(
 
 private fun MyL10nKeysTree.actionToolbar(project: Project): JPanel {
     val panel = ToolbarDecorator.createDecorator(this).setAddAction {
-            WidgetUtil.configTextFieldModal(
-                project, PluginBundle.get("l10n.addDialog.labelText"), "It inserts this key into all ARB files"
-            ) {
-                FlutterL10nService.getInstance(project).insetNewKey(it)
-            }
-        }.addExtraAction(FlutterL10nWindowTreeRefreshAction.getAction())
+        WidgetUtil.configTextFieldModal(
+            project, PluginBundle.get("l10n.addDialog.labelText"), "It inserts this key into all ARB files"
+        ) {
+            FlutterL10nService.getInstance(project).insetNewKey(it)
+        }
+    }.addExtraAction(FlutterL10nWindowTreeRefreshAction.getAction())
         .addExtraAction(FlutterL10nSettingChangeAction.getInstance())
         .addExtraAction(FlutterL10nRunGenAction.getInstance()).addExtraAction(HelpContextAction.ACTION)
         .setPanelBorder(emptyBorder()).setToolbarBorder(emptyBorder()).setScrollPaneBorder(emptyBorder()).createPanel()

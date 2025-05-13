@@ -433,6 +433,11 @@
         </group>
 
 
+        <action id="LoggerCleanAllAction"
+                class="shop.itbug.fluttercheckversionx.window.logger.action.LoggerCleanAllAction"/>
+        <group id="FlutterXLoggerWindowToolbarActionGroup">
+            <reference ref="LoggerCleanAllAction"/>
+        </group>
     </actions>
 
     <actions>
