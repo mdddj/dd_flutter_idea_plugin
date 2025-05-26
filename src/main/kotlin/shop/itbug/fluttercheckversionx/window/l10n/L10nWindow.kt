@@ -25,14 +25,11 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import com.intellij.util.ui.tree.TreeUtil
 import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
 import shop.itbug.fluttercheckversionx.actions.context.SiteDocument
-import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRunGenAction
-import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nSettingChangeAction
-import shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nWindowTreeRefreshAction
+import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.*
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
-import shop.itbug.fluttercheckversionx.widget.WidgetUtil
 import java.awt.Dimension
 import javax.swing.JPanel
 import javax.swing.JTree
@@ -46,18 +43,32 @@ import javax.swing.tree.DefaultTreeModel
 /**
  * l10n多语言窗口
  */
-class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayoutPanel(), Disposable,
-    FlutterL10nService.OnL10nKeysChangedListener,
-    TreeSelectionListener, FlutterL10nService.OnArbFileChangedListener, UiDataProvider {
+class L10nWindow(val project: Project, val toolWindow: ToolWindow) : OnePixelSplitter(), Disposable,
+    FlutterL10nService.OnL10nKeysChangedListener, TreeSelectionListener, FlutterL10nService.OnArbFileChangedListener,
+    UiDataProvider {
+    val toolbarActionGroup =
+        ActionManager.getInstance().getAction("FlutterL10nKeysToolbarActionGroup") as DefaultActionGroup
+    val treeToolbar =
+        ActionManager.getInstance().createActionToolbar("FlutterL10nWindowTreeToolbar", toolbarActionGroup, false)
+            .apply {
+                component.border = JBUI.Borders.emptyRight(1)
+            }
     private val panel = MyPanel()
     private val editorContainer = JBScrollPane(panel)
     private val myTree = MyL10nKeysTree(project)
     private val service = FlutterL10nService.getInstance(project)
-    private val sp = JBSplitter().apply {
-        firstComponent = myTree.actionToolbar(project).apply {
-            border = JBUI.Borders.customLine(JBColor.border(), 0, 0, 0, 1)
+    private val dartStringTree = DartStringKeysTree(project)
+    val treePanel = object : BorderLayoutPanel() {
+        init {
+            addToLeft(treeToolbar.component)
+            addToCenter(myTree.scroll())
         }
-        secondComponent = editorContainer
+    }
+    private val sp = OnePixelSplitter().apply {
+        splitterProportionKey = "FlutterL10nWindowSplitterProportionRightKey"
+        firstComponent = editorContainer
+        secondComponent = dartStringTree.scroll()
+
     }
 
 
@@ -66,11 +77,15 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayou
         project.messageBus.connect(this).subscribe(FlutterL10nService.ArbFileChanged, this)
         myTree.addTreeSelectionListener(this)
         editorContainer.border = emptyBorder()
-        addToCenter(sp)
         SwingUtilities.invokeLater {
             initTreeModel()
         }
         Disposer.register(this, myTree)
+        treeToolbar.targetComponent = toolWindow.component
+        putUserData(HelpContextAction.DataKey, SiteDocument.L10n)
+        this.firstComponent = treePanel
+        this.secondComponent = sp
+        this.splitterProportionKey = "FlutterL10nWindowSplitterProportionKey"
     }
 
 
@@ -93,6 +108,7 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayou
 
     fun getTree() = myTree
 
+    //
     private fun createTreeModel(keys: List<String>): DefaultTreeModel {
         val model = DefaultTreeModel(DefaultMutableTreeNode("l10n keys"))
         val root = model.root as DefaultMutableTreeNode
@@ -108,12 +124,17 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayou
         }
         panel.removeAll()
         val arbFiles = service.arbFiles
+        val panels = mutableListOf<FlutterL10nKeyEditPanel>()
         arbFiles.forEach {
-//            panel.add(editorPanel(it, key, this))
-            panel.add(FlutterL10nKeyEditPanel(it, key, myTree, this))
+            panels.add(FlutterL10nKeyEditPanel(it, key, myTree, this))
+        }
+        panels.forEach {
+            panel.add(it)
         }
         panel.revalidate()
         panel.repaint()
+        project.messageBus.syncPublisher(FlutterL10nService.TreeKeyChanged)
+            .onTreeKeyChanged(project, key, myTree, panels)
     }
 
     override fun dispose() {
@@ -146,7 +167,11 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : BorderLayou
 
     }
 
-    class MyPanel() : JBPanel<MyPanel>(VerticalLayout(12))
+    class MyPanel() : JBPanel<MyPanel>(VerticalLayout(12)) {
+        init {
+            border = JBUI.Borders.empty(12)
+        }
+    }
 }
 
 
@@ -175,6 +200,7 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
         project.messageBus.connect(this).subscribe(FlutterL10nService.ListenKeysChanged, this)
     }
 
+
     fun selectValue(): String? {
         val last = lastSelectedPathComponent as? DefaultMutableTreeNode ?: return null
         if (last == last.root) return null
@@ -189,9 +215,7 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
     }
 
     override fun onKeysChanged(
-        items: List<L10nKeyItem>,
-        keysString: List<String>,
-        project: Project
+        items: List<L10nKeyItem>, keysString: List<String>, project: Project
     ) {
         SwingUtilities.invokeLater {
             updateUI()
@@ -201,13 +225,7 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
 
     inner class Render : ColoredTreeCellRenderer() {
         override fun customizeCellRenderer(
-            tree: JTree,
-            value: Any?,
-            selected: Boolean,
-            expanded: Boolean,
-            leaf: Boolean,
-            row: Int,
-            hasFocus: Boolean
+            tree: JTree, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean
         ) {
             val key = value?.toString() ?: return
             append(key, SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES)
@@ -224,20 +242,14 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
         }
     }
 
-    companion object {
-    }
+    companion object {}
 }
 
 
 ///键编辑区域
 class FlutterL10nKeyEditPanel(
-    val arbFile: ArbFile,
-    val key: String,
-    val tree: MyL10nKeysTree,
-    parentDisposable: Disposable
-) :
-    BorderLayoutPanel(),
-    UiDataProvider, Disposable, DocumentListener {
+    val arbFile: ArbFile, val key: String, val tree: MyL10nKeysTree, parentDisposable: Disposable
+) : BorderLayoutPanel(), UiDataProvider, Disposable, DocumentListener {
     val vf = arbFile.file
     val project = arbFile.project
 
@@ -249,10 +261,8 @@ class FlutterL10nKeyEditPanel(
     val toolbar = ActionManager.getInstance().createActionToolbar("L10nEditPanel", actionGroup, true).apply {
         targetComponent = this@FlutterL10nKeyEditPanel
     }
-    val panel: JPanel = FormBuilder.createFormBuilder()
-        .addLabeledComponent(JBLabel(vf.name), toolbar.component)
-        .addComponent(textArea)
-        .panel
+    val panel: JPanel = FormBuilder.createFormBuilder().addLabeledComponent(JBLabel(vf.name), toolbar.component)
+        .addComponent(textArea).panel
 
 
     init {
@@ -286,24 +296,22 @@ class FlutterL10nKeyEditPanel(
 }
 
 
-private fun MyL10nKeysTree.actionToolbar(project: Project): JPanel {
-    val panel = ToolbarDecorator.createDecorator(this)
-        .setAddAction {
-            WidgetUtil.configTextFieldModal(
-                project, PluginBundle.get("l10n.addDialog.labelText"), "It inserts this key into all ARB files"
-            ) {
-                FlutterL10nService.getInstance(project).insetNewKey(it)
-            }
-        }.addExtraAction(FlutterL10nWindowTreeRefreshAction.getAction())
-        .addExtraAction(FlutterL10nSettingChangeAction.getInstance())
-        .addExtraAction(FlutterL10nRunGenAction.getInstance())
-        .addExtraAction(HelpContextAction.ACTION)
-        .setPanelBorder(emptyBorder())
-        .setToolbarBorder(emptyBorder()).setScrollPaneBorder(emptyBorder())
-        .createPanel()
-    panel.border = emptyBorder()
-    putUserData(HelpContextAction.DataKey, SiteDocument.L10n)
-    return panel
-}
+//private fun MyL10nKeysTree.actionToolbar(project: Project): JPanel {
+//    val panel = ToolbarDecorator.createDecorator(this).setAddAction {
+//        WidgetUtil.configTextFieldModal(
+//            project, PluginBundle.get("l10n.addDialog.labelText"), "It inserts this key into all ARB files"
+//        ) {
+//            FlutterL10nService.getInstance(project).insetNewKey(it)
+//        }
+//    }.addExtraAction(FlutterL10nWindowTreeRefreshAction.getAction())
+//        .addExtraAction(FlutterL10nSettingChangeAction.getInstance())
+//        .addExtraAction(FlutterL10nRunGenAction.getInstance()).addExtraAction(HelpContextAction.ACTION)
+//        .setPanelBorder(emptyBorder()).setToolbarBorder(emptyBorder()).setScrollPaneBorder(emptyBorder()).createPanel()
+//    panel.border = emptyBorder()
+//    scrollsOnExpand = true
+//    panel.preferredSize = Dimension(200, -1)
+//    putUserData(HelpContextAction.DataKey, SiteDocument.L10n)
+//    return panel
+//}
 
 

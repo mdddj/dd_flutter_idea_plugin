@@ -4,8 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="增强 l10n 操作，新增删除 key,修改 key操作">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="日志窗口添加清空全部操作">
+      <change afterPath="$PROJECT_DIR$/right_menu_icon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/other/DioCopyAllPathsAction.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/tool/FlutterL10nAddNewKeyAction.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/DartStringKeysWidget.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/action/SpActionBase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/codegen/FlutterXPluginInfo.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/context/HelpContextAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/context/HelpContextAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/tool/FlutterL10nRunGenAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/tool/FlutterL10nRunGenAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/sub/JsonValueRender.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/sub/JsonValueRender.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/FlutterL10nService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/FlutterL10nService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/SpManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/SpManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/SpWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/sp/SpWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,12 +73,6 @@
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="FlutterX" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="intellij platform" type="c8890929:TasksNode$1" />
-              </path>
             </expand>
             <select />
           </tree_state>
@@ -84,7 +103,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="5.6.0" />
+        <entry key="$PROJECT_DIR$" value="5.6.2" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -212,7 +231,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
     <option name="sortBySeverity" value="false" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
@@ -289,8 +308,9 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit4",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4": "",
     "dart.analysis.tool.window.visible": "false",
+    "dev.sweep.assistant.data.RecentlyUsedFiles": "src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt;build.gradle.kts;sweep://tutorial/SweepTutorial.java",
     "full.screen.before.presentation.mode": "false",
-    "git-widget-placeholder": "5.6.1",
+    "git-widget-placeholder": "5.7.0",
     "ignore.preview.features.used": "true",
     "jdk.selected.JAVA_MODULE": "jbrsdk_jcef-17",
     "junie.onboarding.icon.badge.shown": "true",
@@ -311,8 +331,9 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2945874",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "show.migrate.to.gradle.popup": "false",
+    "sweep.chatMode": "Manual",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -380,7 +401,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [buildPlugin]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -512,11 +533,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [printBundledPlugins]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
       </list>
     </recent_temporary>
   </component>
@@ -1666,6 +1687,33 @@
       <workItem from="1746581742207" duration="7560000" />
       <workItem from="1746590019781" duration="954000" />
       <workItem from="1746609638712" duration="446000" />
+      <workItem from="1746847418854" duration="116000" />
+      <workItem from="1747019998011" duration="16000" />
+      <workItem from="1747029084522" duration="966000" />
+      <workItem from="1747098200185" duration="4165000" />
+      <workItem from="1747102557139" duration="18868000" />
+      <workItem from="1747128927208" duration="682000" />
+      <workItem from="1747357940873" duration="2672000" />
+      <workItem from="1747618784621" duration="377000" />
+      <workItem from="1747634055300" duration="5791000" />
+      <workItem from="1747708829089" duration="16000" />
+      <workItem from="1747727995114" duration="1630000" />
+      <workItem from="1747796991858" duration="30000" />
+      <workItem from="1747797044222" duration="3460000" />
+      <workItem from="1747876296929" duration="47000" />
+      <workItem from="1747876597160" duration="23000" />
+      <workItem from="1747892522884" duration="531000" />
+      <workItem from="1747898768847" duration="274000" />
+      <workItem from="1747899080754" duration="596000" />
+      <workItem from="1747899842472" duration="259000" />
+      <workItem from="1747900146997" duration="299000" />
+      <workItem from="1747900511059" duration="802000" />
+      <workItem from="1748073651029" duration="439000" />
+      <workItem from="1748074131129" duration="337000" />
+      <workItem from="1748074489819" duration="64000" />
+      <workItem from="1748074567231" duration="4617000" />
+      <workItem from="1748222062906" duration="1302000" />
+      <workItem from="1748223373271" duration="4821000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2010,7 +2058,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="390" />
+    <option name="localTasksCounter" value="392" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2045,18 +2093,6 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="date">
-                    <value>
-                      <list>
-                        <option value="1729156623997" />
-                        <option value="" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
               <option name="HIGHLIGHTERS">
                 <map>
                   <entry key="MERGE_COMMITS" value="true" />
@@ -2072,8 +2108,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="修复dio数据类型可能会转成double的bug" />
-    <MESSAGE value="json to macro 注入到dio list 右键菜单" />
     <MESSAGE value="修复查找libaray卡顿的问题" />
     <MESSAGE value="优化part of 性能,添加绝对路径导入" />
     <MESSAGE value="添加接口来到通知" />
@@ -2097,7 +2131,9 @@
     <MESSAGE value="添加日志" />
     <MESSAGE value="添加 dio socket 重启逻辑" />
     <MESSAGE value="增强 l10n 操作，新增删除 key,修改 key操作" />
-    <option name="LAST_COMMIT_MESSAGE" value="增强 l10n 操作，新增删除 key,修改 key操作" />
+    <MESSAGE value="更新文档" />
+    <MESSAGE value="日志窗口添加清空全部操作" />
+    <option name="LAST_COMMIT_MESSAGE" value="日志窗口添加清空全部操作" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">

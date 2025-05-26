@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.actions.tool
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -24,7 +23,4 @@ class FlutterL10nRunGenAction : AnAction() {
         return ActionUpdateThread.BGT
     }
 
-    companion object {
-        fun getInstance() = ActionManager.getInstance().getAction("FlutterL10nRunGenAction") as FlutterL10nRunGenAction
-    }
 }

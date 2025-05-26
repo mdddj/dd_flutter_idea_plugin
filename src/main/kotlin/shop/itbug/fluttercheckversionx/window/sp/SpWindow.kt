@@ -8,8 +8,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.putUserData
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.JBColor
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBList
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.smartboot.socket.transport.AioSession
 import shop.itbug.fluttercheckversionx.actions.context.HelpContextAction
@@ -20,6 +23,7 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import java.awt.Dimension
 import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
+import javax.swing.ListSelectionModel
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
@@ -29,7 +33,6 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 
     private val left = SpWindowLeft()
     private val right = SpWindowRight(project)
-    private val emptyBorder = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 
 
     init {
@@ -40,7 +43,7 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
             firstComponent = left.scroll()
             secondComponent = right
             this.splitterProportionKey = "sp-window-key"
-            border = emptyBorder
+            border = JBUI.Borders.customLineTop(JBColor.border())
         })
         putUserData(HelpContextAction.DataKey, SiteDocument.Sp)
         Disposer.register(this, right)
@@ -53,11 +56,8 @@ class SpWindow(project: Project, private val toolWindow: ToolWindow) : BorderLay
 
 
     private fun createToolbar(): ActionToolbar {
-        return ActionManager.getInstance().createActionToolbar("sp tool bar", DefaultActionGroup().apply {
-            add(ActionManager.getInstance().getAction("FlutterProjects"))
-            add(ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"))
-            add(ActionManager.getInstance().getAction("HelpAction"))
-        }, true).apply {
+        val actionGroup = ActionManager.getInstance().getAction("SpPanelToolbar") as DefaultActionGroup
+        return ActionManager.getInstance().createActionToolbar("sp tool bar", actionGroup, true).apply {
             this.targetComponent = toolWindow.component
         }
     }
@@ -107,7 +107,7 @@ private class SpWindowRight(project: Project) : JsonValueRender(project), Dispos
 
 
 /// keys 列表
-private class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable {
+class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable, UiDataProvider {
     init {
         SpManagerListen.listen(this, modelHandel = {
             this.model = DefaultListModel<String>().apply {
@@ -116,6 +116,8 @@ private class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable
         }, valueHandle = null)
         addListSelectionListener(this)
         border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+        selectionMode = ListSelectionModel.SINGLE_SELECTION
+        PopupHandler.installPopupMenu(this, "SPRightMenuAction", "SP_WINDOW_LEFT_MENU")
     }
 
     override fun valueChanged(e: ListSelectionEvent?) {
@@ -127,7 +129,7 @@ private class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable
 
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(200, -1)
+        return Dimension(200, super<JBList>.preferredSize.height)
     }
 
     override fun getMinimumSize(): Dimension {
@@ -136,6 +138,10 @@ private class SpWindowLeft : JBList<String>(), ListSelectionListener, Disposable
 
     override fun dispose() {
         println("sp window left disposed")
+    }
+
+    override fun uiDataSnapshot(sink: DataSink) {
+
     }
 
 }

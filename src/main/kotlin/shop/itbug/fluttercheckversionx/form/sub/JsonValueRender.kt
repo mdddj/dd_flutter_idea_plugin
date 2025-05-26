@@ -54,6 +54,9 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
                     val map = builder.fromJson(json, Map::class.java)
                     return builder.toJson(map)
                 }
+                if (json.toIntOrNull() != null) {
+                    return "${json.toInt()}"
+                }
             } catch (e: Exception) {
                 println("尝试String转json失败:${e.localizedMessage} \n String is $json")
             }
@@ -64,6 +67,12 @@ open class JsonValueRender(p: Project) : JsonEditorTextPanel(p) {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+        if (json is Int) {
+            return "$json"
+        }
+        if (json is Double) {
+            return "$json"
         }
         try {
             return builder.toJson(json)

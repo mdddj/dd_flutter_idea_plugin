@@ -63,6 +63,15 @@ object MyFileUtil {
         return project.guessProjectDir()
     }
 
+
+    /**
+     * 获取 flutter lib 目录
+     */
+    fun getFlutterLibVirtualFile(project: Project): VirtualFile? {
+        val root = project.guessProjectDir() ?: return null
+        return root.findChild("lib")
+    }
+
     /**
      *
      */
@@ -139,6 +148,7 @@ object MyFileUtil {
      * 获取项目所有的dart文件
      */
     fun findAllProjectFiles(project: Project): List<VirtualFile> {
+
         val lib: VirtualFile =
             LocalFileSystem.getInstance().findFileByPath("${project.basePath}" + File.separator + "lib")
                 ?: return emptyList()

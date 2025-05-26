@@ -2,8 +2,10 @@ package shop.itbug.fluttercheckversionx.window.logger
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DataSink
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.UiDataProvider
 import com.intellij.openapi.project.Project
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
@@ -26,11 +28,7 @@ import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 enum class MyLogIconType {
-    None,
-    Error,
-    Info,
-    Success,
-    Warning;
+    None, Error, Info, Success, Warning;
 
     fun getIcon(): Icon? {
         return when (this) {
@@ -63,10 +61,23 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
 
     private val jsonRender = JsonValueRender(project)
 
+    val actionGroup =
+        ActionManager.getInstance().getAction("FlutterXLoggerWindowToolbarActionGroup") as DefaultActionGroup
+
+
+    val listPanel = ToolbarDecorator.createDecorator(keysPanel).setRemoveAction {
+        keysPanel.removeSelectItem()
+    }.setRemoveActionUpdater {
+        it.presentation.isEnabled = keysPanel.selectedValue != null
+        return@setRemoveActionUpdater true
+    }.setActionGroup(actionGroup)
+        .disableUpDownActions()
+        .createPanel()
+
 
     ///分割窗口
     private val sp = OnePixelSplitter().apply {
-        firstComponent = JBScrollPane(keysPanel).apply {
+        firstComponent = listPanel.apply {
             this.border = JBUI.Borders.customLine(JBColor.border(), 0, 0, 0, 0)
         }
         secondComponent = JBScrollPane(jsonRender).apply {
@@ -143,11 +154,7 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
 
 class MyLogKeysRenderUi : ColoredListCellRenderer<MyLogInfo>() {
     override fun customizeCellRenderer(
-        p0: JList<out MyLogInfo?>,
-        p1: MyLogInfo?,
-        p2: Int,
-        p3: Boolean,
-        p4: Boolean
+        p0: JList<out MyLogInfo?>, p1: MyLogInfo?, p2: Int, p3: Boolean, p4: Boolean
     ) {
         p1?.let {
 
@@ -166,30 +173,14 @@ class MyLogKeysRenderUi : ColoredListCellRenderer<MyLogInfo>() {
 }
 
 
-private class MyLogPanel : JBList<MyLogInfo>(DefaultListModel()), UiDataProvider {
-    val actionGroup = DefaultActionGroup()
-    private val removeAction =
-        object : DumbAwareAction(PluginBundle.get("delete_base_text"), "Remove item", AllIcons.General.Delete) {
-            override fun actionPerformed(p0: AnActionEvent) {
-                this@MyLogPanel.getListModel().removeElement(this@MyLogPanel.selectedValue)
-            }
+class MyLogPanel : JBList<MyLogInfo>(DefaultListModel()), UiDataProvider {
 
-            override fun update(e: AnActionEvent) {
-                e.presentation.isEnabled = this@MyLogPanel.selectedValue != null
-                super.update(e)
-            }
 
-            override fun getActionUpdateThread(): ActionUpdateThread {
-                return ActionUpdateThread.BGT
-            }
-        }
 
     init {
-        actionGroup.add(removeAction)
         ListUiUtil.Selection.installSelectionOnRightClick(this)
         ListUiUtil.Selection.installSelectionOnFocus(this)
         TreeUIHelper.getInstance().installListSpeedSearch(this) { o -> o.key.key }
-        PopupHandler.installPopupMenu(this, actionGroup, "FlutterX.Log.Window.Keys")
         setEmptyText(PluginBundle.get("empty"))
         emptyText.appendLine("")
         emptyText.appendLine(
@@ -199,11 +190,22 @@ private class MyLogPanel : JBList<MyLogInfo>(DefaultListModel()), UiDataProvider
         ) {
             SiteDocument.Log.open()
         }
+
     }
 
     override fun uiDataSnapshot(sink: DataSink) {
 
     }
 
-    private fun getListModel() = model as DefaultListModel
+    fun getListModel() = model as DefaultListModel
+
+    fun removeSelectItem() {
+        val select = selectedValue
+        if (select != null) {
+            getListModel().removeElement(select)
+        }
+
+    }
+
+    fun removeAllItems() = getListModel().removeAllElements()
 }

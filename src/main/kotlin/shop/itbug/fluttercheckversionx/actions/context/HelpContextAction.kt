@@ -2,7 +2,6 @@ package shop.itbug.fluttercheckversionx.actions.context
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -54,7 +53,6 @@ class HelpContextAction() :
 
     companion object {
         val DataKey = Key.create<SiteDocument>("SiteDocument")
-        val ACTION = ActionManager.getInstance().getAction("HelpAction") as HelpContextAction
     }
 
 }
