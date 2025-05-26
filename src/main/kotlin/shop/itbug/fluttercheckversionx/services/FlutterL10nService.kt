@@ -27,19 +27,45 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.GlobalSearchScopes
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import com.intellij.ui.JBColor
 import com.intellij.util.messages.Topic
+import com.jetbrains.lang.dart.DartFileType
+import com.jetbrains.lang.dart.psi.DartFile
+import com.jetbrains.lang.dart.psi.impl.DartArgumentsImpl
+import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
+import com.jetbrains.lang.dart.psi.impl.DartNamedArgumentImpl
+import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.manager.myManagerFun
 import shop.itbug.fluttercheckversionx.tools.JsonPsiFactory
 import shop.itbug.fluttercheckversionx.tools.MyJsonPsiUtil
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
+import shop.itbug.fluttercheckversionx.util.string
 import shop.itbug.fluttercheckversionx.window.l10n.FlutterL10nKeyEditPanel
 import shop.itbug.fluttercheckversionx.window.l10n.MyL10nKeysTree
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
+data class DartString(
+    val element: SmartPsiElementPointer<DartStringLiteralExpressionImpl>,
+    val file: VirtualFile,
+    val psiFile: DartFile,
+    val text: String
+) {
+    override fun toString(): String {
+        return text
+    }
+}
+
+fun List<DartString>.group(): Map<VirtualFile, List<DartString>> {
+    return groupBy { it.file }
+}
 
 data class L10nKeyItem(
     val key: String, val value: String, val property: SmartPsiElementPointer<JsonProperty>, val file: ArbFile,
@@ -69,16 +95,81 @@ class FlutterL10nService(val project: Project) : Disposable {
     private val config = PluginConfig.getState(project)
     private var writeJob: Job? = null
     private var edtJob: Job? = null
+    var dartStringList: List<DartString> = emptyList()
+
+    ///扫描项目中的所有字符串
+    private var scanStringsJob: Job? = null
+
 
     fun coroutineScope() = scope
     private suspend fun keys(): List<L10nKeyItem> =
         arbFiles.map { scope.async { it.readAllKeys() } }.awaitAll().toList().flatten()
 
-    var arbFiles = listOf<ArbFile>() //所有 arb files
+    var arbFiles = listOf<ArbFile>() //所有 arb filesp
 
+
+    //开始扫描项目中的所有字符串 psi element
+    fun startScanStringElements() {
+        scanStringsJob?.cancel()
+        scanStringsJob = scope.launch(Dispatchers.IO) {
+
+            //获取所有项目文件
+            println("开始扫描项目中所有字符串")
+            val allFiles = readAllExitStringElementFiles()
+            val eleList = allFiles.map { async { readAllStringElements(it) } }.awaitAll().flatten()
+            dartStringList = eleList
+            project.messageBus.syncPublisher(OnDartStringScanCompleted)
+                .OnDartStringScanCompleted(project, dartStringList, dartStringList.group())
+        }
+    }
+
+
+    ///获取所有 dart 字符串节点
+    private suspend fun readAllStringElements(file: VirtualFile): List<DartString> {
+        val psi = readAction { PsiManager.getInstance(project).findFile(file) } ?: return emptyList()
+        val list =
+            readAction { PsiTreeUtil.findChildrenOfType(psi, DartStringLiteralExpressionImpl::class.java) }.toList()
+        return list.mapNotNull {
+            val parent = readAction { it.parent }
+            if (parent is DartArgumentsImpl || parent is DartNamedArgumentImpl) {
+                val text = it.string ?: return@mapNotNull null
+                val classContain =
+                    readAction { PsiTreeUtil.findFirstParent(it) { e -> e is DartClassDefinitionImpl } } as? DartClassDefinitionImpl
+                if (classContain != null) {
+                    val isFreezed = readAction { classContain.myManagerFun().isFreezed3Class() }
+                    if (isFreezed) {
+                        return@mapNotNull null
+                    }
+                }
+                val point = readAction { SmartPointerManager.getInstance(project).createSmartPsiElementPointer(it) }
+                return@mapNotNull DartString(
+                    element = point,
+                    file = file,
+                    psiFile = psi as DartFile,
+                    text = text,
+                )
+            }
+            return@mapNotNull null
+        }
+    }
+
+    ///获取索引中所有带有字符串的文件
+    private suspend fun readAllExitStringElementFiles(): List<VirtualFile> {
+        val flutterLibVirtualFile = readAction { MyFileUtil.getFlutterLibVirtualFile(project) } ?: return emptyList()
+        val libScope = GlobalSearchScopes.directoryScope(project, flutterLibVirtualFile, true)
+        val files = readAction {
+            FileTypeIndex.getFiles(DartFileType.INSTANCE, libScope)
+        }
+        return files.filterNotNull().filter {
+            if (it.name.endsWith(".g.dart")) return@filter false
+            if (it.name.endsWith(".freezed.dart")) return@filter false
+            return@filter true
+        }
+    }
 
     //检测 l18n所有的 key
     suspend fun checkAllKeys() {
+        startScanStringElements()
         val folder = config.l10nFolder ?: return
         val file = readAction { LocalFileSystem.getInstance().findFileByPath(folder) } ?: return
         val directory = ApplicationManager.getApplication().executeOnPooledThread<PsiDirectory?> {
@@ -193,6 +284,12 @@ class FlutterL10nService(val project: Project) : Disposable {
         fun onTreeKeyChanged(project: Project, key: String, tree: MyL10nKeysTree, panels: List<FlutterL10nKeyEditPanel>)
     }
 
+    interface OnDartStringScanCompletedListener {
+        fun OnDartStringScanCompleted(
+            project: Project, list: List<DartString>, group: Map<VirtualFile, List<DartString>>
+        )
+    }
+
     companion object {
         fun getInstance(project: Project) = project.service<FlutterL10nService>()
         val ListenKeysChanged =
@@ -202,6 +299,12 @@ class FlutterL10nService(val project: Project) : Disposable {
 
         //key选择发生变更
         val TreeKeyChanged = Topic<OnTreeKeyChanged>.create("L10nKeysTreeShowOnChanged", OnTreeKeyChanged::class.java)
+
+        //dart字符串扫描完毕事件
+        val OnDartStringScanCompleted = Topic<OnDartStringScanCompletedListener>(
+            "OnDartStringScanCompleted", OnDartStringScanCompletedListener::class.java
+        )
+
     }
 }
 
@@ -309,13 +412,9 @@ fun ArbFile.moveToOffset(key: String, editor: Editor) {
         editor.caretModel.moveToOffset(startOffset)
         editor.scrollingModel.scrollToCaret(com.intellij.openapi.editor.ScrollType.CENTER)
         val highlighter = markup.addRangeHighlighter(
-            startOffset,
-            endOffset,
-            HighlighterLayer.CARET_ROW + 1,
-            TextAttributes().apply {
+            startOffset, endOffset, HighlighterLayer.CARET_ROW + 1, TextAttributes().apply {
                 backgroundColor = JBColor.blue
-            },
-            HighlighterTargetArea.EXACT_RANGE
+            }, HighlighterTargetArea.EXACT_RANGE
         )
         Timer().scheduleAtFixedRate(0, 1000) {
             markup.removeHighlighter(highlighter)

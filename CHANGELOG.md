@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## [5.7.0] - 2025-05-26
+
+* Add SP panel right menu actions (SP) [see document](https://flutterx.itbug.shop/shared-preferences.html#bo0451_6)
+* [full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
+
+## [5.6.3] - 2025-05-19
+
+* Fix known bugs
+* Add Dart String Element Scanner (l10n panel)
+* Add "Delete All" in Log panel
+* [full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
+
 ## [5.6.2] - 2025-05-08
 
 * Add `dio` restart button (settings)

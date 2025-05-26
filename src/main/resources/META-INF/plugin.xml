@@ -438,6 +438,12 @@
         <group id="FlutterXLoggerWindowToolbarActionGroup">
             <reference ref="LoggerCleanAllAction"/>
         </group>
+
+
+        <action id="FlutterL10nAddNewKeyAction"
+                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nAddNewKeyAction" text="Add new key"/>
+
+
     </actions>
 
     <actions>
@@ -507,6 +513,19 @@
 
 
     <actions>
+        <action id="DioCopyAllPathsAction"
+                class="shop.itbug.fluttercheckversionx.actions.dio.other.DioCopyAllPathsAction"
+                text="Copy All Api Paths"/>
+
+        <group id="DioApiListOtherActions" popup="true" text="Other Actions">
+            <reference ref="DioCopyAllPathsAction"/>
+            <separator/>
+            <add-to-group group-id="dio-window-view-params" anchor="last"/>
+        </group>
+    </actions>
+
+
+    <actions>
         <action id="HurlCopyAllAction" class="shop.itbug.fluttercheckversionx.actions.dio.hurl.HurlCopyAllAction"
                 text="Copy All Request Hurl Base"/>
         <action id="HurlCopyBaseActionImpl"
@@ -514,8 +533,64 @@
         <group id="HurlGenerateActions" popup="true" text="Hurl Generate">
             <reference ref="HurlCopyBaseActionImpl"/>
             <reference ref="HurlCopyAllAction"/>
-            <add-to-group group-id="dio-window-view-params" anchor="last"/>
+            <add-to-group group-id="DioApiListOtherActions" anchor="last"/>
         </group>
     </actions>
+
+    <actions>
+        <group id="FlutterL10nKeysToolbarActionGroup">
+            <reference ref="FlutterL10nRunGenAction"/>
+            <separator/>
+            <reference ref="FlutterL10nAddNewKeyAction"/>
+            <reference ref="FlutterL10nWindowTreeRefreshAction"/>
+            <reference ref="FlutterL10nSettingChangeAction"/>
+            <separator/>
+            <reference ref="HelpAction"/>
+        </group>
+    </actions>
+
+    <actions>
+        <group id="SpPanelToolbar">
+            <reference ref="FlutterProjects"/>
+            <reference ref="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"/>
+            <reference ref="HelpAction"/>
+        </group>
+    </actions>
+
+
+    <!--sp 右键菜单-->
+    <actions>
+        <action id="SpUpdateStringValueAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateStringValueAction"
+        />
+        <action id="SpUpdateBoolValueAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateBoolValueAction"
+        />
+
+        <action id="SpUpdateIntValueAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateIntValueAction"
+        />
+
+        <action id="SpUpdateDoubleValueAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateDoubleValueAction"
+        />
+        <action id="SpRemoveKeyAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.action.SpRemoveKeyAction"
+        />
+        <action id="SPRemoveAllAction"
+                class="shop.itbug.fluttercheckversionx.window.sp.action.SPRemoveAllAction"
+        />
+
+        <group id="SPRightMenuAction">
+            <reference ref="SpRemoveKeyAction"/>
+            <reference ref="SPRemoveAllAction"/>
+            <separator/>
+            <reference ref="SpUpdateStringValueAction"/>
+            <reference ref="SpUpdateBoolValueAction"/>
+            <reference ref="SpUpdateIntValueAction"/>
+            <reference ref="SpUpdateDoubleValueAction"/>
+        </group>
+    </actions>
+
 </idea-plugin>
 

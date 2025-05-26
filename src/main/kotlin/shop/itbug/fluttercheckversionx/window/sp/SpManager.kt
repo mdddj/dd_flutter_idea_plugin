@@ -1,6 +1,8 @@
 package shop.itbug.fluttercheckversionx.window.sp
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.ToNumberPolicy
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
@@ -38,7 +40,10 @@ class SpManager(message: String) {
     }
 
     private fun valueHandle() {
-        val valueModel = Gson().fromJson(jsonObject.jsonString, SPValueModel::class.java)
+        val gson = GsonBuilder()
+            .setObjectToNumberStrategy(ToNumberPolicy.LAZILY_PARSED_NUMBER)
+            .create()
+        val valueModel = gson.fromJson(jsonObject.jsonString, SPValueModel::class.java)
         SpManagerListen.fireValue(valueModel)
     }
 
@@ -87,4 +92,3 @@ interface SpManagerListen {
         }
     }
 }
-
