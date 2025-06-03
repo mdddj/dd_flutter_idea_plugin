@@ -198,6 +198,7 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
         )
         this.cellRenderer = Render()
         project.messageBus.connect(this).subscribe(FlutterL10nService.ListenKeysChanged, this)
+
     }
 
 
@@ -242,7 +243,6 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
         }
     }
 
-    companion object {}
 }
 
 

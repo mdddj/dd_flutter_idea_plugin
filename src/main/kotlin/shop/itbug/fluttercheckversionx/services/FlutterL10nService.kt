@@ -112,7 +112,6 @@ class FlutterL10nService(val project: Project) : Disposable {
     fun startScanStringElements() {
         scanStringsJob?.cancel()
         scanStringsJob = scope.launch(Dispatchers.IO) {
-
             //获取所有项目文件
             println("开始扫描项目中所有字符串")
             val allFiles = readAllExitStringElementFiles()
@@ -126,7 +125,13 @@ class FlutterL10nService(val project: Project) : Disposable {
 
     ///获取所有 dart 字符串节点
     private suspend fun readAllStringElements(file: VirtualFile): List<DartString> {
-        val psi = readAction { PsiManager.getInstance(project).findFile(file) } ?: return emptyList()
+        val psi = readAction {
+            try {
+                PsiManager.getInstance(project).findFile(file)
+            } catch (_: Exception) {
+                null
+            }
+        } ?: return emptyList()
         val list =
             readAction { PsiTreeUtil.findChildrenOfType(psi, DartStringLiteralExpressionImpl::class.java) }.toList()
         return list.mapNotNull {
@@ -169,7 +174,6 @@ class FlutterL10nService(val project: Project) : Disposable {
 
     //检测 l18n所有的 key
     suspend fun checkAllKeys() {
-        startScanStringElements()
         val folder = config.l10nFolder ?: return
         val file = readAction { LocalFileSystem.getInstance().findFileByPath(folder) } ?: return
         val directory = ApplicationManager.getApplication().executeOnPooledThread<PsiDirectory?> {

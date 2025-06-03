@@ -12,7 +12,7 @@ val pluginVersion: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.21"
-    id("org.jetbrains.intellij.platform") version "2.5.0"
+    id("org.jetbrains.intellij.platform") version "2.6.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
@@ -47,6 +47,7 @@ val bPlugins = mutableListOf(
 if (sinceBuildVersion.toInt() >= 243) {
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
+    bPlugins.add("org.intellij.intelliLang")
 }
 
 dependencies {
@@ -78,15 +79,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            when (sinceBuildVersion) {
-                "243" -> {
-                    local("/Applications/Android Studio.app")
-                }
-
-                "251" -> {
-                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 Beta.app")
-                }
-            }
+            recommended()
         }
     }
 }
@@ -332,6 +325,5 @@ dependencies {
     integrationTestImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
     integrationTestImplementation("org.kodein.di:kodein-di-jvm:7.20.2")
     integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
-
 }
 

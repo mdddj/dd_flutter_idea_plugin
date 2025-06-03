@@ -1,6 +1,41 @@
 <idea-plugin>
     <id>shop.itbug.FlutterCheckVersionX</id>
     <name>FlutterX</name>
+    <description>
+        &lt;blockquote&gt;
+        &lt;p&gt;Links: &lt;a href=&quot;https://github.com/mdddj/dd_flutter_idea_plugin&quot;&gt;Github&lt;/a&gt;,&lt;a
+        href=&quot;https://flutterx.itbug.shop/starter.html&quot;&gt;Document&lt;/a&gt;&lt;/p&gt;
+        &lt;/blockquote&gt;
+        &lt;ul&gt;
+        &lt;li&gt;Author: LiangDianDian &lt;/li&gt;
+        &lt;li&gt;QQ Group: 706438100&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;https://discord.com/invite/ethKNxKRcZ&quot;&gt;Discord&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h2&gt;package autocomplete&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at15.03.38___1732777496374___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 15.03.38.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;package Version detection&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.19.39___1732775000905___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.19.39.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;package detail panel&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.25.43___1732775218121___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.25.43.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;package quick operation&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.28.03___1732775335724___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.28.03.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;Assets autocomplete&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.31.45___1732775582151___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.31.45.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;Assets preview panel&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.35.24___1732775773227___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.35.24.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;Part of autocomplete&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.38.10___1732775948518___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.38.10.gif&quot; /&gt;&lt;/p&gt;
+        &lt;h2&gt;Widget to Riverpod Widget Tool&lt;/h2&gt;
+        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.40.09___1732776112608___.gif&quot;
+        alt=&quot;Kapture 2024-11-28 at 14.40.09.gif&quot; /&gt;&lt;/p&gt;
+    </description>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
@@ -8,16 +43,15 @@
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.json</depends>
-    <depends>org.jetbrains.kotlin</depends>
     <depends>com.intellij.gradle</depends>
     <depends>com.intellij.platform.images</depends>
     <depends>org.jetbrains.plugins.gradle</depends>
     <depends>org.intellij.groovy</depends>
-    <resource-bundle>messages.pluginBundle</resource-bundle>
+    <depends>com.intellij.modules.lang</depends>
 
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <supportsKotlinPluginMode supportsK2="true"/>
-    </extensions>
+    <!--    <extensions defaultExtensionNs="org.jetbrains.kotlin">-->
+    <!--        <supportsKotlinPluginMode supportsK2="true"/>-->
+    <!--    </extensions>-->
 
 
     <extensions defaultExtensionNs="com.intellij">
@@ -89,6 +123,7 @@
                                               implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayProvider"
                                               isEnabledByDefault="true"
                                               language="Dart"
+                                              bundle="messages.pluginBundle"
                                               nameKey="dart_type_params_show_name_key" providerId="DartTypeShow"/>
 
         <codeInsight.inlayActionHandler handlerId="dartTypeInlayProviderId"

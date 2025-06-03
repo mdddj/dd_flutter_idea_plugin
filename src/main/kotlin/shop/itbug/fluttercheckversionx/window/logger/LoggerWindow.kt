@@ -70,7 +70,7 @@ class LoggerWindow(val project: Project) : BorderLayoutPanel(), ListSelectionLis
     }.setRemoveActionUpdater {
         it.presentation.isEnabled = keysPanel.selectedValue != null
         return@setRemoveActionUpdater true
-    }.setActionGroup(actionGroup)
+    }.addExtraActions(actionGroup)
         .disableUpDownActions()
         .createPanel()
 

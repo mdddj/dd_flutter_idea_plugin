@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
@@ -36,6 +37,12 @@ class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
         FlutterL10nService.getInstance(project).checkAllKeys()
+        DumbService.getInstance(project).runWhenSmart {
+            if (!project.isDisposed) {
+                FlutterL10nService.getInstance(project).startScanStringElements()
+            }
+        }
+
     }
 }
 
