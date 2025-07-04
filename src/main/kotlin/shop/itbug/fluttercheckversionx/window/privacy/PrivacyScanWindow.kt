@@ -26,10 +26,10 @@ import shop.itbug.fluttercheckversionx.common.scroll
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import java.io.File
 import javax.swing.*
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.ListSelectionListener
 
 private const val defaultPrivacyFileText = """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -53,20 +53,14 @@ private const val privacyFileName = "PrivacyInfo.xcprivacy"
 ///iOS隐私扫描工具
 
 
-class PrivacyScanWindow(val project: Project) : BorderLayoutPanel(), Disposable, ActionListener {
+class PrivacyScanWindow(val project: Project) : BorderLayoutPanel(), Disposable, ActionListener, ListSelectionListener {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val tipLabel = JBLabel(" " + PluginBundle.get("privacy_info_tips"))
 
+
     private val pathList = JBList(ListModel()).apply {
         cellRenderer = ListRender()
-        addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent) {
-                val index: Int = this@apply.locationToIndex(e.point)
-                if (index >= 0) {
-                    openOnEditor(index)
-                }
-            }
-        })
+        addListSelectionListener(this@PrivacyScanWindow)
     }
 
     private val button = JButton(PluginBundle.get("scan_privacy"))
@@ -258,6 +252,7 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel(), Disposable,
 
     override fun dispose() {
         button.removeActionListener(this)
+        pathList.removeListSelectionListener(this)
         coroutineScope.cancel()
     }
 
@@ -265,5 +260,11 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel(), Disposable,
     override fun actionPerformed(e: ActionEvent?) {
         getListModel().clear()
         scanPackages()
+    }
+
+    override fun valueChanged(e: ListSelectionEvent) {
+        if (!e.valueIsAdjusting) {
+            openOnEditor(pathList.selectedIndex)
+        }
     }
 }
