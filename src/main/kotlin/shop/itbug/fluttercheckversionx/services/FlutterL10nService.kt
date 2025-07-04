@@ -118,7 +118,7 @@ class FlutterL10nService(val project: Project) : Disposable {
             val eleList = allFiles.map { async { readAllStringElements(it) } }.awaitAll().flatten()
             dartStringList = eleList
             project.messageBus.syncPublisher(OnDartStringScanCompleted)
-                .OnDartStringScanCompleted(project, dartStringList, dartStringList.group())
+                .onDartStringScanCompleted(project, dartStringList, dartStringList.group())
         }
     }
 
@@ -289,7 +289,7 @@ class FlutterL10nService(val project: Project) : Disposable {
     }
 
     interface OnDartStringScanCompletedListener {
-        fun OnDartStringScanCompleted(
+        fun onDartStringScanCompleted(
             project: Project, list: List<DartString>, group: Map<VirtualFile, List<DartString>>
         )
     }

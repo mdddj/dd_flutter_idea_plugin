@@ -47,7 +47,7 @@ fun settingPanel(
             row {
                 cell(FlutterVersionCheckPanel(project = project))
             }
-            documentCommentRow(Links.checkFlutterVersion)
+            documentCommentRow(Links.CHECK_FLUTTER_VERSION_DOC_LINK)
         }
 
 
@@ -93,7 +93,7 @@ fun settingPanel(
             }
 
             row {
-                comment(Links.generateDocCommit(Links.dio))
+                comment(Links.generateDocCommit(Links.DIO))
             }
         }
 
@@ -111,7 +111,7 @@ fun settingPanel(
                 textField().bindText(model::assetScanFolderName)
             }
             row {
-                comment(Links.generateDocCommit(Links.accetsIcons))
+                comment(Links.generateDocCommit(Links.ACCESS_ICON))
             }
         }
 
@@ -145,7 +145,7 @@ fun settingPanel(
                 textField().bindText(dioxSetting.copyKeys::timestamp)
             }
             row {
-                comment(Links.generateDocCommit(Links.dioImage))
+                comment(Links.generateDocCommit(Links.DIO_IMAGE))
             }
         }
     }

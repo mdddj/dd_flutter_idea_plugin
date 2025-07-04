@@ -1,6 +1,6 @@
 package shop.itbug.fluttercheckversionx.dialog
 
-import PluginVersionModel
+import shop.itbug.fluttercheckversionx.model.PluginVersionModel
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator

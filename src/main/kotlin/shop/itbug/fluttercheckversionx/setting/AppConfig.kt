@@ -56,7 +56,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                             { pluginConfig.autoImportRiverpodText = it })
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.riverpod))
+                    comment(Links.generateDocCommit(Links.RIVERPOD))
                 }
             }
             group("Open Project in Ide") {
@@ -70,7 +70,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                     checkBox("Enable").bindSelected(pluginConfig::openMacosDirectoryInXcode)
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.openIn))
+                    comment(Links.generateDocCommit(Links.OPEN_IN))
                 }
             }
 
@@ -82,7 +82,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                     checkBox("Enable").bindSelected(pluginConfig::showQQGroup)
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.link))
+                    comment(Links.generateDocCommit(Links.LINK))
                 }
             }
             group("Assets Icon") {
@@ -93,7 +93,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                     intTextField().bindIntText(pluginConfig::assetsIconSize)
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.icons))
+                    comment(Links.generateDocCommit(Links.ICON))
                 }
 
             }
@@ -137,7 +137,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                     )
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.l10nDoc))
+                    comment(Links.generateDocCommit(Links.L10N_DOC))
                 }
             }
 

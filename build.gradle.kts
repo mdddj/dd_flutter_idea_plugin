@@ -81,7 +81,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            
+
         }
     }
 }
@@ -251,21 +251,21 @@ val generateFlutterPluginInfo by tasks.registering {
     }
 
     // 设置输入和输出以支持增量构建
-    outputs.file(outputFile)
-
-    doLast {
-        val q = "\"\"\"\n"
-        outputFile.writeText(
-            """
-            |package codegen
-            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
-            |object FlutterXPluginInfo {
-            |    const val VERSION: String = "${project.version}"
-            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
-            |}
-            |""".trimMargin().trimIndent()
-        )
-    }
+//    outputs.file(outputFile)
+//
+//    doLast {
+//        val q = "\"\"\"\n"
+//        outputFile.writeText(
+//            """
+//            |package codegen
+//            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
+//            |object FlutterXPluginInfo {
+//            |    const val VERSION: String = "${project.version}"
+//            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
+//            |}
+//            |""".trimMargin().trimIndent()
+//        )
+//    }
 }
 
 // 让 Kotlin 编译任务依赖生成任务
@@ -319,13 +319,5 @@ sourceSets {
     }
 }
 
-val integrationTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.testImplementation.get())
-}
 
-dependencies {
-    integrationTestImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-    integrationTestImplementation("org.kodein.di:kodein-di-jvm:7.20.2")
-    integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
-}
 

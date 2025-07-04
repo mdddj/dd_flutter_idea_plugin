@@ -103,7 +103,7 @@ fun getGeneraAssetsPanel(
     val p: DialogPanel = panel {
 
         row {
-            comment(Links.generateDocCommit(Links.assets))
+            comment(Links.generateDocCommit(Links.ASSETS))
         }
 
         row(PluginBundle.get("g.1")) {

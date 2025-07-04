@@ -187,8 +187,6 @@
 
         <!--        <navbar implementation="shop.itbug.fluttercheckversionx.navbar.DartStructureAwareNavbar"/>-->
 
-        <!--        <psi.referenceContributor-->
-        <!--                implementation="shop.itbug.fluttercheckversionx.reference.L10nReferenceContributor" language="Dart"/>-->
 
         <!--        <psi.referenceContributor-->
         <!--                implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor" language="Dart"/>-->

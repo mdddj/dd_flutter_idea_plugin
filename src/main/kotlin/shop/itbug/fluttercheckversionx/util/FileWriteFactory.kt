@@ -49,6 +49,6 @@ class FileWriteService(val project: Project) {
 
 
     companion object {
-        fun getInstance(project: Project) = project.getService(FileWriteService::class.java)
+        fun getInstance(project: Project): FileWriteService = project.getService(FileWriteService::class.java)
     }
 }
