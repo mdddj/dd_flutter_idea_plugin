@@ -7,6 +7,7 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val pluginVersion: String by project
+val ideType: String by project
 
 
 plugins {
@@ -18,7 +19,7 @@ plugins {
 }
 
 group = "shop.itbug"
-version = pluginVersion + sinceBuildVersion
+version = pluginVersion + ideType
 
 repositories {
     mavenCentral()
@@ -44,7 +45,8 @@ val bPlugins = mutableListOf(
     "org.intellij.groovy"
 )
 
-if (sinceBuildVersion.toInt() >= 243) {
+if (ideType.toInt() >= 243) {
+    println("大于 243")
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
     bPlugins.add("org.intellij.intelliLang")
@@ -56,13 +58,13 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
-        when (sinceBuildVersion) {
+        when (ideType) {
             "243" -> {
                 intellijIdeaCommunity("2024.3.5")
             }
 
             "251" -> {
-                intellijIdeaCommunity("2025.1")
+                intellijIdeaCommunity("251.26094.98")
             }
         }
         bundledPlugins(bPlugins)
@@ -79,7 +81,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            recommended()
+            
         }
     }
 }

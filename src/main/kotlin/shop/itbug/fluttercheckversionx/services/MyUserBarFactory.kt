@@ -60,11 +60,20 @@ class MyUserBarFactory : StatusBarWidgetFactory {
 class MyUserAccountBar(var project: Project) : TextPanel.WithIconAndArrows(), IconLikeCustomStatusBarWidget {
 
 
+    private val clickListener = object : ClickListener() {
+        override fun onClick(event: MouseEvent, clickCount: Int): Boolean {
+            if (!project.isDisposed) {
+                showPopup()
+            }
+            return true
+        }
+    }
     override var icon: Icon?
         get() = MyIcons.dartPluginIcon
         set(_) {}
 
     override fun dispose() {
+        clickListener.uninstall(this)
     }
 
     override fun ID(): String {
@@ -82,14 +91,7 @@ class MyUserAccountBar(var project: Project) : TextPanel.WithIconAndArrows(), Ic
 
 
     private fun setupClickListener() {
-        object : ClickListener() {
-            override fun onClick(event: MouseEvent, clickCount: Int): Boolean {
-                if (!project.isDisposed) {
-                    showPopup()
-                }
-                return true
-            }
-        }.installOn(this, true)
+        clickListener.installOn(this, true)
     }
 
     private fun showPopup() {
