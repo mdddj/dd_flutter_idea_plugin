@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [5.7.2] - 2025-07-19
+
+* fix: resource preview panel load in EDT thread error
+*
+
 ## [5.7.0] - 2025-07-02
 
 * Add SP panel right menu actions (SP) [see document](https://flutterx.itbug.shop/shared-preferences.html#bo0451_6)

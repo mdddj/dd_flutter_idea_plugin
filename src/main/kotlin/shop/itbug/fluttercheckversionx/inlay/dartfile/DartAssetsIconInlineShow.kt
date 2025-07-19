@@ -3,7 +3,6 @@ package shop.itbug.fluttercheckversionx.inlay.dartfile
 import com.intellij.codeInsight.codeVision.CodeVisionEntry
 import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
-import com.intellij.codeInsight.codeVision.settings.PlatformCodeVisionIds
 import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.codeInsight.hints.settings.language.isInlaySettingsEditor
@@ -92,9 +91,6 @@ class DartAssetsIconInlineShow : CodeVisionProviderBase() {
         get() = emptyList()
     override val id: String
         get() = "DartAssetsIconInlineShow"
-
-    override val groupId: String
-        get() = PlatformCodeVisionIds.INHERITORS.key
 
 
     private inner class ClickHandler(

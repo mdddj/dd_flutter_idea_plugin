@@ -57,7 +57,7 @@ class FreezedActionInlay : CodeVisionProviderBase() {
     }
 
     override val name: String
-        get() = "Freezed Class Action"
+        get() = "Freezed action"
     override val relativeOrderings: List<CodeVisionRelativeOrdering>
         get() = emptyList()
     override val id: String
