@@ -40,6 +40,8 @@ import javax.swing.event.TreeSelectionListener
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
+private const val SETTING_FOLDER_GOT_IT_ID = "got.it.flutter.l10n.setting.folder"
+
 /**
  * l10n多语言窗口
  */
@@ -86,6 +88,7 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : OnePixelSpl
         this.firstComponent = treePanel
         this.secondComponent = sp
         this.splitterProportionKey = "FlutterL10nWindowSplitterProportionKey"
+
     }
 
 
@@ -168,8 +171,18 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : OnePixelSpl
     }
 
     class MyPanel() : JBPanel<MyPanel>(VerticalLayout(12)) {
+
+        private val emptyText = JBLabel(PluginBundle.get("empty"))
+
         init {
             border = JBUI.Borders.empty(12)
+            setEmptyText()
+        }
+
+        fun setEmptyText() {
+            add(emptyText)
+            revalidate()
+            updateUI()
         }
     }
 }
