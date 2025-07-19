@@ -57,7 +57,7 @@ class MyProjectListening : ProjectManagerListener {
 @Service(Service.Level.PROJECT)
 class AssetsListeningProjectService(val project: Project) : Disposable {
     private val connect: MessageBusConnection = project.messageBus.connect(this)
-    private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask(project)
+    private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
 
     companion object {
         fun getInstance(project: Project): AssetsListeningProjectService {
@@ -122,7 +122,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
     }
 
     ///检测flutter新版本弹出
-    private inner class CheckFlutterVersionTask(val project: Project) :
+    private inner class CheckFlutterVersionTask() :
         Task.Backgroundable(project, "Detecting Flutter version...") {
         var indication: ProgressIndicator? = null
         override fun run(indicator: ProgressIndicator) {
