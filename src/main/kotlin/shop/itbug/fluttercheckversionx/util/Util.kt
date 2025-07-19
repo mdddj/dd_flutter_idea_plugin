@@ -7,7 +7,6 @@ import com.intellij.execution.process.ProcessNotCreatedException
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -23,8 +22,6 @@ import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 
 fun Color.toHexString(): String {
@@ -76,29 +73,6 @@ fun PsiElement.getRelativePoint(editor: Editor): RelativePoint {
 
     // 计算垂直中点：起始 Y 坐标 + 半行高
     val y = startPoint.y + lineHeight / 2
-
-    return RelativePoint(editor.contentComponent, Point(x, y))
-}
-
-///多行的情况
-fun PsiElement.getMultiLineRelativePoint(editor: Editor): RelativePoint {
-    val textRange = this.textRange
-    val startVisual = editor.offsetToVisualPosition(textRange.startOffset)
-    val endVisual = editor.offsetToVisualPosition(textRange.endOffset)
-
-    // 计算中间行位置
-    val midLine = (startVisual.line + endVisual.line) / 2
-    val midVisual = VisualPosition(midLine, 0)
-
-    // 获取该行中间列的 X 坐标
-    val midPoint = editor.visualPositionToXY(midVisual)
-    val lineEnd = editor.visualPositionToXY(VisualPosition(midLine, Int.MAX_VALUE))
-
-    // 计算行水平中点
-    val x = (midPoint.x + lineEnd.x) / 2
-
-    // 垂直中点
-    val y = midPoint.y + editor.lineHeight / 2
 
     return RelativePoint(editor.contentComponent, Point(x, y))
 }
@@ -172,7 +146,7 @@ class Util {
          * 获取本机IP列表
          */
         fun resolveLocalAddresses(): Set<InetAddress> {
-            val addrs: MutableSet<InetAddress> = HashSet<InetAddress>()
+            val adders = HashSet<InetAddress>()
             var ns: Enumeration<NetworkInterface>? = null
             try {
                 ns = NetworkInterface.getNetworkInterfaces()
@@ -185,10 +159,10 @@ class Util {
                     val i: InetAddress = `is`.nextElement()
                     if (!i.isLoopbackAddress && !i.isLinkLocalAddress && !i.isMulticastAddress
                         && !isSpecialIp(i.hostAddress)
-                    ) addrs.add(i)
+                    ) adders.add(i)
                 }
             }
-            return addrs
+            return adders
         }
 
         private fun isSpecialIp(ip: String): Boolean {
@@ -202,13 +176,23 @@ class Util {
         /**
          * 字符串是否包含中文
          *
-         * @param str 待校验字符串
+         * @param text 待校验字符串
          * @return true 包含中文字符 false 不包含中文字符
          */
-        fun isContainChinese(str: String): Boolean {
-            val p: Pattern = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]")
-            val m: Matcher = p.matcher(str)
-            return m.find()
+        fun isContainChinese(text: String): Boolean {
+            if (text.isEmpty()) {
+                return false
+            }
+
+            // \p{IsHan} 是一个 Unicode 属性，用于匹配 CJK 象形文字（Han characters）。
+            // 这是最精准和最全面的方式之一。
+            val regex = Regex(".*\\p{IsHan}.*")
+
+            // 或者使用 containsMatchIn 更为直接
+            // val regex = Regex("\\p{IsHan}")
+            // return regex.containsMatchIn(text)
+
+            return text.matches(regex)
         }
 
 

@@ -63,12 +63,12 @@ class FlutterProjectUtil(val project: Project) {
     /**
      * macos as 默认查找路径
      */
-    private val MAC_AS_DEFAULT_PATH = Path("/Applications/Android Studio.app")
+    private val macAsDefaultFindPath = Path("/Applications/Android Studio.app")
 
     /**
      * win as 默认查找路径
      */
-    private val WIN_AS_DEFAULT_PATH = Path("C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe")
+    private val windowsAsDefaultFindPath = Path("C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe")
 
 
     /**
@@ -79,12 +79,12 @@ class FlutterProjectUtil(val project: Project) {
     /**
      * 获取默认查找路径
      */
-    private val DEFAULT_FIND_PATH: Path
+    private val defaultFindPath: Path
         get() {
             if (SystemInfo.isMac) {
-                return MAC_AS_DEFAULT_PATH
+                return macAsDefaultFindPath
             } else if (SystemInfo.isWindows) {
-                return WIN_AS_DEFAULT_PATH
+                return windowsAsDefaultFindPath
             }
             throw UnsupportedOperationException("Not implemented")
         }
@@ -92,7 +92,7 @@ class FlutterProjectUtil(val project: Project) {
     /**
      * 检查 Android Studio 是否安装
      */
-    val isAndroidStudioInstalled: Boolean get() = MyFileUtil.pathIsExists(DEFAULT_FIND_PATH)
+    val isAndroidStudioInstalled: Boolean get() = MyFileUtil.pathIsExists(defaultFindPath)
 
     // 在 macOS 或 Linux 上打开指定目录
     fun openAndroidStudioWithDirectory() {

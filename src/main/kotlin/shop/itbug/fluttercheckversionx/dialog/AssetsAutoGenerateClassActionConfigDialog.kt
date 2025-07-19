@@ -53,7 +53,7 @@ class AssetsAutoGenerateClassActionConfigDialog(val project: Project) : DialogWr
                     }.align(Align.FILL)
                 }
                 row {
-                    comment(Links.generateDocCommit(Links.assets)).align(AlignX.RIGHT)
+                    comment(Links.generateDocCommit(Links.ASSETS)).align(AlignX.RIGHT)
                 }
             }
             return p

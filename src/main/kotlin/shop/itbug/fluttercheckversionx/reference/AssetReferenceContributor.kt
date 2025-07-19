@@ -5,7 +5,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FilePathReferenceProvider
 import com.intellij.util.ProcessingContext
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import shop.itbug.fluttercheckversionx.util.DartPsiElementHelper
@@ -31,7 +30,7 @@ class AssetReferenceContributor : PsiReferenceContributor() {
     }
 }
 
-internal class AssetReferenceProvider : FilePathReferenceProvider() {
+internal class AssetReferenceProvider : PsiReferenceProvider() {
 
     override fun getReferencesByElement(
         element: PsiElement,

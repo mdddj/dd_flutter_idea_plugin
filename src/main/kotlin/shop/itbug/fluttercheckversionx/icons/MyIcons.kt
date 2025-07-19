@@ -12,7 +12,6 @@ object MyIcons {
     var setting = IconLoader.getIcon("/icons/setting.svg", MyIcons::class.java)
     var freezed = IconLoader.getIcon("/icons/freezed.svg", MyIcons::class.java)
     val score = IconLoader.getIcon("/icons/score.svg", MyIcons::class.java)
-    var collect = IconLoader.getIcon("/icons/collect.svg", MyIcons::class.java)
     val androidStudio = IconLoader.getIcon("/icons/as.svg", MyIcons::class.java)
     val xcode = IconLoader.getIcon("/icons/xcode.svg", MyIcons::class.java)
 }

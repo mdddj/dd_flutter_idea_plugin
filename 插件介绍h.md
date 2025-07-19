@@ -2,7 +2,7 @@
 <p>Links: <a href="https://github.com/mdddj/dd_flutter_idea_plugin">Github</a>,<a href="https://flutterx.itbug.shop/starter.html">Document</a></p>
 </blockquote>
 <ul>
-<li>Auth: 梁典典</li>
+<li>Author: LiangDianDian</li>
 <li>QQ Group: 706438100</li>
 <li><a href="https://discord.com/invite/ethKNxKRcZ">Discord</a></li>
 </ul>

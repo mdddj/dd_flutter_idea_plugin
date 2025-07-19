@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.catchValidationException
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.window.sp.SpWindowLeft
@@ -263,7 +262,7 @@ private class UpdateSpValueDialog<T>(
 private fun <T : JTextComponent> Cell<T>.bindDouble(prop: MutableProperty<Double>): Cell<T> {
     return bindText(
         { prop.get().toString() },
-        { value -> catchValidationException { prop.set(getValidatedDoubleValue(value)) } })
+        { value -> prop.set(getValidatedDoubleValue(value)) })
 }
 
 private fun getValidatedDoubleValue(value: String): Double {

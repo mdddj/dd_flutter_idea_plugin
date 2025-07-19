@@ -12,11 +12,11 @@ import shop.itbug.fluttercheckversionx.util.toast
 
 object MyToolWindowTools {
 
-    const val windowId: String = "Dio Request"
+    const val WINDOW_ID: String = "Dio Request"
 
 
     fun getMyToolWindow(project: Project): ToolWindow? {
-        return ToolWindowManager.getInstance(project = project).getToolWindow(windowId)
+        return ToolWindowManager.getInstance(project = project).getToolWindow(WINDOW_ID)
     }
 
     /**

@@ -7,18 +7,19 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val untilBuildVersion: String by project
 val pluginVersion: String by project
+val ideType: String by project
 
 
 plugins {
     idea
     kotlin("jvm") version "2.1.21"
-    id("org.jetbrains.intellij.platform") version "2.5.0"
+    id("org.jetbrains.intellij.platform") version "2.6.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
 
 group = "shop.itbug"
-version = pluginVersion + sinceBuildVersion
+version = pluginVersion + ideType
 
 repositories {
     mavenCentral()
@@ -44,9 +45,11 @@ val bPlugins = mutableListOf(
     "org.intellij.groovy"
 )
 
-if (sinceBuildVersion.toInt() >= 243) {
+if (ideType.toInt() >= 243) {
+    println("大于 243")
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
+    bPlugins.add("org.intellij.intelliLang")
 }
 
 dependencies {
@@ -55,13 +58,13 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
-        when (sinceBuildVersion) {
+        when (ideType) {
             "243" -> {
                 intellijIdeaCommunity("2024.3.5")
             }
 
             "251" -> {
-                intellijIdeaCommunity("2025.1")
+                intellijIdeaCommunity("251.26094.98")
             }
         }
         bundledPlugins(bPlugins)
@@ -78,15 +81,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            when (sinceBuildVersion) {
-                "243" -> {
-                    local("/Applications/Android Studio.app")
-                }
 
-                "251" -> {
-                    local("/Applications/IntelliJ IDEA Ultimate 2025.1 Beta.app")
-                }
-            }
         }
     }
 }
@@ -256,21 +251,21 @@ val generateFlutterPluginInfo by tasks.registering {
     }
 
     // 设置输入和输出以支持增量构建
-    outputs.file(outputFile)
-
-    doLast {
-        val q = "\"\"\"\n"
-        outputFile.writeText(
-            """
-            |package codegen
-            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
-            |object FlutterXPluginInfo {
-            |    const val VERSION: String = "${project.version}"
-            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
-            |}
-            |""".trimMargin().trimIndent()
-        )
-    }
+//    outputs.file(outputFile)
+//
+//    doLast {
+//        val q = "\"\"\"\n"
+//        outputFile.writeText(
+//            """
+//            |package codegen
+//            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
+//            |object FlutterXPluginInfo {
+//            |    const val VERSION: String = "${project.version}"
+//            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
+//            |}
+//            |""".trimMargin().trimIndent()
+//        )
+//    }
 }
 
 // 让 Kotlin 编译任务依赖生成任务
@@ -324,14 +319,5 @@ sourceSets {
     }
 }
 
-val integrationTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.testImplementation.get())
-}
 
-dependencies {
-    integrationTestImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-    integrationTestImplementation("org.kodein.di:kodein-di-jvm:7.20.2")
-    integrationTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
-
-}
 

@@ -138,12 +138,21 @@ class ImagesPreviewWindow(val project: Project, val toolWindow: ToolWindow) : Bo
     private val onImageAssetVisitor: (VirtualFile) -> Unit
         get() = {
             //获取到的图片文件，添加到网格里面去
-            panel.addImageAsset(it)
+            SwingUtilities.invokeLater {
+                panel.addImageAsset(it)
+                panel.invalidate()
+                panel.repaint()
+            }
         }
 
     private fun startLoadAssets() {
         assetsDirector?.let {
-            VfsUtil.visitChildrenRecursively(it, visitor)
+            ApplicationManager.getApplication().executeOnPooledThread {
+                ApplicationManager.getApplication().runReadAction {
+                    VfsUtil.visitChildrenRecursively(it, visitor)
+                }
+            }
+
         }
 
     }

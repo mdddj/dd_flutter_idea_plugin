@@ -69,10 +69,10 @@ data class DoxListeningSetting(
     var copyKeys: DioCopyAllKey = DioCopyAllKey(),
 
     ///检查链接
-    var checkFlutterVersionUrl: String = Links.defaultFlutterInfosUrl,
+    var checkFlutterVersionUrl: String = Links.DEFAULT_FLUTTER_VERSION_INFO_URL,
 
     /// pubspec服务器地址
-    var pubServerUrl: String = Links.pubServerUrl,
+    var pubServerUrl: String = Links.PUB_SERVER_URL,
 
     ///是否倒序显示接口,默认false,版本5.0.5新增
     var isReverseApi: Boolean = false,

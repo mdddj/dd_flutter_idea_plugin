@@ -1,6 +1,6 @@
 package shop.itbug.fluttercheckversionx.services
 
-import PluginVersionModel
+import shop.itbug.fluttercheckversionx.model.PluginVersionModel
 import com.intellij.util.io.HttpRequests
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

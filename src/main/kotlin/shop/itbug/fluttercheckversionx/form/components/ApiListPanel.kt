@@ -191,7 +191,7 @@ class ApiListPanel(val project: Project) : JBList<Request>(ItemModel(mutableList
     private fun showNewApiTips(req: Request) {
         val config = PluginStateService.getInstance().state
         val manager = ToolWindowManager.getInstance(project)
-        val windowId = MyToolWindowTools.windowId
+        val windowId = MyToolWindowTools.WINDOW_ID
         if (config?.apiInToolwindowTop == true && manager.canShowNotification(windowId)) {
             ///在窗口弹出一个api提醒
             manager.notifyByBalloon(

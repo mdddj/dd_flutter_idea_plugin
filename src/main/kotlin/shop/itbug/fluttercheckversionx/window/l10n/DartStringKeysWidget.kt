@@ -48,7 +48,7 @@ class DartStringKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTree
         removeTreeSelectionListener(this)
     }
 
-    override fun OnDartStringScanCompleted(
+    override fun onDartStringScanCompleted(
         project: Project,
         list: List<DartString>,
         group: Map<VirtualFile, List<DartString>>

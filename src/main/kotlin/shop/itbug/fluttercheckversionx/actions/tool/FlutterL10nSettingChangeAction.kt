@@ -47,7 +47,7 @@ class FlutterL10nSettingChangeAction : AnAction() {
     }
 }
 
-private class MySettingDialog(val project: Project) : DialogWrapper(null, true) {
+class MySettingDialog(val project: Project) : DialogWrapper(null, true) {
     val config = PluginConfig.getState(project)
     private val service = FlutterL10nService.getInstance(project)
     private lateinit var myPanel: DialogPanel

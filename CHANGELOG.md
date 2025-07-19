@@ -2,7 +2,16 @@
 
 ## Unreleased
 
-## [5.7.0] - 2025-05-26
+## [5.7.2] - 2025-07-19
+
+* fix: resource preview panel load in EDT thread error
+* Fix known bugs
+* ⚠️Suggest upgrading Idea or AS to version 2025.1. Starting from next month, FlutterX will not push updates for
+  versions
+  below 2024
+* [full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
+
+## [5.7.0] - 2025-07-02
 
 * Add SP panel right menu actions (SP) [see document](https://flutterx.itbug.shop/shared-preferences.html#bo0451_6)
 * [full changelog](https://github.com/mdddj/dd_flutter_idea_plugin/blob/master/CHANGELOG.md)
