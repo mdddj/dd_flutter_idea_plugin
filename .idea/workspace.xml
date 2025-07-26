@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="refactor(AssetsListeningProjectService): 重构 AssetsListeningProjectService 类- 移除 CheckFlutterVersionTask 类中的冗余参数&#10;- 更新 CHANGELOG.md，添加新版本发布说明&#10;- 调整 gradle.properties 中的版本号和 IDE 类型&#10;- 优化项目结构，提高代码可读性和可维护性">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/other/OpenDioJsonDataInEditorAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="refactor(ProjectSocketService): 添加在编辑器中打开 JSON 数据的功能&#10;&#10;- 在 ProjectSocketService 中添加 openJsonDataInEditor 方法&#10;- 更新 plugin.xml 以包含新的 OpenDioJsonDataInEditorAction 动作&#10;- 优化项目结构和依赖配置">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/PluginErrorHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/PluginErrorHandle.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/ProjectSocketService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/ProjectSocketService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/other/OpenDioJsonDataInEditorAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/other/OpenDioJsonDataInEditorAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1734,7 +1729,7 @@
       <workItem from="1753344444095" duration="822000" />
       <workItem from="1753346174869" duration="463000" />
       <workItem from="1753404890027" duration="1625000" />
-      <workItem from="1753494874431" duration="3807000" />
+      <workItem from="1753494874431" duration="3985000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2079,7 +2074,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="400" />
+    <option name="localTasksCounter" value="401" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2129,7 +2124,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="添加riverpod tool inlay设置" />
     <MESSAGE value="release4.9.5" />
     <MESSAGE value="release5.0.0" />
     <MESSAGE value="release5.0.1" />
@@ -2154,7 +2148,8 @@
     <MESSAGE value="fix(resource): 修复资源预览面板在 EDT 线程中加载的问题&#10;&#10;- 在 ImagesPreviewWindow.kt 中使用 SwingUtilities.invokeLater将 UI 更新操作移至 EDT线程&#10;- 在 startLoadAssets 函数中使用 ApplicationManager.getApplication().executeOnPooledThread执行耗时操作&#10;- 更新 CHANGELOG.md，添加新版本 5.7.2 的发布说明- 调整 gradle.properties 中的版本号和 IDE 类型&#10;- 移除 DartAssetsIconInlineShow.kt 中未使用的 groupId 属性&#10;- 修改 FreezedActionInlay.kt 中的 name属性拼写" />
     <MESSAGE value="feat(l10n): 添加 l10n 文件夹配置功能- 在 AssetsListeningProjectService 中添加项目参数&#10;- 更新 MySettingDialog 类构造函数&#10;- 在 L10nWindow 中添加空文本提示&#10;- 更新多语言属性文件" />
     <MESSAGE value="refactor(AssetsListeningProjectService): 重构 AssetsListeningProjectService 类- 移除 CheckFlutterVersionTask 类中的冗余参数&#10;- 更新 CHANGELOG.md，添加新版本发布说明&#10;- 调整 gradle.properties 中的版本号和 IDE 类型&#10;- 优化项目结构，提高代码可读性和可维护性" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(AssetsListeningProjectService): 重构 AssetsListeningProjectService 类- 移除 CheckFlutterVersionTask 类中的冗余参数&#10;- 更新 CHANGELOG.md，添加新版本发布说明&#10;- 调整 gradle.properties 中的版本号和 IDE 类型&#10;- 优化项目结构，提高代码可读性和可维护性" />
+    <MESSAGE value="refactor(ProjectSocketService): 添加在编辑器中打开 JSON 数据的功能&#10;&#10;- 在 ProjectSocketService 中添加 openJsonDataInEditor 方法&#10;- 更新 plugin.xml 以包含新的 OpenDioJsonDataInEditorAction 动作&#10;- 优化项目结构和依赖配置" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(ProjectSocketService): 添加在编辑器中打开 JSON 数据的功能&#10;&#10;- 在 ProjectSocketService 中添加 openJsonDataInEditor 方法&#10;- 更新 plugin.xml 以包含新的 OpenDioJsonDataInEditorAction 动作&#10;- 优化项目结构和依赖配置" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">

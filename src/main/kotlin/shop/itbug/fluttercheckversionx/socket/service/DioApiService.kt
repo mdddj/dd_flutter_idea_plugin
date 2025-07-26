@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -14,6 +15,7 @@ import org.smartboot.socket.extension.processor.AbstractMessageProcessor
 import org.smartboot.socket.transport.AioQuickServer
 import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
+import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.Request
@@ -167,6 +169,11 @@ class DioApiService : Disposable {
         sessions.map(AioSession::close)
         sessions.clear()
         aioServer?.shutdown()
+    }
+
+    
+    fun getCurrentSelectApi(e: AnActionEvent): Request? {
+        return e.api()
     }
 
 }
