@@ -5,7 +5,7 @@ import com.intellij.openapi.util.NlsActions
 
 class PluginErrorHandle : ErrorReportSubmitter() {
     override fun getReportActionText(): @NlsActions.ActionText String {
-        return "FlutterX Submit Error"
+        return "报告给梁典典"
     }
-    
+
 }

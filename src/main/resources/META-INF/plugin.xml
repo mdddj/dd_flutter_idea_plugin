@@ -37,22 +37,38 @@
         alt=&quot;Kapture 2024-11-28 at 14.40.09.gif&quot; /&gt;&lt;/p&gt;
     </description>
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
-    <depends>com.intellij.modules.platform</depends>
-    <depends>org.jetbrains.plugins.yaml</depends>
-    <depends>Dart</depends>
-    <depends>org.intellij.plugins.markdown</depends>
-    <depends>org.jetbrains.plugins.terminal</depends>
-    <depends>com.intellij.modules.json</depends>
-    <depends>com.intellij.gradle</depends>
-    <depends>com.intellij.platform.images</depends>
-    <depends>org.jetbrains.plugins.gradle</depends>
-    <depends>org.intellij.groovy</depends>
-    <depends>com.intellij.modules.lang</depends>
+
 
     <!--    <extensions defaultExtensionNs="org.jetbrains.kotlin">-->
     <!--        <supportsKotlinPluginMode supportsK2="true"/>-->
     <!--    </extensions>-->
+    <!--    <depends>com.intellij.modules.platform</depends>-->
+    <!--    <depends>org.jetbrains.plugins.yaml</depends>-->
+    <!--    <depends>Dart</depends>-->
+    <!--    <depends>org.intellij.plugins.markdown</depends>-->
+    <!--    <depends>org.jetbrains.plugins.terminal</depends>-->
+    <!--    <depends>com.intellij.modules.json</depends>-->
+    <!--    <depends>com.intellij.gradle</depends>-->
+    <!--    <depends>com.intellij.platform.images</depends>-->
+    <!--    <depends>org.jetbrains.plugins.gradle</depends>-->
+    <!--    <depends>org.intellij.groovy</depends>-->
+    <!--    <depends>com.intellij.modules.lang</depends>-->
 
+    <dependencies>
+        <plugin id="com.intellij.modules.platform"/>
+        <plugin id="org.jetbrains.plugins.yaml"/>
+        <plugin id="Dart"/>
+        <plugin id="org.intellij.plugins.markdown"/>
+        <plugin id="org.jetbrains.plugins.terminal"/>
+        <plugin id="com.intellij.modules.json"/>
+        <plugin id="com.intellij.gradle"/>
+        <plugin id="com.intellij.platform.images"/>
+        <plugin id="org.jetbrains.plugins.gradle"/>
+        <plugin id="org.intellij.groovy"/>
+        <module name="intellij.libraries.ktor.client"/>
+        <module name="intellij.libraries.ktor.client.cio"/>
+
+    </dependencies>
 
     <extensions defaultExtensionNs="com.intellij">
         <intentionAction>
@@ -549,12 +565,19 @@
         <action id="DioCopyAllPathsAction"
                 class="shop.itbug.fluttercheckversionx.actions.dio.other.DioCopyAllPathsAction"
                 text="Copy All Api Paths"/>
+        <action id="OpenDioJsonDataInEditorAction"
+                class="shop.itbug.fluttercheckversionx.actions.dio.other.OpenDioJsonDataInEditorAction"
+                text="Show Data In Editor">
 
+        </action>
         <group id="DioApiListOtherActions" popup="true" text="Other Actions">
             <reference ref="DioCopyAllPathsAction"/>
+            <reference ref="OpenDioJsonDataInEditorAction"/>
             <separator/>
             <add-to-group group-id="dio-window-view-params" anchor="last"/>
         </group>
+
+
     </actions>
 
 

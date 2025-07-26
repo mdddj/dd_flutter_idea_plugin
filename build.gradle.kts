@@ -12,8 +12,8 @@ val ideType: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.21"
-    id("org.jetbrains.intellij.platform") version "2.6.0"
+    kotlin("jvm") version "2.2.0"
+    id("org.jetbrains.intellij.platform") version "2.7.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
 }
@@ -32,6 +32,8 @@ repositories {
         marketplace()
         androidStudioInstallers()
         intellijDependencies()
+
+
     }
 }
 
@@ -56,6 +58,7 @@ dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
+
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
         when (ideType) {
@@ -72,6 +75,9 @@ dependencies {
         pluginVerifier()
         zipSigner()
         javaCompiler()
+
+        bundledModule("intellij.libraries.ktor.client")
+        bundledModule("intellij.libraries.ktor.client.cio")
 
     }
 
