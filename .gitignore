@@ -45,3 +45,5 @@ extend/FlutterX-ai/build
 .DS_Store
 
 .intellijPlatform/
+
+.idea/

@@ -8,60 +8,87 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.util.messages.Topic
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter
+import io.ktor.util.collections.*
+import kotlinx.coroutines.*
+import vm.VmService
+import vm.VmServiceBase
 
+interface FlutterAppVmServiceListener {
+
+    /**
+     * 监听控制台,并获取VM URL连接地址
+     */
+    fun projectOpened(project: Project, env: ProcessEvent, vmUrl: String?, event: FlutterEvent?) {}
+
+    fun stop(
+        project: Project, executorId: String, env: ExecutionEnvironment, exitCode: Int
+    ) {
+    }
+
+    fun onText(project: Project, text: String, event: FlutterEvent?) {}
+
+    fun processStarted(project: Project, executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {}
+
+    fun processFlutterEvent(project: Project, flutterEvent: FlutterEvent, event: ProcessEvent) {}
+
+    fun newVmConnected(vmService: VmService) {}
+}
 
 /**
  * dart vm 监听器
  */
 @Service(Service.Level.PROJECT)
-class FlutterXVMService(val project: Project) : Disposable {
+class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceListener {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val log = thisLogger()
+    private val connectedVmServices = ConcurrentMap<String, VmService>(3)
+
+    init {
+//        project.messageBus.connect(parentDisposable = this).subscribe(TOPIC, this)
+    }
+
+    override fun projectOpened(project: Project, env: ProcessEvent, vmUrl: String?, event: FlutterEvent?) {
+        if (vmUrl != null) {
+            scope.launch {
+                try {
+                    val vmService = VmServiceBase.connect(vmUrl)
+                    connectedVmServices[vmUrl] = vmService
+                    project.messageBus.syncPublisher(TOPIC).newVmConnected(vmService)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    log.warn("连接dart vm [$vmUrl] 失败:${e}")
+                }
+            }
+        }
+        super.projectOpened(project, env, vmUrl, event)
+    }
+
+
+    override fun dispose() {
+        connectedVmServices.values.forEach {
+            it.disconnect()
+        }
+        connectedVmServices.clear()
+        scope.cancel()
+    }
 
     companion object {
         fun getInstance(project: Project) = project.service<FlutterXVMService>()
-        val TOPIC = Topic.create("FlutterXVMListener", Listener::class.java)
-    }
-
-    /**
-     * 添加监听器,自动释放监听器
-     */
-    fun addListener(listener: Listener) {
-        project.messageBus.connect(this).subscribe(TOPIC, listener)
-    }
-
-    override fun dispose() {
-
-    }
-
-    interface Listener {
-
-        /**
-         * 监听控制台,并获取VM URL连接地址
-         */
-        fun projectOpened(project: Project, env: ProcessEvent, vmUrl: String?, event: FlutterEvent?) {}
-
-        fun stop(
-            project: Project, executorId: String, env: ExecutionEnvironment, exitCode: Int
-        ) {
-        }
-
-        fun onText(project: Project, text: String, event: FlutterEvent?) {}
-
-        fun processStarted(project: Project, executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {}
-
-        fun processFlutterEvent(project: Project, flutterEvent: FlutterEvent, event: ProcessEvent) {}
+        val TOPIC = Topic.create("FlutterXVMListener", FlutterAppVmServiceListener::class.java)
     }
 }
 
-///需要启用flutter插件,弃坑
+
 class RunConfigListener(val project: Project) : ExecutionListener, ProcessListener {
 
     private val msgBus = project.messageBus.syncPublisher(FlutterXVMService.TOPIC)
-
+    private val log = thisLogger()
 
     override fun processStarted(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
         println("processStarting $project $executorId  $handler")
@@ -97,7 +124,7 @@ class RunConfigListener(val project: Project) : ExecutionListener, ProcessListen
                 msgBus.processFlutterEvent(project, flutterEvent, event)
             }
         } catch (e: Exception) {
-            logger<RunConfigListener>().warn("处理数据失败...")
+            log.warn("解析 vm service url 失败了,", e)
         }
         super.onTextAvailable(event, outputType)
     }
@@ -105,6 +132,7 @@ class RunConfigListener(val project: Project) : ExecutionListener, ProcessListen
     override fun processTerminated(
         executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int
     ) {
+        log.info("控制台退出:${executorId}  $env  $exitCode")
         handler.removeProcessListener(this)
         msgBus.stop(project, executorId, env, exitCode)
     }
