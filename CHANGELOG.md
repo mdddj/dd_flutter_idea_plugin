@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [5.7.4] - 2025-08-07
+
+* Adapted for 2025.2
+
+## [5.7.3] - 2025-07-26
+
+* add dart vm service code
+
 ## [5.7.2] - 2025-07-19
 
 * fix: resource preview panel load in EDT thread error

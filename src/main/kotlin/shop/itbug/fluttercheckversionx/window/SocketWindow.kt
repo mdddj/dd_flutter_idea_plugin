@@ -86,6 +86,13 @@ class FlutterXSocketWindow : ToolWindowFactory {
         toolWindow.contentManager.addContent(l10nWindowContent)
         l10nWindowContent.setDisposer(l10nWindow)
 
+
+        // widget tree
+//        val flutterWidgetTree = WidgetTreeWindow(project)
+//        val flutterWidgetTreeContent = instance.createContent(flutterWidgetTree, "Widget Tree", false)
+//        flutterWidgetTreeContent.setDisposer(flutterWidgetTree)
+//        toolWindow.contentManager.addContent(flutterWidgetTreeContent)
+
     }
 
 

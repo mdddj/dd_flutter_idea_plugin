@@ -2,18 +2,24 @@ package shop.itbug.fluttercheckversionx.socket
 
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.actions.getDataJson
 import shop.itbug.fluttercheckversionx.config.DioCopyAllKey
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.dsl.formatUrl
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toHexString
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.swing.SwingUtilities
 
 typealias Request = SocketResponseModel
 
@@ -123,6 +129,18 @@ class SocketResponseModel(
         return dataMap
     }
 
+
+    //在编辑器中打开请求数据
+    fun openJsonDataInEditor(project: Project) {
+        val config = DioListingUiConfig.setting.copyKeys
+        val map = getMap(config)
+        val toJson = DioApiService.getInstance().gson.toJson(map)
+        val file = LightVirtualFile("request.json", toJson)
+        SwingUtilities.invokeLater {
+            FileEditorManager.getInstance(project).openFile(file)
+        }
+
+    }
 
 }
 

@@ -110,7 +110,7 @@ fun MarkdownNode.toHtml(project: Project): String {
         return text   // do not trim trailing whitespace
     }
 
-    var currentCodeFenceLang = "dart"
+    var currentCodeFenceLang = "vm"
     val lang = guessLanguage(currentCodeFenceLang) ?: DartLanguage.INSTANCE
     val sb = StringBuilder()
     visit { node, processChildren ->
