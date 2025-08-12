@@ -7,6 +7,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -25,6 +26,7 @@ import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
@@ -33,12 +35,14 @@ import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.Util
 
+//
 class MyAssetGenPostStart : ProjectActivity {
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
         FlutterL10nService.getInstance(project).checkAllKeys()
         DumbService.getInstance(project).runWhenSmart {
-            if (!project.isDisposed) {
+            val setting = PluginConfig.getInstance(project)
+            if (!project.isDisposed && setting.state.scanDartStringInStart) {
                 FlutterL10nService.getInstance(project).startScanStringElements()
             }
         }
@@ -56,6 +60,7 @@ class MyProjectListening : ProjectManagerListener {
 
 @Service(Service.Level.PROJECT)
 class AssetsListeningProjectService(val project: Project) : Disposable {
+    private val logger = thisLogger()
     private val connect: MessageBusConnection = project.messageBus.connect(this)
     private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
 
@@ -133,15 +138,19 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                 return
             }
             currentFlutterVersion?.let { c ->
-                val version = FlutterService.getVersion()
-                version.apply {
-                    val hash = version.getCurrentReleaseByChannel(flutterChannel)
-                    val release = releases.find { o -> o.hash == hash }
-                    release?.let { r ->
-                        if (r.version != c.version) {
-                            showTip(r, project)
+                try {
+                    val version = FlutterService.getVersion()
+                    version.apply {
+                        val hash = version.getCurrentReleaseByChannel(flutterChannel)
+                        val release = releases.find { o -> o.hash == hash }
+                        release?.let { r ->
+                            if (r.version != c.version) {
+                                showTip(r, project)
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    logger.warn("检查 flutter 版本失败:${e.localizedMessage}")
                 }
             }
         }

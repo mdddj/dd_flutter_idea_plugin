@@ -82,16 +82,10 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
         // l10n多语言窗口
         val l10nWindow = L10nWindow(project, toolWindow)
-        val l10nWindowContent = instance.createContent(l10nWindow, "l10n", false)
+        val l10nWindowContent = instance.createContent(l10nWindow, "L10n", false)
         toolWindow.contentManager.addContent(l10nWindowContent)
         l10nWindowContent.setDisposer(l10nWindow)
 
-
-        // widget tree
-//        val flutterWidgetTree = WidgetTreeWindow(project)
-//        val flutterWidgetTreeContent = instance.createContent(flutterWidgetTree, "Widget Tree", false)
-//        flutterWidgetTreeContent.setDisposer(flutterWidgetTree)
-//        toolWindow.contentManager.addContent(flutterWidgetTreeContent)
 
     }
 

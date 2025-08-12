@@ -29,7 +29,7 @@ class DartVmTest : BasePlatformTestCase() {
             }
         }
 
-    val url = "ws://127.0.0.1:51279/O7dUpbtsCdM=/ws"
+    val url = "ws://127.0.0.1:63003/jZU_jiA4HZs=/ws"
     val createVmService
         get() = VmServiceBase.connect(url, vmListen)
 

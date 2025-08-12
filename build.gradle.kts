@@ -59,15 +59,16 @@ dependencies {
     intellijPlatform {
         testFramework(TestFrameworkType.Platform)
         when (ideType) {
-            "243" -> {
-                intellijIdeaCommunity("2024.3.5")
+            "252" -> {
+                intellijIdeaCommunity("2025.2")
             }
 
             "251" -> {
-                intellijIdeaCommunity("2025.2")
+                intellijIdeaCommunity("2025.1.4.1")
             }
         }
         bundledPlugins(bPlugins)
+        //"io.flutter:87.0"
         plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
@@ -89,7 +90,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.1.4.1")
+            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
         }
     }
 }
@@ -148,7 +149,7 @@ tasks {
     }
 
     runIde {
-        jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
+        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "-Didea.kotlin.plugin.use.k2=true",

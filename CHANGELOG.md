@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [5.7.5] - 2025-08-11
+
+* Adapted for 2025.2
+* Remove the error warning for Flutter version detection API access failure
+* Add disabled scan string setting （**l10n module**）
+
 ## [5.7.4] - 2025-08-07
 
 * Adapted for 2025.2

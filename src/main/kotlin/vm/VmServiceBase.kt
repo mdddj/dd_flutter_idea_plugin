@@ -15,6 +15,8 @@ package vm
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolderBase
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
@@ -33,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * 内部 {@link VmService} 基类，包含非生成的代码。
  */
-abstract class VmServiceBase : VmServiceConst {
+abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
     /**
      * 在 {@link String} ID 和请求时传递的关联 {@link Consumer} 之间的映射。
      * 在访问此字段之前，请与 {@link #consumerMapLock} 同步。
@@ -149,6 +151,8 @@ abstract class VmServiceBase : VmServiceConst {
         fun localConnect(port: Int): VmService {
             return connect("ws://localhost:$port/ws")
         }
+
+        val APP_ID_KEY = Key.create<String>("vm service appid")
     }
 
 

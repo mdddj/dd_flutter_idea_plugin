@@ -52,6 +52,8 @@ import kotlin.coroutines.cancellation.CancellationException
 class VmService : VmServiceBase() {
     val gson = Gson()
 
+    val appId get() = getUserData<String>(VmServiceBase.APP_ID_KEY)!!
+
     companion object {
         const val DEBUG_STREAM_ID = "Debug"
 
@@ -100,6 +102,7 @@ class VmService : VmServiceBase() {
         params.addProperty("line", line)
         request("addBreakpoint", params, consumer)
     }
+
 
     /**
      * [addBreakpoint] RPC 用于在脚本的特定行添加断点。

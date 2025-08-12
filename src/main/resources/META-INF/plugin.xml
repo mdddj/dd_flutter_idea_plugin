@@ -87,6 +87,7 @@
         <notificationGroup displayType="BALLOON" id="dart_package_check_service"/>
         <notificationGroup displayType="BALLOON" id="flutterx_check_unused_package"/>
         <notificationGroup displayType="BALLOON" id="open_flutter_project_in_ide"/>
+        <notificationGroup displayType="BALLOON" id="DartVmServiceListener"/>
 
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
@@ -165,6 +166,9 @@
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom"
                     icon="/icons/flutter.svg"/>
+<!--        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowFactory"-->
+<!--                    id="FlutterX VM Service"-->
+<!--                    icon="/icons/flutter.svg" anchor="right" doNotActivateOnStart="true"/>-->
 
         <!--   底部状态栏展示小部件     -->
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"
@@ -201,7 +205,7 @@
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
         <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.UserDartLibServiceInit"/>
         <!--        错误处理-->
-        <!--        <errorHandler implementation="shop.itbug.fluttercheckversionx.common.PluginErrorHandle"/>-->
+<!--                <errorHandler implementation="shop.itbug.fluttercheckversionx.common.PluginErrorHandle"/>-->
         <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
 
@@ -363,6 +367,7 @@
                 id="OpenIosProjectInXcodeAction"/>
         <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenMacosProjectInXcodeAction"
                 id="OpenMacosProjectInXcodeAction"/>
+        <action class="shop.itbug.fluttercheckversionx.actions.bar.LanguagePopupSettingsAction" id="LanguagePopupSettingsAction" />
         <group id="status_bar_actions">
             <reference ref="SearchPubPluginAction"/>
             <reference ref="FlutterRunBuilderCommandAction"/>
@@ -374,6 +379,7 @@
             <reference ref="GoToDiscordAction"/>
             <reference ref="GoToDocumentAction"/>
             <separator/>
+            <reference ref="LanguagePopupSettingsAction" />
             <reference ref="StatusBarOpenSettingAction"/>
             <separator text="Open With"/>
             <reference ref="OpenAndroidProjectOnASAction"/>

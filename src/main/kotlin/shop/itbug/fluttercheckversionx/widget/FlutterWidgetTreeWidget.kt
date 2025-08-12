@@ -4,11 +4,9 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.observable.util.addMouseHoverListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.*
-import com.intellij.ui.hover.HoverListener
 import com.intellij.ui.treeStructure.Tree
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,24 +18,21 @@ import vm.element.FlutterInspectorGetPropertiesResponse
 import vm.element.WidgetNode
 import vm.element.WidgetTreeResponse
 import vm.getProperties
-import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
-import javax.swing.JComponent
 import javax.swing.JTree
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
 // flutter 原生 widget tree
-class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposable,
+class FlutterWidgetTreeWidget(val project: Project, val group: String,val vmService: VmService) : Disposable,
     Tree(DefaultTreeModel(DefaultMutableTreeNode("Waiting for widget data..."))) {
 
     private val myTreeModel
         get() = model as DefaultTreeModel
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    var vmService: VmService? = null
     var isolateId: String? = null
 
 
@@ -104,10 +99,10 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
     /** 处理 Widget 节点点击事件 */
     private fun handleWidgetNodeClick(widgetNode: WidgetNode) {
         val nodeId = widgetNode.valueId
-        if (nodeId != null && vmService != null && isolateId != null) {
+        if (nodeId != null && isolateId != null) {
             scope.launch {
                 try {
-                    val response = vmService!!.getProperties(isolateId!!, group, nodeId)
+                    val response = vmService.getProperties(isolateId!!, group, nodeId)
 
                     // 在 EDT 线程中处理 UI 操作
                     ApplicationManager.getApplication().invokeLater { openSourceFile(response) }
@@ -167,31 +162,12 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
         }
     }
 
-    /** 设置 VM 服务实例和隔离区 ID */
-    fun setVmService(vmService: VmService?, isolateId: String?) {
-        this.vmService = vmService
-        this.isolateId = isolateId
-    }
-
     override fun dispose() {
         removeMouseListener(clickListen)
     }
 
     inner class WidgetTreeCellRenderer : ColoredTreeCellRenderer() {
 
-        val hoverListen = object : HoverListener() {
-            override fun mouseEntered(p0: Component, p1: Int, p2: Int) {
-                val comp = getComponentAt(p1, p2) as? JComponent
-            }
-
-            override fun mouseMoved(p0: Component, p1: Int, p2: Int) {
-
-            }
-
-            override fun mouseExited(p0: Component) {
-            }
-
-        }
 
         override fun customizeCellRenderer(
             p0: JTree,
@@ -202,7 +178,6 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
             p5: Int,
             p6: Boolean
         ) {
-            addMouseHoverListener(p0 as FlutterWidgetTreeWidget, hoverListen)
             if (value is DefaultMutableTreeNode) {
                 val userObject = value.userObject
 

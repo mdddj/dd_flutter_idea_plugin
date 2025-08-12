@@ -4,8 +4,10 @@ import com.intellij.ide.dnd.aware.DnDAwareTree
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.setEmptyState
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.services.DartString
 import shop.itbug.fluttercheckversionx.services.FlutterL10nService
 import shop.itbug.fluttercheckversionx.services.FlutterL10nService.OnDartStringScanCompletedListener
@@ -16,7 +18,8 @@ import javax.swing.event.TreeSelectionListener
 import javax.swing.tree.DefaultMutableTreeNode
 
 /// dart string keys
-class DartStringKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode("Dart String Elements")),
+class DartStringKeysTree(val project: Project) :
+    DnDAwareTree(if (PluginConfig.getInstance(project).state.scanDartStringInStart) DefaultMutableTreeNode("Dart String Elements") else null),
     Disposable,
     OnDartStringScanCompletedListener, TreeSelectionListener {
 
@@ -27,6 +30,12 @@ class DartStringKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTree
         Disposer.register(service, this)
         project.messageBus.connect(this).subscribe(FlutterL10nService.OnDartStringScanCompleted, this)
         addTreeSelectionListener(this)
+
+        SwingUtilities.invokeLater {
+            if(!PluginConfig.getInstance(project).state.scanDartStringInStart) {
+                setEmptyState("This feature has already been disabled in the settings.")
+            }
+        }
     }
 
     private fun initDataModel() {

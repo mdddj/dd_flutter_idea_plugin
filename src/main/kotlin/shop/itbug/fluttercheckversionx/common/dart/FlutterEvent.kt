@@ -8,6 +8,8 @@ import shop.itbug.fluttercheckversionx.actions.isValidJson
 object FlutterEventFactory {
 
     fun formJsonText(text: String): FlutterEvent? {
+        println(text)
+        if(!text.contains("\"event\"")) return null
         if (!isValidJson(text)) return null
         return try {
             val jsonArray = JsonParser.parseString(text).asJsonArray
