@@ -19,10 +19,6 @@ fun JComponent.scroll(): JBScrollPane {
 ///json转 freezed 通用函数
 fun Project.jsonToFreezedRun(jsonText: String) {
     StringToFreezedDialog(this, jsonText).show()
-//    val jsonObject = jsonText.getParseJsonObject()
-//    jsonObject?.let {
-//        jsonToFreezedRun2(it)
-//    }
 }
 
 

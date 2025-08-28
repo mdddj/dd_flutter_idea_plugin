@@ -8,6 +8,7 @@ import javax.swing.BorderFactory
 
 typealias MySimpleTextFieldSubmit = (value: String) -> Unit
 
+//
 class MySimpleTextField(
     placeholder: String = "Please enter content",
     initValue: String? = null,
@@ -35,7 +36,7 @@ class MySimpleTextField(
         }
     }
 
-    override fun getPreferredSize(): Dimension? {
-        return Dimension(300, 40)
+    override fun getPreferredSize(): Dimension {
+        return Dimension(400, 40)
     }
 }

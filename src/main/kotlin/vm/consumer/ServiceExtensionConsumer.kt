@@ -14,7 +14,19 @@
 package vm.consumer
 
 import com.google.gson.JsonObject
+import vm.element.RPCError
 
 interface ServiceExtensionConsumer : Consumer {
     fun received(result: JsonObject)
 }
+
+fun DefaultServiceExtensionConsumer(handle: (data: JsonObject) -> Unit): ServiceExtensionConsumer =
+    object : ServiceExtensionConsumer {
+        override fun received(result: JsonObject) {
+            handle(result)
+        }
+
+        override fun onError(error: RPCError) {
+        }
+
+    }

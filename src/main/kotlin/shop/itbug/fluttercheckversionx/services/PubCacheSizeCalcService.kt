@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
-import shop.itbug.fluttercheckversionx.socket.formatSize
+import shop.itbug.fluttercheckversionx.model.formatSize
 import shop.itbug.fluttercheckversionx.tools.DartPubTools
 import shop.itbug.fluttercheckversionx.tools.log
 

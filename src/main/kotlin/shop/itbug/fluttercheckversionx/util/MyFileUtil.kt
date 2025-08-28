@@ -24,6 +24,7 @@ import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.util.filetool.VisitFolderCheckResult
 import java.io.File
 import java.nio.file.Path
+import javax.swing.SwingUtilities
 
 
 typealias HandleVirtualFile = (virtualFile: VirtualFile) -> Unit
@@ -201,6 +202,42 @@ object MyFileUtil {
         val projectPath = project.guessProjectDir()?.path ?: return false
         val fullPath = projectPath + File.separator + assets
         return File(fullPath).exists()
+    }
+
+    fun openFile(project: Project, file: String,line: Int, column: Int){
+
+        // 将文件路径转换为本地文件系统路径
+        val localFile =
+            if (file.startsWith("file://")) {
+                File(file.substring(7))
+            } else {
+                File(file)
+            }
+
+        val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(localFile)
+        if (virtualFile != null) {
+            SwingUtilities.invokeLater {
+                val editors =
+                    FileEditorManager.getInstance(project).openFile(virtualFile, true)
+                // 跳转到指定行和列
+                if (editors.isNotEmpty()) {
+                    val editor =
+                        FileEditorManager.getInstance(project).selectedTextEditor
+                    editor?.let {
+                        val offset =
+                            it.document.getLineStartOffset(maxOf(0, line - 1)) +
+                                    maxOf(0, column - 1)
+                        val textLen =  it.document.textLength
+                        runReadAction {
+                            it.caretModel.moveToOffset(minOf(offset,textLen ))
+                            it.scrollingModel.scrollToCaret(
+                                com.intellij.openapi.editor.ScrollType.CENTER
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

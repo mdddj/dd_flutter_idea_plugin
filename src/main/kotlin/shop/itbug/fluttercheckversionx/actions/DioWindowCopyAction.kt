@@ -13,7 +13,7 @@ import shop.itbug.fluttercheckversionx.util.toast
  */
 class DioWindowCopyAction : MyAction(PluginBundle.getLazyMessage("window.idea.dio.view.copy")) {
     override fun actionPerformed(e: AnActionEvent) {
-        e.api()?.url?.copyTextToClipboard()?.apply {
+        e.api()?.requestUrl?.copyTextToClipboard()?.apply {
             e.project?.toast("Copy succeeded!")
         }
     }

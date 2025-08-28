@@ -1,6 +1,7 @@
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import vm.*
 import vm.consumer.GetMemoryUsageConsumer
 import vm.consumer.ProtocolListConsumer
@@ -29,7 +30,7 @@ class DartVmTest : BasePlatformTestCase() {
             }
         }
 
-    val url = "ws://127.0.0.1:63003/jZU_jiA4HZs=/ws"
+    val url = "ws://127.0.0.1:64766/zQyC2E3TyEM=/ws"
     val createVmService
         get() = VmServiceBase.connect(url, vmListen)
 
@@ -182,6 +183,19 @@ class DartVmTest : BasePlatformTestCase() {
 
 
             delay(1000)
+        }
+    }
+
+
+    fun testCheckTreeIsReady() {
+        runBlocking {
+            val vmService = createVmService
+            val id = vmService.mainIsolates()!!.getId()!!
+            val r = suspendCancellableCoroutine<Boolean> { continuation ->
+                vmService.checkWidgetTreeReady(id, continuation)
+            }
+            println(r)
+
         }
     }
 

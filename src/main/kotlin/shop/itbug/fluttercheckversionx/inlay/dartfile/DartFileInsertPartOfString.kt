@@ -27,12 +27,15 @@ class DartFileInsertPartOfString : CodeVisionProviderBase() {
     }
 
     override fun acceptsElement(element: PsiElement): Boolean {
-        return element is DartPartOfStatementImpl && element.libraryFiles.isNotEmpty() && element.parts().isNotEmpty()
+        if(element !is DartPartOfStatementImpl) return false
+        if( element.libraryFiles.isEmpty()) return false
+
+        return  element.parts().isNotEmpty()
                 && validIsShow(element, element.parts())
     }
 
-    override fun getHint(element: PsiElement, file: PsiFile): String? {
-        return "add part statement"
+    override fun getHint(element: PsiElement, file: PsiFile): String {
+        return "Add part statement"
     }
 
     override fun handleClick(

@@ -10,11 +10,11 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 class DioResponseHeadersViewJsonAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
-        e.api()?.responseHeaders?.apply { SimpleJsonViewDialog.show(this, e.project!!) }
+        e.api()?.httpResponseHeaders?.apply { SimpleJsonViewDialog.show(this, e.project!!) }
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.project != null && e.api()?.responseHeaders?.isNotEmpty() == true
+        e.presentation.isEnabled = e.project != null && e.api()?.httpResponseHeaders?.isNotEmpty() == true
         e.presentation.text = "${PluginBundle.get("view.text")} Response Headers"
         super.update(e)
     }

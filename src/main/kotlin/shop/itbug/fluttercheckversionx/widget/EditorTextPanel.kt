@@ -20,9 +20,9 @@ private fun LanguageTextField.format(lang: Language) {
         if (project.isDisposed) {
             return null
         }
-        val fileName = "tempFile.${lang.id}"
+        val fileName = "tempFile.${lang.associatedFileType?.defaultExtension ?: lang.id}"
         val psiFileFactory = PsiFileFactory.getInstance(project)
-        return psiFileFactory.createFileFromText(fileName, DartLanguage.INSTANCE, text, false, true)
+        return psiFileFactory.createFileFromText(fileName, lang, text, false, true)
     }
 
     fun formatCode() {

@@ -23,6 +23,8 @@ import shop.itbug.fluttercheckversionx.form.socket.MyCustomItemRender
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.listeners.FlutterProjectChangeEvent
+import shop.itbug.fluttercheckversionx.model.getHtmlPrefix
+import shop.itbug.fluttercheckversionx.model.getMessageType
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.service.AppService

@@ -17,6 +17,7 @@ import org.smartboot.socket.transport.AioSession
 import org.smartboot.socket.transport.WriteBuffer
 import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.services.PluginStateService
 import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
@@ -172,7 +173,7 @@ class DioApiService : Disposable {
     }
 
     
-    fun getCurrentSelectApi(e: AnActionEvent): Request? {
+    fun getCurrentSelectApi(e: AnActionEvent): IRequest? {
         return e.api()
     }
 

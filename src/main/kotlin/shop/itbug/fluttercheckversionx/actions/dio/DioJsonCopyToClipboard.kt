@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.model.getMap
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.CopyImageToClipboard
 

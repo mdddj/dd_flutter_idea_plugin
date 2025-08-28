@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [5.7.6] - 2025-08-18
+
+* Change New [Document](https://mdddj.github.io/flutterx-doc/)
+
 ## [5.7.5] - 2025-08-11
 
 * Adapted for 2025.2

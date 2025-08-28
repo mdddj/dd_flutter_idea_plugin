@@ -6,10 +6,11 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import shop.itbug.fluttercheckversionx.actions.api
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
-import shop.itbug.fluttercheckversionx.socket.HurlGenerate
-import shop.itbug.fluttercheckversionx.socket.Request
+import shop.itbug.fluttercheckversionx.model.HurlGenerate
+import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.socket.service.AppService
 
+private val IRequest.hurlGenerate get() = HurlGenerate(this)
 
 abstract class HurlCopyBaseAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -19,7 +20,7 @@ abstract class HurlCopyBaseAction : AnAction() {
         }
     }
 
-    abstract fun doCopy(request: Request, generate: HurlGenerate, e: AnActionEvent): String?
+    abstract fun doCopy(request: IRequest, generate: HurlGenerate, e: AnActionEvent): String?
 
     override fun update(e: AnActionEvent) {
         e.presentation.icon = AllIcons.Actions.Copy
@@ -37,7 +38,7 @@ abstract class HurlCopyBaseAction : AnAction() {
 ///基础
 class HurlCopyBaseActionImpl : HurlCopyBaseAction() {
     override fun doCopy(
-        request: Request,
+        request: IRequest,
         generate: HurlGenerate,
         e: AnActionEvent
     ): String? {

@@ -14,6 +14,7 @@ object MyIcons {
     val score = IconLoader.getIcon("/icons/score.svg", MyIcons::class.java)
     val androidStudio = IconLoader.getIcon("/icons/as.svg", MyIcons::class.java)
     val xcode = IconLoader.getIcon("/icons/xcode.svg", MyIcons::class.java)
+    val language = IconLoader.getIcon("/icons/language.svg", MyIcons::class.java)
 }
 
 

@@ -21,7 +21,7 @@ import com.google.gson.JsonObject
 /**
  * {@link Event} 是来自 VM 的异步通知。只有当客户端使用 streamListen RPC 订阅了事件流时才会传递此通知。
  */
-class Event(json: JsonObject) : Response(json) {
+open class Event(json: JsonObject) : Response(json) {
 
     /**
      * 已注册服务的别名。

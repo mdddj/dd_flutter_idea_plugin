@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.widget.PopupWidgets
 
 class LanguagePopupSettingsAction : AnAction(), DumbAware {
@@ -15,6 +16,7 @@ class LanguagePopupSettingsAction : AnAction(), DumbAware {
     override fun update(e: AnActionEvent) {
         e.presentation.text = PluginBundle
             .get("setting.language")
+        e.presentation.icon = MyIcons.language
         super.update(e)
     }
 

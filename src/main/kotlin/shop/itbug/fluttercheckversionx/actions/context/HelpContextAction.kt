@@ -12,12 +12,12 @@ import javax.swing.JComponent
 
 
 enum class SiteDocument(val url: String) {
-    Dio("https://flutterx.itbug.shop/starter.html"),
-    Hive("https://flutterx.itbug.shop/hive%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7.html"),
-    Sp("https://flutterx.itbug.shop/shared-preferences.html"),
-    AssetsPreview("https://flutterx.itbug.shop/%E8%B5%84%E4%BA%A7%E9%A2%84%E8%A7%88%E7%AA%97%E5%8F%A3.html"),
-    L10n("https://flutterx.itbug.shop/l10n-editor.html"),
-    Log("https://flutterx.itbug.shop/log.html");
+    Dio("https://mdddj.github.io/flutterx-doc/en/dio/starter"),
+    Hive("https://mdddj.github.io/flutterx-doc/en/hive/hive-cache-tool/"),
+    Sp("https://mdddj.github.io/flutterx-doc/en/shared_p/shared-preferences/"),
+    AssetsPreview("https://mdddj.github.io/flutterx-doc/en/assets/asset-preview-window/"),
+    L10n("https://mdddj.github.io/flutterx-doc/en/other/l10n-editor/"),
+    Log("https://mdddj.github.io/flutterx-doc/en/other/log-tools/");
 
     fun open() {
         BrowserUtil.open(url)

@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.actions.dio.other
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import shop.itbug.fluttercheckversionx.model.openJsonDataInEditor
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 
 class OpenDioJsonDataInEditorAction : AnAction() {

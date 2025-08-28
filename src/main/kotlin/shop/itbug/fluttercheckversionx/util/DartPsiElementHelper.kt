@@ -18,7 +18,7 @@ import org.intellij.images.index.ImageInfoIndex
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay.FileResult
-import shop.itbug.fluttercheckversionx.socket.formatSize
+import shop.itbug.fluttercheckversionx.model.formatSize
 import java.io.File
 import java.net.URI
 import java.net.URLConnection

@@ -5,6 +5,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.options.ShowSettingsUtil
 import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.constance.qqGroup
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
@@ -110,7 +111,7 @@ class GoToQQGroupAction : AnAction() {
 // open setting
 class GoToDocumentAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        BrowserUtil.browse("https://flutterx.itbug.shop")
+        BrowserUtil.browse(Links.DOCUMENT_DEFAULT_URL)
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

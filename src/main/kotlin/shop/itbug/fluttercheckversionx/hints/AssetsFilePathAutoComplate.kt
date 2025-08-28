@@ -11,10 +11,10 @@ import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.impl.DartStringLiteralExpressionImpl
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.model.formatSize
 import shop.itbug.fluttercheckversionx.services.AppStateModel
 import shop.itbug.fluttercheckversionx.services.FlutterAssetsService
 import shop.itbug.fluttercheckversionx.services.PluginStateService
-import shop.itbug.fluttercheckversionx.socket.formatSize
 import shop.itbug.fluttercheckversionx.util.SwingUtil
 import java.io.File
 

@@ -21,6 +21,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
+import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInfo
 import vm.consumer.*
 import vm.element.*
 import vm.internal.RequestSink
@@ -118,6 +119,8 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
                             // 监听传入的消息
                             vmService.listenData()
                         }
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         connectionError = e
                         connectionLatch.countDown()
@@ -153,6 +156,7 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
         }
 
         val APP_ID_KEY = Key.create<String>("vm service appid")
+        val APP_INFO = Key.create<FlutterAppInfo>("DartProjectService.APP_INFO")
     }
 
 
@@ -198,9 +202,10 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
      * 断开与 VM Observatory 服务的连接。
      */
     fun disconnect() {
+        client?.close()
         requestSink?.close()
         coroutineScope.cancel()
-        client?.close()
+
     }
 
     /**
@@ -358,6 +363,19 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
         request(method, params, consumer)
     }
 
+    fun callServiceExtension(isolateId: String, method: String) {
+        val params = JsonObject()
+        params.addProperty("isolateId", isolateId)
+        request(method, params, DefaultServiceExtensionConsumer {  })
+    }
+    fun callServiceExtension(
+        isolateId: String,
+        method: String,
+        params: JsonObject,
+    ) {
+        params.addProperty("isolateId", isolateId)
+        request(method, params, DefaultServiceExtensionConsumer {  })
+    }
     /**
      * 调用特定的服务协议扩展方法。
      * <p>
@@ -439,7 +457,7 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
     /**
      * 处理来自 VM 服务的响应，并将该响应转发给与响应 ID 关联的消费者。
      */
-    fun processMessage(jsonText: String?) {
+    open fun processMessage(jsonText: String?) {
         if (jsonText == null || jsonText.isEmpty()) {
             return
         }

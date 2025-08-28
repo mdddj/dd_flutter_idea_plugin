@@ -5,34 +5,72 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="添加 dart vm 连接代码">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/bar/LanguagePopupSettingsAction.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/PopupWidgets.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowFactory.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/network/HttpProfileActions.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/widget/DetailedModeToggleAction.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/widget/InspectorOverlayToggleAction.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/widget/RefreshTreeAction.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/IRequest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/ComposeHelper.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartHttpWindowsFactory.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/HttpProfileEx.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/dart-vm-actions.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/icons/language.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/icons/language_dark.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/ApiCopyAll.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/ApiCopyAll.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/ApiCopyPathAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/ApiCopyPathAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowAnActionEx.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowAnActionEx.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowCopyAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowCopyAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowViewHeadersAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowViewHeadersAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowViewPostParamsAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/DioWindowViewPostParamsAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/bar/LanguagePopupSettingsAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/bar/LanguagePopupSettingsAction.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/bar/SearchPubPluginAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/bar/SearchPubPluginAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/context/HelpContextAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/context/HelpContextAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioJsonCopyToClipboard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioJsonCopyToClipboard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioResponseHeadersViewJsonAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/DioResponseHeadersViewJsonAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/hurl/HurlCopyBaseAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/other/OpenDioJsonDataInEditorAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/dio/other/OpenDioJsonDataInEditorAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/riverpod/RiverpodAutoImportTextConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/riverpod/RiverpodAutoImportTextConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/autoCompletion/DartPartAutoCompletion.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/autoCompletion/DartPartAutoCompletion.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/AnyExtend.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/AnyExtend.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/DartProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/DartProjectService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/FlutterEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/FlutterEvent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/constance/StringConstance.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/constance/StringConstance.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/RequestItemLayout.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/RequestItemLayout.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/components/ApiListPanel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/components/ApiListPanel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/SocketRequestForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/form/socket/SocketRequestForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hints/AssetsFilePathAutoComplate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/hints/AssetsFilePathAutoComplate.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/icons/MyIcons.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/icons/MyIcons.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/dartfile/DartFileInsertPartOfString.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/dartfile/DartFileInsertPartOfString.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/AssetsListeningProjectService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubCacheSizeCalcService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PubCacheSizeCalcService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/ProjectSocketService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/ProjectSocketService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/socket/service/DioApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/DartPluginVersionCheckV2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/tools/DartPluginVersionCheckV2.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DartPsiElementHelper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DartPsiElementHelper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/EditorTextPanel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/EditorTextPanel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/FlutterWidgetTreeWidget.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/FlutterWidgetTreeWidget.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/MySimpleTextField.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/MySimpleTextField.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowFactory.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowFactory.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/flutter/WidgetTreeWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/flutter/WidgetTreeWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/DartStringKeysWidget.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/DartStringKeysWidget.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceBase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceBase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceEx.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceEx.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/consumer/ServiceExtensionConsumer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/consumer/ServiceExtensionConsumer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/consumer/SuccessConsumer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/consumer/SuccessConsumer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/element/Event.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/element/Event.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/element/EventKind.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/element/EventKind.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/element/WidgetTree.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/element/WidgetTree.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/logging/Logger.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/logging/Logger.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/DartVmTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/DartVmTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/插件介绍h.md" beforeDir="false" afterPath="$PROJECT_DIR$/插件介绍h.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +137,6 @@
       <list>
         <option value="package.json" />
         <option value="Kotlin Enum" />
-        <option value="Kotlin Interface" />
         <option value="Class" />
         <option value="Kotlin Data Class" />
         <option value="JUnit4 Test Class" />
@@ -108,13 +145,14 @@
         <option value="InspectionDescription" />
         <option value="Action" />
         <option value="Kotlin Class" />
+        <option value="Kotlin Interface" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="5.7.2" />
+        <entry key="$PROJECT_DIR$" value="5.7.3" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -147,6 +185,10 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="5.7.4" />
+                    <option name="lastUsedInstant" value="1754968281" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="5.7.3" />
                     <option name="lastUsedInstant" value="1753500645" />
                   </RecentBranch>
@@ -161,10 +203,6 @@
                   <RecentBranch>
                     <option name="branchName" value="4.8.0" />
                     <option name="lastUsedInstant" value="1720057669" />
-                  </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="4.7.0" />
-                    <option name="lastUsedInstant" value="1720057611" />
                   </RecentBranch>
                 </list>
               </option>
@@ -225,8 +263,8 @@
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
-    <option name="FILTER_INFO" value="true" />
-    <option name="FILTER_DEBUG" value="true" />
+    <option name="FILTER_INFO" value="false" />
+    <option name="FILTER_DEBUG" value="false" />
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="MacroExpansionManager">
@@ -265,6 +303,7 @@
     &quot;Gradle.DartPluginVersionTest.test.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.DartPluginVersionTest.testVersion.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.DartVmTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DartVmTest.testCheckTreeIsReady.executor&quot;: &quot;Debug&quot;,
     &quot;Gradle.DartVmTest.testConnect.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.DartVmTest.testGetProperties.executor&quot;: &quot;Debug&quot;,
     &quot;Gradle.DartVmTest.testGetSupportProtocolList.executor&quot;: &quot;Debug&quot;,
@@ -326,13 +365,13 @@
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;dev.sweep.assistant.data.RecentlyUsedFiles&quot;: &quot;src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt;build.gradle.kts;sweep://tutorial/SweepTutorial.java&quot;,
     &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;5.7.3&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;5.7.4&quot;,
     &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;ktor.last.update.timestamp&quot;: &quot;1687769586955&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/src/main/kotlin/vm&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/src/main/resources/icons&quot;,
     &quot;llm.McpServerEditPanel.switcher&quot;: &quot;1&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
@@ -348,7 +387,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2945874&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.language.and.region&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.tabs&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
     &quot;sweep.chatMode&quot;: &quot;Manual&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
@@ -380,11 +419,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/icons" />
       <recent name="$PROJECT_DIR$/src/main/kotlin/vm" />
       <recent name="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/main/resources/messages" />
-      <recent name="$PROJECT_DIR$/src/main/resources/images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/kotlin/vm" />
@@ -401,6 +440,9 @@
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="shop.itbug.fluttercheckversionx.util" />
+    </key>
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="vm.network" />
     </key>
   </component>
   <component name="RestServicesNavigator">
@@ -431,52 +473,26 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="DartVmTest.testMemoryUsage" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="dd_flutter_idea_plugin [buildPlugin]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
+        <option name="scriptParameters" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;DartVmTest.testMemoryUsage&quot;" />
+            <option value="buildPlugin" />
           </list>
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="MyPopupTest.testPopupDisplay" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;MyPopupTest.testPopupDisplay&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
+      <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [classes]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -491,6 +507,28 @@
         <option name="taskNames">
           <list>
             <option value="classes" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="dd_flutter_idea_plugin [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -524,11 +562,17 @@
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [runIde]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <log_file alias="idea.log" path="$PROJECT_DIR$/build/idea-sandbox/IC-2025.1.4.1/log/idea.log" />
       <ExternalSystemSettings>
+        <option name="env">
+          <map>
+            <entry key="DART_VM" value="true" />
+          </map>
+        </option>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -574,8 +618,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.MyPopupTest.testPopupDisplay" />
-      <item itemvalue="Gradle.DartVmTest.testMemoryUsage" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [clean]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
@@ -583,10 +627,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
-        <item itemvalue="Gradle.MyPopupTest.testPopupDisplay" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
-        <item itemvalue="Gradle.DartVmTest.testMemoryUsage" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [clean]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
       </list>
     </recent_temporary>
   </component>
@@ -1832,7 +1876,35 @@
       <workItem from="1754960902583" duration="33000" />
       <workItem from="1754960951614" duration="3025000" />
       <workItem from="1754966434241" duration="1366000" />
-      <workItem from="1754967814580" duration="134000" />
+      <workItem from="1754967814580" duration="10050000" />
+      <workItem from="1754984351815" duration="25000" />
+      <workItem from="1755050385070" duration="75000" />
+      <workItem from="1755050479328" duration="142000" />
+      <workItem from="1755063015021" duration="9781000" />
+      <workItem from="1755072930644" duration="33000" />
+      <workItem from="1755072978831" duration="6842000" />
+      <workItem from="1755132957275" duration="11992000" />
+      <workItem from="1755480157360" duration="3523000" />
+      <workItem from="1755569857799" duration="19000" />
+      <workItem from="1755681810262" duration="35000" />
+      <workItem from="1755681993754" duration="172000" />
+      <workItem from="1755846871937" duration="10000" />
+      <workItem from="1755848899818" duration="110000" />
+      <workItem from="1756085648691" duration="757000" />
+      <workItem from="1756115300819" duration="1109000" />
+      <workItem from="1756170386552" duration="2296000" />
+      <workItem from="1756190595622" duration="9445000" />
+      <workItem from="1756201740257" duration="1217000" />
+      <workItem from="1756256800397" duration="466000" />
+      <workItem from="1756257943213" duration="4572000" />
+      <workItem from="1756262637707" duration="10059000" />
+      <workItem from="1756278035497" duration="3562000" />
+      <workItem from="1756282152220" duration="7027000" />
+      <workItem from="1756342384249" duration="561000" />
+      <workItem from="1756342958213" duration="6000" />
+      <workItem from="1756342975662" duration="510000" />
+      <workItem from="1756343668947" duration="5458000" />
+      <workItem from="1756349364228" duration="8000000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2283,6 +2355,11 @@
         <PinnedItemInfo parentTag="com.jetbrains.lang.dart.psi.impl.DartReferenceExpressionImpl" memberName="myNode" />
       </pinned-members>
     </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="GradleRunConfiguration">
+        <watch expression="((AnActionEvent)e).myDataContext" custom="com.intellij.openapi.actionSystem.AnActionEvent" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

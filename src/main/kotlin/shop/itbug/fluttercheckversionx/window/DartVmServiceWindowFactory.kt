@@ -5,7 +5,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
-import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
+import shop.itbug.fluttercheckversionx.common.dart.isSupportDartVm
 import shop.itbug.fluttercheckversionx.window.DartVmServiceWindowFactory.Companion.ID
 import shop.itbug.fluttercheckversionx.window.flutter.WidgetTreeWindow
 
@@ -13,7 +13,6 @@ class DartVmServiceWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(
         project: Project, toolWindow: ToolWindow
     ) {
-        FlutterXVMService.getInstance(project)
         // widget tree
         val flutterWidgetTree = WidgetTreeWindow(project)
         val flutterWidgetTreeContent =
@@ -22,6 +21,9 @@ class DartVmServiceWindowFactory : ToolWindowFactory {
         toolWindow.contentManager.addContent(flutterWidgetTreeContent)
     }
 
+    override fun shouldBeAvailable(project: Project): Boolean {
+        return isSupportDartVm
+    }
     companion object {
         const val ID = "FlutterX VM Service"
     }
@@ -38,4 +40,8 @@ fun showDartVmServiceToolWindow(project: Project) {
     if (!toolWindow.isVisible) {
         toolWindow.show()
     }
+}
+
+fun dartVmServiceWindowIsShow(project: Project): Boolean {
+    return getFlutterXVmServiceToolWindow(project).isVisible
 }

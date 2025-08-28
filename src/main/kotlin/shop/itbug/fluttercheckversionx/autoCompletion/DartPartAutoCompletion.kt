@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.autoCompletion
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
@@ -22,27 +23,31 @@ class DartPartAutoCompletion : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement().withLanguage(DartLanguage.INSTANCE).withSuperParent(6, DartFile::class.java)
-                .withText(PlatformPatterns.string().startsWith("par")),
+                .withText(PlatformPatterns.string().startsWith("par"))
+                .withText(PlatformPatterns.string().startsWith("p")),
             Provider()
         )
     }
 
-    private inner class Provider : CompletionProvider<CompletionParameters>() {
-
+    private class Provider : CompletionProvider<CompletionParameters>() {
+        private val logger = thisLogger()
         override fun addCompletions(
             parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet
         ) {
-            val project = parameters.editor.project!!
+            val project = parameters.editor.project ?: return
             val partService = UserDartLibService.getInstance(project)
             val file = parameters.editor.virtualFile
 
             val libNames = partService.getLibraryNames()
 
+
             libNames.forEach { name ->
                 val psi = createElement(name, project) { this }
                 result.addElement(psi)
             }
+            logger.info("lib names: $libNames")
             val rf = partService.calcRelativelyPath(file)
+            println("列表:${rf}")
             rf.forEach { model ->
                 println("path =>${model.path}  <>${model.libName}")
                 result.addElement(createElement("'${model.path}'", project) {

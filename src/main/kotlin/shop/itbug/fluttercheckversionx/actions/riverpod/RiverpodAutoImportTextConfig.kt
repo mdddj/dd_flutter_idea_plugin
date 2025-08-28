@@ -11,7 +11,7 @@ import shop.itbug.fluttercheckversionx.widget.WidgetUtil
  * 配置自动导入
  */
 class RiverpodAutoImportTextConfig : AnAction() {
-    private val title = PluginBundle.get("key_config") + PluginBundle.get("setting_riverpod_import_text_title")
+    private val title = PluginBundle.get("key_config") + " " + PluginBundle.get("setting_riverpod_import_text_title").lowercaseFirstLetter()
     override fun actionPerformed(e: AnActionEvent) {
         e.project?.let { project ->
             val state = PluginConfig.getState(project)
@@ -39,4 +39,13 @@ class RiverpodAutoImportTextConfig : AnAction() {
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.EDT
     }
+}
+
+private fun String.lowercaseFirstLetter(): String {
+    // 检查字符串是否为空，如果是则直接返回，避免异常
+    if (this.isEmpty()) {
+        return this
+    }
+    // 获取第一个字符并转换为小写，然后拼接上剩余的字符串
+    return this[0].lowercase() + this.substring(1)
 }

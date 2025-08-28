@@ -24,6 +24,8 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.messages.MessageBusConnection
 import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.actions.components.MyButtonAnAction
+import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
+import shop.itbug.fluttercheckversionx.common.dart.isSupportDartVm
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.PluginConfig
@@ -37,6 +39,8 @@ import shop.itbug.fluttercheckversionx.util.Util
 
 //
 class MyAssetGenPostStart : ProjectActivity {
+    val isEnableDartVm by lazy { isSupportDartVm }
+    val logger = thisLogger()
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
         FlutterL10nService.getInstance(project).checkAllKeys()
@@ -47,8 +51,14 @@ class MyAssetGenPostStart : ProjectActivity {
             }
         }
 
+        logger.info("支持 dart vm ? :${isEnableDartVm}")
+
+        if (isEnableDartVm) {
+            FlutterXVMService.getInstance(project)
+        }
     }
 }
+
 
 class MyProjectListening : ProjectManagerListener {
 
