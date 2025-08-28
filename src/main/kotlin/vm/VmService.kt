@@ -25,6 +25,8 @@ import fleet.multiplatform.shims.ConcurrentHashMap
 import io.ktor.websocket.*
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -68,7 +70,7 @@ class VmService : VmServiceBase() {
     val appId get() = getUserData<String>(APP_ID_KEY)!!
     val appInfo get() = getUserData(APP_INFO)!!
 
-    private var dartHttpMonitor: DartNetworkMonitor? = null
+    var dartHttpMonitor: MutableStateFlow<DartNetworkMonitor?> = MutableStateFlow(null)
     private var _mainIsolateId: String? = null
 
     //注意判空
@@ -78,7 +80,8 @@ class VmService : VmServiceBase() {
     }
 
     // 是否正在监听 http 请求
-    val dartHttpIsMonitoring get() = dartHttpMonitor?.isMonitoring ?: false
+    val dartHttpIsMonitoring = MutableStateFlow(false)
+    val getAllRequests get() = dartHttpMonitor.value?.getAllRequests() ?: emptyList()
 
     //开始监听 http 请求
     suspend fun startMonitoring(
@@ -86,23 +89,32 @@ class VmService : VmServiceBase() {
         listener: DartNetworkMonitor.NetworkRequestListener? = null
     ): Job? {
         val isolateId = getMainIsolateId()
-        if (dartHttpMonitor == null) {
-            dartHttpMonitor = DartNetworkMonitor(
+        if (dartHttpMonitor.value == null) {
+            dartHttpMonitor.value = DartNetworkMonitor(
                 vmService = this,
                 isolateId = isolateId,
                 scope = coroutineScope,
             )
         }
         if (listener != null) {
-            dartHttpMonitor?.addListener(listener)
+            dartHttpMonitor.value?.addListener(listener)
         }
-        dartHttpMonitor?.startMonitoring(intervalMs)
+        dartHttpMonitor.value?.startMonitoring(intervalMs)
+        dartHttpIsMonitoring.value = true
 
-        return dartHttpMonitor?.taskJob
+        return dartHttpMonitor.value?.taskJob
     }
 
     fun destroyHttpMonitor() {
-        dartHttpMonitor?.destroy()
+        dartHttpIsMonitoring.value = false
+        dartHttpMonitor.value?.destroy()
+        dartHttpMonitor.value = null
+    }
+
+    fun runInScope(action: suspend VmService.() -> Unit) {
+        coroutineScope.launch {
+            action.invoke(this@VmService)
+        }
     }
 
 

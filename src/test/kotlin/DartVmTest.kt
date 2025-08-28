@@ -40,11 +40,10 @@ class DartVmTest : BasePlatformTestCase() {
             Logging.setLogger(Logger.CONSOLE)
             val vmService = createVmService
             vmService.runtimeVersion = vmService.getVersion()
-            val mainIos = vmService.mainIsolates()
+            val mainIos = vmService.getMainIsolateId()
             assertNotNull(mainIos)
-            assertTrue(mainIos!!.getId() != null)
             Logging.getLogger().logInformation("开始获取 widget信息")
-            val widgets = vmService.getRootWidgetTree(mainIos.getId()!!, "testGroup")
+            val widgets = vmService.getRootWidgetTree(vmService.getMainIsolateId(), "testGroup")
             Logging.getLogger().logInformation("结束获取 widgets信息")
             assertNotNull(widgets)
 
@@ -80,9 +79,9 @@ class DartVmTest : BasePlatformTestCase() {
         val vmService = createVmService
 
         runBlocking {
-            val id = vmService.mainIsolates()
+            val id = vmService.getMainIsolateId()
             vmService.getMemoryUsage(
-                id!!.getId()!!,
+                id,
                 object : GetMemoryUsageConsumer {
                     override fun received(response: MemoryUsage) {
                         log(response)
@@ -104,7 +103,7 @@ class DartVmTest : BasePlatformTestCase() {
         Logging.setLogger(Logger.CONSOLE)
         val vmService = createVmService
         runBlocking {
-            val id = vmService.mainIsolates()?.getId()!!
+            val id = vmService.getMainIsolateId()
             val tree =
                 vmService.getRootWidgetTree(
                     isolateId = id,
@@ -140,8 +139,8 @@ class DartVmTest : BasePlatformTestCase() {
     fun testSetInspectorOverlay() {
         val vm = createVmService
         runBlocking {
-            val id = vm.mainIsolates()?.getId()
-            id?.let {
+            val id = vm.getMainIsolateId()
+            id.let {
                 vm.setInspectorOverlay(id, true)
                 delay(3000)
                 vm.setInspectorOverlay(id, false)
@@ -154,7 +153,7 @@ class DartVmTest : BasePlatformTestCase() {
         Logging.setLogger(Logger.CONSOLE)
         val vmService = createVmService
         runBlocking {
-            val id = vmService.mainIsolates()?.getId()!!
+            val id = vmService.getMainIsolateId()
             val tree =
                 vmService.getRootWidgetTree(
                     isolateId = id,
@@ -190,7 +189,7 @@ class DartVmTest : BasePlatformTestCase() {
     fun testCheckTreeIsReady() {
         runBlocking {
             val vmService = createVmService
-            val id = vmService.mainIsolates()!!.getId()!!
+            val id = vmService.getMainIsolateId()
             val r = suspendCancellableCoroutine<Boolean> { continuation ->
                 vmService.checkWidgetTreeReady(id, continuation)
             }

@@ -3,9 +3,7 @@ package vm.network
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.model.formatDate
 import vm.VmService
@@ -27,7 +25,7 @@ data class MonitoringStats(
 )
 
 /**
- * 监控到的网络请求数据模型 (已实现 IRequest 接口)
+ * 监控到的网络请求数据模型
  */
 data class NetworkRequest(
     val id: String,
@@ -53,23 +51,20 @@ data class NetworkRequest(
     val isComplete: Boolean
         get() = status == RequestStatus.COMPLETED || status == RequestStatus.ERROR
 
-    // --- 实现 IRequest 接口的属性 ---
     override val requestUrl: String get() = uri
     override val httpMethod: String? get() = method
-    override val httpStatusCode: Int get() = statusCode ?: -1 // 如果为 null，提供一个默认值
-    override val durationMs: Long get() = duration ?: -1L // 如果为 null，提供一个默认值
+    override val httpStatusCode: Int get() = statusCode ?: -1
+    override val durationMs: Long get() = duration ?: -1L
     override val httpRequestHeaders: Map<String, Any> get() = requestHeaders ?: emptyMap()
     override val httpResponseHeaders: Map<String, Any> get() = responseHeaders ?: emptyMap()
     override val httpRequestBody: Any? get() = requestBody
     override val httpResponseBody: Any? get() = responseBody
 
-    // 从 startTime (Long) 转换
     override val requestStartTime: String
         get() = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTime), ZoneId.systemDefault()).formatDate()
 
     override val queryParams: Map<String, Any?>
         get() {
-            // 如果 URI 包含查询参数，需要解析它们。这是一个简单的实现。
             return uri.substringAfter('?', "")
                 .split('&')
                 .filter { it.isNotEmpty() }
@@ -79,8 +74,6 @@ data class NetworkRequest(
                 }
                 .toMap()
         }
-
-    // ... companion object 和其他代码保持不变 ...
 }
 
 data class RequestEvent(
@@ -101,7 +94,9 @@ class DartNetworkMonitor(
 ) {
     private val requests = mutableMapOf<String, NetworkRequest>()
     private val listeners = mutableListOf<NetworkRequestListener>()
-    var isMonitoring = false
+    private var isMonitoring : MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isRunning: StateFlow<Boolean>
+        get() = isMonitoring
     private var lastUpdateTime = 0L
     private var pollingJob: Job? = null
 
@@ -131,30 +126,22 @@ class DartNetworkMonitor(
      * 开始网络监控
      */
     suspend fun startMonitoring(intervalMs: Long = 1000L): Boolean {
-        if (isMonitoring) return true
+        if (isMonitoring.value) return true
 
         return try {
-            // 1. 检查HTTP分析可用性
             val isAvailable = vmService.isHttpProfilingAvailable(isolateId)
             if (!isAvailable) {
                 notifyError("HTTP分析功能不可用")
                 return false
             }
-
-            // 2. 启用HTTP时间线日志
             val timelineResult = vmService.setHttpTimelineLogging(isolateId, true)
             if (timelineResult == null) {
                 notifyError("启用HTTP时间线日志失败")
                 return false
             }
-
-            // 3. 清除旧数据
             vmService.clearHttpProfile(isolateId)
-
-            isMonitoring = true
-            lastUpdateTime = System.currentTimeMillis() * 1000 // 转换为微秒
-
-            // 4. 开始定期轮询
+            isMonitoring.value = true
+            lastUpdateTime = System.currentTimeMillis() * 1000
             startPolling(intervalMs)
 
             true
@@ -168,51 +155,38 @@ class DartNetworkMonitor(
      * 停止网络监控
      */
     suspend fun stopMonitoring() {
-        isMonitoring = false
+        isMonitoring.value = false
 
-        // 取消轮询任务
         pollingJob?.let { job ->
             job.cancel()
             try {
                 job.join() // 等待协程完全停止
             } catch (e: CancellationException) {
-                // 正常的取消，忽略
                 throw e
             }
         }
         pollingJob = null
 
         try {
-            // 禁用HTTP时间线日志
             vmService.setHttpTimelineLogging(isolateId, false)
         } catch (e: Exception) {
             println("停止监控时出错: ${e.message}")
         }
     }
 
-    /**
-     * 销毁监控器，释放所有资源
-     */
     fun destroy() {
         scope.launch {
             stopMonitoring()
         }
-
-        // 清理数据
         requests.clear()
         listeners.clear()
     }
 
-    /**
-     * 开始轮询HTTP分析数据
-     */
     private fun startPolling(intervalMs: Long = 1000L) {
-        // 取消现有的轮询任务
         pollingJob?.cancel()
-
         pollingJob = scope.launch {
             try {
-                while (isActive && isMonitoring) {
+                while (isActive && isMonitoring.value) {
                     try {
                         updateRequests()
                     } catch (e: CancellationException) {
@@ -237,11 +211,8 @@ class DartNetworkMonitor(
         }
     }
 
-    /**
-     * 获取HTTP分析数据并更新请求列表
-     */
     suspend fun updateRequests() {
-        if (!isMonitoring) return
+        if (!isMonitoring.value) return
 
         try {
             val result = vmService.getHttpProfile(isolateId, lastUpdateTime)
@@ -253,10 +224,6 @@ class DartNetworkMonitor(
             notifyError("更新网络请求数据失败: ${e.message}")
         }
     }
-
-    /**
-     * 解析HTTP分析数据
-     */
     private fun parseHttpProfile(profileData: JsonObject) {
         try {
             val timestamp = profileData.get("timestamp")?.asLong ?: return
@@ -532,7 +499,7 @@ class DartNetworkMonitor(
     }
 }
 
-// 使用示例
+
 class NetworkMonitorExample {
     private var networkMonitor: DartNetworkMonitor? = null
     private val monitorScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -646,4 +613,173 @@ class NetworkMonitorExample {
             averageResponseTime = requests.mapNotNull { it.duration }.average().takeIf { !it.isNaN() } ?: 0.0
         )
     }
+}
+
+/**
+ * 生成一组覆盖各种场景的模拟网络请求数据。
+ * @return List<NetworkRequest> 模拟数据列表
+ */
+fun generateMockData(): List<NetworkRequest> {
+    val now = System.currentTimeMillis()
+    val jsonContentType = mapOf("Content-Type" to "application/json; charset=utf-8")
+    var idCounter = 1
+
+    return listOf(
+
+        // 场景 1: 成功的 GET 请求 (200 OK)
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "GET",
+            uri = "https://api.github.com/users/JakeWharton",
+            startTime = now - 5000,
+            endTime = now - 4500, // 耗时 500ms
+            status = RequestStatus.COMPLETED,
+            statusCode = 200,
+            requestHeaders = mapOf(
+                "Accept" to "application/vnd.github.v3+json",
+                "User-Agent" to "MyAwesomeApp/1.0"
+            ),
+            responseHeaders = jsonContentType + ("Server" to "GitHub.com"),
+            requestBody = null,
+            responseBody = """
+                {
+                  "login": "JakeWharton",
+                  "id": 66577,
+                  "name": "Jake Wharton",
+                  "company": "Google, Inc.",
+                  "public_repos": 113
+                }
+                """.trimIndent(),
+            contentLength = 185
+        ),
+
+        // 场景 2: 成功的 POST 请求 (201 Created)
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "POST",
+            uri = "https://api.example.com/v1/orders",
+            startTime = now - 4000,
+            endTime = now - 3700, // 耗时 300ms
+            status = RequestStatus.COMPLETED,
+            statusCode = 201,
+            requestHeaders = jsonContentType + ("Authorization" to "Bearer your_jwt_token_here"),
+            responseHeaders = jsonContentType + ("Location" to "https://api.example.com/v1/orders/12345"),
+            requestBody = """
+                {
+                  "productId": "prod_abc123",
+                  "quantity": 2,
+                  "customer": "customer_xyz789"
+                }
+                """.trimIndent(),
+            responseBody = """
+                {
+                  "orderId": "12345",
+                  "status": "created",
+                  "createdAt": "2023-10-27T12:00:00Z"
+                }
+                """.trimIndent(),
+            contentLength = 110
+        ),
+
+        // 场景 3: 正在进行中的请求 (Pending)
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "GET",
+            uri = "https://api.example.com/realtime-feed",
+            startTime = now - 1000,
+            // endTime, statusCode, responseBody 等都是 null，因为请求还未完成
+            status = RequestStatus.PENDING,
+            requestHeaders = mapOf("Accept" to "application/json")
+        ),
+
+        // 场景 4: 客户端错误 (404 Not Found)
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "GET",
+            uri = "https://api.github.com/users/a-user-that-does-not-exist",
+            startTime = now - 3000,
+            endTime = now - 2800, // 耗时 200ms
+            status = RequestStatus.COMPLETED, // 技术上请求完成了，只是HTTP状态是错误
+            statusCode = 404,
+            requestHeaders = mapOf("Accept" to "application/vnd.github.v3+json"),
+            responseHeaders = jsonContentType,
+            responseBody = """
+                {
+                  "message": "Not Found",
+                  "documentation_url": "https://docs.github.com/rest"
+                }
+                """.trimIndent(),
+            contentLength = 80
+        ),
+
+        // 场景 5: 服务器错误 (500 Internal Server Error)
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "DELETE",
+            uri = "https://api.buggy-service.com/items/42",
+            startTime = now - 2000,
+            endTime = now - 1800, // 耗时 200ms
+            status = RequestStatus.ERROR,
+            statusCode = 500,
+            requestHeaders = mapOf("Authorization" to "Bearer some-jwt-token"),
+            responseHeaders = mapOf("Content-Type" to "text/html"),
+            responseBody = "<h1>Internal Server Error</h1><p>Something went wrong on our end. Please try again later.</p>",
+            error = "Server responded with status code 500"
+        ),
+
+        // 场景 6: 网络连接错误 (例如，DNS解析失败)
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "GET",
+            uri = "https://this-domain-does-not-exist.xyz/api/data",
+            startTime = now - 8000,
+            endTime = now - 6000, // 花了2秒才失败
+            status = RequestStatus.ERROR,
+            // statusCode, responseHeaders, responseBody 都是 null，因为没有收到响应
+            statusCode = null,
+            requestHeaders = mapOf("Accept" to "application/json"),
+            error = "java.net.UnknownHostException: this-domain-does-not-exist.xyz"
+        ),
+
+        // 场景 7: 带有查询参数的 GET 请求
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "GET",
+            uri = "https://api.example.com/search?q=jetpack+compose&page=1&sort=popularity",
+            startTime = now - 1500,
+            endTime = now - 1250, // 耗时 250ms
+            status = RequestStatus.COMPLETED,
+            statusCode = 200,
+            requestHeaders = mapOf("Accept" to "application/json"),
+            responseHeaders = jsonContentType,
+            responseBody = """{"results": [], "count": 0}""",
+            contentLength = 26
+        ),
+
+        // 场景 8: PUT 请求用于更新资源
+        NetworkRequest(
+            id = (idCounter++).toString(),
+            method = "PUT",
+            uri = "https://api.example.com/v1/users/profile",
+            startTime = now - 1000,
+            endTime = now - 800, // 耗时 200ms
+            status = RequestStatus.COMPLETED,
+            statusCode = 200,
+            requestHeaders = jsonContentType + ("Authorization" to "Bearer your_jwt_token_here"),
+            responseHeaders = jsonContentType,
+            requestBody = """
+                {
+                  "displayName": "New Awesome Name",
+                  "bio": "Developer and coffee enthusiast."
+                }
+                """.trimIndent(),
+            responseBody = """
+                {
+                  "status": "success",
+                  "message": "Profile updated successfully."
+                }
+                """.trimIndent(),
+            contentLength = 70
+        )
+    )
 }
