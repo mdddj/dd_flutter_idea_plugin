@@ -72,20 +72,21 @@ interface Logger {
     }
 
     class IdeaLogger : Logger {
+        val ideaLog = thisLogger()
         override fun logError(message: String) {
-            thisLogger().error(message)
+            ideaLog.error(message)
         }
 
         override fun logError(message: String, exception: Throwable) {
-            thisLogger().error(message, exception)
+            ideaLog.error(message, exception)
         }
 
         override fun logInformation(message: String) {
-            thisLogger().info(message)
+            ideaLog.info(message)
         }
 
         override fun logInformation(message: String, exception: Throwable) {
-            thisLogger().info(message, exception)
+            ideaLog.info(message, exception)
         }
     }
 

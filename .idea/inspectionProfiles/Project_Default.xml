@@ -33,8 +33,8 @@
         </list>
       </option>
     </inspection_tool>
-    <inspection_tool class="UnstableApiUsage" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES">
-      <scope name="Project Files" level="INFORMATION" enabled="true" editorAttributes="INFORMATION_ATTRIBUTES" />
+    <inspection_tool class="UnstableApiUsage" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES">
+      <scope name="Project Files" level="WARNING" enabled="true" editorAttributes="WARNING_ATTRIBUTES" />
     </inspection_tool>
   </profile>
 </component>

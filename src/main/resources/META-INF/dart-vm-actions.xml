@@ -1,0 +1,20 @@
+<idea-plugin>
+    <actions>
+        <action id="FlutterVmRefreshTreeAction" class="shop.itbug.fluttercheckversionx.actions.vm.widget.RefreshTreeAction"  />
+        <action id="FlutterVmDetailedModeToggleAction" class="shop.itbug.fluttercheckversionx.actions.vm.widget.DetailedModeToggleAction" />
+        <action id="FlutterVmInspectorOverlayToggleAction" class="shop.itbug.fluttercheckversionx.actions.vm.widget.InspectorOverlayToggleAction" />
+        <group id="FlutterVMTreeToolbarAction">
+            <reference ref="FlutterVmRefreshTreeAction"/>
+            <reference ref="FlutterVmDetailedModeToggleAction"/>
+            <reference ref="FlutterVmInspectorOverlayToggleAction"/>
+        </group>
+    </actions>
+
+    <actions>
+        <action class="shop.itbug.fluttercheckversionx.actions.vm.network.HttpProfileCopyAction" id="HttpProfileCopyAction" />
+        <group id="FlutterVmHttpProfile">
+            <reference ref="HttpProfileCopyAction" />
+        </group>
+    </actions>
+
+</idea-plugin>

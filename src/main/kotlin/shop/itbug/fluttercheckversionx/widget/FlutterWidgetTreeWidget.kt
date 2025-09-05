@@ -1,44 +1,80 @@
 package shop.itbug.fluttercheckversionx.widget
 
+import com.google.gson.GsonBuilder
 import com.intellij.icons.AllIcons
+import com.intellij.json.JsonFileType
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.observable.util.addMouseHoverListener
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.util.Disposer
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.*
-import com.intellij.ui.hover.HoverListener
 import com.intellij.ui.treeStructure.Tree
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import com.intellij.util.ui.components.BorderLayoutPanel
+import kotlinx.coroutines.*
 import shop.itbug.fluttercheckversionx.tools.emptyBorder
-import vm.VmService
-import vm.element.FlutterInspectorGetPropertiesResponse
-import vm.element.WidgetNode
-import vm.element.WidgetTreeResponse
-import vm.getProperties
-import java.awt.Component
+import shop.itbug.fluttercheckversionx.util.MyFileUtil
+import vm.*
+import vm.element.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.io.File
-import javax.swing.JComponent
 import javax.swing.JTree
 import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
+class FlutterTreeComponent(val project: Project, val group: String, val vmService: VmService) : BorderLayoutPanel(),
+    UiDataProvider,
+    Disposable {
+    private val tree = FlutterWidgetTreeWidget(project, group, vmService)
+    private val toolbar = ActionManager.getInstance().createActionToolbar("FlutterTree", createActionsGroup(), true)
+
+    init {
+        toolbar.targetComponent = this
+        Disposer.register(this, tree)
+        addToCenter(tree)
+        addToTop(toolbar.component)
+    }
+
+    override fun uiDataSnapshot(sink: DataSink) {
+        sink[FlutterWidgetTreeWidget.TREE_WIDGET] = tree
+    }
+
+    override fun dispose() {
+
+    }
+
+    fun isEq(service: VmService): Boolean = vmService == service
+
+
+    fun createActionsGroup(): DefaultActionGroup {
+        return ActionManager.getInstance().getAction("FlutterVMTreeToolbarAction") as DefaultActionGroup
+    }
+
+}
+
 // flutter 原生 widget tree
-class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposable,
-    Tree(DefaultTreeModel(DefaultMutableTreeNode("Waiting for widget data..."))) {
+class FlutterWidgetTreeWidget(val project: Project, val group: String, val vmService: VmService) : Disposable,
+    Tree(DefaultTreeModel(DefaultMutableTreeNode("Waiting for widget data..."))),
+    InspectorStateManager.InspectorStateListener, UiDataProvider {
 
     private val myTreeModel
         get() = model as DefaultTreeModel
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    var vmService: VmService? = null
+    val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     var isolateId: String? = null
+    private val listenStreams = arrayOf(EventKind.Extension.name, EventKind.ToolEvent.name)
+
+    // 存储当前的WidgetTreeResponse，用于导出JSON
+    var currentWidgetTreeResponse: WidgetTreeResponse? = null
+        private set
+
+    // 是否启用详细模式（显示Text内容等）
+    var detailedMode: Boolean = false  // 默认关闭详细模式以避免嵌套问题
+
+    // Inspector状态管理器
+    private var inspectorStateManager: InspectorStateManager? = null
 
 
     val clickListen = object : MouseAdapter() {
@@ -65,14 +101,76 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
         isHorizontalAutoScrollingEnabled = false
         isOpaque = false
         this.cellRenderer = WidgetTreeCellRenderer()
-
         addMouseListener(clickListen)
+        SwingUtilities.invokeLater {
+            refreshTree()
+        }
+        scope.launch {
+            listenStreams.forEach(vmService::streamListen)
+        }
 
+    }
+
+
+    fun refreshTree(isInit: Boolean = true) {
+        scope.launch {
+            if (isInit) {
+                delay(800)
+            }
+
+            val isolateId = vmService.getMainIsolateId()
+            if (isolateId.isNotBlank()) {
+                if (inspectorStateManager == null) {
+                    inspectorStateManager = InspectorStateManager.getOrCreate(vmService, isolateId)
+                    inspectorStateManager!!.addStateListener(this@FlutterWidgetTreeWidget)
+                }
+                try {
+                    val rootTree = if (detailedMode) {
+                        // 使用详细模式获取Text内容和其他详细信息
+                        vmService.getDetailedWidgetTree(isolateId, group)
+                    } else {
+                        // 使用简单模式
+                        vmService.getRootWidgetTree(isolateId, group)
+                    }
+
+                    if (rootTree != null) {
+                        // 限制树的深度以避免嵌套过深
+                        val limitedTree = rootTree.limitDepth(30) // 限制最大深度为30
+                        updateTree(limitedTree)
+                    }
+                } catch (e: Exception) {
+                    println("获取Widget Tree失败: ${e.message}")
+                    // 如果失败，尝试使用最简单的模式
+                    try {
+                        val simpleTree = vmService.getRootWidgetTree(
+                            isolateId = isolateId,
+                            groupName = group,
+                            isSummaryTree = true,
+                            withPreviews = false,
+                            fullDetails = false
+                        )
+                        if (simpleTree != null) {
+                            updateTree(simpleTree.limitDepth(20))
+                        }
+                    } catch (fallbackException: Exception) {
+                        println("获取简单Widget Tree也失败: ${fallbackException.message}")
+                        SwingUtilities.invokeLater {
+                            myTreeModel.setRoot(DefaultMutableTreeNode("Failed to load widget tree: ${fallbackException.message}"))
+                        }
+                    }
+                }
+            }
+
+
+        }
     }
 
     // 更新 widget tree
     fun updateTree(widgetTree: WidgetTreeResponse) {
         val response = widgetTree
+        // 保存当前的WidgetTreeResponse
+        currentWidgetTreeResponse = response
+
         SwingUtilities.invokeLater {
             response.result?.let { rootWidget ->
                 val rootNode = createTreeNodes(rootWidget)
@@ -104,12 +202,10 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
     /** 处理 Widget 节点点击事件 */
     private fun handleWidgetNodeClick(widgetNode: WidgetNode) {
         val nodeId = widgetNode.valueId
-        if (nodeId != null && vmService != null && isolateId != null) {
+        if (nodeId != null && isolateId != null) {
             scope.launch {
                 try {
-                    val response = vmService!!.getProperties(isolateId!!, group, nodeId)
-
-                    // 在 EDT 线程中处理 UI 操作
+                    val response = vmService.getProperties(isolateId!!, group, nodeId)
                     ApplicationManager.getApplication().invokeLater { openSourceFile(response) }
                 } catch (e: Exception) {
                     println("获取 widget 属性失败: ${e.message}")
@@ -118,80 +214,94 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
         }
     }
 
+
     /** 从属性响应中提取文件信息并打开源码文件 */
     private fun openSourceFile(response: FlutterInspectorGetPropertiesResponse) {
         try {
             // 尝试从响应中提取 creationLocation 信息
             val creationLocation = response.result.find { it.creationLocation != null }?.creationLocation
-
             if (creationLocation != null) {
                 val file = creationLocation.file
                 val line = creationLocation.line
                 val column = creationLocation.column
-
-                // 将文件路径转换为本地文件系统路径
-                val localFile =
-                    if (file.startsWith("file://")) {
-                        File(file.substring(7))
-                    } else {
-                        File(file)
-                    }
-
-                val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(localFile)
-                if (virtualFile != null) {
-                    val editors =
-                        FileEditorManager.getInstance(project).openFile(virtualFile, true)
-
-                    // 跳转到指定行和列
-                    if (editors.isNotEmpty()) {
-                        val editor =
-                            FileEditorManager.getInstance(project).selectedTextEditor
-                        editor?.let {
-                            val offset =
-                                it.document.getLineStartOffset(maxOf(0, line - 1)) +
-                                        maxOf(0, column - 1)
-                            it.caretModel.moveToOffset(minOf(offset, it.document.textLength))
-                            it.scrollingModel.scrollToCaret(
-                                com.intellij.openapi.editor.ScrollType.CENTER
-                            )
-                        }
-                    }
-                } else {
-                    println("无法找到文件: $file")
-                }
-            } else {
-                println("响应中没有找到 creationLocation 信息")
+                MyFileUtil.openFile(project, file, line, column)
             }
         } catch (e: Exception) {
             println("打开源码文件失败: ${e.message}")
         }
     }
 
-    /** 设置 VM 服务实例和隔离区 ID */
-    fun setVmService(vmService: VmService?, isolateId: String?) {
-        this.vmService = vmService
-        this.isolateId = isolateId
+
+    /**
+     * 在Editor区域打开当前WidgetTreeResponse的JSON文本
+     */
+    fun openWidgetTreeJsonInEditor() {
+        val response = currentWidgetTreeResponse
+        if (response == null) {
+            println("No widget tree data available")
+            return
+        }
+        ApplicationManager.getApplication().invokeLater {
+            try {
+                // 使用Gson格式化JSON
+                val gson = GsonBuilder().setPrettyPrinting().create()
+                val jsonText = gson.toJson(response)
+
+                // 创建虚拟文件
+                val virtualFile = LightVirtualFile(
+                    "widget_tree_${System.currentTimeMillis()}.json",
+                    JsonFileType.INSTANCE,
+                    jsonText
+                )
+
+                // 在编辑器中打开文件
+                FileEditorManager.getInstance(project).openFile(virtualFile, true)
+
+                println("Widget tree JSON opened in editor")
+            } catch (e: Exception) {
+                println("Failed to open widget tree JSON: ${e.message}")
+                e.printStackTrace()
+            }
+        }
     }
 
+    /**
+     * 获取Inspector状态管理器
+     */
+    fun getInspectorStateManager(): InspectorStateManager? = inspectorStateManager
+
+
     override fun dispose() {
+        scope.launch {
+            listenStreams.forEach(vmService::streamCancel)
+        }
         removeMouseListener(clickListen)
+
+        // 清理Inspector状态管理器
+        if (isolateId != null) {
+            InspectorStateManager.cleanup(vmService, isolateId!!)
+        }
+        inspectorStateManager?.removeStateListener(this)
+        inspectorStateManager = null
+    }
+
+    override fun onOverlayStateChanged(enabled: Boolean) {
+    }
+
+    override fun navigate(result: NavigatorLocationInfo) {
+        MyFileUtil.openFile(project, result.fileUri, result.line, result.column)
+    }
+
+    override fun uiDataSnapshot(sink: DataSink) {
+        sink[TREE_WIDGET] = this
+    }
+
+    companion object {
+        val TREE_WIDGET = DataKey.create<FlutterWidgetTreeWidget>("flutter_widget_tree")
     }
 
     inner class WidgetTreeCellRenderer : ColoredTreeCellRenderer() {
 
-        val hoverListen = object : HoverListener() {
-            override fun mouseEntered(p0: Component, p1: Int, p2: Int) {
-                val comp = getComponentAt(p1, p2) as? JComponent
-            }
-
-            override fun mouseMoved(p0: Component, p1: Int, p2: Int) {
-
-            }
-
-            override fun mouseExited(p0: Component) {
-            }
-
-        }
 
         override fun customizeCellRenderer(
             p0: JTree,
@@ -202,23 +312,47 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
             p5: Int,
             p6: Boolean
         ) {
-            addMouseHoverListener(p0 as FlutterWidgetTreeWidget, hoverListen)
             if (value is DefaultMutableTreeNode) {
                 val userObject = value.userObject
 
                 if (userObject is WidgetNode) {
-                    // 如果是我们的 WidgetNode 对象，就自定义显示内容
+                    // 显示widget描述
                     append("${userObject.description}", SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES)
 
-                    // 设置一个默认图标
-                    icon = AllIcons.Nodes.Class
+                    // 如果有textPreview（Text widget的文本内容），显示它
+                    if (!userObject.textPreview.isNullOrBlank()) {
+                        append(" ", SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES)
+                        append("\"${userObject.textPreview}\"", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+                    }
+
+                    // 设置图标
+                    icon = when (userObject.widgetRuntimeType) {
+                        "Text" -> AllIcons.FileTypes.Text
+                        "Container" -> AllIcons.Nodes.Package
+                        "Column", "Row" -> AllIcons.Actions.SplitVertically
+                        else -> AllIcons.Nodes.Class
+                    }
 
                     // 如果该 Widget 不是由本地项目创建的（例如 Flutter 框架自带的），用灰色显示以区分
                     if (userObject.createdByLocalProject != true) {
                         foreground = JBColor.GRAY
                     }
 
-                    toolTipText = "<${userObject.widgetRuntimeType}>"
+                    // 构建更详细的tooltip
+                    val tooltipBuilder = StringBuilder()
+                    tooltipBuilder.append("<html>")
+                    tooltipBuilder.append("<b>${userObject.widgetRuntimeType}</b><br>")
+                    if (!userObject.textPreview.isNullOrBlank()) {
+                        tooltipBuilder.append("Text: \"${userObject.textPreview}\"<br>")
+                    }
+                    if (userObject.properties?.isNotEmpty() == true) {
+                        tooltipBuilder.append("<br><b>Properties:</b><br>")
+                        userObject.properties.take(5).forEach { prop ->
+                            tooltipBuilder.append("${prop.name}: ${prop.value}<br>")
+                        }
+                    }
+                    tooltipBuilder.append("</html>")
+                    toolTipText = tooltipBuilder.toString()
 
                 } else {
                     // 对于根提示节点或其他非 WidgetNode 的节点，正常显示
@@ -231,3 +365,6 @@ class FlutterWidgetTreeWidget(val project: Project, val group: String) : Disposa
 
 
 }
+
+
+

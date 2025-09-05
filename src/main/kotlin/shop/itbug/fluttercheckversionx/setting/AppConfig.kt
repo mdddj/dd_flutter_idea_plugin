@@ -128,6 +128,9 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
 
             //多语言设置
             group("flutter l10n") {
+                row {
+                    checkBox(PluginBundle.get("l10n.scan.dart.string.setting")).bindSelected(pluginConfig::scanDartStringInStart)
+                }
                 row("arb file directory") {
                     MyRowBuild.folder(
                         this,

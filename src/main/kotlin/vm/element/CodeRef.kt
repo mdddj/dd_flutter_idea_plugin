@@ -35,10 +35,4 @@ class CodeRef(json: JsonObject) : ObjRef(json) {
         }
     }
 
-    /**
-     * 包含此代码对象的函数的名称。
-     */
-    fun getName(): String {
-        return getAsString("name")!!
-    }
 }

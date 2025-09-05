@@ -33,7 +33,7 @@ class PubspecPackageDiscontinuedAnnotator : Annotator {
                 "FlutterX: This package has been marked to stop updating. Please replace it with another package "
             )
                 .range(keyEle)
-                .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+                .highlightType(ProblemHighlightType.WARNING)
                 .create()
         }
 

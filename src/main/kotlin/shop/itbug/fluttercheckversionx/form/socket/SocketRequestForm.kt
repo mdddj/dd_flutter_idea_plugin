@@ -19,6 +19,7 @@ import shop.itbug.fluttercheckversionx.dialog.validParseToFreezed
 import shop.itbug.fluttercheckversionx.form.actions.DioRequestSearch
 import shop.itbug.fluttercheckversionx.form.components.ApiListPanel
 import shop.itbug.fluttercheckversionx.form.components.RightDetailPanel
+import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.socket.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import javax.swing.event.ListDataEvent
@@ -26,8 +27,8 @@ import javax.swing.event.ListDataListener
 
 
 ///是否可以转换到 json 对象
-fun SocketResponseModel.isParseToJson(): Boolean {
-    data.let {
+fun IRequest.isParseToJson(): Boolean {
+    httpResponseBody.let {
         when (it) {
             is String -> {
                 return it.validParseToFreezed()
@@ -47,8 +48,8 @@ fun SocketResponseModel.isParseToJson(): Boolean {
     return false
 }
 
-fun SocketResponseModel.getDataString(): String {
-    data.let {
+fun IRequest.getDataString(): String {
+    httpResponseBody.let {
         return when (it) {
             is String -> it
             is Map<*, *> -> Gson().toJson(it)

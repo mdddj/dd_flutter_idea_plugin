@@ -9,37 +9,40 @@ const val qqGroup = "https://qm.qq.com/q/3zYRrSC7zW"
 
 
 object Links {
-    const val RIVERPOD = "https://flutterx.itbug.shop/riverpod.html"
+
+    const val DOCUMENT_DEFAULT_URL = "https://mdddj.github.io/flutterx-doc/en/"
+
+    const val RIVERPOD = "https://mdddj.github.io/flutterx-doc/en/settings/riverpod/"
     const val OPEN_IN =
-        "https://flutterx.itbug.shop/%E5%BF%AB%E9%80%9F%E6%89%93%E5%BC%80%E5%AD%90%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6%E5%A4%B9.html"
+        "https://mdddj.github.io/flutterx-doc/en/settings/quick-open-subdirectory/"
 
 
     //链接
-    const val LINK = "https://flutterx.itbug.shop/links.html"
+    const val LINK = "https://mdddj.github.io/flutterx-doc/en/settings/links/"
 
     //编辑器图标
-    const val ICON = "https://flutterx.itbug.shop/%E5%86%85%E8%81%94%E8%B5%84%E4%BA%A7%E6%98%BE%E7%A4%BA.html"
+    const val ICON = "https://mdddj.github.io/flutterx-doc/en/settings/inline-asset-display/"
 
     //资产生成
     const val ASSETS =
-        "https://flutterx.itbug.shop/%E8%B5%84%E4%BA%A7%E7%94%9F%E6%88%90%E7%B1%BB%E8%B0%83%E7%94%A8.html"
+        "https://mdddj.github.io/flutterx-doc/en/assets/asset-generation-class/"
 
 
     //资产预览
-    const val ACCESS_ICON = "https://flutterx.itbug.shop/%E8%B5%84%E4%BA%A7%E9%A2%84%E8%A7%88.html"
+    const val ACCESS_ICON = "https://mdddj.github.io/flutterx-doc/en/assets/asset-preview/"
 
     // dio
-    const val DIO = "https://flutterx.itbug.shop/starter.html"
+    const val DIO = "https://mdddj.github.io/flutterx-doc/en/dio/starter/"
 
-    const val DIO_IMAGE = "https://flutterx.itbug.shop/%E6%8E%A5%E5%8F%A3%E4%BF%A1%E6%81%AF%E6%88%AA%E5%9B%BE.html"
+    const val DIO_IMAGE = "https://mdddj.github.io/flutterx-doc/en/dio/request-screenshot/"
 
     // l10n
-    const val L10N_DOC = "https://flutterx.itbug.shop/l10n-editor.html"
+    const val L10N_DOC = "https://mdddj.github.io/flutterx-doc/en/other/l10n-editor/"
 
 
     //新版本检查
     const val CHECK_FLUTTER_VERSION_DOC_LINK =
-        "https://flutterx.itbug.shop/flutter%E6%96%B0%E7%89%88%E6%9C%AC%E6%A3%80%E6%B5%8B.html"
+        "https://mdddj.github.io/flutterx-doc/en/other/flutter-version-detection/"
 
 
     //flutter版本信息

@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+
+## [6.0.0] - 2025-09-05
+
+*   New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
+    *   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).
+    *   **HTTP Monitor**: Capture and inspect HTTP requests made by your application.
+    *   **Logging**: View logs sent via `dart:developer`.
+![](https://github.com/mdddj/dd_flutter_idea_plugin/blob/5.7.4/images/vm-toolwindow/vm1.png?raw=true)
+![](https://github.com/mdddj/dd_flutter_idea_plugin/blob/5.7.4/images/vm-toolwindow/vm2.png?raw=true)
+![](https://github.com/mdddj/dd_flutter_idea_plugin/blob/5.7.4/images/vm-toolwindow/vm3.png?raw=true)
+    
+    See [Document](https://flutterx.itbug.shop/zh/vm/dart_vm_panel/)
+    
+## [5.7.6] - 2025-08-18
+
+* Change New [Document](https://mdddj.github.io/flutterx-doc/)
+
+## [5.7.5] - 2025-08-11
+
+* Adapted for 2025.2
+* Remove the error warning for Flutter version detection API access failure
+* Add disabled scan string setting （**l10n module**）
+
 ## [5.7.4] - 2025-08-07
 
 * Adapted for 2025.2

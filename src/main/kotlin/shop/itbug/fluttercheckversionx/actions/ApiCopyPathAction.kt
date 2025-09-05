@@ -11,7 +11,7 @@ import java.net.URI
 ///复制路径
 class ApiCopyPathAction : MyAction({ "Copy Path" }) {
     override fun actionPerformed(e: AnActionEvent) {
-        val url = e.api()!!.url
+        val url = e.api()!!.requestUrl
         val path = URI.create(url).toURL().path
         path.copyTextToClipboard().apply {
             e.project?.toast("Copy succeeded!")

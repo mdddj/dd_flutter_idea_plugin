@@ -23,12 +23,6 @@ import com.google.gson.JsonObject
  */
 class ClassRef(json: JsonObject) : ObjRef(json) {
 
-    /**
-     * 类的名称。
-     */
-    fun getName(): String {
-        return getAsString("name")!!
-    }
 
     /**
      * 此类在源代码中的位置。
@@ -44,6 +38,7 @@ class ClassRef(json: JsonObject) : ObjRef(json) {
         }
         return SourceLocation(obj)
     }
+
 
 
     /**

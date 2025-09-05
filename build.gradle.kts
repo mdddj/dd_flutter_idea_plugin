@@ -17,6 +17,8 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.7.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
+    id("org.jetbrains.compose") version "1.8.2"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
 }
 
 group = "shop.itbug"
@@ -57,18 +59,19 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
 
     intellijPlatform {
-        testFramework(TestFrameworkType.Platform)
         when (ideType) {
-            "243" -> {
-                intellijIdeaCommunity("2024.3.5")
+            "252" -> {
+                intellijIdeaCommunity("2025.2")
             }
 
             "251" -> {
-                intellijIdeaCommunity("2025.2")
+                intellijIdeaCommunity("2025.1.4.1")
+//                local("/Applications/Android Studio.app")
             }
         }
         bundledPlugins(bPlugins)
-        plugins("Dart:$dartVersion")
+        //"io.flutter:87.1"
+        plugins("Dart:$dartVersion","io.flutter:87.1")
         pluginVerifier()
         zipSigner()
         javaCompiler()
@@ -79,6 +82,16 @@ dependencies {
         testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
 
         testFramework(TestFrameworkType.Platform)
+
+
+        // jewel
+        bundledModule("intellij.platform.jewel.foundation")
+        bundledModule("intellij.platform.jewel.ui")
+        bundledModule("intellij.platform.jewel.ideLafBridge")
+        bundledModule("intellij.platform.jewel.markdown.core")
+        bundledModule("intellij.platform.jewel.markdown.ideLafBridgeStyling")
+        bundledModule("intellij.libraries.compose.foundation.desktop")
+        bundledModule("intellij.libraries.skiko")
     }
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -89,7 +102,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.1.4.1")
+            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
         }
     }
 }
@@ -103,7 +116,6 @@ kotlin {
         freeCompilerArgs.add("-Xmulti-dollar-interpolation")
     }
 }
-
 val pushToken: String? = System.getenv("idea_push_token")
 val myChangeLog = provider {
     changelog.renderItem(
@@ -124,10 +136,6 @@ compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation", "-Xwhen-guards"))
 }
 
-
-
-
-
 tasks {
 
     patchPluginXml {
@@ -145,10 +153,11 @@ tasks {
 
     publishPlugin {
         token.set(pushToken)
+        channels.set(listOf("bata","stable"))
     }
 
     runIde {
-        jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
+        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "-Didea.kotlin.plugin.use.k2=true",
@@ -182,6 +191,8 @@ tasks {
         enabled = false
     }
 }
+
+val getChannel = tasks.publishPlugin.get().channels.get()
 
 changelog {
     version = pluginVersion.removeSuffix(".")
@@ -292,36 +303,4 @@ tasks.prepareKotlinBuildScriptModel {
 tasks.clean {
     delete("src/main/kotlin/codegen/FlutterPluginInfo.kt")
 }
-
-
-
-intellijPlatformTesting {
-    runIde {
-        register("runIdeForUiTests") {
-            task {
-                jvmArgumentProviders += CommandLineArgumentProvider {
-                    listOf(
-                        "-Drobot-server.port=8082",
-                        "-Dide.mac.message.dialogs.as.sheets=false",
-                        "-Djb.privacy.policy.text=<!--999.999-->",
-                        "-Djb.consents.confirmation.enabled=false",
-                    )
-                }
-            }
-
-            plugins {
-                robotServerPlugin()
-            }
-        }
-    }
-}
-
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
-}
-
-
 

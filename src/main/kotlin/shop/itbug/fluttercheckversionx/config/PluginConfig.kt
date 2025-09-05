@@ -22,6 +22,10 @@ class PluginSetting : BaseState() {
     var assetDirectory by string()
     var l10nFolder by string("") //flutter多语言 arb 目录
     var l10nDefaultFileName by string("") // 默认多语言文件名
+    var scanDartStringInStart by property(true) //启动时扫描字符串
+
+    //启动 flutterx vm 窗口
+    var enableVmServiceToolWindow by property(true)
 }
 
 @Service(Service.Level.PROJECT)

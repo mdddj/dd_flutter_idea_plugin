@@ -15,10 +15,13 @@ package vm
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolderBase
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
+import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInfo
 import vm.consumer.*
 import vm.element.*
 import vm.internal.RequestSink
@@ -33,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * 内部 {@link VmService} 基类，包含非生成的代码。
  */
-abstract class VmServiceBase : VmServiceConst {
+abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
     /**
      * 在 {@link String} ID 和请求时传递的关联 {@link Consumer} 之间的映射。
      * 在访问此字段之前，请与 {@link #consumerMapLock} 同步。
@@ -67,7 +70,6 @@ abstract class VmServiceBase : VmServiceConst {
 
     var runtimeVersion: Version? = null
 
-    // Ktor HttpClient
     var client: HttpClient? = null
     var myWebSocketSession: DefaultClientWebSocketSession? = null
     val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -116,6 +118,8 @@ abstract class VmServiceBase : VmServiceConst {
                             // 监听传入的消息
                             vmService.listenData()
                         }
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         connectionError = e
                         connectionLatch.countDown()
@@ -149,6 +153,9 @@ abstract class VmServiceBase : VmServiceConst {
         fun localConnect(port: Int): VmService {
             return connect("ws://localhost:$port/ws")
         }
+
+        val APP_ID_KEY = Key.create<String>("vm service appid")
+        val APP_INFO = Key.create<FlutterAppInfo>("DartProjectService.APP_INFO")
     }
 
 
@@ -194,9 +201,11 @@ abstract class VmServiceBase : VmServiceConst {
      * 断开与 VM Observatory 服务的连接。
      */
     fun disconnect() {
+
+        client?.close()
         requestSink?.close()
         coroutineScope.cancel()
-        client?.close()
+
     }
 
     /**
@@ -354,6 +363,19 @@ abstract class VmServiceBase : VmServiceConst {
         request(method, params, consumer)
     }
 
+    fun callServiceExtension(isolateId: String, method: String) {
+        val params = JsonObject()
+        params.addProperty("isolateId", isolateId)
+        request(method, params, DefaultServiceExtensionConsumer {  })
+    }
+    fun callServiceExtension(
+        isolateId: String,
+        method: String,
+        params: JsonObject,
+    ) {
+        params.addProperty("isolateId", isolateId)
+        request(method, params, DefaultServiceExtensionConsumer {  })
+    }
     /**
      * 调用特定的服务协议扩展方法。
      * <p>
@@ -435,7 +457,7 @@ abstract class VmServiceBase : VmServiceConst {
     /**
      * 处理来自 VM 服务的响应，并将该响应转发给与响应 ID 关联的消费者。
      */
-    fun processMessage(jsonText: String?) {
+    open fun processMessage(jsonText: String?) {
         if (jsonText == null || jsonText.isEmpty()) {
             return
         }

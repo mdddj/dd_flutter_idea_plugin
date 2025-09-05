@@ -7,6 +7,7 @@ import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DioRequestUIStyle
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
+import shop.itbug.fluttercheckversionx.model.calculateSize
 import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.util.MyFontUtil
 import java.awt.Dimension

@@ -47,12 +47,6 @@ class FuncRef(json: JsonObject) : ObjRef(json) {
         return SourceLocation(obj)
     }
 
-    /**
-     * 此函数的名称。
-     */
-    fun getName(): String {
-        return getAsString("name")!!
-    }
 
     /**
      * 此函数的所有者，可以是 Library、Class 或 Function。

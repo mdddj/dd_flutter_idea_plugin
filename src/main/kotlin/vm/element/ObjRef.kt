@@ -38,4 +38,15 @@ open class ObjRef(json: JsonObject) : Response(json) {
     fun getId(): String? {
         return getAsString("id")
     }
+
+    fun getName(): String {
+        return getAsString("name") ?: ""
+    }
+
+    fun getLibrary(): LibraryRef? {
+        val obj = json.get("library")?.asJsonObject ?: return null
+        return LibraryRef(obj)
+    }
+
+
 }

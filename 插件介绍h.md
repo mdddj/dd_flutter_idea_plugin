@@ -1,5 +1,5 @@
 <blockquote>
-<p>Links: <a href="https://github.com/mdddj/dd_flutter_idea_plugin">Github</a>,<a href="https://flutterx.itbug.shop/starter.html">Document</a></p>
+<p>Links: <a href="https://github.com/mdddj/dd_flutter_idea_plugin">Github</a>,<a href="https://mdddj.github.io/flutterx-doc/">Document</a></p>
 </blockquote>
 <ul>
 <li>Author: LiangDianDian</li>

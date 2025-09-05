@@ -49,12 +49,6 @@ class FieldRef(json: JsonObject) : ObjRef(json) {
         return SourceLocation(obj)
     }
 
-    /**
-     * The name of this field.
-     */
-    fun getName(): String {
-        return getAsString("name")!!
-    }
 
     /**
      * The owner of this field, which can be either a Library or a Class.
@@ -86,4 +80,6 @@ class FieldRef(json: JsonObject) : ObjRef(json) {
     fun isStatic(): Boolean {
         return getAsBoolean("static")
     }
+
+
 }

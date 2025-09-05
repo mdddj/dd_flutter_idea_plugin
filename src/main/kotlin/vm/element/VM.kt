@@ -77,15 +77,25 @@ class VM(json: JsonObject) : Response(json) {
         return getAsInt("pid")
     }
 
+    fun getEmbedder(): String = getAsString("_embedder") ?: ""
+
     /**
      * VM 启动的时间，以纪元以来的毫秒数表示。
      *
      * 适合传递给 DateTime.fromMillisecondsSinceEpoch。
      */
-    fun getStartTime(): Int {
-        return getAsInt("startTime")
+    fun getStartTime(): Long {
+        return getAsLong("startTime")
     }
 
+    fun getCurrentMemory(): Long {
+        return getAsLong("_currentMemory")
+    }
+
+    fun getCurrentRSS() = getAsLong("_currentRSS")
+
+    fun getMaxRSS() = getAsLong("_maxRSS")
+    fun getFeatures() = getAsString("_features") ?:""
     /**
      * 包含在 VM 中运行的系统隔离的隔离组列表。
      */

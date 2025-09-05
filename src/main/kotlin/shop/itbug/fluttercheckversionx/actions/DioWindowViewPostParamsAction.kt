@@ -12,12 +12,12 @@ import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 class DioWindowViewPostParamsAction : MyAction(PluginBundle.getLazyMessage("dio.toolbar.post.params")) {
     override fun actionPerformed(e: AnActionEvent) {
         val api = e.api()!!
-        api.body?.let { SimpleJsonViewDialog.show(it, e.project!!) }
+        api.httpRequestBody?.let { SimpleJsonViewDialog.show(it, e.project!!) }
     }
 
     override fun update(e: AnActionEvent) {
         super.update(e)
-        e.presentation.isEnabled = e.api()?.body is Map<*, *> && e.project != null
+        e.presentation.isEnabled = e.api()?.httpRequestBody is Map<*, *> && e.project != null
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

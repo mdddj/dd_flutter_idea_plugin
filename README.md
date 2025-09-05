@@ -3,7 +3,7 @@
 </div>
 
 <div style="text-align: center;">
-    <a href="https://flutterx.itbug.shop">📄Document</a>
+    <a href="https://mdddj.github.io/flutterx-doc">📄Document</a>
     <span>·</span>
     <a href="https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx">🔗Download</a>
 </div>

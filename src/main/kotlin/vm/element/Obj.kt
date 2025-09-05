@@ -47,7 +47,7 @@ open class Obj(json: JsonObject) : Response(json) {
      *
      * 可以返回 <code>null</code>。
      */
-    fun getFixedId(): Boolean? {
+    fun getFixedId(): Boolean {
         return getAsBoolean("fixedId")
     }
 
@@ -70,7 +70,7 @@ open class Obj(json: JsonObject) : Response(json) {
      *
      * 可以返回 <code>null</code>。
      */
-    fun getSize(): Int? {
+    fun getSize(): Int {
         return getAsInt("size")
     }
 }
