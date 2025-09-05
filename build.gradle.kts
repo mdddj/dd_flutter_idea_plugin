@@ -153,7 +153,7 @@ tasks {
 
     publishPlugin {
         token.set(pushToken)
-        channels.set(listOf("bata"))
+        channels.set(listOf("bata","stable"))
     }
 
     runIde {

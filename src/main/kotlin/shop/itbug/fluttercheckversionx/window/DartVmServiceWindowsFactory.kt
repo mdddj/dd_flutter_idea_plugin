@@ -330,7 +330,7 @@ private fun RequestDetailPanel(
                     closable = false
                 )
             },
-            style = JewelTheme.editorTabStyle
+            style = JewelTheme.editorTabStyle,
         )
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
         Box(modifier = Modifier.weight(1f).padding(8.dp)) {

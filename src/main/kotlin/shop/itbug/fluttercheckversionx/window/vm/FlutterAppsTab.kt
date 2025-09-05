@@ -45,7 +45,9 @@ If you are running on a real device, please make sure the device is connected to
             )
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
-                TabStrip(tabs, JewelTheme.editorTabStyle)
+                TabStrip(
+                    tabs, JewelTheme.editorTabStyle,
+                )
                 val selectApp = flutterAppList.getOrNull(tabIndex)
                 if (selectApp != null) {
                     body.invoke(selectApp)
