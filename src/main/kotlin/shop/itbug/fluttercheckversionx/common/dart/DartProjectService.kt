@@ -8,11 +8,9 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
@@ -21,9 +19,6 @@ import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.window.dartVmServiceWindowIsShow
-import shop.itbug.fluttercheckversionx.window.showDartVmServiceToolWindow
 import vm.VmService
 import vm.VmServiceBase
 import java.util.concurrent.ConcurrentHashMap
@@ -268,6 +263,8 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
                 vmService.putUserData(VmServiceBase.APP_INFO, appInfo)
 
                 // 创建Flutter应用实例
+                vmService.updateMainIsolateId()
+                vmService.startListenStreams()
                 val appInstance = FlutterAppInstance(
                     processHandler = handler,
                     vmService = vmService,
@@ -284,14 +281,14 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
                 project.messageBus.syncPublisher(STATE_TOPIC).newVmConnected(vmService, appInfo.vmUrl)
 
                 // 检查工具窗口是否显示，如果没有显示则显示通知
-                val isShow = dartVmServiceWindowIsShow(project)
-                if (!isShow && !notifiedApps.contains(appInfo.appId)) {
-                    log.info("工具窗口未显示且未通知过，显示VM连接通知: ${appInfo.appId}")
-                    showVmConnectNotification(vmService, appInfo.vmUrl, appInfo.appId)
-                    notifiedApps.add(appInfo.appId)
-                } else {
-                    log.info("工具窗口已显示或已通知过，跳过通知: ${appInfo.appId}")
-                }
+//                val isShow = dartVmServiceWindowIsShow(project)
+//                if (!isShow && !notifiedApps.contains(appInfo.appId)) {
+//                    log.info("工具窗口未显示且未通知过，显示VM连接通知: ${appInfo.appId}")
+//                    showVmConnectNotification(vmService, appInfo.vmUrl, appInfo.appId)
+//                    notifiedApps.add(appInfo.appId)
+//                } else {
+//                    log.info("工具窗口已显示或已通知过，跳过通知: ${appInfo.appId}")
+//                }
 
                 log.info("成功连接到Flutter应用: ${appInfo.appId} - ${appInfo.vmUrl}")
 
@@ -341,41 +338,6 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
         } else null
     }
 
-    private fun showVmConnectNotification(vm: VmService, url: String, appId: String) {
-        try {
-            log.info("开始创建VM连接通知")
-
-            val notificationGroup = NotificationGroupManager.getInstance().getNotificationGroup(BALLOON_ID)
-            log.info("获取通知组: $notificationGroup")
-
-            val notification = notificationGroup.createNotification(
-                "检测 Flutter APP启动",
-                "使用 flutter x 连接 vm service\nURL: $url",
-                NotificationType.INFORMATION
-            )
-
-            notification.addAction(object : DumbAwareAction("Show In Tool Window") {
-                override fun actionPerformed(e: AnActionEvent) {
-                    showDartVmServiceToolWindow(project)
-                    notification.expire()
-                }
-            })
-
-            notification.addAction(object : DumbAwareAction(PluginBundle.get("document")) {
-                override fun actionPerformed(e: AnActionEvent) {
-                    // 文档操作
-                }
-            })
-
-            notification.isSuggestionType = true
-            notification.notify(project)
-
-            log.info("VM连接通知已发送")
-        } catch (e: Exception) {
-            log.error("显示VM连接通知失败", e)
-        }
-    }
-
     override fun stop(
         project: Project, executorId: String, env: ExecutionEnvironment, exitCode: Int, listener: ProcessHandler
     ) {
@@ -388,6 +350,7 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
                     .vmDisconnected(appInstance.vmService, appInstance.appInfo.vmUrl)
 
                 // 断开VM服务连接
+                appInstance.vmService.cancelListenStreams()
                 appInstance.vmService.disconnect()
 
                 // 从映射中移除
@@ -436,25 +399,7 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
     fun getRunningAppsInfo(): List<String> =
         flutterApps.values.map { "${it.appInfo.appId} (${it.appInfo.deviceId}) - ${it.appInfo.vmUrl}" }
 
-    /**
-     * 测试通知功能（用于调试）
-     */
-    fun testNotification() {
-        try {
-            log.info("测试通知功能")
-            val notification = NotificationGroupManager.getInstance()
-                .getNotificationGroup(BALLOON_ID)
-                .createNotification(
-                    "测试通知",
-                    "这是一个测试通知，用于验证通知系统是否正常工作",
-                    NotificationType.INFORMATION
-                )
-            notification.notify(project)
-            log.info("测试通知已发送")
-        } catch (e: Exception) {
-            log.error("测试通知失败", e)
-        }
-    }
+
 
 
     // ---- compose

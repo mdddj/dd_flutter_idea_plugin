@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.icons
 
 import com.intellij.openapi.util.IconLoader
+import org.jetbrains.jewel.ui.icon.PathIconKey
 
 object MyIcons {
     var dartPackageIcon = IconLoader.getIcon("/icons/dart.svg", MyIcons::class.java)
@@ -15,6 +16,8 @@ object MyIcons {
     val androidStudio = IconLoader.getIcon("/icons/as.svg", MyIcons::class.java)
     val xcode = IconLoader.getIcon("/icons/xcode.svg", MyIcons::class.java)
     val language = IconLoader.getIcon("/icons/language.svg", MyIcons::class.java)
+    val image = IconLoader.getIcon("/icons/image.svg", MyIcons::class.java)
+    val imageIconPath = PathIconKey("/icons/image.svg",MyIcons::class.java)
 }
 
 

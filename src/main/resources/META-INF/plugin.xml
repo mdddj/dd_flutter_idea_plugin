@@ -165,9 +165,10 @@
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom" icon="/icons/flutter.svg"/>
-        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowFactory"
-                    id="FlutterX VM Service" icon="/icons/flutter.svg" anchor="right" doNotActivateOnStart="true"/>
-        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartHttpWindowsFactory" id="Dart Http" anchor="bottom" doNotActivateOnStart="true" />
+        <!--        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowFactory"-->
+        <!--                    id="FlutterX VM Service" icon="/icons/flutter.svg" anchor="right" doNotActivateOnStart="true"/>-->
+        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowsFactory" id="FlutterX Dart VM"
+                    icon="/icons/dart.svg" anchor="bottom" doNotActivateOnStart="true"/>
 
         <!--   底部状态栏展示小部件     -->
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"
@@ -179,7 +180,8 @@
         <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
                              id="setting.flutterx" displayName="FlutterX"/>
 
-        <!--                <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.vm.DartVmTestSetting" parentId="setting.flutterx" id="dart.vm.test" displayName="dart vm test" />-->
+        <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.vm.DartVmSetting"
+                             parentId="setting.flutterx" id="dart.vm.test" displayName="Dart Vm"/>
 
         <editorNotificationProvider
                 implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
@@ -208,7 +210,8 @@
 
         <!--        <psi.referenceContributor-->
         <!-- implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor" language="Dart"/>-->
-        <registryKey defaultValue="false" description="Enable Flutterx VM functionality" key="flutterx.vm.future.enable" />
+        <registryKey defaultValue="false" description="Enable Flutterx VM functionality"
+                     key="flutterx.vm.future.enable"/>
     </extensions>
 
     <projectListeners>
@@ -533,6 +536,8 @@
             <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"/>
             <action id="ApiCopyPathAction" class="shop.itbug.fluttercheckversionx.actions.ApiCopyPathAction"/>
             <action id="ApiCopyAll" class="shop.itbug.fluttercheckversionx.actions.ApiCopyAll"/>
+            <action id="HttpCopyToCurlAction"
+                    class="shop.itbug.fluttercheckversionx.actions.vm.network.HttpCopyToCurlAction"/>
             <action class="shop.itbug.fluttercheckversionx.actions.dio.DioJsonCopyToClipboard"
                     id="DioJsonCopyToClipboard"/>
             <separator/>

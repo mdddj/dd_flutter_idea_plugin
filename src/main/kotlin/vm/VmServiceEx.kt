@@ -1,10 +1,8 @@
 package vm
 
 import com.google.gson.JsonObject
-import vm.consumer.DefaultServiceExtensionConsumer
-import vm.consumer.ServiceExtensionConsumer
-import vm.consumer.VMConsumer
-import vm.consumer.VersionConsumer
+import kotlinx.coroutines.suspendCancellableCoroutine
+import vm.consumer.*
 import vm.element.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -390,7 +388,395 @@ suspend fun VmService.getHttpProfile(isolateId: String,updatedSince: Long? = nul
 }
 
 
+
 suspend fun VmService.isHttpProfilingAvailable(isolateId: String): Boolean {
     return getIsolateById(isolateId)?.getExtensionRPCs()?.contains("ext.dart.io.getHttpProfile") ?: false
 }
 
+
+
+/**
+ * 检索 [stringRef] 的完整字符串值。
+ *
+ * 如果 [stringRef] 中存储的字符串值未被截断，则直接返回该值。
+ * 如果值被截断，则会发起一个额外的 getObject 调用以获取完整值。
+ *
+ * @param isolateId 目标 isolate 的 ID.
+ * @param stringRef 字符串的引用 [InstanceRef].
+ * @return 完整的字符串值。如果对象已过期且无法检索到完整字符串，则抛出 [IllegalStateException]。
+ * @throws RPCError 如果 VM 服务调用失败。
+ * @throws IllegalStateException 如果对象已过期且无法检索到完整字符串。
+ */
+suspend fun VmService.retrieveFullStringValue(
+    isolateId: String,
+    stringRef: InstanceRef
+): String? {
+    // 1. 检查字符串是否被截断
+    if (!stringRef.getValueAsStringIsTruncated()) {
+        return stringRef.getValueAsString()
+    }
+    return suspendCancellableCoroutine { continuation ->
+        val objectId = stringRef.getId()
+        val length = stringRef.getLength()
+
+        if (objectId == null) {
+            continuation.resumeWithException(
+                IllegalArgumentException("InstanceRef must have a valid id and length for truncation retrieval.")
+            )
+            return@suspendCancellableCoroutine
+        }
+
+        getObject(isolateId, objectId, 0, length, object : GetObjectConsumer {
+            override fun received(response: Breakpoint) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ClassObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Code) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Context) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ErrorObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Field) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Func) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Instance) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Library) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Null) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Obj) {
+                if (response is Instance) {
+                    if (continuation.isActive) {
+                        continuation.resume(response.getValueAsString())
+                    }
+                } else {
+                    if (continuation.isActive) {
+                        continuation.resumeWithException(
+                            IllegalStateException("Expected an Instance object but got ${response.type} for string retrieval.")
+                        )
+                    }
+                }
+            }
+
+            override fun received(response: Script) {
+                TODO("Not yet implemented")
+            }
+
+            override fun received(response: Sentinel) {
+                // 4. 如果返回 Sentinel，说明对象已过期，无法获取
+                if (continuation.isActive) {
+                    val truncatedValue = stringRef.getValueAsString()
+                    continuation.resumeWithException(
+                        IllegalStateException("The full string for \"$truncatedValue...\" is unavailable (expired).")
+                    )
+                }
+            }
+
+            override fun received(response: TypeArguments) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onError(error: RPCError) {
+                if (continuation.isActive) {
+                    continuation.resumeWithException(error.exception)
+                }
+            }
+        })
+
+    }
+}
+
+
+// 获取 provider ids
+suspend fun VmService.getObject(isolateId: String,instanceId: String): Instance? {
+    return suspendCancellableCoroutine { continuation ->
+        getObject(isolateId,instanceId,object : GetObjectConsumer{
+            override fun received(response: Breakpoint) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ClassObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Code) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Context) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ErrorObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Field) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Func) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Instance) {
+                continuation.resume(response)
+            }
+
+            override fun received(response: Library) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Null) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Obj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Script) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Sentinel) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: TypeArguments) {
+                continuation.resume(null)
+            }
+
+            override fun onError(error: RPCError) {
+                continuation.resume(null)
+            }
+
+        })
+    }
+}
+
+suspend fun VmService.getObjectWithClassObj(isolateId: String, instanceId: String): ClassObj? {
+    return suspendCancellableCoroutine { continuation ->
+        getObject(isolateId,instanceId,object : GetObjectConsumer{
+            override fun received(response: Breakpoint) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ClassObj) {
+                continuation.resume(response)
+            }
+
+            override fun received(response: Code) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Context) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ErrorObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Field) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Func) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Instance) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Library) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Null) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Obj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Script) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Sentinel) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: TypeArguments) {
+                continuation.resume(null)
+            }
+
+            override fun onError(error: RPCError) {
+                continuation.resume(null)
+            }
+
+        })
+    }
+}
+
+
+suspend fun VmService.getObjectWithField(isolateId: String,instanceId: String): Field? {
+    return suspendCancellableCoroutine { continuation ->
+        getObject(isolateId,instanceId,object : GetObjectConsumer{
+            override fun received(response: Breakpoint) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ClassObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Code) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Context) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ErrorObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Field) {
+                continuation.resume(response)
+            }
+
+            override fun received(response: Func) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Instance) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Library) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Null) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Obj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Script) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Sentinel) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: TypeArguments) {
+                continuation.resume(null)
+            }
+
+            override fun onError(error: RPCError) {
+                continuation.resume(null)
+            }
+
+        })
+    }
+}
+
+
+suspend fun VmService.getObjectWithLibrary(isolateId: String,instanceId: String): Library? {
+    return suspendCancellableCoroutine { continuation ->
+        getObject(isolateId,instanceId,object : GetObjectConsumer{
+            override fun received(response: Breakpoint) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ClassObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Code) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Context) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: ErrorObj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Field) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Func) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Instance) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Library) {
+                continuation.resume(response)
+            }
+
+            override fun received(response: Null) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Obj) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Script) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: Sentinel) {
+                continuation.resume(null)
+            }
+
+            override fun received(response: TypeArguments) {
+                continuation.resume(null)
+            }
+
+            override fun onError(error: RPCError) {
+                continuation.resume(null)
+            }
+
+        })
+    }
+}

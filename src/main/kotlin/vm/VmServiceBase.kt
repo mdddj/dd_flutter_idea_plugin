@@ -70,7 +70,6 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
 
     var runtimeVersion: Version? = null
 
-    // Ktor HttpClient
     var client: HttpClient? = null
     var myWebSocketSession: DefaultClientWebSocketSession? = null
     val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -202,6 +201,7 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
      * 断开与 VM Observatory 服务的连接。
      */
     fun disconnect() {
+
         client?.close()
         requestSink?.close()
         coroutineScope.cancel()

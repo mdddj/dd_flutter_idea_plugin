@@ -23,13 +23,6 @@ import com.google.gson.JsonObject
 class LibraryRef(json: JsonObject) : ObjRef(json) {
 
     /**
-     * 此库的名称。
-     */
-    fun getName(): String? {
-        return getAsString("name")
-    }
-
-    /**
      * 此库的 URI。
      */
     fun getUri(): String? {

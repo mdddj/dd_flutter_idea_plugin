@@ -136,10 +136,6 @@ compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation", "-Xwhen-guards"))
 }
 
-
-
-
-
 tasks {
 
     patchPluginXml {
@@ -157,6 +153,7 @@ tasks {
 
     publishPlugin {
         token.set(pushToken)
+        channels.set(listOf("bata"))
     }
 
     runIde {
@@ -194,6 +191,8 @@ tasks {
         enabled = false
     }
 }
+
+val getChannel = tasks.publishPlugin.get().channels.get()
 
 changelog {
     version = pluginVersion.removeSuffix(".")

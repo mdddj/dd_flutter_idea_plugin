@@ -21,11 +21,4 @@ import com.google.gson.JsonObject
  * {@link TypeArgumentsRef} is a reference to a {@link TypeArguments} object.
  */
 class TypeArgumentsRef(json: JsonObject) : ObjRef(json) {
-
-    /**
-     * A name for this type argument list.
-     */
-    fun getName(): String? {
-        return getAsString("name")
-    }
 }

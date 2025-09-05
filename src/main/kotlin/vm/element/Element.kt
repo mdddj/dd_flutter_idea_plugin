@@ -25,6 +25,11 @@ open class Element protected constructor(val json: JsonObject) {
         return if (element == null || element === JsonNull.INSTANCE) -1 else element.asInt
     }
 
+    protected fun getAsLong(name: String): Long {
+        val element = json.get(name)
+        return if (element == null || element === JsonNull.INSTANCE) -1 else element.asLong
+    }
+
     /**
      * A utility method to handle null values and JsonNull values.
      */

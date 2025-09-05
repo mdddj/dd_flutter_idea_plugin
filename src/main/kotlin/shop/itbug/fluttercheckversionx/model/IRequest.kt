@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.model
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
@@ -9,13 +10,18 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.config.DioCopyAllKey
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
+import shop.itbug.fluttercheckversionx.socket.SocketResponseModel
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import shop.itbug.fluttercheckversionx.util.toHexString
+import vm.network.NetworkRequest
+import java.net.URLEncoder
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.swing.SwingUtilities
+import kotlin.math.log10
+import kotlin.math.pow
 
 
 /**
@@ -55,6 +61,8 @@ interface IRequest {
 }
 
 
+fun IRequest.isDioRequest(): Boolean = this is SocketResponseModel
+fun IRequest.isDartVmRequest(): Boolean = this is NetworkRequest
 
 /**
  * 计算响应体的大小
@@ -204,6 +212,100 @@ fun LocalDateTime.formatDate(): String {
 fun formatSize(sizeInBytes: Long): String {
     if (sizeInBytes <= 0) return "0 B"
     val units = arrayOf("B", "KB", "MB", "GB", "TB")
-    val digitGroups = (Math.log10(sizeInBytes.toDouble()) / Math.log10(1024.0)).toInt()
-    return DecimalFormat("#,##0.#").format(sizeInBytes / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
+    val digitGroups = (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt()
+    return DecimalFormat("#,##0.#").format(sizeInBytes / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
 }
+
+
+
+
+/**
+ * 将 IRequest 对象转换为与 Dart/Flutter DevTools "Copy as cURL" 功能风格完全一致的命令字符串。
+ *
+ * 特点:
+ * - 使用 `--location` 自动处理重定向。
+ * - 使用 `--compressed` 处理压缩。
+ * - 精确的参数顺序 (`--request METHOD 'URL' ...`)。
+ * - 自动过滤掉由 cURL 管理的冗余头信息 (Host, Content-Length, Accept-Encoding)。
+ * - 格式化为易于阅读和粘贴的多行命令。
+ *
+ * @param gsonInstance 一个可选的 Gson 实例，用于序列化 JSON 请求体。如果为 null，将创建一个新的实例。
+ * @return 格式化后的 cURL 命令字符串。
+ */
+fun IRequest.toCurlStringAsDartDevTools(gsonInstance: Gson? = null): String {
+    // 创建一个列表来收集 cURL 命令的所有部分，方便最后用 `\` 连接
+    val commandParts = mutableListOf<String>()
+
+    // 1. HTTP 方法 (--request)
+    // Dart DevTools 总是显式包含方法
+    httpMethod?.let {
+        commandParts.add("--request ${it.uppercase()}")
+    }
+
+    // 2. 构建并添加最终的 URL (包含查询参数)
+    val finalUrl = buildString {
+        append(requestUrl)
+        if (queryParams.isNotEmpty()) {
+            val queryString = queryParams.map { (key, value) ->
+                val encodedKey = URLEncoder.encode(key, "UTF-8")
+                val encodedValue = URLEncoder.encode(value?.toString() ?: "", "UTF-8")
+                "$encodedKey=$encodedValue"
+            }.joinToString("&")
+
+            if (requestUrl.contains("?")) {
+                append("&$queryString")
+            } else {
+                append("?$queryString")
+            }
+        }
+    }
+    // 对 URL 中的特殊字符（主要是单引号）进行转义
+    commandParts.add("'${finalUrl.replace("'", "'\\''")}'")
+
+    // 3. 添加请求头 (--header)
+    // 过滤掉 cURL 会自动处理或通过标志管理的头
+    val headersToFilter = setOf("host", "accept-encoding", "content-length")
+    httpRequestHeaders
+        .filterKeys { key -> !headersToFilter.contains(key.lowercase()) }
+        .forEach { (key, value) ->
+            val escapedValue = value.toString().replace("'", "'\\''")
+            commandParts.add("--header '$key: $escapedValue'")
+        }
+
+    // 4. 智能处理请求体 (--data-raw, --data)
+    httpRequestBody?.let { body ->
+        val contentType = httpRequestHeaders.entries
+            .firstOrNull { it.key.equals("Content-Type", ignoreCase = true) }
+            ?.value?.toString()?.lowercase() ?: ""
+
+        val bodyPart = when {
+            contentType.contains("application/json") -> {
+                val jsonBody = when (body) {
+                    is String -> body
+                    else -> (gsonInstance ?: Gson()).toJson(body)
+                }
+                val escapedBody = jsonBody.replace("'", "'\\''")
+                "--data-raw '$escapedBody'"
+            }
+            contentType.contains("application/x-www-form-urlencoded") && body is Map<*, *> -> {
+                val formData = body.map { (key, value) ->
+                    val encodedKey = URLEncoder.encode(key.toString(), "UTF-8")
+                    val encodedValue = URLEncoder.encode(value?.toString() ?: "", "UTF-8")
+                    "$encodedKey=$encodedValue"
+                }.joinToString("&")
+                "--data '$formData'"
+            }
+            else -> {
+                val escapedBody = body.toString().replace("'", "'\\''")
+                "--data '$escapedBody'"
+            }
+        }
+        commandParts.add(bodyPart)
+    }
+
+    // 5. 组合所有部分
+    // `curl --location --compressed` 是固定的前缀
+    // 使用 `joinToString` 来优雅地处理 `\` 和换行，确保最后一行没有 `\`
+    return "curl --location --compressed " + commandParts.joinToString(separator = " \\\n  ")
+}
+

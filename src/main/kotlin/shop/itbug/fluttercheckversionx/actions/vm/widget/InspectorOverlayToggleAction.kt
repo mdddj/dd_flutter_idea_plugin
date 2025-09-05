@@ -21,11 +21,11 @@ class InspectorOverlayToggleAction() : ToggleAction(
 
 
     override fun isSelected(e: AnActionEvent): Boolean {
-        return e.flutterTree.getInspectorStateManager()?.getCurrentState() ?: false
+        return e.flutterTree?.getInspectorStateManager()?.getCurrentState() ?: false
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-        val tree = e.flutterTree
+        val tree = e.flutterTree ?: return
         tree.scope.launch {
             try {
                 val isolateId = tree.isolateId
@@ -42,7 +42,8 @@ class InspectorOverlayToggleAction() : ToggleAction(
 
     override fun update(e: AnActionEvent) {
         super.update(e)
-        e.presentation.isEnabled = e.flutterTree.isolateId != null
+        e.presentation.isEnabled = e.flutterTree?.isolateId != null
+        e.presentation.isVisible = e.flutterTree != null
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

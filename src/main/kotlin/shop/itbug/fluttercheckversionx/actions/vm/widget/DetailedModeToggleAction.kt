@@ -17,12 +17,17 @@ class DetailedModeToggleAction() : ToggleAction(
 ) {
 
     override fun isSelected(e: AnActionEvent): Boolean {
-        return e.flutterTree.detailedMode
+        return e.flutterTree?.detailedMode ?: false
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-        e.flutterTree.detailedMode = state
-        e.flutterTree.refreshTree(false)
+        e.flutterTree?.detailedMode = state
+        e.flutterTree?.refreshTree(false)
+    }
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.isVisible = e.flutterTree!=null
+        super.update(e)
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

@@ -12,6 +12,7 @@ import vm.isHttpProfilingAvailable
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 /**
  * 监控统计数据
@@ -39,11 +40,14 @@ data class NetworkRequest(
     var responseHeaders: Map<String, String>? = null,
     var requestBody: String? = null,
     var responseBody: String? = null,
+    @Transient
+    var responseByteArray: JsonArray? = null,
     var contentLength: Long? = null,
     var error: String? = null,
     val events: MutableList<RequestEvent> = mutableListOf(),
-    var networkMonitor: DartNetworkMonitor? = null
-) : IRequest { // <--- 实现接口
+    @Transient
+    var networkMonitor: DartNetworkMonitor? = null,
+) : IRequest {
 
     val duration: Long?
         get() = endTime?.let { it - startTime }
@@ -74,12 +78,35 @@ data class NetworkRequest(
                 }
                 .toMap()
         }
+    val isImageResponse: Boolean
+        get() {
+            val contentType = responseHeaders?.entries
+                ?.find { it.key.equals("Content-Type", ignoreCase = true) }
+                ?.value
+            return contentType?.startsWith("image/", ignoreCase = true) ?: false
+        }
+
+    val hasImageExtensionInUri: Boolean
+        get() {
+            val imageExtensions = setOf(".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp")
+            return imageExtensions.any { uri.substringBefore('?').endsWith(it, ignoreCase = true) }
+        }
+
+
+    /**
+     * 综合判断是否为一个图片响应，具有更高的可靠性。
+     * 优先检查 Content-Type，如果请求未完成或 header 缺失，则检查 URI 扩展名。
+     */
+    val isLikelyImage: Boolean
+        get() = if (responseHeaders != null) isImageResponse else hasImageExtensionInUri
 }
 
 data class RequestEvent(
     val timestamp: Long,
     val event: String,
-    val arguments: Map<String, Any>? = null
+    var time1: String,
+    val arguments: Map<String, Any>? = null,
+
 )
 
 enum class RequestStatus {
@@ -94,7 +121,7 @@ class DartNetworkMonitor(
 ) {
     private val requests = mutableMapOf<String, NetworkRequest>()
     private val listeners = mutableListOf<NetworkRequestListener>()
-    private var isMonitoring : MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private var isMonitoring: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean>
         get() = isMonitoring
     private var lastUpdateTime = 0L
@@ -190,11 +217,9 @@ class DartNetworkMonitor(
                     try {
                         updateRequests()
                     } catch (e: CancellationException) {
-                        // 正常的协程取消，不需要处理
                         throw e
                     } catch (e: Exception) {
                         notifyError("轮询网络数据失败: ${e.message}")
-                        // 出现错误时稍微延长等待时间
                         delay(intervalMs * 2)
                         continue
                     }
@@ -224,6 +249,7 @@ class DartNetworkMonitor(
             notifyError("更新网络请求数据失败: ${e.message}")
         }
     }
+
     private fun parseHttpProfile(profileData: JsonObject) {
         try {
             val timestamp = profileData.get("timestamp")?.asLong ?: return
@@ -271,6 +297,14 @@ class DartNetworkMonitor(
                 existing.events.add(newEvent)
             }
         }
+        requests[existing.id] = existing
+    }
+
+    fun updateRequest(id: String, newRequest: NetworkRequest) {
+        val request = requests[id]
+        if(request!=null){
+            requests[id] = newRequest
+        }
     }
 
     /**
@@ -290,6 +324,7 @@ class DartNetworkMonitor(
                 // 解析响应body
                 detailJson.getAsJsonArray("responseBody")?.let { bodyArray ->
                     request.responseBody = decodeByteArray(bodyArray)
+                    request.responseByteArray = bodyArray
                 }
 
                 request
@@ -336,12 +371,13 @@ class DartNetworkMonitor(
     fun filterRequests(
         method: String? = null,
         status: RequestStatus? = null,
-        containsUrl: String? = null
+        containsUrl: String? = null,
     ): List<NetworkRequest> {
         return requests.values.filter { request ->
             (method == null || request.method.equals(method, ignoreCase = true)) &&
                     (status == null || request.status == status) &&
                     (containsUrl == null || request.uri.contains(containsUrl, ignoreCase = true))
+
         }
     }
 
@@ -393,7 +429,7 @@ class DartNetworkMonitor(
                 uri = uri,
                 startTime = startTime,
                 endTime = endTime,
-                status = if (endTime != null) RequestStatus.COMPLETED else RequestStatus.PENDING
+                status = if (endTime != null) RequestStatus.COMPLETED else RequestStatus.PENDING,
             )
 
             // 解析请求数据
@@ -409,9 +445,11 @@ class DartNetworkMonitor(
             // 解析事件
             json.getAsJsonArray("events")?.forEach { eventElement ->
                 val eventJson = eventElement.asJsonObject
+                val timestamp = eventJson.get("timestamp")?.asLong ?: 0L
                 val event = RequestEvent(
-                    timestamp = eventJson.get("timestamp")?.asLong ?: 0L,
+                    timestamp = timestamp,
                     event = eventJson.get("event")?.asString ?: "",
+                    time1 = formatTime(timestamp),
                     arguments = parseEventArguments(eventJson.get("arguments")?.asJsonObject)
                 )
                 request.events.add(event)
@@ -495,6 +533,18 @@ class DartNetworkMonitor(
                     else -> entry.value.toString()
                 }
             }
+        }
+
+        fun formatTime(dur: Long): String {
+            return microsToFormattedTime(micros = dur)
+        }
+
+        fun microsToFormattedTime(micros: Long, pattern: String = "yyyy-MM-dd HH:mm:ss:SSS"): String {
+            val millis = micros / 1000
+            val instant = Instant.ofEpochMilli(millis)
+            val formatter = DateTimeFormatter.ofPattern(pattern)
+                .withZone(ZoneId.systemDefault())
+            return formatter.format(instant)
         }
     }
 }
