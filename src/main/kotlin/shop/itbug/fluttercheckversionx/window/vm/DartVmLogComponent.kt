@@ -22,7 +22,6 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import shop.itbug.fluttercheckversionx.actions.isValidJson
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
@@ -261,7 +260,6 @@ private fun LogDetailsPanel(
 ) {
     val scope = rememberCoroutineScope()
 
-    // 触发详情加载
     LaunchedEffect(log) {
         if (log.needsComputing) {
             scope.launch {
@@ -278,27 +276,23 @@ private fun LogDetailsPanel(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier,
+            horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(12.dp,0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 "Log Details",
-                modifier = Modifier.padding(bottom = 8.dp)
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                IconActionButton(AllIconsKeys.Actions.Copy, onClick = {
-                    details?.copyTextToClipboard()
-                }, contentDescription = "Copy")
-                OutlinedButton({
-                    details?.let { MyFileUtil.showJsonInEditor(project, it) }
-                }) {
-                    Text(PluginBundle.get("open.in.editor"))
-                }
+            IconActionButton(AllIconsKeys.Actions.Copy, onClick = {
+                details?.copyTextToClipboard()
+            }, contentDescription = "Copy")
+            OutlinedButton({
+                details?.let { MyFileUtil.showJsonInEditor(project, it) }
+            }) {
+                Text(PluginBundle.get("open.in.editor"))
             }
         }
 
         Divider(orientation = Orientation.Horizontal)
-        val text = log.prettyPrinted()
         Crossfade(targetState = details, label = "LogDetailsCrossfade") { targetDetails ->
             when {
                 log.isComputingDetails || targetDetails == null -> {
@@ -316,8 +310,9 @@ private fun LogDetailsPanel(
 
                     SelectionContainer {
                         Text(
-                            text = text ?: "No details available.",
+                            text = log.prettyPrinted() ?: "",
                             modifier = Modifier
+                                .fillMaxSize()
                                 .background(background)
                                 .verticalScroll(scrollState)
                                 .padding(12.dp),
@@ -333,12 +328,6 @@ private fun LogDetailsPanel(
                     // )
                 }
             }
-        }
-        Divider(orientation = Orientation.Horizontal)
-        OutlinedButton({
-            MyFileUtil.showJsonInEditor(project, text ?: "")
-        }, enabled = isValidJson(text ?: "")) {
-            Text(PluginBundle.get("open.in.editor") + "(map eg. debugPrint(jsonEncode({\"hello\": \"flutterx\"})))" )
         }
     }
 }

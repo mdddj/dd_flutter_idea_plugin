@@ -93,6 +93,7 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
 }
 
 fun Project.getDartVmWindow() = ToolWindowManager.getInstance(this).getToolWindow("FlutterX Dart VM")
+val dartVmToolWindowId = "FlutterX Dart VM"
 
 
 @OptIn(ExperimentalJewelApi::class)
@@ -644,10 +645,14 @@ fun HttpStatusIndicator(
 
 @Composable
 private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
-    val textState = rememberTextFieldState(text)
+    val textState = rememberTextFieldState()
     val isJson by remember { derivedStateOf { isValidJson(textState.text.toString()) } }
     val gson = remember { GsonBuilder().setPrettyPrinting().create() }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(text) {
+        textState.setTextAndPlaceCursorAtEnd(text)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(8.dp, 6.dp),

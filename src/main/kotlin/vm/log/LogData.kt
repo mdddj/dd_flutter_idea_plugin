@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import shop.itbug.fluttercheckversionx.actions.isValidJson
 import vm.element.IsolateRef
 import java.text.SimpleDateFormat
 import java.util.*
@@ -84,23 +83,13 @@ data class LogData(
     fun prettyPrinted(): String? {
         val currentDetails = details.value ?: return null
         return try {
-            if (isValidJson(currentDetails)) {
-                val text = removeFlutterStart(currentDetails.trim())
-                val jsonElement = JsonParser.parseString(text)
-                prettyJsonEncoder.toJson(jsonElement)
-            } else {
-                currentDetails.trim()
-            }
-
-        } catch (e: Exception) {
+            val jsonElement = JsonParser.parseString(currentDetails)
+            prettyJsonEncoder.toJson(jsonElement)
+        } catch (_: Exception) {
             currentDetails.trim()
         }
     }
 
-    private fun removeFlutterStart(text: String): String {
-        if (text.startsWith("flutter:") && text.removePrefix("flutter:").isNotBlank()) return text.removePrefix("flutter:")
-        return text
-    }
 
     companion object {
         private val timeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.US)

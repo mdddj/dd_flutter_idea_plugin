@@ -40,7 +40,15 @@ class DartVmSetting(val project: Project) : Configurable {
 
     override fun disposeUIResources() {
         if (!state.enableVmServiceToolWindow) {
-            project.getDartVmWindow()?.hide()
+            project.getDartVmWindow()?.let {
+                it.hide()
+                it.isAvailable = false
+            }
+        }else {
+            project.getDartVmWindow()?.let {
+                it.show()
+                it.isAvailable = true
+            }
         }
         super.disposeUIResources()
     }

@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+
+## [6.0.0] - 2025-09-05
+
+*   New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
+    *   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).
+    *   **HTTP Monitor**: Capture and inspect HTTP requests made by your application.
+    *   **Logging**: View logs sent via `dart:developer`.
+
+
 ## [5.7.6] - 2025-08-18
 
 * Change New [Document](https://mdddj.github.io/flutterx-doc/)
