@@ -3,7 +3,11 @@
 ## Unreleased
 
 
-## [6.0.1] - 2025-09-06
+## [6.0.2] - 2025-09-08
+
+
+* Fix: Fixed an issue where HTTP request listening failed after a hot restart
+* New: dart types support displaying to the left of the variable name
 
 *   New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
     *   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).

@@ -60,7 +60,6 @@ import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
 import shop.itbug.fluttercheckversionx.window.vm.FlutterAppsTabComponent
 import shop.itbug.fluttercheckversionx.window.vm.ProviderComposeComponent
 import vm.VmService
-import vm.element.EventKind
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
 import vm.network.RequestStatus
@@ -137,20 +136,6 @@ private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
         vmService.startMonitoring(
             listener = requestListener
         )
-    }
-
-    LaunchedEffect(vmService){
-        scope.launch {
-            vmService.vmEvents.collect {
-                when(it){
-                    EventKind.IsolateReload -> {
-                        vmService.destroyHttpMonitor()
-                        vmService.startMonitoring(listener = requestListener)
-                    }
-                    else -> {}
-                }
-            }
-        }
     }
 
 

@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.model.formatDate
 import vm.VmService
+import vm.VmService.VmEventListener
+import vm.element.Event
+import vm.element.EventKind
 import vm.getHttpProfile
 import vm.isHttpProfilingAvailable
 import java.time.Instant
@@ -46,7 +49,7 @@ data class NetworkRequest(
         get() = status == RequestStatus.COMPLETED || status == RequestStatus.ERROR
 
     override val requestUrl: String get() = uri
-    override val httpMethod: String? get() = method
+    override val httpMethod: String get() = method
     override val httpStatusCode: Int get() = statusCode ?: -1
     override val durationMs: Long get() = duration ?: -1L
     override val httpRequestHeaders: Map<String, Any> get() = requestHeaders ?: emptyMap()
@@ -107,7 +110,7 @@ enum class RequestStatus {
 class DartNetworkMonitor(
     private val vmService: VmService,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-) {
+): VmEventListener {
     private val requests = mutableMapOf<String, NetworkRequest>()
     private val listeners = mutableListOf<NetworkRequestListener>()
     private var isMonitoring: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -119,6 +122,10 @@ class DartNetworkMonitor(
     val taskJob get() = pollingJob
 
     private val isolateId get() = vmService.getMainIsolateId()
+
+    init {
+        vmService.addEventListener(this)
+    }
 
     interface NetworkRequestListener {
         fun onRequestStarted(request: NetworkRequest)
@@ -196,6 +203,7 @@ class DartNetworkMonitor(
         scope.launch {
             stopMonitoring()
         }
+        vmService.removeEventListener(this)
         requests.clear()
         listeners.clear()
     }
@@ -401,6 +409,22 @@ class DartNetworkMonitor(
 
     private fun notifyError(error: String) {
         listeners.forEach { it.onError(error) }
+    }
+
+    override fun onVmEvent(streamId: String, event: Event) {
+                when(event.getKind()){
+                    EventKind.IsolateExit -> {
+                        scope.launch {
+                            stopMonitoring()
+                        }
+                    }
+                    EventKind.IsolateReload -> {
+                        scope.launch {
+                            startMonitoring()
+                        }
+                    }
+                    else -> {}
+                }
     }
 
     companion object {
