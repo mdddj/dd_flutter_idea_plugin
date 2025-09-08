@@ -19,14 +19,17 @@ import vm.element.RPCError
 interface ServiceExtensionConsumer : Consumer {
     fun received(result: JsonObject)
 }
-
-fun DefaultServiceExtensionConsumer(handle: (data: JsonObject) -> Unit): ServiceExtensionConsumer =
+fun defaultServiceExtensionConsumer(
+    handle: (data: JsonObject) -> Unit,
+    handleError: (data: RPCError) -> Unit
+): ServiceExtensionConsumer =
     object : ServiceExtensionConsumer {
         override fun received(result: JsonObject) {
             handle(result)
         }
 
         override fun onError(error: RPCError) {
+            handleError.invoke(error)
         }
 
     }

@@ -7,7 +7,8 @@
 
 
 * Fix: Fixed an issue where HTTP request listening failed after a hot restart
-* New: dart types support displaying to the left of the variable name
+* Fix: Fixed a bug where the http listening UI right-click menu caused a freeze after isolateId was regenerated
+* New: dart types support displaying to the left of the variable name, see [document](https://flutterx.itbug.shop/en/dart-file/parameter-type-inline-display/#display-location)
 
 *   New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
     *   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).

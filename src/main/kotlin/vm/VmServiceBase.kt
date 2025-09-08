@@ -366,7 +366,7 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
     fun callServiceExtension(isolateId: String, method: String) {
         val params = JsonObject()
         params.addProperty("isolateId", isolateId)
-        request(method, params, DefaultServiceExtensionConsumer {  })
+        request(method, params, defaultServiceExtensionConsumer({}) {  })
     }
     fun callServiceExtension(
         isolateId: String,
@@ -374,7 +374,7 @@ abstract class VmServiceBase : UserDataHolderBase(), VmServiceConst {
         params: JsonObject,
     ) {
         params.addProperty("isolateId", isolateId)
-        request(method, params, DefaultServiceExtensionConsumer {  })
+        request(method, params, defaultServiceExtensionConsumer({}) {  })
     }
     /**
      * 调用特定的服务协议扩展方法。

@@ -7,9 +7,10 @@
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="优化 http请求监听">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowsFactory.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowsFactory.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceBase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceBase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceEx.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceEx.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/consumer/ServiceExtensionConsumer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/consumer/ServiceExtensionConsumer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/network/HttpProfileEx.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/HttpProfileEx.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -398,7 +399,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -564,8 +565,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [verifyPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
@@ -1878,7 +1879,7 @@
       <workItem from="1757125012942" duration="498000" />
       <workItem from="1757148899972" duration="4335000" />
       <workItem from="1757294820892" duration="2573000" />
-      <workItem from="1757317257113" duration="4267000" />
+      <workItem from="1757317257113" duration="5765000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2223,7 +2224,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="411" />
+    <option name="localTasksCounter" value="412" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

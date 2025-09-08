@@ -345,15 +345,17 @@ suspend fun VmService.getSelectedWidget(
 }
 
 //ext.dart.io.socketProfilingEnabled
-suspend fun VmService.socketProfilingEnable(isolateId: String,enabled: Boolean) {
+fun VmService.socketProfilingEnable(isolateId: String,enabled: Boolean) {
     callServiceExtension(
         isolateId = isolateId,
         method = "ext.dart.io.socketProfilingEnabled",
         params = JsonObject().apply {
             addProperty("enabled", enabled)
         },
-        DefaultServiceExtensionConsumer{
-            println("成功:$it")
+        defaultServiceExtensionConsumer({
+            println("成功:${it}")
+        }){
+            println("失败:$it")
         }
     )
 }

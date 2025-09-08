@@ -2,14 +2,13 @@ package vm.network
 
 import com.google.gson.JsonObject
 import vm.VmService
-import vm.consumer.DefaultServiceExtensionConsumer
 import vm.consumer.ServiceExtensionConsumer
+import vm.consumer.defaultServiceExtensionConsumer
 import vm.element.RPCError
 import vm.isHttpProfilingAvailable
 import vm.socketProfilingEnable
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
 
 
 // Socket Profiling Extensions
@@ -35,8 +34,8 @@ suspend fun VmService.getSocketProfilingState(isolateId: String): JsonObject? {
             isolateId = isolateId,
             method = "ext.dart.io.socketProfilingEnabled",
             params = JsonObject(),
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({ cont.resume(it) }) { err ->
+                cont.resume(null)
             }
         )
     }
@@ -84,8 +83,8 @@ suspend fun VmService.getSocketProfile(isolateId: String): JsonObject? {
             isolateId = isolateId,
             method = "ext.dart.io.getSocketProfile",
             params = JsonObject(),
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({ cont.resume(it) }) { err ->
+                cont.resume(null)
             }
         )
     }
@@ -116,8 +115,10 @@ suspend fun VmService.setHttpTimelineLogging(isolateId: String, enabled: Boolean
             params = JsonObject().apply {
                 addProperty("enabled", enabled)
             },
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) { result ->
+                cont.resume(null)
             }
         )
     }
@@ -137,8 +138,10 @@ suspend fun VmService.getHttpTimelineLoggingState(isolateId: String): JsonObject
             isolateId = isolateId,
             method = "ext.dart.io.httpEnableTimelineLogging",
             params = JsonObject(),
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -160,8 +163,10 @@ suspend fun VmService.getHttpProfileRequest(isolateId: String, requestId: String
             params = JsonObject().apply {
                 addProperty("id", requestId)
             },
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -206,8 +211,10 @@ suspend fun VmService.getOpenFiles(isolateId: String): JsonObject? {
             isolateId = isolateId,
             method = "ext.dart.io.getOpenFiles",
             params = JsonObject(),
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -224,8 +231,10 @@ suspend fun VmService.getOpenFileById(isolateId: String, fileId: Int): JsonObjec
             params = JsonObject().apply {
                 addProperty("id", fileId)
             },
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -242,8 +251,10 @@ suspend fun VmService.getSpawnedProcesses(isolateId: String): JsonObject? {
             isolateId = isolateId,
             method = "ext.dart.io.getSpawnedProcesses",
             params = JsonObject(),
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -260,8 +271,10 @@ suspend fun VmService.getSpawnedProcessById(isolateId: String, processId: Int): 
             params = JsonObject().apply {
                 addProperty("id", processId)
             },
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -278,8 +291,10 @@ suspend fun VmService.getDartIOVersion(isolateId: String): JsonObject? {
             isolateId = isolateId,
             method = "ext.dart.io.getVersion",
             params = JsonObject(),
-            DefaultServiceExtensionConsumer { result ->
-                cont.resume(result)
+            defaultServiceExtensionConsumer({
+                cont.resume(it)
+            }) {
+                cont.resume(null)
             }
         )
     }
@@ -363,7 +378,8 @@ data class IOCapabilities(
     val fileOperations: Boolean,
     val processManagement: Boolean
 ) {
-    fun hasAnyCapability(): Boolean = socketProfiling || httpProfiling || httpTimelineLogging || fileOperations || processManagement
+    fun hasAnyCapability(): Boolean =
+        socketProfiling || httpProfiling || httpTimelineLogging || fileOperations || processManagement
 
     fun getSupportedFeatures(): List<String> = mutableListOf<String>().apply {
         if (socketProfiling) add("Socket分析")
