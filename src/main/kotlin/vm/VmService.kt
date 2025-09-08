@@ -60,11 +60,9 @@ class VmService : VmServiceBase() {
         intervalMs: Long = 1000L,
         listener: DartNetworkMonitor.NetworkRequestListener? = null
     ): Job? {
-        val isolateId = getMainIsolateId()
         if (dartHttpMonitor.value == null) {
             dartHttpMonitor.value = DartNetworkMonitor(
                 vmService = this,
-                isolateId = isolateId,
                 scope = coroutineScope,
             )
         }
@@ -171,7 +169,6 @@ class VmService : VmServiceBase() {
                         logger.info("✅ 监听到热重启成功！新的主 Isolate (name: $newIsolateName, id: $eventIsolateId) 已启动。")
                         runInScope {
                             updateMainIsolateId()
-                            destroyHttpMonitor()
                         }
                     }
                 }

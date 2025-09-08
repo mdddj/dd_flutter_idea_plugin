@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="新增 inlay 支持在左侧显示">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="添加热重启事件">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowsFactory.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowsFactory.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/element/EventKind.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/element/EventKind.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1880,7 +1876,7 @@
       <workItem from="1757125012942" duration="498000" />
       <workItem from="1757148899972" duration="4335000" />
       <workItem from="1757294820892" duration="2573000" />
-      <workItem from="1757317257113" duration="3314000" />
+      <workItem from="1757317257113" duration="3491000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2225,7 +2221,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="409" />
+    <option name="localTasksCounter" value="410" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2275,7 +2271,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="release5.4.1" />
     <MESSAGE value="release5.4.2" />
     <MESSAGE value="新能优化&#10;bug修复&#10;release5.4.3" />
     <MESSAGE value="添加日志" />
@@ -2300,7 +2295,8 @@
     <MESSAGE value="完善vm功能" />
     <MESSAGE value="release 6.0" />
     <MESSAGE value="新增 inlay 支持在左侧显示" />
-    <option name="LAST_COMMIT_MESSAGE" value="新增 inlay 支持在左侧显示" />
+    <MESSAGE value="添加热重启事件" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加热重启事件" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
