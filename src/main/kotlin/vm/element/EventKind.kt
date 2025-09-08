@@ -58,6 +58,7 @@ enum class EventKind {
      * 来自 dart:developer.inspect 的通知。
      */
     Inspect,
+    Isolate,
 
     /**
      * 隔离区已退出的通知。
@@ -182,5 +183,19 @@ enum class EventKind {
      */
     Unknown,
 
-    ToolEvent
+    ToolEvent,
+
+
+    ServiceReload,
+    Debug,
+    HeapSnapshot,
+    Profiler,
+    Service,
+    Stderr,
+    Stdout,
+    Timeline,
+    VM
+
+
+
 }

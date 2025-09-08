@@ -60,6 +60,7 @@ import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
 import shop.itbug.fluttercheckversionx.window.vm.FlutterAppsTabComponent
 import shop.itbug.fluttercheckversionx.window.vm.ProviderComposeComponent
 import vm.VmService
+import vm.element.EventKind
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
 import vm.network.RequestStatus
@@ -107,6 +108,7 @@ private fun DartHttpUI(project: Project) {
 @Composable
 private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
     val vmService = app.vmService
+    val scope = rememberCoroutineScope()
     val httpRequests =
         remember(vmService.dartHttpMonitor) { mutableStateListOf(*vmService.getAllRequests.reversed().toTypedArray()) }
     var selectedRequest by remember { mutableStateOf<NetworkRequest?>(null) }
@@ -135,6 +137,20 @@ private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
         vmService.startMonitoring(
             listener = requestListener
         )
+    }
+
+    LaunchedEffect(vmService){
+        scope.launch {
+            vmService.vmEvents.collect {
+                when(it){
+                    EventKind.IsolateReload -> {
+                        vmService.destroyHttpMonitor()
+                        vmService.startMonitoring(listener = requestListener)
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
 
