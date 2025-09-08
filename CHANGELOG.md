@@ -3,7 +3,7 @@
 ## Unreleased
 
 
-## [6.0.0] - 2025-09-05
+## [6.0.1] - 2025-09-06
 
 *   New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
     *   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).

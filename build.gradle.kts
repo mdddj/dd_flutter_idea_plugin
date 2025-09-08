@@ -14,7 +14,7 @@ val ideType: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.7.0"
+    id("org.jetbrains.intellij.platform") version "2.9.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
@@ -153,7 +153,7 @@ tasks {
 
     publishPlugin {
         token.set(pushToken)
-        channels.set(listOf("bata","stable"))
+//        channels.set(listOf("bata","stable"))
     }
 
     runIde {

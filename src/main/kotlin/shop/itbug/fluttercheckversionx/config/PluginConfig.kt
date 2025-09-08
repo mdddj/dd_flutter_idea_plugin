@@ -26,6 +26,8 @@ class PluginSetting : BaseState() {
 
     //启动 flutterx vm 窗口
     var enableVmServiceToolWindow by property(true)
+
+
 }
 
 @Service(Service.Level.PROJECT)
