@@ -49,6 +49,10 @@ class VmService : VmServiceBase() {
         return ""
     }
 
+    suspend fun getMainIsolates(): IsolateRef? {
+        return mainIsolates()
+    }
+
     suspend fun updateMainIsolateId() {
         _mainIsolateId = mainIsolates()?.getId()
     }

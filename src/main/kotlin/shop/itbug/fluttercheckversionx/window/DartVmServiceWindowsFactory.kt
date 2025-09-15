@@ -54,6 +54,7 @@ import shop.itbug.fluttercheckversionx.util.ComposeHelper
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.contextMenu
+import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
 import shop.itbug.fluttercheckversionx.widget.SearchResultCard
 import shop.itbug.fluttercheckversionx.window.vm.DartVmLoggingComponent
 import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
@@ -83,6 +84,13 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         toolWindow.addComposeTab("Provider") {
             ProviderComposeComponent(project)
         }
+
+        if (System.getenv("DEV") == "true") {
+            toolWindow.addComposeTab("Demo") {
+                JsonViewerDemo()
+            }
+        }
+
     }
 
     override fun shouldBeAvailable(project: Project): Boolean {

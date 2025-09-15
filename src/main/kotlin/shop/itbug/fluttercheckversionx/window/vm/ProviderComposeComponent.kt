@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import shop.itbug.fluttercheckversionx.widget.CenterText
 import vm.VmService
 import vm.devtool.*
 
@@ -26,8 +25,8 @@ import vm.devtool.*
 @Composable
 fun ProviderComposeComponent(project: Project) {
     FlutterAppsTabComponent(project) {
-        CenterText("Coming soon...")
-//        ProviderBody(project, it.vmService)
+//        CenterText("Coming soon...")
+        ProviderBody(project, it.vmService)
     }
 }
 
@@ -97,7 +96,7 @@ private fun ProviderList(project: Project, vm: VmService, onSelectChange: (item:
  */
 @Composable
 private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
-    val rootPath = remember(provider.id) { InstancePath.FromProviderId(provider.id) }
+    val rootPath = remember(provider.id) { provider.getProviderPath() }
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(8.dp)) {
         InstanceNodeViewer(vmService = vmService, path = rootPath)
     }
@@ -107,14 +106,14 @@ private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
  * 递归的 Composable，用于显示一个实例节点及其子节点。
  */
 @Composable
-private fun InstanceNodeViewer(vmService: VmService, path: InstancePath) {
+private fun InstanceNodeViewer(vmService: VmService, path: InstancePath, parent: InstanceDetails? = null) {
     var details by remember(path) { mutableStateOf<InstanceDetails?>(null) }
     var error by remember(path) { mutableStateOf<String?>(null) }
     var isExpanded by remember(path) { mutableStateOf(path.pathToProperty.isEmpty()) } // 根节点默认展开
 
     LaunchedEffect(path) {
         try {
-            details = ProviderHelper.getInstanceDetails(vmService, path)
+            details = ProviderHelper.getInstanceDetails(vmService, path, parent)
         } catch (e: Exception) {
             error = e.message ?: "An unknown error occurred"
         }
@@ -149,22 +148,27 @@ private fun InstanceNodeViewer(vmService: VmService, path: InstancePath) {
                 when (currentDetails) {
                     is InstanceDetails.Object -> {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            currentDetails.fields.forEach { field ->
-                                Row(verticalAlignment = Alignment.Top) {
-                                    Text("${field.name}: ", fontWeight = FontWeight.Bold)
-                                    InstanceNodeViewer(
-                                        vmService = vmService,
-                                        path = path.pathForChildWithInstance(
-                                            PathToProperty.ObjectProperty(
-                                                name = field.name,
-                                                ownerName = field.ownerName,
-                                                ownerUri = field.ownerUri
+                            currentDetails.fields
+                                .filter { it.isDefinedByDependency.not() }
+                                .filter { it.isStatic.not() }
+                                .forEach { field ->
+                                    Row(verticalAlignment = Alignment.Top) {
+                                        Text("${field.name}: ", fontWeight = FontWeight.Bold)
+                                        InstanceNodeViewer(
+                                            vmService = vmService,
+                                            path = path.pathForChildWithInstance(
+                                                PathToProperty.ObjectProperty(
+                                                    name = field.name,
+                                                    ownerName = field.ownerName,
+                                                    ownerUri = field.ownerUri,
+                                                    field = field
+                                                ),
+                                                "${field.ref?.getId()}"
                                             ),
-                                            field.instanceId
+                                            parent = currentDetails
                                         )
-                                    )
+                                    }
                                 }
-                            }
                         }
                     }
 
@@ -175,7 +179,8 @@ private fun InstanceNodeViewer(vmService: VmService, path: InstancePath) {
                                     Text("[$i]: ")
                                     InstanceNodeViewer(
                                         vmService = vmService,
-                                        path = path.pathForChild(PathToProperty.ListIndex(i))
+                                        path = path.pathForChild(PathToProperty.ListIndex(i)),
+                                        parent = currentDetails
                                     )
                                 }
                             }
@@ -202,7 +207,8 @@ private fun InstanceNodeViewer(vmService: VmService, path: InstancePath) {
                                     if (valueId != null) {
                                         InstanceNodeViewer(
                                             vmService = vmService,
-                                            path = InstancePath.FromInstanceId(valueId)
+                                            path = InstancePath.FromInstanceId(valueId),
+                                            parent = currentDetails
                                         )
                                     } else {
                                         Text("null")

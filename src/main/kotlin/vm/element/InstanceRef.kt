@@ -39,7 +39,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
     /**
      * 实例引用总是包含它们的类。
      */
-    fun getClassRef(): ClassRef {
+    open fun getClassRef(): ClassRef {
         return ClassRef(json.get("class").asJsonObject)
     }
 
@@ -51,7 +51,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * 可以返回 <code>null</code>。
      */
-    fun getClosureContext(): ContextRef? {
+    open fun getClosureContext(): ContextRef? {
         val obj = json.get("closureContext")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -69,7 +69,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * 可以返回 <code>null</code>。
      */
-    fun getClosureFunction(): FuncRef? {
+    open fun getClosureFunction(): FuncRef? {
         val obj = json.get("closureFunction")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -87,21 +87,21 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * 可以返回 <code>null</code>。
      */
-    fun getDebugName(): String? {
+    open fun getDebugName(): String? {
         return getAsString("debugName")
     }
 
     /**
      * 分配给已分配对象的 identityHashCode。此哈希码与 getAllocationTraces() 返回的 HeapSnapshot 和 CpuSample 中提供的哈希码相同。
      */
-    fun getIdentityHashCode(): Int {
+    open fun getIdentityHashCode(): Int {
         return getAsInt("identityHashCode")
     }
 
     /**
      * 这是什么类型的实例？
      */
-    fun getKind(): InstanceKind {
+    open fun getKind(): InstanceKind {
         val value = json.get("kind")
         try {
             return if (value == null) InstanceKind.Unknown else InstanceKind.valueOf(value.asString)
@@ -139,7 +139,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getLength(): Int {
+    open fun getLength(): Int {
         return getAsInt("length")
     }
 
@@ -152,7 +152,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getParameterizedClass(): ClassRef? {
+    open fun getParameterizedClass(): ClassRef? {
         val obj = json.get("parameterizedClass")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -170,7 +170,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getParameters(): ElementList<Parameter>? {
+    open fun getParameters(): ElementList<Parameter>? {
         val parameters = json.get("parameters") ?: return null
 
         return object : ElementList<Parameter>(parameters.asJsonArray) {
@@ -190,7 +190,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getPattern(): InstanceRef? {
+    open fun getPattern(): InstanceRef? {
         val obj = json.get("pattern")?.asJsonObject ?: return null
         return InstanceRef(obj)
     }
@@ -203,7 +203,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getPortId(): Int {
+    open fun getPortId(): Int {
         return getAsInt("portId")
     }
 
@@ -215,7 +215,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getReturnType(): InstanceRef? {
+    open fun getReturnType(): InstanceRef? {
         val obj = json.get("returnType")?.asJsonObject ?: return null
         return InstanceRef(obj)
     }
@@ -228,7 +228,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getTypeClass(): ClassRef? {
+    open fun getTypeClass(): ClassRef? {
         val obj = json.get("typeClass")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -246,7 +246,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getTypeParameters(): ElementList<InstanceRef>? {
+    open fun getTypeParameters(): ElementList<InstanceRef>? {
         val typeParameters = json.get("typeParameters") ?: return null
 
         return object : ElementList<InstanceRef>(typeParameters.asJsonArray) {
@@ -284,7 +284,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getValueAsStringIsTruncated(): Boolean {
+    open fun getValueAsStringIsTruncated(): Boolean {
         val elem = json.get("valueAsStringIsTruncated")
         return elem?.asBoolean ?: false
     }
@@ -292,7 +292,7 @@ open class InstanceRef(json: JsonObject) : ObjRef(json) {
     /**
      * Returns whether this instance represents null.
      */
-    fun isNull(): Boolean {
+    open fun isNull(): Boolean {
         return getKind() == InstanceKind.Null
     }
 }

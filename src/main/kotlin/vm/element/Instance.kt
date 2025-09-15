@@ -21,20 +21,8 @@ import com.google.gson.JsonObject
 /**
  * {@link Instance} 表示 Dart 语言类 {@link Obj} 的一个实例。
  */
-open class Instance(json: JsonObject) : Obj(json) {
+open class Instance(json: JsonObject) : InstanceRef(json) {
 
-    /**
-     * 与 ReceivePort 分配关联的堆栈跟踪。
-     *
-     * 为以下实例类型提供：
-     *  - ReceivePort
-     *
-     * 可以返回 <code>null</code>。
-     */
-    fun getAllocationLocation(): InstanceRef? {
-        val obj = json.get("allocationLocation")?.asJsonObject ?: return null
-        return InstanceRef(obj)
-    }
 
     /**
      * Map 实例的元素。
@@ -112,7 +100,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getClosureContext(): ContextRef? {
+    override fun getClosureContext(): ContextRef? {
         val obj = json.get("closureContext")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -130,7 +118,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getClosureFunction(): FuncRef? {
+    override fun getClosureFunction(): FuncRef? {
         val obj = json.get("closureFunction")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -178,7 +166,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getDebugName(): String? {
+    override fun getDebugName(): String? {
         return getAsString("debugName")
     }
 
@@ -226,7 +214,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      * The identityHashCode assigned to the allocated object. This hash code is the same as the hash
      * code provided in HeapSnapshot and CpuSample's returned by getAllocationTraces().
      */
-    fun getIdentityHashCode(): Int {
+    override fun getIdentityHashCode(): Int {
         return getAsInt("identityHashCode")
     }
 
@@ -257,7 +245,7 @@ open class Instance(json: JsonObject) : Obj(json) {
     /**
      * What kind of instance is this?
      */
-    fun getKind(): InstanceKind {
+    override fun getKind(): InstanceKind {
         val value = json.get("kind")
         try {
             return if (value == null) InstanceKind.Unknown else InstanceKind.valueOf(value.asString)
@@ -295,7 +283,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getLength(): Int {
+    override fun getLength(): Int {
         return getAsInt("length")
     }
 
@@ -317,17 +305,6 @@ open class Instance(json: JsonObject) : Obj(json) {
         return ObjRef(obj)
     }
 
-    /**
-     * The name of a Type instance.
-     *
-     * Provided for instance kinds:
-     *  - Type
-     *
-     * Can return <code>null</code>.
-     */
-    fun getName(): String? {
-        return getAsString("name")
-    }
 
     /**
      * The index of the first element or association or codeunit returned. This is only provided when
@@ -379,7 +356,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getParameterizedClass(): ClassRef? {
+    override fun getParameterizedClass(): ClassRef? {
         val obj = json.get("parameterizedClass")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -397,7 +374,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getParameters(): ElementList<Parameter>? {
+    override fun getParameters(): ElementList<Parameter>? {
         val parameters = json.get("parameters") ?: return null
 
         return object : ElementList<Parameter>(parameters.asJsonArray) {
@@ -415,7 +392,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getPattern(): InstanceRef? {
+    override fun getPattern(): InstanceRef? {
         val obj = json.get("pattern")?.asJsonObject ?: return null
         return InstanceRef(obj)
     }
@@ -428,7 +405,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getPortId(): Int {
+    override fun getPortId(): Int {
         return getAsInt("portId")
     }
 
@@ -476,7 +453,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getReturnType(): InstanceRef? {
+    override fun getReturnType(): InstanceRef? {
         val obj = json.get("returnType")?.asJsonObject ?: return null
         return InstanceRef(obj)
     }
@@ -541,7 +518,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getTypeClass(): ClassRef? {
+    override fun getTypeClass(): ClassRef? {
         val obj = json.get("typeClass")?.asJsonObject ?: return null
         val type = json.get("type")?.asString
         if ("Instance" == type || "@Instance" == type) {
@@ -559,7 +536,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getTypeParameters(): ElementList<InstanceRef>? {
+    override fun getTypeParameters(): ElementList<InstanceRef>? {
         val typeParameters = json.get("typeParameters") ?: return null
 
         return object : ElementList<InstanceRef>(typeParameters.asJsonArray) {
@@ -581,7 +558,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    open fun getValueAsString(): String? {
+    override fun getValueAsString(): String? {
         return getAsString("valueAsString")
     }
 
@@ -593,7 +570,7 @@ open class Instance(json: JsonObject) : Obj(json) {
      *
      * Can return <code>null</code>.
      */
-    fun getValueAsStringIsTruncated(): Boolean {
+    override fun getValueAsStringIsTruncated(): Boolean {
         val elem = json.get("valueAsStringIsTruncated")
         return elem?.asBoolean ?: false
     }
@@ -601,7 +578,7 @@ open class Instance(json: JsonObject) : Obj(json) {
     /**
      * Returns whether this instance represents null.
      */
-    fun isNull(): Boolean {
+    override fun isNull(): Boolean {
         return getKind() == InstanceKind.Null
     }
 }
