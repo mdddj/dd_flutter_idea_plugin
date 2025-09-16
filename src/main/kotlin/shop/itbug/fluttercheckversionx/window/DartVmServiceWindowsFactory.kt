@@ -54,6 +54,7 @@ import shop.itbug.fluttercheckversionx.util.ComposeHelper
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.contextMenu
+import shop.itbug.fluttercheckversionx.widget.AddPackageDialog
 import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
 import shop.itbug.fluttercheckversionx.widget.SearchResultCard
 import shop.itbug.fluttercheckversionx.window.vm.DartVmLoggingComponent
@@ -89,6 +90,10 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
             toolWindow.addComposeTab("Demo") {
                 JsonViewerDemo()
             }
+
+            toolWindow.addComposeTab("常见依赖") {
+                AddPackageDialog(project){}
+            }
         }
 
     }
@@ -104,7 +109,6 @@ fun Project.getDartVmWindow() = ToolWindowManager.getInstance(this).getToolWindo
 val dartVmToolWindowId = "FlutterX Dart VM"
 
 
-@OptIn(ExperimentalJewelApi::class)
 @Composable
 private fun DartHttpUI(project: Project) {
     FlutterAppsTabComponent(project) {

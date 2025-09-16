@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
+import shop.itbug.fluttercheckversionx.widget.CenterText
 import vm.VmService
 import vm.devtool.*
 
@@ -25,8 +26,8 @@ import vm.devtool.*
 @Composable
 fun ProviderComposeComponent(project: Project) {
     FlutterAppsTabComponent(project) {
-//        CenterText("Coming soon...")
-        ProviderBody(project, it.vmService)
+        CenterText("Coming soon...")
+//        ProviderBody(project, it.vmService)
     }
 }
 

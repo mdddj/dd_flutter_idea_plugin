@@ -3,9 +3,10 @@
 ## Unreleased
 
 
-## [6.0.2] - 2025-09-08
+## [6.0.3] - 2025-09-16
 
 
+* Fix: Switching VM Service is unresponsive (9.16 dart vm)
 * Fix: Fixed an issue where HTTP request listening failed after a hot restart
 * Fix: Fixed a bug where the http listening UI right-click menu caused a freeze after isolateId was regenerated
 * New: dart types support displaying to the left of the variable name, see [document](https://flutterx.itbug.shop/en/dart-file/parameter-type-inline-display/#display-location)

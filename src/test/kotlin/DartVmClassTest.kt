@@ -1,14 +1,14 @@
+
 import com.google.gson.GsonBuilder
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlinx.coroutines.runBlocking
 import vm.VmService
 import vm.VmServiceBase
 import vm.VmServiceListener
-import vm.devtool.InstanceDetails
-import vm.devtool.PathToProperty
-import vm.devtool.ProviderHelper
-import vm.devtool.ProviderNode
+import vm.devtool.*
 import vm.element.Event
+import vm.logging.Logger
+import vm.logging.Logging
 
 class DartVmClassTest : BasePlatformTestCase() {
     val json = GsonBuilder().setPrettyPrinting().create()
@@ -32,7 +32,7 @@ class DartVmClassTest : BasePlatformTestCase() {
             }
         }
 
-    val url = "ws://127.0.0.1:60944/fuEL9uYgCUA=/ws"
+    val url = "ws://127.0.0.1:63210/vJxUYNzr9gM=/ws"
     val createVmService: VmService
         get() = VmServiceBase.connect(url, vmListen)
 
@@ -41,6 +41,7 @@ class DartVmClassTest : BasePlatformTestCase() {
     fun testGetProviders() {
         runBlocking {
             val vmService = createVmService
+            Logging.setLogger(Logger.CONSOLE)
             vmService.updateMainIsolateId()
             val providers: List<ProviderNode> = ProviderHelper.getProviderNodes(vmService)
             assert(providers.isNotEmpty())
@@ -52,11 +53,11 @@ class DartVmClassTest : BasePlatformTestCase() {
                 when (resultByPath) {
                     is InstanceDetails.Object -> {
                         resultByPath.fieldsFiltered.forEach { field ->
-                            val newPath = path.pathForChildWithInstance(
+                            val newPath: InstancePath.FromInstanceId = path.pathForChildWithInstance(
                                 PathToProperty.ObjectProperty(field.name, field.ownerUri, field.ownerName, field),
                                 instanceId = field.ref!!.getId()!!
                             )
-                            val instance =  ProviderHelper.getInstanceDetails(vmService,newPath,resultByPath)
+                            val instance: InstanceDetails =  ProviderHelper.getInstanceDetails(vmService,newPath,resultByPath)
                             println(instance)
                         }
                     }

@@ -71,7 +71,7 @@ dependencies {
         }
         bundledPlugins(bPlugins)
         //"io.flutter:87.1"
-        plugins("Dart:$dartVersion","io.flutter:87.1")
+        plugins("Dart:$dartVersion", "io.flutter:87.1")
         pluginVerifier()
         zipSigner()
         javaCompiler()
@@ -82,6 +82,7 @@ dependencies {
         testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
 
         testFramework(TestFrameworkType.Platform)
+
 
 
         // jewel
@@ -208,36 +209,10 @@ idea {
 }
 
 
-try {
-    val userName = System.getenv("maven_username")
-    val passWord = System.getenv("maven_password")
-    afterEvaluate {
-        publishing {
-            repositories {
-                maven {
-                    name = "sonatype"
-                    url = uri("https://package.itbug.shop/nexus/repository/idea-plugin/")
-                    credentials {
-                        username = userName
-                        password = passWord
-                    }
-                }
-                publications {
-                    create<MavenPublication>("release") {
-                        artifact("${layout.buildDirectory}/distributions/FlutterX-${project.version}.zip")
-                    }
-                }
-            }
-        }
-    }
-} catch (e: Exception) {
-    println("上传插件到私服失败:${e}")
-}
-
-
 idea {
     module {
         isDownloadSources = true
+        isDownloadJavadoc = true
     }
 }
 

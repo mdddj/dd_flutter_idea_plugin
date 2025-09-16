@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.intellij.openapi.project.Project
-import org.jetbrains.jewel.bridge.theme.SwingBridgeTheme
-import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.SimpleTabContent
 import org.jetbrains.jewel.ui.component.TabData
@@ -18,7 +16,6 @@ import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 import shop.itbug.fluttercheckversionx.widget.CenterText
 
 
-@OptIn(ExperimentalJewelApi::class)
 @Composable
 fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterAppInstance) -> Unit) {
     var tabIndex by remember { mutableIntStateOf(0) }
@@ -31,29 +28,29 @@ fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterApp
                 content = { tabState ->
                     SimpleTabContent(flutterAppList[index].appInfo.deviceId.firstChatToUpper(), tabState)
                 },
-                closable = false
+                closable = false,
+                onClick = {
+                    tabIndex = index
+                }
             )
         }
     }
-    SwingBridgeTheme {
-        if (flutterAppList.isEmpty()) {
-            CenterText(
-                """Not Found any running flutter app.
+    if (flutterAppList.isEmpty()) {
+        CenterText(
+            """Not Found any running flutter app.
 Please make sure the flutter app is running and the observatory is enabled.
 If you are running on a real device, please make sure the device is connected to the computer and the port is forwarded.
 """
+        )
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            TabStrip(
+                tabs, JewelTheme.editorTabStyle,
             )
-        } else {
-            Column(modifier = Modifier.fillMaxSize()) {
-                TabStrip(
-                    tabs, JewelTheme.editorTabStyle,
-                )
-                val selectApp = flutterAppList.getOrNull(tabIndex)
-                if (selectApp != null) {
-                    body.invoke(selectApp)
-                }
+            val selectApp = flutterAppList.getOrNull(tabIndex)
+            if (selectApp != null) {
+                body.invoke(selectApp)
             }
         }
-
     }
 }

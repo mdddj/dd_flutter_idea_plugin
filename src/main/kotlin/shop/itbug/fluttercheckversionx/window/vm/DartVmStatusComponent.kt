@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.launch
-import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
@@ -34,7 +33,6 @@ import javax.swing.SwingUtilities
 import kotlin.math.ln
 import kotlin.math.pow
 
-@OptIn(ExperimentalJewelApi::class)
 @Composable
 fun DartVmStatusComponent(project: Project) {
     FlutterAppsTabComponent(project) {

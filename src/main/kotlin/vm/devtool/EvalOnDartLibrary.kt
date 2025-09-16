@@ -6,6 +6,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import vm.*
 import vm.consumer.EvaluateConsumer
+import vm.consumer.GetInstanceConsumer
 import vm.element.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -47,13 +48,12 @@ class EvalSentinelException(
  *
  * @param libraryUri 要执行代码的目标库的 URI, e.g., "package:provider/provider.dart"。
  * @param vmService VmService 实例。
- * @param scope 用于执行异步操作的 CoroutineScope。
  */
 class EvalOnDartLibrary(
     private val libraryUri: String,
     private val vmService: VmService,
-    private val scope: CoroutineScope,
 ) {
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var libraryRef: LibraryRef? = null
     private var initializeJob: Deferred<LibraryRef?>? = null
     private val mutex = Mutex()
@@ -149,8 +149,18 @@ class EvalOnDartLibrary(
      * @return 完整的 [Instance] 对象。
      */
     suspend fun getInstance(isolateId: String, instanceRef: InstanceRef): Instance {
-        return vmService.getObject(isolateId, instanceRef.getId()!!)
-            ?: throw IllegalStateException("Failed to get instance details for object ID ${instanceRef.getId()}")
+        return suspendCancellableCoroutine { continuation ->
+            vmService.getInstance(isolateId, instanceRef.getId()!!,object : GetInstanceConsumer{
+                override fun received(response: Instance) {
+                    continuation.resume(response)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resumeWithException(error.exception)
+                }
+
+            })
+        }
     }
 
 

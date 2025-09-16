@@ -7,6 +7,7 @@ import vm.VmService
 import vm.element.*
 import vm.getObject
 import vm.getObjectWithClassObj
+import vm.logging.Logging
 
 data class ProviderNode(
     val id: String,
@@ -111,8 +112,8 @@ data class ObjectField(
 
     val isPrivate get() = name.startsWith("_")
 
-    fun createEval(vm: VmService): EvalOnDartLibrary = EvalOnDartLibrary("dart:io", vm, vm.coroutineScope)
-    fun createEvalWithOwner(vm: VmService): EvalOnDartLibrary = EvalOnDartLibrary(ownerUri, vm, vm.coroutineScope)
+    fun createEval(vm: VmService): EvalOnDartLibrary = EvalOnDartLibrary("dart:io", vm)
+    fun createEvalWithOwner(vm: VmService): EvalOnDartLibrary = EvalOnDartLibrary(ownerUri, vm)
 
     suspend fun getInstance(vm: VmService, parentInstance: InstanceDetails.Object): Instance? {
         return this.getFieldInstance(vm, parentInstance)
@@ -169,7 +170,7 @@ object ProviderHelper {
 
     suspend fun getProviderNodes(vm: VmService): List<ProviderNode> {
         val mainIsolateId = vm.getMainIsolateId()
-        val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm, vm.coroutineScope)
+        val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm)
         val instanceRef = providerEval.safeEval(
             mainIsolateId,
             "ProviderBinding.debugInstance.providerDetails.keys.toList()"
@@ -208,10 +209,10 @@ object ProviderHelper {
         parent: InstanceDetails? = null
     ): InstanceDetails {
         val mainIsolateId = vm.getMainIsolateId()
-        val coreEval = EvalOnDartLibrary("dart:core", vm, vm.coroutineScope)
+        val coreEval = EvalOnDartLibrary("dart:core", vm)
         val currentRef: InstanceRef? = if (parent == null) when (path) {
             is InstancePath.FromProviderId -> {
-                val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm, vm.coroutineScope)
+                val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm)
                 providerEval.safeEval(
                     mainIsolateId,
                     "ProviderBinding.debugInstance.providerDetails[\"${path.providerId}\"]?.value"
@@ -219,11 +220,11 @@ object ProviderHelper {
             }
 
             is InstancePath.FromInstanceId -> {
-                val dartEval = EvalOnDartLibrary("dart:io", vm, vm.coroutineScope)
+                Logging.getLogger().logInformation("获取实例详情")
+                val dartEval = EvalOnDartLibrary("dart:io", vm)
                 dartEval.safeEval(vm.getMainIsolateId(), "value", mapOf("value" to path.instanceId))
             }
         } else when (parent) {
-
             is InstanceDetails.Map -> {
                 val keyPath = path.pathToProperty.last() as PathToProperty.MapKey
                 val key = if (keyPath.ref == null) "null" else "key"
@@ -258,7 +259,9 @@ object ProviderHelper {
                     it.name == propertyPath.name
                             && it.ownerName == propertyPath.ownerName && it.ownerUri == propertyPath.ownerUri
                 }
-                field.getFieldInstance(vm, parent)
+                Logging.getLogger().logInformation("获取字段详情")
+//                field.getFieldInstance(vm, parent)
+                field.ref
             }
 
             is InstanceDetails.DartList -> {
@@ -287,7 +290,7 @@ object ProviderHelper {
         isolateId: String,
         path: InstancePath
     ): InstanceDetails {
-        val coreEval = EvalOnDartLibrary("dart:core", vm, vm.coroutineScope)
+        val coreEval = EvalOnDartLibrary("dart:core", vm)
         val instanceRefId = instance.getId()!!
         val hash = instance.getIdentityHashCode()
 
@@ -316,7 +319,7 @@ object ProviderHelper {
 
                 val classRef = instance.getClassRef()
                 val libraryUri = classRef.getLibrary()?.getUri() ?: "dart:core"
-                val evalForInstance = EvalOnDartLibrary(libraryUri, vm, vm.coroutineScope)
+                val evalForInstance = EvalOnDartLibrary(libraryUri, vm)
                 val allFields = mutableListOf<ObjectField>()
                 var currentClass = coreEval.getClassObject(isolateId, classRef.getId()!!)
                 val evalCache = mutableMapOf<String, EvalOnDartLibrary>()
@@ -330,7 +333,7 @@ object ProviderHelper {
                             val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId()!!)
 
                             val ownerUri: String = fieldRef.getLocation()!!.getScript().getUri()!!
-                            val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName())!!
+                            val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
 
                             val ownerPackageName: String? = tryParsePackageName(ownerUri)
                             val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
@@ -343,8 +346,7 @@ object ProviderHelper {
                                     ownerName = ownerName,
                                     eval = EvalOnDartLibrary(
                                         ownerUri,
-                                        vm,
-                                        vm.coroutineScope
+                                        vm
                                     ),
                                     ref = fieldRef.getDeclaredType(),
                                     ownerUri = ownerUri,
