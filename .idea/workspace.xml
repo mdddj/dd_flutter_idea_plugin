@@ -4,32 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="feat(plugin): 添加常用依赖项搜索和添加功能&#10;&#10;- 新增 DartPackageAddCompose 组件，用于展示和搜索常用依赖项&#10;- 实现 AddPackageDialog 和 AddPackageDialogIdea 类，提供依赖项添加功能&#10;- 在主工具窗口添加常用依赖项选项卡&#10;-优化 ProviderComposeComponent，暂时移除 ProviderBody 展示&#10;- 更新搜索插件动作，支持打开新增的依赖项搜索对话框">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="修复检查器bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/widget/DetailedModeToggleAction.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/widget/InspectorOverlayToggleAction.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/widget/RefreshTreeAction.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/DartProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/DartProjectService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubSearchResult.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubSearchResult.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/DartPackageAddCompose.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/DartPackageAddCompose.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/FlutterWidgetTreeWidget.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowFactory.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowsFactory.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/DartVmServiceWindowsFactory.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/flutter/WidgetTreeWindow.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/DartVmStatusComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/DartVmStatusComponent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/vm/DartVmSetting.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/vm/DartVmSetting.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/CenterText.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/CenterText.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/FlutterAppsTab.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/FlutterAppsTab.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/InspectorStateManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/InspectorStateManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceBase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/VmServiceBase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/element/EventKind.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/element/EventKind.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/dart-vm-actions.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/dart-vm-actions.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1947,7 +1928,7 @@
       <workItem from="1758075154830" duration="293000" />
       <workItem from="1758185308811" duration="9000" />
       <workItem from="1758186282127" duration="3069000" />
-      <workItem from="1758244415024" duration="1154000" />
+      <workItem from="1758244415024" duration="3441000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2292,7 +2273,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="415" />
+    <option name="localTasksCounter" value="416" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2342,7 +2323,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="增强 l10n 操作，新增删除 key,修改 key操作" />
     <MESSAGE value="更新文档" />
     <MESSAGE value="日志窗口添加清空全部操作" />
     <MESSAGE value="release 5.7.0" />
@@ -2367,7 +2347,8 @@
     <MESSAGE value="release 6.0.2" />
     <MESSAGE value="feat(devtool): 添加 provider 数据解析功能&#10;&#10;- 实现了 ProviderNode 类，用于表示 provider 节点信息&#10;- 添加了 PathToProperty 类，用于表示对象属性路径&#10;- 实现了 ObjectField 类，用于表示对象字段信息&#10;- 添加了 getInstanceDetails 方法，用于获取实例详细信息&#10;- 实现了 ProviderComposeComponent，用于展示 provider 数据&#10;- 添加了 JsonViewerDemo组件，用于展示 JSON 数据" />
     <MESSAGE value="feat(plugin): 添加常用依赖项搜索和添加功能&#10;&#10;- 新增 DartPackageAddCompose 组件，用于展示和搜索常用依赖项&#10;- 实现 AddPackageDialog 和 AddPackageDialogIdea 类，提供依赖项添加功能&#10;- 在主工具窗口添加常用依赖项选项卡&#10;-优化 ProviderComposeComponent，暂时移除 ProviderBody 展示&#10;- 更新搜索插件动作，支持打开新增的依赖项搜索对话框" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(plugin): 添加常用依赖项搜索和添加功能&#10;&#10;- 新增 DartPackageAddCompose 组件，用于展示和搜索常用依赖项&#10;- 实现 AddPackageDialog 和 AddPackageDialogIdea 类，提供依赖项添加功能&#10;- 在主工具窗口添加常用依赖项选项卡&#10;-优化 ProviderComposeComponent，暂时移除 ProviderBody 展示&#10;- 更新搜索插件动作，支持打开新增的依赖项搜索对话框" />
+    <MESSAGE value="修复检查器bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="修复检查器bug" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>

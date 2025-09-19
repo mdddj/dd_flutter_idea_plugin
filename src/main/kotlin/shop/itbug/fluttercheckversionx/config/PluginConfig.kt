@@ -27,6 +27,9 @@ class PluginSetting : BaseState() {
     //启动 flutterx vm 窗口
     var enableVmServiceToolWindow by property(true)
 
+    //启用dart vm service 控制台监听器
+    var enableVmServiceListen by property(true)
+
 
 }
 
