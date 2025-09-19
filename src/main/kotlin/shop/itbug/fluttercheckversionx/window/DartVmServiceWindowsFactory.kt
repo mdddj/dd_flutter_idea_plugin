@@ -57,10 +57,7 @@ import shop.itbug.fluttercheckversionx.util.contextMenu
 import shop.itbug.fluttercheckversionx.widget.AddPackageDialog
 import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
 import shop.itbug.fluttercheckversionx.widget.SearchResultCard
-import shop.itbug.fluttercheckversionx.window.vm.DartVmLoggingComponent
-import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
-import shop.itbug.fluttercheckversionx.window.vm.FlutterAppsTabComponent
-import shop.itbug.fluttercheckversionx.window.vm.ProviderComposeComponent
+import shop.itbug.fluttercheckversionx.window.vm.*
 import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
@@ -92,7 +89,7 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
             }
 
             toolWindow.addComposeTab("常见依赖") {
-                AddPackageDialog(project){}
+                AddPackageDialog(project) {}
             }
         }
 
@@ -334,7 +331,7 @@ private fun RequestDetailPanel(
 
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TabStrip(
+        MyTabStrip(
             tabs = tabs.mapIndexed { index, title ->
                 TabData.Default(
                     selected = index == selectedTabIndex,

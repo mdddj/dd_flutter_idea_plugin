@@ -9,6 +9,7 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.SimpleTabContent
 import org.jetbrains.jewel.ui.component.TabData
 import org.jetbrains.jewel.ui.component.TabStrip
+import org.jetbrains.jewel.ui.component.styling.TabStyle
 import org.jetbrains.jewel.ui.theme.editorTabStyle
 import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInstance
 import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
@@ -44,7 +45,7 @@ If you are running on a real device, please make sure the device is connected to
         )
     } else {
         Column(modifier = Modifier.fillMaxSize()) {
-            TabStrip(
+            MyTabStrip(
                 tabs, JewelTheme.editorTabStyle,
             )
             val selectApp = flutterAppList.getOrNull(tabIndex)
@@ -53,4 +54,9 @@ If you are running on a real device, please make sure the device is connected to
             }
         }
     }
+}
+
+@Composable
+fun MyTabStrip(tabs: List<TabData>, style: TabStyle, modifier: Modifier = Modifier, enabled: Boolean = true) {
+    TabStrip(tabs, style, modifier)
 }

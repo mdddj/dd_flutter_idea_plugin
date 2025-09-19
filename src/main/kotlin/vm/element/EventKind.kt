@@ -65,10 +65,7 @@ enum class EventKind {
      */
     IsolateExit,
 
-    /**
-     * 隔离区已重新加载的通知。
-     */
-    IsolateReload,
+
 
     /**
      * 隔离区准备运行的通知。

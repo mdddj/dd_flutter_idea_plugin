@@ -5,9 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,14 +25,19 @@ import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.jewel.ui.theme.editorTabStyle
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.MyPackageGroup
+import shop.itbug.fluttercheckversionx.services.PubService
+import shop.itbug.fluttercheckversionx.window.vm.MyTabStrip
 import java.awt.Dimension
+import javax.swing.Action
 import javax.swing.JComponent
 
 /**
  * 给flutter 项目中添加常用依赖第三个包
  */
 @get:Composable
-private val bgColor get() = if (JewelTheme.isDark) Color.Black else Color.White
+private val bgColor get() = if (JewelTheme.isDark) Color.Black.copy(alpha = 0.5f) else Color.White
+
+
 
 //依赖的类型
 private enum class PackageGroup(val displayName: String) {
@@ -40,7 +48,7 @@ private enum class PackageGroup(val displayName: String) {
     Util("工具类")
 }
 
-private sealed class MyFlutterPackage() {
+private sealed class MyFlutterPackage {
     //单个依赖
     data class Simple(val packageName: String, val type: MyPackageGroup, val group: PackageGroup) : MyFlutterPackage()
 
@@ -197,6 +205,7 @@ private fun PackageItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .background(bgColor)
             .clickable { onSelectedChange(!isSelected) },
     ) {
@@ -277,7 +286,14 @@ private val flutterXDefinePackages: List<MyFlutterPackage> = listOf(
 
 @Composable
 fun AddPackageDialog(project: Project, onDismissRequest: () -> Unit) {
-    AddPackageDialogContent(project, onDismissRequest)
+    Column {
+        OutlinedButton({
+            AddPackageDialogIdea(project).show()
+        }) {
+            Text("弹窗")
+        }
+        AddPackageDialogContent(project, onDismissRequest)
+    }
 }
 
 enum class DartPackageDialogTab {
@@ -317,10 +333,10 @@ class AddPackageDialogIdea(val project: Project) : DialogWrapper(project, true) 
             }
 
             Column(modifier = Modifier.fillMaxSize()) {
-                TabStrip(tabs, JewelTheme.editorTabStyle, modifier = Modifier.fillMaxWidth())
+                MyTabStrip(tabs, JewelTheme.editorTabStyle, modifier = Modifier.fillMaxWidth())
                 when (DartPackageDialogTab.entries[selectIndex]) {
                     DartPackageDialogTab.Search -> {
-                        Text("搜索插件")
+                        SearchPackage(project)
                     }
 
                     DartPackageDialogTab.AddedInConfig -> {
@@ -339,5 +355,80 @@ class AddPackageDialogIdea(val project: Project) : DialogWrapper(project, true) 
         return Dimension(500, 400)
     }
 
+    override fun createActions(): Array<out Action?> {
+        return emptyArray()
+    }
 
+}
+
+
+//
+@Composable
+private fun SearchPackage(project: Project) {
+
+    SearchCompose({
+        val result = PubService.search(it)
+        if (result != null) SearchState.Result(result) else SearchState.Empty()
+    }) {
+        val packages = it.data.packages
+        LazyColumn {
+            itemsIndexed(packages) { index, packageItem ->
+                Box {
+                    Text(packageItem.`package`)
+                }
+            }
+        }
+    }
+}
+
+
+sealed class SearchState<T> {
+    data class Loading<T>(val dummy: Unit = Unit) : SearchState<T>()
+    data class Empty<T>(val dummy: Unit = Unit) : SearchState<T>()
+    data class Error<T>(val error: String) : SearchState<T>()
+    data class Result<T>(val data: T) : SearchState<T>()
+}
+typealias SearchFun<T> = (search: String) -> SearchState<T>
+
+@Composable
+fun <T> SearchCompose(onSearch: SearchFun<T>, child: @Composable (result: SearchState.Result<T>) -> Unit) {
+    val textFieldState by remember { mutableStateOf(TextFieldState()) }
+    var result by remember { mutableStateOf<SearchState<T>>(SearchState.Empty()) }
+    LaunchedEffect(textFieldState.text) {
+        val text = textFieldState.text.toString()
+        if (text.isNotEmpty()) {
+            try {
+                result = SearchState.Loading()
+                val response = onSearch(text)
+                result = response
+            } catch (e: Exception) {
+                result = SearchState.Error(e.localizedMessage)
+            }
+        }
+    }
+
+    Column {
+        TextField(
+            state = textFieldState,
+            placeholder = { Text("输入搜索内容") },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        when (result) {
+            is SearchState.Empty<*> -> {
+                Text("Empty data")
+            }
+
+            is SearchState.Error -> {
+                Text("Error:${(result as SearchState.Error<T>).error}")
+            }
+
+            is SearchState.Result<*> -> {
+                child(result as SearchState.Result<T>)
+            }
+
+            is SearchState.Loading<*> -> {
+                CircularProgressIndicator()
+            }
+        }
+    }
 }

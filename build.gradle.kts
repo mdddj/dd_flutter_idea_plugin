@@ -61,12 +61,12 @@ dependencies {
     intellijPlatform {
         when (ideType) {
             "252" -> {
-                intellijIdeaCommunity("2025.2")
+                intellijIdea("2025.2")
             }
 
             "251" -> {
-                intellijIdeaCommunity("2025.1.4.1")
-//                local("/Applications/Android Studio.app")
+//                intellijIdeaCommunity("2025.1.4.1")
+                local("/Applications/Android Studio.app")
             }
         }
         bundledPlugins(bPlugins)

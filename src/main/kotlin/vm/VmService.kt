@@ -36,6 +36,9 @@ class VmService : VmServiceBase() {
         LoggingController(this, coroutineScope)
     }
 
+    //检查管理器
+    val inspectorManager by lazy { InspectorStateManager(this) }
+
     private val listenStreamsEvents = arrayOf(
         *EventKind.entries.map { it.name }.toTypedArray()
     )
@@ -159,12 +162,13 @@ class VmService : VmServiceBase() {
                 return
             }
             val eventIsolateId = event.getIsolate()?.getId()
-
+            logger.info("[热重启监听]:${event}")
             when (event.getKind()) {
                 EventKind.IsolateExit -> {
                     if (eventIsolateId != null && eventIsolateId == getMainIsolateId()) {
                         logger.info("🔥 主 Isolate (id: $eventIsolateId) 正在退出，这很可能是热重启的第一步。")
                     }
+                    hotListeners.forEach { it.onExit() }
                 }
 
                 EventKind.IsolateStart -> {
@@ -175,12 +179,7 @@ class VmService : VmServiceBase() {
                             updateMainIsolateId()
                         }
                     }
-                }
-
-                EventKind.IsolateReload -> {
-                    if (eventIsolateId != null && eventIsolateId == getMainIsolateId()) {
-                        logger.info("🔄 监听到热重载 (Hot Reload) on isolate: $eventIsolateId")
-                    }
+                    hotListeners.forEach { it.onStart() }
                 }
 
                 else -> {
@@ -209,9 +208,16 @@ class VmService : VmServiceBase() {
     }
 
     private val eventListeners = mutableListOf<VmEventListener>()
+    private val hotListeners = mutableListOf<VmHotResetListener>()
 
     interface VmEventListener {
         fun onVmEvent(streamId: String, event: Event)
+    }
+
+    //热重载
+    interface VmHotResetListener {
+        fun onExit()
+        fun onStart()
     }
 
     fun addEventListener(listener: VmEventListener) {
@@ -221,6 +227,16 @@ class VmService : VmServiceBase() {
 
     fun removeEventListener(listener: VmEventListener) {
         eventListeners.remove(listener)
+    }
+
+    fun addEventHotResetListener(listener: VmHotResetListener) {
+        logger.info("添加热重启监听器.")
+        hotListeners.add(listener)
+    }
+
+    fun removeEventHotResetListener(listener: VmHotResetListener) {
+        logger.info("移除热重启监听器")
+        hotListeners.remove(listener)
     }
 
     private fun forwardEventToCustomListeners(streamId: String, event: Event) {
@@ -1928,5 +1944,16 @@ class VmService : VmServiceBase() {
             })
         }
     }
+
+    override fun dispose() {
+        disconnect()
+    }
+
+
+    override fun disconnect() {
+        super.disconnect()
+        hotListeners.clear()
+    }
+
 
 }

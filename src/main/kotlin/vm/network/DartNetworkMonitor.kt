@@ -418,7 +418,7 @@ class DartNetworkMonitor(
                             stopMonitoring()
                         }
                     }
-                    EventKind.IsolateReload -> {
+                    EventKind.IsolateStart -> {
                         scope.launch {
                             startMonitoring()
                         }

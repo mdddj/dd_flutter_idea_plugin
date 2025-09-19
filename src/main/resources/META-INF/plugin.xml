@@ -169,8 +169,6 @@
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom" icon="/icons/flutter.svg"/>
-        <!--        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowFactory"-->
-        <!--                    id="FlutterX VM Service" icon="/icons/flutter.svg" anchor="right" doNotActivateOnStart="true"/>-->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowsFactory"
                     id="FlutterX Dart VM"
                     icon="/icons/dart.svg" anchor="bottom" doNotActivateOnStart="true"/>

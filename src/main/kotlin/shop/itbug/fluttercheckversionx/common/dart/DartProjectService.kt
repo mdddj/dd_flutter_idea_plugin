@@ -113,7 +113,6 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
     val isEnable by lazy { isSupportDartVm }
 
     init {
-
         log.info("是否启动了 dart vm 的功能:${isEnable}")
         if (isEnable) {
             project.messageBus.connect(parentDisposable = this).subscribe(TOPIC, this)

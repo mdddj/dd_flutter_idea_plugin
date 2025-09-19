@@ -21,7 +21,6 @@ import org.jetbrains.skiko.Cursor
 import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInstance
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
-import vm.InspectorStateManager
 import vm.VmService
 import vm.element.IsolateRef
 import vm.element.VM
@@ -239,25 +238,15 @@ private fun OpenGroupPanel(title: String, child: @Composable () -> Unit) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun InspectorStateComponent(vmService: VmService, project: Project) {
-    val manager by remember(vmService) {
-        mutableStateOf(
-            InspectorStateManager.getOrCreate(
-                vmService,
-                vmService.getMainIsolateId()
-            )
-        )
-    }
+    val manager = vmService.inspectorManager
     val isSelect by manager.overlayState.collectAsState()
-    DisposableEffect(manager) {
+    LaunchedEffect(manager) {
         manager.scope.launch {
             manager.navigationEvents.collect { result ->
                 SwingUtilities.invokeLater {
                     MyFileUtil.openFile(project, result.fileUri, result.line, result.column)
                 }
             }
-        }
-        onDispose {
-            manager.dispose()
         }
     }
     ToggleableIconActionButton(
@@ -270,6 +259,6 @@ private fun InspectorStateComponent(vmService: VmService, project: Project) {
             }
         }
     ) {
-        Text("Inspector")
+        Text("Inspector: ${if(isSelect) "On" else "Off"}")
     }
 }
