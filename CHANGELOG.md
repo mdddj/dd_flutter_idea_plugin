@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [6.0.5] - 2025-09-19
+
+* Fix the issue of Inspector hot-reload state synchronization problems
+* Added a setting to disable the Dart VM service
+* The VM panel has added some document links.
+
+
 
 ## [6.0.3] - 2025-09-16
 

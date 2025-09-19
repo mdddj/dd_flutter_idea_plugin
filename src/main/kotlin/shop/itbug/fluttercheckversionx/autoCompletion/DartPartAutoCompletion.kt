@@ -36,7 +36,7 @@ class DartPartAutoCompletion : CompletionContributor() {
         ) {
             val project = parameters.editor.project ?: return
             val partService = UserDartLibService.getInstance(project)
-            val file = parameters.editor.virtualFile
+            val file = parameters.editor.virtualFile ?: return
 
             val libNames = partService.getLibraryNames()
 

@@ -61,7 +61,8 @@ dependencies {
     intellijPlatform {
         when (ideType) {
             "252" -> {
-                intellijIdea("2025.2")
+                intellijIdeaCommunity("2025.2.1")
+//                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
 
             "251" -> {
