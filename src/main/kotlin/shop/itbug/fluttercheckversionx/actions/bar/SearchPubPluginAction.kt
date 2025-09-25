@@ -22,6 +22,7 @@ fun getStatusBarActionGroup() = ActionManager.getInstance().getAction("status_ba
 /// dart package search
 class SearchPubPluginAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
+//        e.project?.let { AddPackageDialogIdea(it).show() }
         e.project?.let { SearchDialog(it).show() }
     }
 
@@ -30,7 +31,7 @@ class SearchPubPluginAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.project != null
+        e.presentation.isVisible = e.project != null
         e.presentation.text = PluginBundle.get("search.pub.plugin")
     }
 }

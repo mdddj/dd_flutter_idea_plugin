@@ -54,11 +54,10 @@ import shop.itbug.fluttercheckversionx.util.ComposeHelper
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.contextMenu
+import shop.itbug.fluttercheckversionx.widget.AddPackageDialog
+import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
 import shop.itbug.fluttercheckversionx.widget.SearchResultCard
-import shop.itbug.fluttercheckversionx.window.vm.DartVmLoggingComponent
-import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
-import shop.itbug.fluttercheckversionx.window.vm.FlutterAppsTabComponent
-import shop.itbug.fluttercheckversionx.window.vm.ProviderComposeComponent
+import shop.itbug.fluttercheckversionx.window.vm.*
 import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
@@ -83,6 +82,17 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         toolWindow.addComposeTab("Provider") {
             ProviderComposeComponent(project)
         }
+
+        if (System.getenv("DEV") == "true") {
+            toolWindow.addComposeTab("Demo") {
+                JsonViewerDemo()
+            }
+
+            toolWindow.addComposeTab("常见依赖") {
+                AddPackageDialog(project) {}
+            }
+        }
+
     }
 
     override fun shouldBeAvailable(project: Project): Boolean {
@@ -96,7 +106,6 @@ fun Project.getDartVmWindow() = ToolWindowManager.getInstance(this).getToolWindo
 val dartVmToolWindowId = "FlutterX Dart VM"
 
 
-@OptIn(ExperimentalJewelApi::class)
 @Composable
 private fun DartHttpUI(project: Project) {
     FlutterAppsTabComponent(project) {
@@ -321,7 +330,7 @@ private fun RequestDetailPanel(
 
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TabStrip(
+        MyTabStrip(
             tabs = tabs.mapIndexed { index, title ->
                 TabData.Default(
                     selected = index == selectedTabIndex,
@@ -492,7 +501,7 @@ private fun RequestRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatusIndicator(request.status)
-            Text(request.method, modifier = Modifier.width(60.dp))
+            Text(request.method, modifier = Modifier.width(70.dp))
             Text(request.statusCode?.toString() ?: "...", modifier = Modifier.width(50.dp))
             SearchResultCard(
                 request.uri, searchQuery = searchText, true, enableAnimation = true, modifier = Modifier.weight(1f),

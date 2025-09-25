@@ -100,9 +100,7 @@
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
 
         <!--    plugin版本自动联想功能    -->
-        <completion.contributor language="yaml"
-                                implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
-                                order="first"/>
+
         <completion.contributor language="yaml" order="first"
                                 implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPackageAutoCompletion"/>
         <completion.contributor language="Dart"
@@ -139,7 +137,11 @@
         <codeInsight.declarativeInlayProvider group="TYPES_GROUP"
                                               implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayProvider"
                                               isEnabledByDefault="true" language="Dart" bundle="messages.pluginBundle"
-                                              nameKey="dart_type_params_show_name_key" providerId="DartTypeShow"/>
+                                              nameKey="dart_type_params_show_name_key" providerId="DartTypeShow"
+                                              descriptionKey="dart_type_params_show_name_key"/>
+        <codeInsight.declarativeInlayProviderCustomSettingsProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlaySettingProvider"
+                language="Dart" providerId="DartTypeShow"/>
 
         <codeInsight.inlayActionHandler handlerId="dartTypeInlayProviderId"
                                         implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeClickActionHandle"/>
@@ -165,9 +167,8 @@
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom" icon="/icons/flutter.svg"/>
-        <!--        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowFactory"-->
-        <!--                    id="FlutterX VM Service" icon="/icons/flutter.svg" anchor="right" doNotActivateOnStart="true"/>-->
-        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowsFactory" id="FlutterX Dart VM"
+        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowsFactory"
+                    id="FlutterX Dart VM"
                     icon="/icons/dart.svg" anchor="bottom" doNotActivateOnStart="true"/>
 
         <!--   底部状态栏展示小部件     -->

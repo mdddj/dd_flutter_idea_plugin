@@ -1,16 +1,12 @@
 package shop.itbug.fluttercheckversionx.services
 
-import shop.itbug.fluttercheckversionx.model.PluginVersionModel
 import com.intellij.util.io.HttpRequests
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
-import shop.itbug.fluttercheckversionx.model.PubPackageInfo
-import shop.itbug.fluttercheckversionx.model.PubPackageScore
-import shop.itbug.fluttercheckversionx.model.PubSearchResult
-import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
+import shop.itbug.fluttercheckversionx.model.*
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 
 
@@ -88,13 +84,17 @@ object PubService {
         val r = runBlocking(Dispatchers.IO) {
             return@runBlocking packageNames.map {
                 async {
-                    val score = getScore(it) ?: return@async null
-                    val info = callPluginDetails(it) ?: return@async null
-                    return@async PubPackageInfo(score, info)
+                    return@async getPubPackageInfoModel(it)
                 }
             }.awaitAll()
         }.filterNotNull()
         return r
+    }
+
+    fun getPubPackageInfoModel(name: String): PubPackageInfo? {
+        val score = getScore(name) ?: return null
+        val info = callPluginDetails(name) ?: return null
+        return PubPackageInfo(score, info)
     }
 }
 

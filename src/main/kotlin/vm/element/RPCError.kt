@@ -92,7 +92,7 @@ class RPCError(json: JsonObject) : Element(json), VmServiceConst {
 }
 
 class DartVMRPCException(val err: RPCError) : Error() {
-    override fun getLocalizedMessage(): String? {
-        return err.message + "\n" + err.details
+    override fun getLocalizedMessage(): String {
+        return err.message + "\n" + err.details + "\n" + err.json.toString()
     }
 }

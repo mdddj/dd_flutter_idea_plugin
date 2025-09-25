@@ -39,7 +39,7 @@ open class ObjRef(json: JsonObject) : Response(json) {
         return getAsString("id")
     }
 
-    fun getName(): String {
+    open fun getName(): String {
         return getAsString("name") ?: ""
     }
 

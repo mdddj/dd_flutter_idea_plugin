@@ -2,8 +2,25 @@
 
 ## Unreleased
 
+## [6.0.6] - 2025-09-25
 
-## [6.0.0] - 2025-09-05
+* Optimized the Flutter project detection logic
+
+## [6.0.5] - 2025-09-19
+
+* Fix the issue of Inspector hot-reload state synchronization problems
+* Added a setting to disable the Dart VM service
+* The VM panel has added some document links.
+
+
+
+## [6.0.3] - 2025-09-16
+
+
+* Fix: Switching VM Service is unresponsive (9.16 dart vm)
+* Fix: Fixed an issue where HTTP request listening failed after a hot restart
+* Fix: Fixed a bug where the http listening UI right-click menu caused a freeze after isolateId was regenerated
+* New: dart types support displaying to the left of the variable name, see [document](https://flutterx.itbug.shop/en/dart-file/parameter-type-inline-display/#display-location)
 
 *   New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
     *   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).

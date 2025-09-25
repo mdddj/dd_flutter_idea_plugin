@@ -1,17 +1,26 @@
 package vm.devtool
 
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import vm.VmService
-import vm.element.Instance
-import vm.element.InstanceKind
-import vm.element.InstanceRef
-import vm.element.MapAssociation
+import vm.element.*
+import vm.getObject
+import vm.getObjectWithClassObj
+import vm.logging.Logging
 
 data class ProviderNode(
     val id: String,
     val type: String
-)
+) {
+    override fun toString(): String {
+        return GsonBuilder().setPrettyPrinting().create().toJson(this)
+    }
+
+    fun getProviderPath(): InstancePath.FromProviderId {
+        return InstancePath.FromProviderId(id)
+    }
+}
 
 
 /**
@@ -20,8 +29,9 @@ data class ProviderNode(
  */
 sealed class PathToProperty {
     data class ListIndex(val index: Int) : PathToProperty()
-    data class MapKey(val ref: String) : PathToProperty()
-    data class ObjectProperty(val name: String, val ownerUri: String, val ownerName: String) : PathToProperty()
+    data class MapKey(val ref: String? = null) : PathToProperty()
+    data class ObjectProperty(val name: String, val ownerUri: String, val ownerName: String, val field: ObjectField) :
+        PathToProperty()
 }
 
 
@@ -66,6 +76,22 @@ sealed class InstancePath {
 }
 
 
+suspend fun ObjectField.getFieldInstance(vmService: VmService, parentInstance: InstanceDetails.Object): Instance? {
+    if (isStatic) return null
+    val eval: EvalOnDartLibrary = this.eval
+    val expression = "(parent as ${this.ownerName}).${this.name}"
+    val instanceRef = eval.safeEval(
+        vmService.getMainIsolateId(),
+        expression,
+        mapOf("parent" to parentInstance.instanceRefId)
+    )
+    val instance = vmService.getObject(
+        vmService.getMainIsolateId(),
+        instanceRef.getId()!!
+    )
+    return instance
+}
+
 /**
  * 封装一个对象的字段信息。
  */
@@ -74,8 +100,25 @@ data class ObjectField(
     val isFinal: Boolean,
     val ownerName: String,
     val ownerUri: String,
-    val instanceId: String
-)
+    val ref: InstanceRef? = null,
+    @Transient
+    val eval: EvalOnDartLibrary,
+    val isDefinedByDependency: Boolean,
+    val isStatic: Boolean,
+) {
+    override fun toString(): String {
+        return GsonBuilder().setPrettyPrinting().create().toJson(this)
+    }
+
+    val isPrivate get() = name.startsWith("_")
+
+    fun createEval(vm: VmService): EvalOnDartLibrary = EvalOnDartLibrary("dart:io", vm)
+    fun createEvalWithOwner(vm: VmService): EvalOnDartLibrary = EvalOnDartLibrary(ownerUri, vm)
+
+    suspend fun getInstance(vm: VmService, parentInstance: InstanceDetails.Object): Instance? {
+        return this.getFieldInstance(vm, parentInstance)
+    }
+}
 
 /**
  * 封装不同类型实例的详细信息，用于UI展示。
@@ -102,8 +145,11 @@ sealed class InstanceDetails {
         val fields: List<ObjectField>, // 注意，这里的 List 来自 kotlin.collections
         val hash: Int,
         val instanceRefId: String,
+        @Transient
         val evalForInstance: EvalOnDartLibrary // 每个对象实例都关联一个在其库上下文中执行的 eval
-    ) : InstanceDetails()
+    ) : InstanceDetails() {
+        val fieldsFiltered get() = fields.filter { it.isDefinedByDependency.not() }.filter { it.isStatic.not() }
+    }
 
     data class MapEntry(val key: InstanceDetails, val value: InstanceDetails)
 
@@ -114,13 +160,17 @@ sealed class InstanceDetails {
             is Object -> fields.isNotEmpty()
             else -> false
         }
+
+    override fun toString(): String {
+        return GsonBuilder().setPrettyPrinting().create().toJson(this)
+    }
 }
 
 object ProviderHelper {
 
     suspend fun getProviderNodes(vm: VmService): List<ProviderNode> {
         val mainIsolateId = vm.getMainIsolateId()
-        val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm, vm.coroutineScope)
+        val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm)
         val instanceRef = providerEval.safeEval(
             mainIsolateId,
             "ProviderBinding.debugInstance.providerDetails.keys.toList()"
@@ -153,13 +203,16 @@ object ProviderHelper {
      * 根据给定的路径获取一个实例的【单层】详细信息。
      * 它不再递归，只解析由 path 指定的那个对象。
      */
-    suspend fun getInstanceDetails(vm: VmService, path: InstancePath): InstanceDetails {
+    suspend fun getInstanceDetails(
+        vm: VmService,
+        path: InstancePath,
+        parent: InstanceDetails? = null
+    ): InstanceDetails {
         val mainIsolateId = vm.getMainIsolateId()
-        val coreEval = EvalOnDartLibrary("dart:core", vm, vm.coroutineScope)
-
-        val currentRef = when (path) {
+        val coreEval = EvalOnDartLibrary("dart:core", vm)
+        val currentRef: InstanceRef? = if (parent == null) when (path) {
             is InstancePath.FromProviderId -> {
-                val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm, vm.coroutineScope)
+                val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm)
                 providerEval.safeEval(
                     mainIsolateId,
                     "ProviderBinding.debugInstance.providerDetails[\"${path.providerId}\"]?.value"
@@ -167,10 +220,65 @@ object ProviderHelper {
             }
 
             is InstancePath.FromInstanceId -> {
-                val dartEval = EvalOnDartLibrary("dart:io", vm, vm.coroutineScope)
+                Logging.getLogger().logInformation("获取实例详情")
+                val dartEval = EvalOnDartLibrary("dart:io", vm)
                 dartEval.safeEval(vm.getMainIsolateId(), "value", mapOf("value" to path.instanceId))
             }
+        } else when (parent) {
+            is InstanceDetails.Map -> {
+                val keyPath = path.pathToProperty.last() as PathToProperty.MapKey
+                val key = if (keyPath.ref == null) "null" else "key"
+                val keyPathRef = keyPath.ref
+
+                val scope = mutableMapOf("parent" to parent.instanceRefId)
+                if (keyPathRef != null) {
+                    scope["key"] = keyPathRef
+                }
+                coreEval.safeEval(mainIsolateId, "parent[$key]", scope)
+            }
+
+            is InstanceDetails.Bool -> {
+                null
+            }
+
+            is InstanceDetails.Enum -> {
+                null
+            }
+
+            is InstanceDetails.Nill -> {
+                null
+            }
+
+            is InstanceDetails.Number -> {
+                null
+            }
+
+            is InstanceDetails.Object -> {
+                val propertyPath = path.pathToProperty.last() as PathToProperty.ObjectProperty
+                val field = parent.fields.first {
+                    it.name == propertyPath.name
+                            && it.ownerName == propertyPath.ownerName && it.ownerUri == propertyPath.ownerUri
+                }
+                Logging.getLogger().logInformation("获取字段详情")
+//                field.getFieldInstance(vm, parent)
+                field.ref
+            }
+
+            is InstanceDetails.DartList -> {
+                val indexPath = path.pathToProperty.last() as PathToProperty.ListIndex
+                coreEval.safeEval(mainIsolateId, "parent[${indexPath.index}]", mapOf("parent" to parent.instanceRefId))
+            }
+
+            is InstanceDetails.DartString -> {
+                null
+            }
         }
+
+        if (currentRef == null) {
+            throw RuntimeException("无法获取实例")
+        }
+
+
         val instance = coreEval.getInstance(mainIsolateId, currentRef)
         return instanceToDetails(instance, vm, mainIsolateId, path)
     }
@@ -182,7 +290,7 @@ object ProviderHelper {
         isolateId: String,
         path: InstancePath
     ): InstanceDetails {
-        val coreEval = EvalOnDartLibrary("dart:core", vm, vm.coroutineScope)
+        val coreEval = EvalOnDartLibrary("dart:core", vm)
         val instanceRefId = instance.getId()!!
         val hash = instance.getIdentityHashCode()
 
@@ -209,38 +317,41 @@ object ProviderHelper {
 
             else -> {
 
-                if (path.pathToProperty.isNotEmpty()) {
-                    println(path)
-                    println(instance)
-                }
-
-
                 val classRef = instance.getClassRef()
                 val libraryUri = classRef.getLibrary()?.getUri() ?: "dart:core"
-                val evalForInstance = EvalOnDartLibrary(libraryUri, vm, vm.coroutineScope)
+                val evalForInstance = EvalOnDartLibrary(libraryUri, vm)
                 val allFields = mutableListOf<ObjectField>()
                 var currentClass = coreEval.getClassObject(isolateId, classRef.getId()!!)
                 val evalCache = mutableMapOf<String, EvalOnDartLibrary>()
                 evalCache[libraryUri] = evalForInstance
                 while (currentClass != null) {
-                    currentClass.getFields().forEach { fieldRef ->
+                    currentClass.getFields().forEach { fieldRef: FieldRef ->
                         try {
-                            val fieldObj = coreEval.getFieldObject(isolateId, fieldRef.getId()!!) ?: return@forEach
-                            val fieldName = fieldObj.getName()
-                            val ownerClassRef = fieldObj.getOwner()
-                            val ownerLibrary =
-                                (coreEval.getObjectWithLibrary(isolateId, ownerClassRef.getLibrary()!!.getId()!!))
-                                    ?: return@forEach
-                            val ownerLibraryUri = ownerLibrary.getUri()!!
+
+                            val classRef: ObjRef = fieldRef.getOwner()
+
+                            val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId()!!)
+
+                            val ownerUri: String = fieldRef.getLocation()!!.getScript().getUri()!!
+                            val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
+
+                            val ownerPackageName: String? = tryParsePackageName(ownerUri)
+                            val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
+                            val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
 
                             allFields.add(
                                 ObjectField(
-                                    name = fieldName,
-                                    isFinal = fieldObj.isFinal(),
-
-                                    ownerName = ownerClassRef.getName(),
-                                    ownerUri = ownerLibraryUri,
-                                    instanceId = fieldRef.getId()!!
+                                    name = fieldRef.getName(),
+                                    isFinal = fieldRef.isFinal(),
+                                    ownerName = ownerName,
+                                    eval = EvalOnDartLibrary(
+                                        ownerUri,
+                                        vm
+                                    ),
+                                    ref = fieldRef.getDeclaredType(),
+                                    ownerUri = ownerUri,
+                                    isDefinedByDependency = ownerPackageName != appName,
+                                    isStatic = fieldRef.isStatic()
                                 )
                             )
                         } catch (e: Exception) {
@@ -266,4 +377,8 @@ object ProviderHelper {
             }
         }
     }
+}
+
+private fun tryParsePackageName(uri: String): String? {
+    return Regex("package:(.+?)/").find(uri)?.groupValues?.get(1)
 }

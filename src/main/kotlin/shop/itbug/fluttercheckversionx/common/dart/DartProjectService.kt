@@ -19,6 +19,7 @@ import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import shop.itbug.fluttercheckversionx.config.PluginConfig
 import vm.VmService
 import vm.VmServiceBase
 import java.util.concurrent.ConcurrentHashMap
@@ -96,7 +97,7 @@ interface FlutterAppVmServiceListener {
 class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceListener {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-     val log = thisLogger()
+    val log = thisLogger()
 
     // 使用ConcurrentHashMap存储多个Flutter应用实例
     private val flutterApps = ConcurrentHashMap<ProcessHandler, FlutterAppInstance>()
@@ -113,10 +114,11 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
     val isEnable by lazy { isSupportDartVm }
 
     init {
-
         log.info("是否启动了 dart vm 的功能:${isEnable}")
-        if (isEnable) {
+        if (isEnable && PluginConfig.getState(project).enableVmServiceListen) {
             project.messageBus.connect(parentDisposable = this).subscribe(TOPIC, this)
+        } else {
+            log.info("dart vm service 服务监听已经被禁用")
         }
 
     }
@@ -400,8 +402,6 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
         flutterApps.values.map { "${it.appInfo.appId} (${it.appInfo.deviceId}) - ${it.appInfo.vmUrl}" }
 
 
-
-
     // ---- compose
     // 1. 创建一个私有的、可变的 StateFlow
     //    它持有当前所有运行的应用实例列表，并以空列表作为初始值
@@ -450,46 +450,54 @@ class RunConfigListener(val project: Project) : UserDataHolderBase(), ExecutionL
 
     private val msgBus = project.messageBus.syncPublisher(FlutterXVMService.TOPIC)
     private val log = thisLogger()
+    private val isEnableListener by lazy { PluginConfig.getState(project).enableVmServiceListen }
 
     override fun processStarted(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
-        log.info("Flutter进程启动: $executorId")
-        handler.addProcessListener(this)
-        msgBus.processStarted(project, executorId, env, handler)
         super.processStarted(executorId, env, handler)
+        if (isEnableListener) {
+            log.info("Flutter进程启动: $executorId")
+            handler.addProcessListener(this)
+            msgBus.processStarted(project, executorId, env, handler)
+        }
     }
 
     override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        try {
-            val text = event.text.trim()
-            if (text.isBlank()) return
-
-            // 只记录关键事件
-            if (text.contains("app.debugPort")) {
-                log.info("🎯 收到关键的app.debugPort事件: $text")
-            }
-
-            val flutterEvent = FlutterEventFactory.formJsonText(text)
-
-            // 通知文本处理
-            msgBus.onText(project, text, flutterEvent)
-
-            // 如果解析出Flutter事件，则处理该事件
-            if (flutterEvent != null) {
-                log.info("成功解析Flutter事件: ${flutterEvent.event} - ${flutterEvent.params}")
-                msgBus.processFlutterEvent(project, flutterEvent, event)
-            }
-        } catch (e: Exception) {
-            log.warn("解析Flutter事件失败: ${event.text.take(100)}...", e)
-        }
         super.onTextAvailable(event, outputType)
+        if (isEnableListener) {
+            try {
+                val text = event.text.trim()
+                if (text.isBlank()) return
+
+                // 只记录关键事件
+                if (text.contains("app.debugPort")) {
+                    log.info("🎯 收到关键的app.debugPort事件: $text")
+                }
+
+                val flutterEvent = FlutterEventFactory.formJsonText(text)
+
+                // 通知文本处理
+                msgBus.onText(project, text, flutterEvent)
+
+                // 如果解析出Flutter事件，则处理该事件
+                if (flutterEvent != null) {
+                    log.info("成功解析Flutter事件: ${flutterEvent.event} - ${flutterEvent.params}")
+                    msgBus.processFlutterEvent(project, flutterEvent, event)
+                }
+            } catch (e: Exception) {
+                log.warn("解析Flutter事件失败: ${event.text.take(100)}...", e)
+            }
+        }
+
     }
 
     override fun processTerminated(
         executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int
     ) {
-        log.info("Flutter进程终止: $executorId, 退出码: $exitCode")
-        handler.removeProcessListener(this)
-        msgBus.stop(project, executorId, env, exitCode, handler)
+        if (isEnableListener) {
+            log.info("Flutter进程终止: $executorId, 退出码: $exitCode")
+            handler.removeProcessListener(this)
+            msgBus.stop(project, executorId, env, exitCode, handler)
+        }
     }
 
     override fun equals(other: Any?): Boolean {

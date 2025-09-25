@@ -14,7 +14,7 @@ val ideType: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.7.0"
+    id("org.jetbrains.intellij.platform") version "2.9.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
@@ -50,7 +50,10 @@ if (ideType.toInt() >= 243) {
     println("大于 243")
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
-    bPlugins.add("org.intellij.intelliLang")
+    if(ideType != "253"){
+        bPlugins.add("org.intellij.intelliLang")
+    }
+
 }
 
 dependencies {
@@ -60,21 +63,30 @@ dependencies {
 
     intellijPlatform {
         when (ideType) {
+            "253" -> {
+//                intellijIdeaCommunity("2025.2.1")
+                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
+            }
             "252" -> {
-                intellijIdeaCommunity("2025.2")
+                intellijIdeaCommunity("2025.2.1")
+//                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
 
             "251" -> {
-                intellijIdeaCommunity("2025.1.4.1")
-//                local("/Applications/Android Studio.app")
+//                intellijIdeaCommunity("2025.1.4.1")
+                local("/Applications/Android Studio.app")
             }
         }
         bundledPlugins(bPlugins)
         //"io.flutter:87.1"
-        plugins("Dart:$dartVersion","io.flutter:87.1")
+        plugins("Dart:$dartVersion", "io.flutter:87.1")
         pluginVerifier()
         zipSigner()
         javaCompiler()
+
+        if(ideType == "253"){
+//            bundledModule("org.intellij.intelliLang")
+        }
 
         bundledModule("intellij.libraries.ktor.client")
         bundledModule("intellij.libraries.ktor.client.cio")
@@ -82,6 +94,7 @@ dependencies {
         testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
 
         testFramework(TestFrameworkType.Platform)
+
 
 
         // jewel
@@ -153,7 +166,7 @@ tasks {
 
     publishPlugin {
         token.set(pushToken)
-        channels.set(listOf("bata","stable"))
+//        channels.set(listOf("bata","stable"))
     }
 
     runIde {
@@ -208,36 +221,10 @@ idea {
 }
 
 
-try {
-    val userName = System.getenv("maven_username")
-    val passWord = System.getenv("maven_password")
-    afterEvaluate {
-        publishing {
-            repositories {
-                maven {
-                    name = "sonatype"
-                    url = uri("https://package.itbug.shop/nexus/repository/idea-plugin/")
-                    credentials {
-                        username = userName
-                        password = passWord
-                    }
-                }
-                publications {
-                    create<MavenPublication>("release") {
-                        artifact("${layout.buildDirectory}/distributions/FlutterX-${project.version}.zip")
-                    }
-                }
-            }
-        }
-    }
-} catch (e: Exception) {
-    println("上传插件到私服失败:${e}")
-}
-
-
 idea {
     module {
         isDownloadSources = true
+        isDownloadJavadoc = true
     }
 }
 

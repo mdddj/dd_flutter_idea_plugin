@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.model
 
+typealias DartPackageItem = Package
 data class PubSearchResult(
     val packages: List<Package>,
     val next: String

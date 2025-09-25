@@ -3,17 +3,21 @@ package shop.itbug.fluttercheckversionx.autoCompletion
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.application.ex.ApplicationUtil
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.yaml.YAMLLanguage
+import org.jetbrains.yaml.YAMLTokenTypes
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLDocumentImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.model.PubPackageInfo
 import shop.itbug.fluttercheckversionx.services.PubService
+import shop.itbug.fluttercheckversionx.util.YamlExtends
 
 
 /**
@@ -32,19 +36,51 @@ class DartPackageAutoCompletion : CompletionContributor() {
                 .withLanguage(YAMLLanguage.INSTANCE),
             Provider()
         )
+
     }
+
+
 }
 
 
-///dart package 提供者
-private class Provider : CompletionProvider<CompletionParameters>() {
 
+private class VersionProvider : CompletionProvider<CompletionParameters>() {
+    private val logger = thisLogger()
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        val text = parameters.originalPosition?.text ?: ""
+        val text = result.prefixMatcher.prefix
+        logger.info("前缀:${text}")
+        if (text.startsWith("^")) {
+            val pluginNameEle = parameters.position.parent.parent.firstChild
+            if (pluginNameEle.node == YAMLTokenTypes.SCALAR_KEY) {
+                val yamlExt = YamlExtends(pluginNameEle)
+                val pluginName = yamlExt.getDartPluginNameAndVersion()?.name ?: return
+                ProgressManager.checkCanceled()
+                ApplicationUtil.runWithCheckCanceled({
+                    val versions = PubService.getPackageVersions(pluginName)
+                    logger.info(versions.toString())
+                }, ProgressManager.getGlobalProgressIndicator())
+            }
+
+        }
+    }
+    // result.addElement(LookupElementBuilder.create(it))
+
+}
+
+///dart package 提供者
+private class Provider : CompletionProvider<CompletionParameters>() {
+    private val logger = thisLogger()
+    override fun addCompletions(
+        parameters: CompletionParameters,
+        context: ProcessingContext,
+        result: CompletionResultSet
+    ) {
+        val text = result.prefixMatcher.prefix
+        logger.info("yaml 搜索包: $text")
         if (text.isNotBlank()) {
             ProgressManager.checkCanceled()
             val packages = ApplicationUtil.runWithCheckCanceled(
@@ -66,6 +102,15 @@ private class Provider : CompletionProvider<CompletionParameters>() {
             }
         }
 
+    }
+
+    private fun addItemResult(infoModel: PubPackageInfo,result:  CompletionResultSet) {
+        val info = infoModel.model
+        val score = infoModel.score
+        val element = LookupElementBuilder.create("${info.name}: ^${info.latest.version}").withIcon(MyIcons.flutter)
+            .withTailText(" " + info.formatTime(), true)
+            .withTypeText(score.likeCount.toString(), MyIcons.score, true)
+        result.addElement(element)
     }
 
 }

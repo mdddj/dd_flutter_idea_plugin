@@ -22,14 +22,13 @@ class DartAssetsAnnotator : Annotator {
         if (element !is DartCallExpressionImpl || element.firstChild !is DartReferenceExpressionImpl) {
             return
         }
-        val callElement = element
         val dartReferenceElement = element.firstChild as DartReferenceExpressionImpl
 
         if (!dartClass.contains(dartReferenceElement.text)) {
             return
         }
 
-        val args = callElement.arguments ?: return
+        val args = element.arguments ?: return
         val argList = args.argumentList ?: return
         val assetStringElement = argList.firstChild as? DartStringLiteralExpressionImpl ?: return
         val assetUrl = assetStringElement.string ?: return

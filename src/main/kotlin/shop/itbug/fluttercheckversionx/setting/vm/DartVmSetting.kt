@@ -7,6 +7,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.widget.PopupWidgets
 import shop.itbug.fluttercheckversionx.window.getDartVmWindow
 import javax.swing.JComponent
 
@@ -24,6 +25,10 @@ class DartVmSetting(val project: Project) : Configurable {
                 checkBox("Enable Dart VM tool window").bindSelected(state::enableVmServiceToolWindow)
                     .comment("(only this project)")
             }
+            row {
+                checkBox("Listen to vm service connection").bindSelected(state::enableVmServiceListen)
+                    .comment("Disabled, vm service related services are unavailable (only this project) ")
+            }
         }
         return myPanel
     }
@@ -35,6 +40,7 @@ class DartVmSetting(val project: Project) : Configurable {
     override fun apply() {
         myPanel.apply()
         PluginConfig.getState(project).enableVmServiceToolWindow = state.enableVmServiceToolWindow
+        PluginConfig.getState(project).enableVmServiceListen = state.enableVmServiceListen
 
     }
 
@@ -49,6 +55,9 @@ class DartVmSetting(val project: Project) : Configurable {
                 it.show()
                 it.isAvailable = true
             }
+        }
+        if(!state.enableVmServiceListen){
+            PopupWidgets.restartWithConfirmation()
         }
         super.disposeUIResources()
     }

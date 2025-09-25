@@ -14,9 +14,10 @@ class PubspecYamlFileTools private constructor(yaml: YAMLFile) : YamlFileToolBas
 
     /**
      * 判断是否为flutter项目,这四个是flutter项目必填字段
+     * && hasKey("description") && hasKey("version")
      */
     suspend fun isFlutterProject() =
-        hasKey("name") && hasKey("description") && hasKey("version") && hasKey("environment")
+        hasKey("name") && hasKey("environment")
 
 
     /**

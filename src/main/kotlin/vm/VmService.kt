@@ -2,11 +2,15 @@ package vm
 
 
 import com.google.gson.*
+import com.intellij.openapi.diagnostic.thisLogger
 import fleet.multiplatform.shims.ConcurrentHashMap
 import io.ktor.websocket.*
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
@@ -21,16 +25,19 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class VmService : VmServiceBase() {
-    val gson = GsonBuilder()
+    val gson: Gson = GsonBuilder()
         .setPrettyPrinting()
         .setStrictness(Strictness.LENIENT)
         .create()
-
+    private val logger = thisLogger()
     val appId get() = getUserData(APP_ID_KEY)!!
     val appInfo get() = getUserData(APP_INFO)!!
     val logController by lazy {
         LoggingController(this, coroutineScope)
     }
+
+    //检查管理器
+    val inspectorManager by lazy { InspectorStateManager(this) }
 
     private val listenStreamsEvents = arrayOf(
         *EventKind.entries.map { it.name }.toTypedArray()
@@ -45,6 +52,10 @@ class VmService : VmServiceBase() {
         return ""
     }
 
+    suspend fun getMainIsolates(): IsolateRef? {
+        return mainIsolates()
+    }
+
     suspend fun updateMainIsolateId() {
         _mainIsolateId = mainIsolates()?.getId()
     }
@@ -56,11 +67,9 @@ class VmService : VmServiceBase() {
         intervalMs: Long = 1000L,
         listener: DartNetworkMonitor.NetworkRequestListener? = null
     ): Job? {
-        val isolateId = getMainIsolateId()
         if (dartHttpMonitor.value == null) {
             dartHttpMonitor.value = DartNetworkMonitor(
                 vmService = this,
-                isolateId = isolateId,
                 scope = coroutineScope,
             )
         }
@@ -129,14 +138,57 @@ class VmService : VmServiceBase() {
     fun startListenStreams() {
         coroutineScope.launch {
             listenStreamsEvents.map(::streamListen)
+            addEventListener(hotRestartListener)
         }
     }
 
     fun cancelListenStreams() {
         listenStreamsEvents.forEach {
             coroutineScope.launch { streamCancel(it) }
+            removeEventListener(hotRestartListener)
         }
     }
+
+    private val _vmEvents = MutableSharedFlow<EventKind>()
+    val vmEvents: SharedFlow<EventKind> = _vmEvents
+
+    //监听dart vm 热重启
+    private val hotRestartListener = object : VmEventListener {
+        override fun onVmEvent(streamId: String, event: Event) {
+            runInScope {
+                _vmEvents.emit(event.getKind())
+            }
+            if (streamId != ISOLATE_STREAM_ID) {
+                return
+            }
+            val eventIsolateId = event.getIsolate()?.getId()
+            logger.info("[热重启监听]:${event}")
+            when (event.getKind()) {
+                EventKind.IsolateExit -> {
+                    if (eventIsolateId != null && eventIsolateId == getMainIsolateId()) {
+                        logger.info("🔥 主 Isolate (id: $eventIsolateId) 正在退出，这很可能是热重启的第一步。")
+                    }
+                    hotListeners.forEach { it.onExit() }
+                }
+
+                EventKind.IsolateStart -> {
+                    val newIsolateName = event.getIsolate()?.getName()
+                    if (newIsolateName == "main") {
+                        logger.info("✅ 监听到热重启成功！新的主 Isolate (name: $newIsolateName, id: $eventIsolateId) 已启动。")
+                        runInScope {
+                            updateMainIsolateId()
+                        }
+                    }
+                    hotListeners.forEach { it.onStart() }
+                }
+
+                else -> {
+                }
+            }
+        }
+
+    }
+
 
     fun addBreakpoint(isolateId: String, scriptId: String, line: Int, consumer: AddBreakpointConsumer) {
         val params = JsonObject()
@@ -156,9 +208,16 @@ class VmService : VmServiceBase() {
     }
 
     private val eventListeners = mutableListOf<VmEventListener>()
+    private val hotListeners = mutableListOf<VmHotResetListener>()
 
     interface VmEventListener {
         fun onVmEvent(streamId: String, event: Event)
+    }
+
+    //热重载
+    interface VmHotResetListener {
+        fun onExit()
+        fun onStart()
     }
 
     fun addEventListener(listener: VmEventListener) {
@@ -168,6 +227,16 @@ class VmService : VmServiceBase() {
 
     fun removeEventListener(listener: VmEventListener) {
         eventListeners.remove(listener)
+    }
+
+    fun addEventHotResetListener(listener: VmHotResetListener) {
+        logger.info("添加热重启监听器.")
+        hotListeners.add(listener)
+    }
+
+    fun removeEventHotResetListener(listener: VmHotResetListener) {
+        logger.info("移除热重启监听器")
+        hotListeners.remove(listener)
     }
 
     private fun forwardEventToCustomListeners(streamId: String, event: Event) {
@@ -237,7 +306,7 @@ class VmService : VmServiceBase() {
 
                 if (retryCount < maxRetries) {
                     Logging.getLogger().logInformation("等待 ${retryCount * 1000}ms 后重试...")
-                    kotlinx.coroutines.delay(retryCount * 1000L)
+                    delay(retryCount * 1000L)
                 } else {
                     Logging.getLogger().logError("达到最大重试次数，停止监听")
                 }
@@ -1875,5 +1944,16 @@ class VmService : VmServiceBase() {
             })
         }
     }
+
+    override fun dispose() {
+        disconnect()
+    }
+
+
+    override fun disconnect() {
+        super.disconnect()
+        hotListeners.clear()
+    }
+
 
 }

@@ -3,13 +3,17 @@ package shop.itbug.fluttercheckversionx.util
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
+import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
+import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.MyDartPackage
+import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
 
 
 private val devPattern = Regex("""\bdev\b""")
@@ -103,6 +107,18 @@ class YamlExtends(val element: PsiElement) {
         return null
     }
 
+    fun tryGetModels(): List<DartYamlModel> {
+        val file = element.containingFile?.virtualFile ?: return emptyList()
+        val psiFile = PsiManager.getInstance(element.project).findFile(file) ?: return emptyList()
+        return psiFile.getUserData(YAML_DART_PACKAGE_INFO_KEY) ?: emptyList()
+    }
+
+    //获取 pub数据
+    fun tryGetPackageInfo(): PubVersionDataModel? {
+        val pluginName = getDartPluginNameAndVersion()?.name ?: return null
+        val models = tryGetModels()
+        return models.find { it.name == pluginName }?.pubData
+    }
 }
 
 object MyYamlPsiElementFactory {

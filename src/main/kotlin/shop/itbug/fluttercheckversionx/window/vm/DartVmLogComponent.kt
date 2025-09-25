@@ -17,7 +17,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.launch
-import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
@@ -31,7 +30,6 @@ import vm.log.LoggingController
 
 
 // dart log UI
-@OptIn(ExperimentalJewelApi::class)
 @Composable
 fun DartVmLoggingComponent(project: Project) {
     FlutterAppsTabComponent(project) {
