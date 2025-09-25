@@ -50,7 +50,10 @@ if (ideType.toInt() >= 243) {
     println("大于 243")
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
-    bPlugins.add("org.intellij.intelliLang")
+    if(ideType != "253"){
+        bPlugins.add("org.intellij.intelliLang")
+    }
+
 }
 
 dependencies {
@@ -60,6 +63,10 @@ dependencies {
 
     intellijPlatform {
         when (ideType) {
+            "253" -> {
+//                intellijIdeaCommunity("2025.2.1")
+                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
+            }
             "252" -> {
                 intellijIdeaCommunity("2025.2.1")
 //                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
@@ -76,6 +83,10 @@ dependencies {
         pluginVerifier()
         zipSigner()
         javaCompiler()
+
+        if(ideType == "253"){
+//            bundledModule("org.intellij.intelliLang")
+        }
 
         bundledModule("intellij.libraries.ktor.client")
         bundledModule("intellij.libraries.ktor.client.cio")

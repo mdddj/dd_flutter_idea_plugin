@@ -116,7 +116,6 @@ private fun DartHttpUI(project: Project) {
 @Composable
 private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
     val vmService = app.vmService
-    val scope = rememberCoroutineScope()
     val httpRequests =
         remember(vmService.dartHttpMonitor) { mutableStateListOf(*vmService.getAllRequests.reversed().toTypedArray()) }
     var selectedRequest by remember { mutableStateOf<NetworkRequest?>(null) }
@@ -502,7 +501,7 @@ private fun RequestRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatusIndicator(request.status)
-            Text(request.method, modifier = Modifier.width(60.dp))
+            Text(request.method, modifier = Modifier.width(70.dp))
             Text(request.statusCode?.toString() ?: "...", modifier = Modifier.width(50.dp))
             SearchResultCard(
                 request.uri, searchQuery = searchText, true, enableAnimation = true, modifier = Modifier.weight(1f),

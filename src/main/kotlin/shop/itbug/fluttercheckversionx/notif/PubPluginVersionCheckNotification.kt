@@ -27,7 +27,6 @@ import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService.Companio
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
-import shop.itbug.fluttercheckversionx.tools.log
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import java.awt.event.InputEvent
 import java.util.function.Function
@@ -44,10 +43,10 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (it.component.parent == null) return@Function null
             val psiFile = PsiManager.getInstance(project).findFile(file) ?: return@Function null
             if (file.name == "pubspec.yaml" && psiFile is YAMLFile) {
-                log().warn("start check is flutter project")
+
                 val isFlutterProject =
                     runBlocking(Dispatchers.IO) { PubspecYamlFileTools.create(psiFile).isFlutterProject() }
-                log().warn("is a flutter project: $isFlutterProject")
+
                 if (!isFlutterProject) return@Function null
                 val panel = YamlFileNotificationPanel(it, psiFile, project)
                 return@Function panel

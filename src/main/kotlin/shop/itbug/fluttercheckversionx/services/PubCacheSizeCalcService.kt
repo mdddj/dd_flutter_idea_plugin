@@ -35,7 +35,6 @@ class PubCacheSizeCalcService(val project: Project) : VirtualFileVisitor<Virtual
         cachePath = dartPubCacheDir?.path
         cacheFileName = dartPubCacheDir?.name
         if (dartPubCacheDir != null) {
-            println("缓存目录cache dir: ${dartPubCacheDir.path}")
             try {
                 VfsUtilCore.visitChildrenRecursively(dartPubCacheDir, this)
             } catch (ex: ProcessCanceledException) {

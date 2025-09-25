@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [6.0.6] - 2025-09-25
+
+* Optimized the Flutter project detection logic
+
 ## [6.0.5] - 2025-09-19
 
 * Fix the issue of Inspector hot-reload state synchronization problems

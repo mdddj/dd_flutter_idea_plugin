@@ -100,9 +100,7 @@
                                         implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
 
         <!--    plugin版本自动联想功能    -->
-        <completion.contributor language="yaml"
-                                implementationClass="shop.itbug.fluttercheckversionx.hints.PluginVersionHints"
-                                order="first"/>
+
         <completion.contributor language="yaml" order="first"
                                 implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPackageAutoCompletion"/>
         <completion.contributor language="Dart"

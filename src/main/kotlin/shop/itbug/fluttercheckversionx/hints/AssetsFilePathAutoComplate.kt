@@ -62,9 +62,8 @@ class AssetsFilePathAutoCompleteProvider(val setting: AppStateModel) : Completio
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        val element = parameters.originalPosition ?: return
         val project = parameters.editor.project
-        val text = element.text ?: ""
+        val text = result.prefixMatcher.prefix
         val isOk = text.startsWith(setting.assetCompilationTriggerString)
         if (isOk) {
             project?.let {

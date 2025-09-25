@@ -5,10 +5,9 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
 import org.jetbrains.yaml.YAMLTokenTypes
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
-import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
+import shop.itbug.fluttercheckversionx.util.YamlExtends
 
 /**
  *
@@ -19,14 +18,10 @@ import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
 class PubspecPackageDiscontinuedAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        val project = element.project
+        val yamlEx = YamlExtends(element)
         if (element !is YAMLKeyValueImpl) return
         val keyEle = element.node.findChildByType(YAMLTokenTypes.SCALAR_KEY) ?: return
-        val pluginName = keyEle.text
-        val psiFile = PsiManager.getInstance(project).findFile(element.containingFile?.virtualFile ?: return) ?: return
-        val details = psiFile.getUserData(YAML_DART_PACKAGE_INFO_KEY) ?: return
-        val pluginInfo = details.find { it.name == pluginName } ?: return
-        val pubData = pluginInfo.pubData ?: return
+        val pubData = yamlEx.tryGetPackageInfo() ?: return
         if (pubData.isDiscontinued == true) {
             holder.newAnnotation(
                 HighlightSeverity.WARNING,
