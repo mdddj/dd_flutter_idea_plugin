@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.jewel.bridge.addComposeTab
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -202,21 +203,22 @@ private fun RequestListPanel(
         debouncedSearchText = searchState.text.toString()
     }
 
-    //过滤图片请求
-    fun filterImageRequests(request: List<NetworkRequest>): List<NetworkRequest> {
-        return if (showImageRequest) request else request.filter { !it.isLikelyImage }
+    //过滤图片请求,和空 path请求
+    fun filterImageRequestsAndEmptyPaths(request: List<NetworkRequest>): List<NetworkRequest> {
+        val requests = if (showImageRequest) request else request.filter { !it.isLikelyImage }
+        return requests.filter { hasMeaningfulPathWithOkHttp(it.uri) }
     }
 
     val filteredRequests by derivedStateOf {
         val currentList = requests.toList()
         if (debouncedSearchText.isNotBlank()) {
-            filterImageRequests(
+            filterImageRequestsAndEmptyPaths(
                 vmService.dartHttpMonitor.value?.filterRequests(
                     containsUrl = debouncedSearchText,
                 ) ?: emptyList()
             )
         } else {
-            filterImageRequests(currentList)
+            filterImageRequestsAndEmptyPaths(currentList)
         }
     }
 
@@ -280,7 +282,7 @@ private fun RequestListPanel(
             }
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                itemsIndexed(filteredRequests.ifEmpty { filterImageRequests(requests.toList()) }) { _, item ->
+                itemsIndexed(filteredRequests.ifEmpty { filterImageRequestsAndEmptyPaths(requests.toList()) }) { _, item ->
                     RequestRow(
                         request = item,
                         isSelected = item.id == selectedRequest?.id,
@@ -710,4 +712,11 @@ private suspend fun formatJsonAsync(textState: TextFieldState, gson: Gson, text:
         textState.setTextAndPlaceCursorAtEnd(formattedJson)
     } catch (_: Exception) {
     }
+}
+
+//检测 path
+private fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
+    val httpUrl = urlString.toHttpUrlOrNull() ?: return false
+    val segments = httpUrl.pathSegments
+    return segments.size > 1 || (segments.size == 1 && segments.first().isNotEmpty())
 }

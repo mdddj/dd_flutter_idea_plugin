@@ -35,8 +35,8 @@ open class ObjRef(json: JsonObject) : Response(json) {
     /**
      * 对象的唯一标识符。传递给 getObject RPC 以加载此对象。
      */
-    fun getId(): String? {
-        return getAsString("id")
+    fun getId(): String {
+        return getAsString("id") ?: ""
     }
 
     open fun getName(): String {

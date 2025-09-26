@@ -7,6 +7,7 @@ import vm.VmService
 import vm.element.*
 import vm.getObject
 import vm.getObjectWithClassObj
+import vm.getObjectWithField
 import vm.logging.Logging
 
 data class ProviderNode(
@@ -100,7 +101,7 @@ data class ObjectField(
     val isFinal: Boolean,
     val ownerName: String,
     val ownerUri: String,
-    val ref: InstanceRef? = null,
+    val ref: InstanceRef,
     @Transient
     val eval: EvalOnDartLibrary,
     val isDefinedByDependency: Boolean,
@@ -149,6 +150,9 @@ sealed class InstanceDetails {
         val evalForInstance: EvalOnDartLibrary // 每个对象实例都关联一个在其库上下文中执行的 eval
     ) : InstanceDetails() {
         val fieldsFiltered get() = fields.filter { it.isDefinedByDependency.not() }.filter { it.isStatic.not() }
+        override fun toString(): String {
+            return "Object: ${type}, fields: ${fields.joinToString(", ")} instance ref id : ${instanceRefId}"
+        }
     }
 
     data class MapEntry(val key: InstanceDetails, val value: InstanceDetails)
@@ -338,17 +342,21 @@ object ProviderHelper {
                             val ownerPackageName: String? = tryParsePackageName(ownerUri)
                             val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
                             val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
+                            val eval = EvalOnDartLibrary(
+                                ownerUri,
+                                vm
+                            )
 
+                            val field = vm.getObjectWithField(vm.getMainIsolateId(),classRef.getId())
+                            println(field)
+                            val instanceRef = vm.getObject(vm.getMainIsolateId(), instance.getId()) ?: return@forEach
                             allFields.add(
                                 ObjectField(
                                     name = fieldRef.getName(),
                                     isFinal = fieldRef.isFinal(),
                                     ownerName = ownerName,
-                                    eval = EvalOnDartLibrary(
-                                        ownerUri,
-                                        vm
-                                    ),
-                                    ref = fieldRef.getDeclaredType(),
+                                    eval = eval,
+                                    ref = instanceRef,
                                     ownerUri = ownerUri,
                                     isDefinedByDependency = ownerPackageName != appName,
                                     isStatic = fieldRef.isStatic()
