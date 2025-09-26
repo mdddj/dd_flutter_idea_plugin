@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [6.0.7] - 2025-09-26
+
+* Remove http requests without paths (dart vm)
+
 ## [6.0.6] - 2025-09-25
 
 * Optimized the Flutter project detection logic

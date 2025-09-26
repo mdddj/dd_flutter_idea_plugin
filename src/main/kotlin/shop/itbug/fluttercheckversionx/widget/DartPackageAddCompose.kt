@@ -22,11 +22,9 @@ import org.jetbrains.jewel.bridge.JewelComposePanel
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import org.jetbrains.jewel.ui.theme.editorTabStyle
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.MyPackageGroup
 import shop.itbug.fluttercheckversionx.services.PubService
-import shop.itbug.fluttercheckversionx.window.vm.MyTabStrip
 import java.awt.Dimension
 import javax.swing.Action
 import javax.swing.JComponent
@@ -333,7 +331,9 @@ class AddPackageDialogIdea(val project: Project) : DialogWrapper(project, true) 
             }
 
             Column(modifier = Modifier.fillMaxSize()) {
-                MyTabStrip(tabs, JewelTheme.editorTabStyle, modifier = Modifier.fillMaxWidth())
+                CustomTabRow(selectIndex,tabs= listOf("搜索","常用依赖"), onTabClick = {
+                    selectIndex = it
+                }, modifier = Modifier.fillMaxWidth())
                 when (DartPackageDialogTab.entries[selectIndex]) {
                     DartPackageDialogTab.Search -> {
                         SearchPackage(project)
