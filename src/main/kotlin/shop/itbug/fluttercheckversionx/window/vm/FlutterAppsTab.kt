@@ -10,13 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
-import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Link
 import org.jetbrains.jewel.ui.component.SimpleTabContent
 import org.jetbrains.jewel.ui.component.TabData
-import org.jetbrains.jewel.ui.component.TabStrip
-import org.jetbrains.jewel.ui.component.styling.TabStyle
-import org.jetbrains.jewel.ui.theme.editorTabStyle
 import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInstance
 import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
 import shop.itbug.fluttercheckversionx.config.PluginConfig
@@ -24,6 +20,7 @@ import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 import shop.itbug.fluttercheckversionx.widget.CenterText
+import shop.itbug.fluttercheckversionx.widget.CustomTabRow
 import java.net.URI
 
 
@@ -83,9 +80,9 @@ If you are running on a real device, please make sure the device is connected to
         }
     } else {
         Column(modifier = Modifier.fillMaxSize()) {
-            MyTabStrip(
-                tabs, JewelTheme.editorTabStyle,
-            )
+            CustomTabRow(tabIndex, tabs = flutterAppList.map { it.appInfo.deviceId }.toList(), onTabClick = {
+                tabIndex = it
+            })
             val selectApp = flutterAppList.getOrNull(tabIndex)
             if (selectApp != null) {
                 body.invoke(selectApp)
@@ -94,7 +91,3 @@ If you are running on a real device, please make sure the device is connected to
     }
 }
 
-@Composable
-fun MyTabStrip(tabs: List<TabData>, style: TabStyle, modifier: Modifier = Modifier, enabled: Boolean = true) {
-    TabStrip(tabs, style, modifier)
-}

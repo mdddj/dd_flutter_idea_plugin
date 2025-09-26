@@ -42,7 +42,6 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import org.jetbrains.jewel.ui.theme.editorTabStyle
 import org.jetbrains.jewel.ui.theme.simpleListItemStyle
 import shop.itbug.fluttercheckversionx.actions.isValidJson
 import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInstance
@@ -56,9 +55,13 @@ import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 import shop.itbug.fluttercheckversionx.util.contextMenu
 import shop.itbug.fluttercheckversionx.widget.AddPackageDialog
+import shop.itbug.fluttercheckversionx.widget.CustomTabRow
 import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
 import shop.itbug.fluttercheckversionx.widget.SearchResultCard
-import shop.itbug.fluttercheckversionx.window.vm.*
+import shop.itbug.fluttercheckversionx.window.vm.DartVmLoggingComponent
+import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
+import shop.itbug.fluttercheckversionx.window.vm.FlutterAppsTabComponent
+import shop.itbug.fluttercheckversionx.window.vm.ProviderComposeComponent
 import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
@@ -332,17 +335,9 @@ private fun RequestDetailPanel(
 
 
     Column(modifier = Modifier.fillMaxSize()) {
-        MyTabStrip(
-            tabs = tabs.mapIndexed { index, title ->
-                TabData.Default(
-                    selected = index == selectedTabIndex,
-                    onClick = { selectedTabIndex = index },
-                    content = { Text(title) },
-                    closable = false
-                )
-            },
-            style = JewelTheme.editorTabStyle,
-        )
+        CustomTabRow(selectedTabIndex, tabs = tabs.map { it }, onTabClick = {
+            selectedTabIndex = it
+        })
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
         Box(modifier = Modifier.weight(1f).padding(8.dp)) {
             when (selectedTabIndex) {
@@ -660,6 +655,7 @@ private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
     val isJson by remember { derivedStateOf { isValidJson(textState.text.toString()) } }
     val gson = remember { GsonBuilder().setPrettyPrinting().create() }
     val scope = rememberCoroutineScope()
+    var formatJson: String? by remember { mutableStateOf(null) }
 
     LaunchedEffect(text) {
         textState.setTextAndPlaceCursorAtEnd(text)
@@ -671,7 +667,7 @@ private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
-                onClick = { MyFileUtil.showJsonInEditor(project, text) },
+                onClick = { MyFileUtil.showJsonInEditor(project, formatJson ?: text) },
                 enabled = text.trim().isNotBlank()
             ) {
                 Text(PluginBundle.get("open.in.editor"))
@@ -687,7 +683,7 @@ private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
             OutlinedButton(
                 onClick = {
                     scope.launch {
-                        formatJsonAsync(textState, gson, textState.text.toString())
+                        formatJson = formatJsonAsync(textState, gson, textState.text.toString())
                     }
                 },
                 enabled = isJson
@@ -703,14 +699,16 @@ private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
     }
 }
 
-private suspend fun formatJsonAsync(textState: TextFieldState, gson: Gson, text: String) {
-    try {
+private suspend fun formatJsonAsync(textState: TextFieldState, gson: Gson, text: String): String? {
+    return try {
         val formattedJson = withContext(Dispatchers.Default) {
             val jsonObject = gson.fromJson(text, JsonObject::class.java)
             gson.toJson(jsonObject)
         }
         textState.setTextAndPlaceCursorAtEnd(formattedJson)
+        formattedJson
     } catch (_: Exception) {
+        null
     }
 }
 

@@ -67,7 +67,7 @@ private fun FlutterAppStatusPanel(project: Project, app: FlutterAppInstance) {
                 }
             },
             second = {
-                VmMemoryDisplay(vm!!, vmService, project)
+                VmMemoryDisplay(app,vm!!, vmService, project)
             },
             state = rememberSplitLayoutState(0.5f)
         )
@@ -78,15 +78,16 @@ private fun FlutterAppStatusPanel(project: Project, app: FlutterAppInstance) {
 }
 
 @Composable
-private fun VmMemoryDisplay(vm: VM, vmService: VmService, project: Project) {
-    var vmInfo by remember { mutableStateOf(vm) }
+private fun VmMemoryDisplay(app: FlutterAppInstance, vm: VM, vmService: VmService, project: Project) {
+    var vmInfo by remember(app) { mutableStateOf(vm) }
     val scope = rememberCoroutineScope()
 
     suspend fun refresh() {
         vmInfo = vmService.getVm()
     }
-
-
+    LaunchedEffect(app){
+        refresh()
+    }
 
     Column(
         modifier = Modifier.padding(12.dp).verticalScroll(rememberScrollState()),
@@ -240,7 +241,7 @@ private fun OpenGroupPanel(title: String, child: @Composable () -> Unit) {
 private fun InspectorStateComponent(vmService: VmService, project: Project) {
     val manager = vmService.inspectorManager
     val isSelect by manager.overlayState.collectAsState()
-    LaunchedEffect(manager) {
+    LaunchedEffect(vmService, manager) {
         manager.scope.launch {
             manager.navigationEvents.collect { result ->
                 SwingUtilities.invokeLater {
