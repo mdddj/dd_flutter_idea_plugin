@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.services
 
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.util.io.HttpRequests
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -15,6 +16,8 @@ import shop.itbug.fluttercheckversionx.socket.service.DioApiService
  * 接口url: [https://pub.dartlang.org/api/packages/插件名字]
  */
 object PubService {
+
+    private val logger = thisLogger()
 
 
     fun getApiUrl(pluginName: String): String {
@@ -42,9 +45,10 @@ object PubService {
     fun getPackageVersions(pluginName: String): PluginVersionModel? {
         val url = "${DioListingUiConfig.setting.pubServerUrl}/packages/$pluginName.json"
         try {
+            logger.info("get versions for url:$url")
             val resposne = HttpRequests.request(url).readString()
             return DioApiService.getInstance().gson.fromJson(resposne, PluginVersionModel::class.java)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             return null
         }
     }

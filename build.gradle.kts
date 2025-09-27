@@ -291,3 +291,10 @@ tasks.clean {
     delete("src/main/kotlin/codegen/FlutterPluginInfo.kt")
 }
 
+tasks.test {
+    dependencies {
+        intellijPlatform {
+            bundledPlugins("org.jetbrains.kotlin","org.jetbrains.plugins.yaml")
+        }
+    }
+}
