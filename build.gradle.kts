@@ -294,7 +294,7 @@ tasks.clean {
 tasks.test {
     dependencies {
         intellijPlatform {
-            bundledPlugins("org.jetbrains.kotlin","org.jetbrains.plugins.yaml")
+            bundledPlugins("org.jetbrains.kotlin","org.jetbrains.plugins.yaml","org.intellij.groovy")
         }
     }
 }

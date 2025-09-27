@@ -127,6 +127,8 @@
                 implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShow"/>
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlay"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
 
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
