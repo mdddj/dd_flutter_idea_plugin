@@ -13,9 +13,13 @@ abstract class YamlFileToolBase(val file: YAMLFile) {
     /**
      * 查找某个key下面的列表
      */
-    suspend fun getChsWith(key: String) =
-        getRootKeyValueList()?.find { it.keyText.trim() == key.trim() }?.findChild<YAMLBlockMappingImpl>()
-            ?.chs<YAMLKeyValueImpl>() ?: emptyList()
+    suspend fun getChsWith(key: String): List<YAMLKeyValueImpl> {
+        val keyValueList = getRootKeyValueList() ?: return emptyList()
+        val find = keyValueList.find { it.keyText.trim() == key.trim() } ?: return emptyList()
+        val r = find.findChild<YAMLBlockMappingImpl>() ?: return emptyList()
+        return r.chs<YAMLKeyValueImpl>()
+    }
+
 
     /**
      * 检查是否存在某个key

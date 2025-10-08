@@ -93,7 +93,7 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
             }
 
             toolWindow.addComposeTab("常见依赖") {
-                AddPackageDialog(project) {}
+                AddPackageDialog(project)
             }
         }
 

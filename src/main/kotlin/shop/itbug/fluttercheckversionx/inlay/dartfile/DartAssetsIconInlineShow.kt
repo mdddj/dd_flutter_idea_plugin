@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.inlay.dartfile
 import com.intellij.codeInsight.codeVision.CodeVisionEntry
 import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
+import com.intellij.codeInsight.codeVision.settings.CodeVisionGroupSettingProvider
 import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.codeInsight.hints.settings.language.isInlaySettingsEditor
@@ -23,7 +24,7 @@ import shop.itbug.fluttercheckversionx.util.SwingUtil
 import java.awt.event.MouseEvent
 
 /**
- * dart assets icon render
+ * dart assets icon inlay render
  */
 class DartAssetsIconInlineShow : CodeVisionProviderBase() {
     override fun acceptsFile(file: PsiFile): Boolean {
@@ -116,4 +117,15 @@ object MyHintsUtils {
             ?: element
         return TextRange.create(start.startOffset, element.endOffset)
     }
+}
+
+class DartAssetsIconInlineShowSettingGroup : CodeVisionGroupSettingProvider {
+    override val groupId: String
+        get() = "DartAssetsIconInlineShow"
+
+    override val groupName: String
+        get() = "Dart Assets Icon Inline (flutterX)"
+
+    override val description: String
+        get() = "Preview flutter assets svg icon or image"
 }

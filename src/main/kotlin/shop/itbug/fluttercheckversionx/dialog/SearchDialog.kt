@@ -1,6 +1,5 @@
 package shop.itbug.fluttercheckversionx.dialog
 
-import shop.itbug.fluttercheckversionx.model.PluginVersionModel
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -20,6 +19,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.FlutterPluginType
+import shop.itbug.fluttercheckversionx.model.PluginVersionModel
 import shop.itbug.fluttercheckversionx.util.MyPsiElementUtil
 import java.awt.Component
 import java.awt.Dimension
@@ -39,7 +39,7 @@ data class Package(
     val `package`: String
 )
 
-
+@Deprecated("替代函数:MyActionUtil.showPubSearchDialog")
 class SearchDialog(val project: Project) : DialogWrapper(project) {
 
 

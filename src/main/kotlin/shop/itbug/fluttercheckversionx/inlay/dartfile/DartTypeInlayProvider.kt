@@ -96,12 +96,16 @@ class DartTypeInlayProvider : InlayHintsProvider {
                     HintMarginPadding.MarginAndSmallerPadding
                 ) else HintFormat.default
             ) {
-                text(
-                    text, InlayActionData(
-                        PsiPointerInlayActionPayload(element.createSmartPointer()),
-                        "dartTypeInlayProviderId"
-                    )
+                val actionData = InlayActionData(
+                    PsiPointerInlayActionPayload(element.createSmartPointer()),
+                    "dartTypeInlayProviderId"
                 )
+                clickHandlerScope(actionData){
+                    text(
+                        text, actionData
+                    )
+                }
+
             }
         }
     }

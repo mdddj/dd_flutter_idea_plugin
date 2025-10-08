@@ -9,11 +9,11 @@ import shop.itbug.fluttercheckversionx.constance.Links
 import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.constance.qqGroup
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
-import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.setting.AppConfig
 import shop.itbug.fluttercheckversionx.tools.FlutterProjectUtil
+import shop.itbug.fluttercheckversionx.util.MyActionUtil
 import shop.itbug.fluttercheckversionx.util.RunUtil
 
 
@@ -22,8 +22,12 @@ fun getStatusBarActionGroup() = ActionManager.getInstance().getAction("status_ba
 /// dart package search
 class SearchPubPluginAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-//        e.project?.let { AddPackageDialogIdea(it).show() }
-        e.project?.let { SearchDialog(it).show() }
+
+        //新版本搜索
+        e.project?.let {
+            MyActionUtil.showPubSearchDialog(it)
+        }
+
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

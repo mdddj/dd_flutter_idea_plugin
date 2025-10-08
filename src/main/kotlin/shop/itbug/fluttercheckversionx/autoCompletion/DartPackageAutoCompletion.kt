@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.YAMLTokenTypes
@@ -37,34 +38,49 @@ class DartPackageAutoCompletion : CompletionContributor() {
             Provider()
         )
 
+        extend(
+            CompletionType.BASIC,
+            PlatformPatterns.psiElement(LeafPsiElement::class.java)
+                .withParent(YAMLPlainTextImpl::class.java)
+                .withSuperParent(2, YAMLKeyValueImpl::class.java)
+                .withSuperParent(3, YAMLBlockMappingImpl::class.java)
+                .withSuperParent(4, YAMLKeyValueImpl::class.java),
+            VersionProvider()
+        )
+
     }
 
 
 }
 
 
-
 private class VersionProvider : CompletionProvider<CompletionParameters>() {
+    init {
+        println("版本补全进来了..")
+    }
+
     private val logger = thisLogger()
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        val text = result.prefixMatcher.prefix
-        logger.info("前缀:${text}")
-        if (text.startsWith("^")) {
-            val pluginNameEle = parameters.position.parent.parent.firstChild
-            if (pluginNameEle.node == YAMLTokenTypes.SCALAR_KEY) {
-                val yamlExt = YamlExtends(pluginNameEle)
-                val pluginName = yamlExt.getDartPluginNameAndVersion()?.name ?: return
-                ProgressManager.checkCanceled()
-                ApplicationUtil.runWithCheckCanceled({
-                    val versions = PubService.getPackageVersions(pluginName)
-                    logger.info(versions.toString())
-                }, ProgressManager.getGlobalProgressIndicator())
+        val pluginNameEle = parameters.position.parent.parent.firstChild
+        if (pluginNameEle.elementType == YAMLTokenTypes.SCALAR_KEY) {
+            val yamlExt = YamlExtends(pluginNameEle.parent)
+            val pluginName = yamlExt.getDartPluginNameAndVersion()?.name ?: return
+            ProgressManager.checkCanceled()
+            val versions = ApplicationUtil.runWithCheckCanceled({
+                val versions = PubService.getPackageVersions(pluginName)
+                logger.info(versions.toString())
+                versions
+            }, ProgressManager.getGlobalProgressIndicator())
+            logger.info("versions: $versions")
+            versions?.versions?.reversed()?.toList()?.forEach {
+                result
+                    .addElement(LookupElementBuilder.create("$it").withIcon(MyIcons.flutter))
             }
-
+            result.runRemainingContributors(parameters, false)
         }
     }
     // result.addElement(LookupElementBuilder.create(it))
@@ -104,7 +120,7 @@ private class Provider : CompletionProvider<CompletionParameters>() {
 
     }
 
-    private fun addItemResult(infoModel: PubPackageInfo,result:  CompletionResultSet) {
+    private fun addItemResult(infoModel: PubPackageInfo, result: CompletionResultSet) {
         val info = infoModel.model
         val score = infoModel.score
         val element = LookupElementBuilder.create("${info.name}: ^${info.latest.version}").withIcon(MyIcons.flutter)

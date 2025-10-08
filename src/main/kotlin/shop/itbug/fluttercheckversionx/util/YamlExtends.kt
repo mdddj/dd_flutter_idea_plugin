@@ -1,16 +1,22 @@
 package shop.itbug.fluttercheckversionx.util
 
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.YAMLLanguage
 import org.jetbrains.yaml.psi.YAMLFile
+import org.jetbrains.yaml.psi.YAMLKeyValue
+import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
+import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.MyDartPackage
 import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
@@ -121,12 +127,88 @@ class YamlExtends(val element: PsiElement) {
     }
 }
 
-object MyYamlPsiElementFactory {
+open class MyYamlPsiElementFactory(open val project: Project) {
 
     ///创建一个节点
-    fun createPlainPsiElement(project: Project, text: String): YAMLPlainTextImpl? {
+    fun createPlainPsiElement(text: String): YAMLPlainTextImpl? {
         val instance = PsiFileFactory.getInstance(project)
         val createFileFromText: YAMLFile = instance.createFileFromText(YAMLLanguage.INSTANCE, "name: $text") as YAMLFile
         return PsiTreeUtil.findChildOfType(createFileFromText, YAMLPlainTextImpl::class.java)
     }
+
+    open fun findKeyValue(key: String, file: YAMLFile): YAMLKeyValue? {
+        return PsiTreeUtil.findChildrenOfType(file, YAMLKeyValue::class.java).find { it.key?.text == key }
+    }
+
+    open fun generateKeyValue(key: String, value: String): YAMLKeyValue {
+        return YAMLElementGenerator.getInstance(project).createYamlKeyValue(key, value)
+    }
+
+    open fun createEol() = YAMLElementGenerator.getInstance(project).createEol()
 }
+
+class PubspecYamlElementFactory(override val project: Project) : MyYamlPsiElementFactory(project) {
+
+    fun addDependencies(pluginName: String, pluginVersion: String, yamlFile: YAMLFile, type: FlutterPluginType) {
+        val depsElement = runReadAction { findKeyValue(type.type, yamlFile) }
+        if (depsElement != null) {
+            when (val value = depsElement.value) {
+                is YAMLBlockMappingImpl -> {
+                    val keyValues = value.keyValues
+                    val last = keyValues.lastOrNull() ?: return
+                    val eol = runReadAction { createEol() }
+                    val newEle = runReadAction { generateKeyValue(pluginName, pluginVersion) }
+                    WriteCommandAction.runWriteCommandAction(project) {
+                        val eolEle = value.addAfter(eol, last)
+                        value.addAfter(newEle, eolEle)
+                    }
+                }
+            }
+        } else {
+            addTopLevel(yamlFile, type.type, pluginName, pluginVersion)
+        }
+
+    }
+
+    fun addDependenciesToDefault(pluginName: String, pluginVersion: String, yamlFile: YAMLFile) = addDependencies(
+        pluginName,
+        pluginVersion,
+        yamlFile,
+        FlutterPluginType.Dependencies
+    )
+
+    fun addDependenciesToDev(pluginName: String, pluginVersion: String, yamlFile: YAMLFile) = addDependencies(
+        pluginName,
+        pluginVersion,
+        yamlFile,
+        FlutterPluginType.DevDependencies
+    )
+
+    fun addDependenciesToOverrides(pluginName: String, pluginVersion: String, yamlFile: YAMLFile) = addDependencies(
+        pluginName,
+        pluginVersion,
+        yamlFile,
+        FlutterPluginType.OverridesDependencies
+    )
+
+    //在没有顶级 key的情况下执行
+    fun addTopLevel(yamlFile: YAMLFile, key: String, pluginName: String, pluginVersion: String) {
+        yamlFile.documents.firstOrNull()?.let {
+            val mp = it.topLevelValue as? YAMLMapping?
+            if (mp != null) {
+                val last = mp.keyValues.lastOrNull() ?: return
+                val topElement = YAMLElementGenerator.getInstance(project)
+                    .createYamlKeyValueWithSequence(
+                        key, mapOf(
+                            pluginName to pluginVersion
+                        )
+                    )
+                WriteCommandAction.runWriteCommandAction(project) {
+                    val newLast = mp.addAfter(createEol(), last)
+                    mp.addAfter(topElement, newLast)
+                }
+            }
+        }
+    }
+}
+

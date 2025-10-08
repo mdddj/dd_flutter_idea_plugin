@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.common.yaml.PubspecYamlFileTools
-import shop.itbug.fluttercheckversionx.dialog.SearchDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService
@@ -27,6 +26,7 @@ import shop.itbug.fluttercheckversionx.services.PubCacheSizeCalcService.Companio
 import shop.itbug.fluttercheckversionx.services.noused.DartNoUsedCheckService
 import shop.itbug.fluttercheckversionx.setting.IgPluginPubspecConfigList
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
+import shop.itbug.fluttercheckversionx.util.MyActionUtil
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import java.awt.event.InputEvent
 import java.util.function.Function
@@ -122,7 +122,7 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
     }
 
     private fun search() {
-        SearchDialog(project).show()
+        MyActionUtil.showPubSearchDialog(project,file)
     }
 
 }

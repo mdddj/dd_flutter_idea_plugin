@@ -20,7 +20,7 @@ import shop.itbug.fluttercheckversionx.util.*
  * 创建一个新的
  */
 fun DartYamlModel.createPsiElement() =
-    MyYamlPsiElementFactory.createPlainPsiElement(element.project, "${getLastVersionText() ?: ""} ")
+    MyYamlPsiElementFactory(element.project).createPlainPsiElement( "${getLastVersionText() ?: ""} ")
 
 /**
  * dart包模型(新)

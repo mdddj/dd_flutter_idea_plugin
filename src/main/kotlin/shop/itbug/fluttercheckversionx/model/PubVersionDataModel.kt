@@ -67,6 +67,7 @@ data class PubVersionDataModel(
 data class Latest(
     val version: String,
     val pubspec: Pubspec,
+    val description: String,
     @SerializedName("archive_url") val archiveURL: String,
     private var published: String? = null
 ) {

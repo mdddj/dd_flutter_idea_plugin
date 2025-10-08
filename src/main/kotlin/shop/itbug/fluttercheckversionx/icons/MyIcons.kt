@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.icons
 
 import com.intellij.openapi.util.IconLoader
+import org.jetbrains.jewel.ui.icon.IntelliJIconKey
 import org.jetbrains.jewel.ui.icon.PathIconKey
 
 object MyIcons {
@@ -18,6 +19,10 @@ object MyIcons {
     val language = IconLoader.getIcon("/icons/language.svg", MyIcons::class.java)
     val image = IconLoader.getIcon("/icons/image.svg", MyIcons::class.java)
     val imageIconPath = PathIconKey("/icons/image.svg",MyIcons::class.java)
+
+
+    /// compose
+    val download = IntelliJIconKey("/icons/new/download.svg","/icons/new/download.svg", MyIcons::class.java)
 }
 
 
