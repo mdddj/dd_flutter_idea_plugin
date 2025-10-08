@@ -1,6 +1,7 @@
 package shop.itbug.fluttercheckversionx.inlay.freezed
 
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
+import com.intellij.codeInsight.codeVision.settings.CodeVisionGroupSettingProvider
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -200,4 +201,15 @@ class FreezedActionInlay : CodeVisionProviderBase() {
 
         }
     }
+}
+
+class FreezedActionInlaySettingProvider: CodeVisionGroupSettingProvider {
+    override val groupId: String
+        get() = "FreezedActionInlay"
+
+    override val groupName: String
+        get() = "Freezed action (flutterX)"
+
+    override val description: String
+        get() = "Display tools in freezed class"
 }

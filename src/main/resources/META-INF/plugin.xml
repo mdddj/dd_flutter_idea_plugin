@@ -58,6 +58,7 @@
         <plugin id="com.intellij.modules.platform"/>
         <plugin id="org.jetbrains.plugins.yaml"/>
         <plugin id="Dart"/>
+        <plugin id="org.jetbrains.kotlin"/>
         <plugin id="org.intellij.plugins.markdown"/>
         <plugin id="org.jetbrains.plugins.terminal"/>
         <plugin id="com.intellij.modules.json"/>
@@ -73,7 +74,9 @@
         <module name="intellij.platform.jewel.markdown.core"/>
         <module name="intellij.platform.jewel.markdown.ideLafBridgeStyling"/>
     </dependencies>
-
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true"/>
+    </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <intentionAction>
             <className>shop.itbug.fluttercheckversionx.actions.internal.L10nKeyExtractIntentionAction</className>
@@ -125,11 +128,33 @@
                 implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartFileInsertPartOfString"/>
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShow"/>
+        <config.codeVisionGroupSettingProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShowSettingGroup"
+                id="DartAssetsIconInlineShowSettingGroup"/>
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlay"/>
+        <config.codeVisionGroupSettingProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlaySettingProvider"
+                id="FreezedActionInlaySettingProvider"/>
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.fluttercheckversionx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
+        <config.codeVisionGroupSettingProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.GradleAliyuMirrorImageInlayGroupSetting"
+                id="GradleAliyuMirrorImageInlayGroupSetting"/>
+        <codeInsight.daemonBoundCodeVisionProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.KtsAliyunMirrorInlay"/>
+        <config.codeVisionGroupSettingProvider
+                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
+                id="KtsAliyunMirrorInlayGroupSetting"/>
+<!--        <codeInsight.daemonBoundCodeVisionProvider-->
+<!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
+<!--        <config.codeVisionGroupSettingProvider-->
+<!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
+<!--                id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
 
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogInlay"
+                language="yaml" id="DartPackageSearchDialogInlay" />
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
 

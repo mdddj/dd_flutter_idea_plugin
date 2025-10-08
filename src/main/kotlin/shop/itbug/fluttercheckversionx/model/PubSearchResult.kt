@@ -12,6 +12,6 @@ data class Package(
 
 
 ///插件评分
-data class PubPackageScore(val likeCount: Int)
+data class PubPackageScore(val likeCount: Int,val downloadCount30Days: Int)
 
 data class PubPackageInfo(val score: PubPackageScore, val model: PubVersionDataModel)

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.FileTypeIndex
@@ -245,6 +246,12 @@ object MyFileUtil {
                 }
             }
         }
+    }
+
+    fun isFlutterPubspecFile(file: PsiFile): Boolean {
+        if(file !is YAMLFile) return false
+        if(file.name != "pubspec.yaml") return false
+        return true
     }
 
 }

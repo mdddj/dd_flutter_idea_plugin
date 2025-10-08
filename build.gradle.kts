@@ -13,12 +13,12 @@ val ideType: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.2.20"
     id("org.jetbrains.intellij.platform") version "2.9.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
 }
 
 group = "shop.itbug"
@@ -60,7 +60,6 @@ dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
-
     intellijPlatform {
         when (ideType) {
             "253" -> {
@@ -78,8 +77,8 @@ dependencies {
             }
         }
         bundledPlugins(bPlugins)
-        //"io.flutter:87.1"
-        plugins("Dart:$dartVersion", "io.flutter:87.1")
+        //"io.flutter:88.0.0"
+        plugins("Dart:$dartVersion", "io.flutter:88.0.0")
         pluginVerifier()
         zipSigner()
         javaCompiler()

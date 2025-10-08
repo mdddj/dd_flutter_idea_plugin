@@ -2,6 +2,7 @@ package shop.itbug.fluttercheckversionx.inlay.gradle
 
 import com.intellij.codeInsight.codeVision.CodeVisionEntry
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
+import com.intellij.codeInsight.codeVision.settings.CodeVisionGroupSettingProvider
 import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.openapi.diagnostic.thisLogger
@@ -43,7 +44,6 @@ val aliyunGradleMirrorImages = listOf(
     """.trimIndent()
 )
 
-//阿里云镜像添加
 class GradleAliyuMirrorImageInlay : CodeVisionProviderBase() {
     private val logger = thisLogger()
     override fun acceptsFile(file: PsiFile): Boolean {
@@ -67,7 +67,6 @@ class GradleAliyuMirrorImageInlay : CodeVisionProviderBase() {
         event: MouseEvent?
     ) {
         val factory = MyGrPsiElementFactory(element.project)
-        logger.info("添加阿里云镜像")
         val methodCallExpression = element as GrMethodCallExpression
         GrPsiElementHelper.methodCallAddMethodCall(
             element.project,
@@ -99,4 +98,16 @@ class GradleAliyuMirrorImageInlay : CodeVisionProviderBase() {
         get() = listOf(CodeVisionRelativeOrdering.CodeVisionRelativeOrderingLast)
     override val id: String
         get() = "flutter-aliyun-mirror-image-inlay"
+}
+
+class GradleAliyuMirrorImageInlayGroupSetting: CodeVisionGroupSettingProvider {
+    override val groupId: String
+        get() = "flutter-aliyun-mirror-image-inlay"
+
+    override val groupName: String
+        get() = "Change AliYun Mirror Image (flutterX)"
+
+    override val description: String
+        get() = "Quickly add Aliyun mirror (Groovy)"
+
 }

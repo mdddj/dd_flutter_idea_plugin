@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
@@ -61,15 +59,12 @@ private fun CustomJewelTab(
 ) {
     val tabModifier = if (selected) {
         Modifier
+            .clip(RoundedCornerShape(4.dp))
             .background(JewelTheme.defaultTabStyle.colors.backgroundHovered)
-            .border(
-                width = 1.dp,
-                color = JewelTheme.globalColors.borders.focused,
-            )
     } else {
         Modifier
+            .clip(RoundedCornerShape(4.dp))
             .background(JewelTheme.globalColors.panelBackground)
-            .border(width = 1.dp, color = Color.Transparent)
     }
 
     Box(

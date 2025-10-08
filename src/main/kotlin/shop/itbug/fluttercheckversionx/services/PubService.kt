@@ -10,7 +10,7 @@ import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.model.*
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 
-
+data class PubServiceException( val msg: String) : Exception(msg)
 /**
  * 访问pub开放Api接口
  * 接口url: [https://pub.dartlang.org/api/packages/插件名字]
@@ -72,10 +72,11 @@ object PubService {
     fun getScore(pluginName: String): PubPackageScore? {
         val url = "${DioListingUiConfig.setting.pubServerUrl}/api/packages/$pluginName/score"
         return try {
-            DioApiService.getInstance().gson.fromJson(
+            val result = DioApiService.getInstance().gson.fromJson(
                 HttpRequests.request(url).readString(),
                 PubPackageScore::class.java
             )
+            result
         } catch (_: Exception) {
             null
         }
@@ -91,13 +92,13 @@ object PubService {
                     return@async getPubPackageInfoModel(it)
                 }
             }.awaitAll()
-        }.filterNotNull()
+        }
         return r
     }
 
-    fun getPubPackageInfoModel(name: String): PubPackageInfo? {
-        val score = getScore(name) ?: return null
-        val info = callPluginDetails(name) ?: return null
+    fun getPubPackageInfoModel(name: String): PubPackageInfo {
+        val score = getScore(name) ?: throw PubServiceException("Failed to load score for name:$name")
+        val info = callPluginDetails(name) ?: throw PubServiceException("Failed to load info for name:$name")
         return PubPackageInfo(score, info)
     }
 }

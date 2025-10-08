@@ -25,7 +25,6 @@ class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
                             EndOfLinePosition(editor.getLine(element)),
                             null,
                             null,
-//                            false,
                             HintFormat.default.withColorKind(HintColorKind.TextWithoutBackground)
                                 .withHorizontalMargin(HintMarginPadding.MarginAndSmallerPadding)
                                 .withFontSize(HintFontSize.AsInEditor)
@@ -39,7 +38,6 @@ class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
                                 InlineInlayPosition(element.textRange.endOffset, true, 0),
                                 null,
                                 null,
-//                                true,
                                 HintFormat.default.withHorizontalMargin(HintMarginPadding.MarginAndSmallerPadding)
                                     .withColorKind(HintColorKind.Default).withFontSize(HintFontSize.AsInEditor)
                             ) {

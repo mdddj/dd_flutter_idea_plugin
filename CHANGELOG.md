@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [6.1.0] - 2025-10-08
+
+* New version of the search dialog component (dart package)
+* Fixed a bug with blank names in some inlay settings
+* Add an Alibaba Cloud image shortcut setting inlay (gradle)
+
+
 ## [6.0.7] - 2025-09-26
 
 * Remove http requests without paths (dart vm)
