@@ -1,7 +1,7 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.theme.simpleListItemStyle
@@ -28,20 +27,9 @@ fun SearchResultCard(
     enableFuzzyMatch: Boolean,
     enableAnimation: Boolean,
     modifier: Modifier? = null,
-    maxLines: Int = Int.MAX_VALUE
+    maxLines: Int = Int.MAX_VALUE,
+    color: Color? = Color.Unspecified
 ) {
-    val animatedElevation by animateDpAsState(
-        targetValue = if (searchQuery.isNotEmpty()) 6.dp else 2.dp,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "elevation"
-    )
-
-    val animatedAlpha by animateFloatAsState(
-        targetValue = if (searchQuery.isEmpty()) 0.8f else 1f,
-        animationSpec = tween(300),
-        label = "alpha"
-    )
-
     Text(
         text = if (enableFuzzyMatch) {
             animatedFuzzyHighlight(text, searchQuery, enableAnimation)
@@ -49,7 +37,8 @@ fun SearchResultCard(
             animatedHighlightSearchText(text, searchQuery, enableAnimation)
         },
         modifier = modifier ?: Modifier.padding(16.dp),
-        maxLines = maxLines
+        maxLines = maxLines,
+        color = color ?: Color.Unspecified
     )
 }
 
@@ -115,24 +104,6 @@ private fun animatedHighlightSearchText(
     }
 
     return annotatedStringBuilder.toAnnotatedString()
-}
-
-/**
- * 模糊匹配函数 - 计算字符串相似度
- */
-fun fuzzyMatch(text: String, query: String, threshold: Double = 0.6): Boolean {
-    if (query.isEmpty()) return true
-    if (text.isEmpty()) return false
-
-    val lowerText = text.lowercase()
-    val lowerQuery = query.lowercase()
-
-    // 如果包含完整匹配，直接返回 true
-    if (lowerText.contains(lowerQuery)) return true
-
-    // 计算编辑距离相似度
-    val similarity = calculateSimilarity(lowerText, lowerQuery)
-    return similarity >= threshold
 }
 
 /**
@@ -264,198 +235,3 @@ private fun findBestFuzzyMatch(text: String, query: String): Pair<Int, Int>? {
     return bestMatch
 }
 
-enum class AnimationStyle(val displayName: String) {
-    PULSE("脉冲"),
-    GLOW("发光"),
-    BOUNCE("弹跳"),
-    WAVE("波浪")
-}
-
-@Composable
-private fun AnimatedSearchResultCard(
-    text: String,
-    searchQuery: String,
-    enableFuzzyMatch: Boolean,
-    animationStyle: AnimationStyle,
-    index: Int
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "highlight_animation")
-
-    // 不同的动画效果
-    val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulse_alpha"
-    )
-
-    val glowIntensity by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "glow_intensity"
-    )
-
-    val bounceOffset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = -8f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "bounce_offset"
-    )
-
-    Text(
-        text = createAnimatedHighlight(
-            text = text,
-            searchQuery = searchQuery,
-            enableFuzzyMatch = enableFuzzyMatch,
-            animationStyle = animationStyle,
-            pulseAlpha = pulseAlpha,
-            glowIntensity = glowIntensity
-        ),
-        modifier = Modifier.padding(16.dp),
-        fontSize = 16.sp,
-        lineHeight = 24.sp
-    )
-}
-
-@Composable
-private fun createAnimatedHighlight(
-    text: String,
-    searchQuery: String,
-    enableFuzzyMatch: Boolean,
-    animationStyle: AnimationStyle,
-    pulseAlpha: Float,
-    glowIntensity: Float
-): AnnotatedString {
-    if (searchQuery.isEmpty()) {
-        return AnnotatedString(text)
-    }
-
-    val baseColor = when (animationStyle) {
-        AnimationStyle.PULSE -> Color.Yellow.copy(alpha = pulseAlpha)
-        AnimationStyle.GLOW -> Color.Cyan.copy(alpha = 0.6f + glowIntensity * 0.4f)
-        AnimationStyle.BOUNCE -> Color.Green.copy(alpha = 0.7f)
-        AnimationStyle.WAVE -> Color.Magenta.copy(alpha = 0.6f)
-    }
-
-    return if (enableFuzzyMatch) {
-        createFuzzyHighlightAnnotatedString(text, searchQuery, baseColor)
-    } else {
-        createExactHighlightAnnotatedString(text, searchQuery, baseColor)
-    }
-}
-
-private fun createExactHighlightAnnotatedString(
-    text: String,
-    searchQuery: String,
-    highlightColor: Color
-): AnnotatedString {
-    val annotatedStringBuilder = AnnotatedString.Builder()
-    var currentIndex = 0
-
-    val lowerText = text.lowercase()
-    val lowerQuery = searchQuery.lowercase()
-
-    while (currentIndex < text.length) {
-        val foundIndex = lowerText.indexOf(lowerQuery, currentIndex)
-
-        if (foundIndex == -1) {
-            annotatedStringBuilder.append(text.substring(currentIndex))
-            break
-        }
-
-        if (foundIndex > currentIndex) {
-            annotatedStringBuilder.append(text.substring(currentIndex, foundIndex))
-        }
-
-        annotatedStringBuilder.withStyle(
-            style = SpanStyle(
-                background = highlightColor,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-        ) {
-            append(text.substring(foundIndex, foundIndex + searchQuery.length))
-        }
-
-        currentIndex = foundIndex + searchQuery.length
-    }
-
-    return annotatedStringBuilder.toAnnotatedString()
-}
-
-private fun createFuzzyHighlightAnnotatedString(
-    text: String,
-    searchQuery: String,
-    highlightColor: Color
-): AnnotatedString {
-    val bestMatch = findBestFuzzyMatch(text, searchQuery)
-
-    return if (bestMatch != null) {
-        val annotatedStringBuilder = AnnotatedString.Builder()
-        val (start, end) = bestMatch
-
-        if (start > 0) {
-            annotatedStringBuilder.append(text.substring(0, start))
-        }
-
-        annotatedStringBuilder.withStyle(
-            style = SpanStyle(
-                background = highlightColor,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline
-            )
-        ) {
-            append(text.substring(start, end))
-        }
-
-        if (end < text.length) {
-            annotatedStringBuilder.append(text.substring(end))
-        }
-
-        annotatedStringBuilder.toAnnotatedString()
-    } else {
-        // 如果没有找到好的模糊匹配，尝试高亮单个字符
-        highlightIndividualCharacters(text, searchQuery, highlightColor)
-    }
-}
-
-/**
- * 高亮单个匹配字符（用于极端模糊匹配）
- */
-private fun highlightIndividualCharacters(
-    text: String,
-    searchQuery: String,
-    highlightColor: Color
-): AnnotatedString {
-    val annotatedStringBuilder = AnnotatedString.Builder()
-    val lowerText = text.lowercase()
-    val lowerQuery = searchQuery.lowercase()
-
-    text.forEachIndexed { index, char ->
-        if (lowerQuery.contains(char.lowercase())) {
-            annotatedStringBuilder.withStyle(
-                style = SpanStyle(
-                    background = highlightColor.copy(alpha = 0.3f),
-                    fontWeight = FontWeight.Medium
-                )
-            ) {
-                append(char)
-            }
-        } else {
-            annotatedStringBuilder.append(char)
-        }
-    }
-
-    return annotatedStringBuilder.toAnnotatedString()
-}

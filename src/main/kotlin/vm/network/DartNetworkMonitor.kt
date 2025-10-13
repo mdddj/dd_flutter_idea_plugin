@@ -2,15 +2,15 @@ package vm.network
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.intellij.openapi.diagnostic.thisLogger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.model.formatDate
 import vm.VmService
-import vm.VmService.VmEventListener
-import vm.element.Event
-import vm.element.EventKind
+import vm.VmServiceComponent
 import vm.getHttpProfile
 import vm.isHttpProfilingAvailable
 import java.time.Instant
@@ -40,6 +40,8 @@ data class NetworkRequest(
     val events: MutableList<RequestEvent> = mutableListOf(),
     @Transient
     var networkMonitor: DartNetworkMonitor? = null,
+
+    var isolateId: String
 ) : IRequest {
 
     val duration: Long?
@@ -100,79 +102,89 @@ data class RequestEvent(
     var time1: String,
     val arguments: Map<String, Any>? = null,
 
-)
+    )
 
 enum class RequestStatus {
     PENDING, COMPLETED, ERROR
 }
 
+interface TimeSource {
+    fun currentTimeMicros(): Long
+}
+
+class SystemTimeSource : TimeSource {
+    override fun currentTimeMicros() = System.currentTimeMillis() * 1000
+}
+
 // 网络监控管理器
 class DartNetworkMonitor(
     private val vmService: VmService,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-): VmEventListener {
-    private val requests = mutableMapOf<String, NetworkRequest>()
-    private val listeners = mutableListOf<NetworkRequestListener>()
-    private var isMonitoring: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isRunning: StateFlow<Boolean>
-        get() = isMonitoring
+    private val scope: CoroutineScope,
+    private val timeSource: TimeSource = SystemTimeSource(),
+    private val maxRequestsCount: Int = 1000
+) : VmServiceComponent {
+
+    private val _requests = MutableStateFlow<Map<String, NetworkRequest>>(emptyMap())
+    val requests: StateFlow<Map<String, NetworkRequest>> = _requests.asStateFlow()
+
+    private val _isMonitoring = MutableStateFlow(false)
+    val isMonitoring: StateFlow<Boolean> = _isMonitoring.asStateFlow()
+
     private var lastUpdateTime = 0L
     private var pollingJob: Job? = null
-
-    val taskJob get() = pollingJob
+    private var errorCount = 0
+    private val maxConsecutiveErrors = 3
+    private val logger = thisLogger()
 
     private val isolateId get() = vmService.getMainIsolateId()
 
     init {
-        vmService.addEventListener(this)
-    }
-
-    interface NetworkRequestListener {
-        fun onRequestStarted(request: NetworkRequest)
-        fun onRequestUpdated(request: NetworkRequest)
-        fun onRequestCompleted(request: NetworkRequest)
-        fun onError(error: String)
-    }
-
-    open class DefaultNetworkRequestListener(
-        val started: (req: NetworkRequest) -> Unit,
-        val update: (req: NetworkRequest) -> Unit,
-        val completed: (req: NetworkRequest) -> Unit,
-        val onError: (err: String) -> Unit = {}
-    ) : NetworkRequestListener {
-        override fun onRequestStarted(request: NetworkRequest) = started.invoke(request)
-        override fun onRequestUpdated(request: NetworkRequest) = update.invoke(request)
-        override fun onRequestCompleted(request: NetworkRequest) = completed.invoke(request)
-        override fun onError(error: String) = onError.invoke(error)
-
+        vmService.addEventHotResetListener(this)
+        scope.launch {
+            delay(100)
+            startMonitoring()
+        }
     }
 
     /**
      * 开始网络监控
      */
     suspend fun startMonitoring(intervalMs: Long = 1000L): Boolean {
-        if (isMonitoring.value) return true
+        if (_isMonitoring.value) {
+            logger.debug("监控已在运行中")
+            return true
+        }
 
         return try {
             val isAvailable = vmService.isHttpProfilingAvailable(isolateId)
             if (!isAvailable) {
-                notifyError("HTTP分析功能不可用")
+                logger.error("HTTP分析功能不可用")
                 return false
             }
+
             val timelineResult = vmService.setHttpTimelineLogging(isolateId, true)
             if (timelineResult == null) {
-                notifyError("启用HTTP时间线日志失败")
+                logger.error("启用HTTP时间线日志失败")
                 return false
             }
+
             vmService.clearHttpProfile(isolateId)
-            isMonitoring.value = true
-            lastUpdateTime = System.currentTimeMillis() * 1000
+            _isMonitoring.value = true
+            lastUpdateTime = timeSource.currentTimeMicros()
+            errorCount = 0
             startPolling(intervalMs)
 
+            logger.info("网络监控已启动")
             true
         } catch (e: Exception) {
-            notifyError("启动网络监控失败: ${e.message}")
+            logger.error("启动网络监控失败", e)
             false
+        }
+    }
+
+    fun stop() {
+        scope.launch {
+            stopMonitoring()
         }
     }
 
@@ -180,12 +192,14 @@ class DartNetworkMonitor(
      * 停止网络监控
      */
     suspend fun stopMonitoring() {
-        isMonitoring.value = false
+        if (!_isMonitoring.value) return
+
+        _isMonitoring.value = false
 
         pollingJob?.let { job ->
             job.cancel()
             try {
-                job.join() // 等待协程完全停止
+                job.join()
             } catch (e: CancellationException) {
                 throw e
             }
@@ -194,142 +208,168 @@ class DartNetworkMonitor(
 
         try {
             vmService.setHttpTimelineLogging(isolateId, false)
+            logger.info("网络监控已停止")
         } catch (e: Exception) {
-            println("停止监控时出错: ${e.message}")
+            logger.error("停止监控时出错", e)
         }
     }
 
-    fun destroy() {
-        scope.launch {
-            stopMonitoring()
-        }
-        vmService.removeEventListener(this)
-        requests.clear()
-        listeners.clear()
-    }
 
-    private fun startPolling(intervalMs: Long = 1000L) {
+    /**
+     * 启动轮询任务
+     */
+    private fun startPolling(intervalMs: Long) {
         pollingJob?.cancel()
         pollingJob = scope.launch {
             try {
-                while (isActive && isMonitoring.value) {
+                while (isActive && _isMonitoring.value) {
                     try {
                         updateRequests()
+                        errorCount = 0 // 成功时重置错误计数
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {
-                        notifyError("轮询网络数据失败: ${e.message}")
-                        delay(intervalMs * 2)
-                        continue
+                        errorCount++
+                        logger.error("轮询网络数据失败 (错误次数: $errorCount/$maxConsecutiveErrors)", e)
+
+                        if (errorCount >= maxConsecutiveErrors) {
+                            logger.error("连续错误过多,停止监控")
+                            stopMonitoring()
+                            break
+                        }
                     }
 
-                    // 等待指定的轮询间隔
                     delay(intervalMs)
                 }
             } catch (e: CancellationException) {
-                println("网络监控轮询已停止")
+                logger.debug("网络监控轮询已取消")
                 throw e
             } catch (e: Exception) {
-                notifyError("轮询过程中发生严重错误: ${e.message}")
+                logger.error("轮询过程中发生严重错误", e)
             }
         }
     }
 
+    /**
+     * 更新请求数据
+     */
     suspend fun updateRequests() {
-        if (!isMonitoring.value) return
+        if (!_isMonitoring.value) return
 
         try {
             val result = vmService.getHttpProfile(isolateId, lastUpdateTime)
             result?.let { profileData ->
                 parseHttpProfile(profileData)
-                lastUpdateTime = System.currentTimeMillis() * 1000
+                lastUpdateTime = timeSource.currentTimeMicros()
             }
         } catch (e: Exception) {
-            notifyError("更新网络请求数据失败: ${e.message}")
+            logger.error("更新网络请求数据失败", e)
+            throw e
         }
     }
 
+    /**
+     * 解析HTTP分析数据
+     */
     private fun parseHttpProfile(profileData: JsonObject) {
         try {
-            val timestamp = profileData.get("timestamp")?.asLong ?: return
             val requestsArray = profileData.getAsJsonArray("requests") ?: return
 
             requestsArray.forEach { element ->
                 val requestJson = element.asJsonObject
-                val request = parseNetworkRequest(requestJson)
+                val request = parseNetworkRequest(requestJson, vmService)
                 request.networkMonitor = this
 
-                val existingRequest = requests[request.id]?.copy()
+                val existingRequest = _requests.value[request.id]
                 if (existingRequest == null) {
                     // 新请求
-                    requests[request.id] = request
-                    notifyRequestStarted(request)
+                    addRequest(request)
                 } else {
                     // 更新现有请求
-                    updateExistingRequest(existingRequest, request)
-                    notifyRequestUpdated(existingRequest)
-
-                    if (existingRequest.isComplete) {
-                        notifyRequestCompleted(existingRequest)
-                    }
+                    val updatedRequest = mergeRequests(existingRequest, request)
+                    updateRequest(request.id, updatedRequest)
                 }
             }
         } catch (e: Exception) {
-            notifyError("解析HTTP分析数据失败: ${e.message}")
+            logger.error("解析HTTP分析数据失败", e)
         }
     }
 
-
     /**
-     * 更新现有请求
+     * 添加新请求(带容量限制)
      */
-    private fun updateExistingRequest(existing: NetworkRequest, updated: NetworkRequest) {
-        existing.endTime = updated.endTime
-        existing.status = updated.status
-        existing.statusCode = updated.statusCode
-        existing.responseHeaders = updated.responseHeaders
-        existing.error = updated.error
-
-        // 合并事件
-        updated.events.forEach { newEvent ->
-            if (!existing.events.any { it.timestamp == newEvent.timestamp && it.event == newEvent.event }) {
-                existing.events.add(newEvent)
+    private fun addRequest(request: NetworkRequest) {
+        _requests.value = _requests.value.let { current ->
+            if (current.size >= maxRequestsCount) {
+                // 移除最老的请求
+                val sorted = current.values.sortedBy { it.startTime }
+                val toRemove = sorted.take(current.size - maxRequestsCount + 1).map { it.id }
+                (current - toRemove.toSet()) + (request.id to request)
+            } else {
+                current + (request.id to request)
             }
         }
-        requests[existing.id] = existing
     }
 
+    /**
+     * 更新现有请求(不可变方式)
+     */
+    private fun mergeRequests(existing: NetworkRequest, updated: NetworkRequest): NetworkRequest {
+        // 合并事件列表
+        val mergedEvents = mergeEvents(existing.events, updated.events)
+
+        return existing.copy(
+            endTime = updated.endTime,
+            status = updated.status,
+            statusCode = updated.statusCode,
+            responseHeaders = updated.responseHeaders,
+            error = updated.error,
+            events = mergedEvents.toMutableList()
+        )
+    }
+
+    /**
+     * 合并事件列表,避免重复
+     */
+    private fun mergeEvents(existing: List<RequestEvent>, new: List<RequestEvent>): List<RequestEvent> {
+        val existingSet = existing.map { it.timestamp to it.event }.toSet()
+        return existing + new.filter { (it.timestamp to it.event) !in existingSet }
+    }
+
+    /**
+     * 更新请求(线程安全)
+     */
     fun updateRequest(id: String, newRequest: NetworkRequest) {
-        val request = requests[id]
-        if(request!=null){
-            requests[id] = newRequest
+        _requests.value = _requests.value.let { current ->
+            if (id in current) {
+                current + (id to newRequest)
+            } else {
+                current
+            }
         }
     }
 
     /**
-     * 获取详细的请求信息（包括body）
+     * 获取详细的请求信息(包括body)
      */
     suspend fun getRequestDetails(requestId: String): NetworkRequest? {
         return try {
             val result = vmService.getHttpProfileRequest(isolateId, requestId)
             result?.let { detailJson ->
-                val request = requests[requestId] ?: return null
+                val request = _requests.value[requestId] ?: return null
 
-                // 解析请求body
-                detailJson.getAsJsonArray("requestBody")?.let { bodyArray ->
-                    request.requestBody = decodeByteArray(bodyArray)
-                }
+                // 创建新的请求对象,保持不可变性
+                val updatedRequest = request.copy(
+                    requestBody = detailJson.getAsJsonArray("requestBody")?.let { decodeByteArray(it) },
+                    responseBody = detailJson.getAsJsonArray("responseBody")?.let { decodeByteArray(it) },
+                    responseByteArray = detailJson.getAsJsonArray("responseBody")
+                )
 
-                // 解析响应body
-                detailJson.getAsJsonArray("responseBody")?.let { bodyArray ->
-                    request.responseBody = decodeByteArray(bodyArray)
-                    request.responseByteArray = bodyArray
-                }
-
-                request
+                updateRequest(requestId, updatedRequest)
+                updatedRequest
             }
         } catch (e: Exception) {
-            println("获取请求详细信息失败: ${e.message}")
+            logger.error("获取请求详细信息失败: requestId=$requestId", e)
             null
         }
     }
@@ -342,6 +382,7 @@ class DartNetworkMonitor(
             val bytes = jsonArray.map { it.asInt.toByte() }.toByteArray()
             String(bytes, Charsets.UTF_8)
         } catch (e: Exception) {
+            logger.warn("解码body失败", e)
             "Failed to decode body: ${e.message}"
         }
     }
@@ -350,19 +391,16 @@ class DartNetworkMonitor(
      * 清除所有请求数据
      */
     suspend fun clearRequests() {
-        requests.clear()
+        _requests.value = emptyMap()
         try {
             vmService.clearHttpProfile(isolateId)
-            lastUpdateTime = System.currentTimeMillis() * 1000
+            lastUpdateTime = timeSource.currentTimeMicros()
+            logger.info("请求数据已清除")
         } catch (e: Exception) {
-            notifyError("清除请求数据失败: ${e.message}")
+            logger.error("清除请求数据失败", e)
         }
     }
 
-    /**
-     * 获取所有请求
-     */
-    fun getAllRequests(): List<NetworkRequest> = requests.values.toList()
 
     /**
      * 根据条件筛选请求
@@ -372,66 +410,36 @@ class DartNetworkMonitor(
         status: RequestStatus? = null,
         containsUrl: String? = null,
     ): List<NetworkRequest> {
-        return requests.values.filter { request ->
+        return _requests.value.values.filter { request ->
             (method == null || request.method.equals(method, ignoreCase = true)) &&
                     (status == null || request.status == status) &&
                     (containsUrl == null || request.uri.contains(containsUrl, ignoreCase = true))
-
         }
     }
 
-    /**
-     * 添加监听器
-     */
-    fun addListener(listener: NetworkRequestListener) {
-        listeners.add(listener)
+
+    override fun onExit() {
+        stop()
     }
 
-    /**
-     * 移除监听器
-     */
-    fun removeListener(listener: NetworkRequestListener) {
-        listeners.remove(listener)
+    override fun onStart() {
+        scope.launch {
+            delay(100)
+            startMonitoring()
+        }
     }
 
-    // 通知方法
-    private fun notifyRequestStarted(request: NetworkRequest) {
-        listeners.forEach { it.onRequestStarted(request) }
-    }
-
-    private fun notifyRequestUpdated(request: NetworkRequest) {
-        listeners.forEach { it.onRequestUpdated(request) }
-    }
-
-    private fun notifyRequestCompleted(request: NetworkRequest) {
-        listeners.forEach { it.onRequestCompleted(request) }
-    }
-
-    private fun notifyError(error: String) {
-        listeners.forEach { it.onError(error) }
-    }
-
-    override fun onVmEvent(streamId: String, event: Event) {
-                when(event.getKind()){
-                    EventKind.IsolateExit -> {
-                        scope.launch {
-                            stopMonitoring()
-                        }
-                    }
-                    EventKind.IsolateStart -> {
-                        scope.launch {
-                            startMonitoring()
-                        }
-                    }
-                    else -> {}
-                }
+    override fun dispose() {
+        stop()
+        _requests.value = emptyMap()
+        vmService.removeEventHotResetListener(this)
     }
 
     companion object {
         /**
          * 解析单个网络请求
          */
-        fun parseNetworkRequest(json: JsonObject): NetworkRequest {
+        fun parseNetworkRequest(json: JsonObject, vmService: VmService): NetworkRequest {
             val id = json.get("id")?.asString ?: ""
             val method = json.get("method")?.asString ?: ""
             val uri = json.get("uri")?.asString ?: ""
@@ -445,6 +453,7 @@ class DartNetworkMonitor(
                 startTime = startTime,
                 endTime = endTime,
                 status = if (endTime != null) RequestStatus.COMPLETED else RequestStatus.PENDING,
+                isolateId = vmService.getMainIsolateId()
             )
 
             // 解析请求数据
@@ -494,7 +503,7 @@ class DartNetworkMonitor(
                     request.status = RequestStatus.ERROR
                 }
             } catch (e: Exception) {
-                println("解析请求数据失败: ${e.message}")
+                thisLogger().warn("解析请求数据失败", e)
             }
         }
 
@@ -524,8 +533,7 @@ class DartNetworkMonitor(
                     request.status = RequestStatus.COMPLETED
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                println("解析响应数据失败: ${e.message}")
+                thisLogger().warn("解析响应数据失败", e)
             }
         }
 
@@ -563,5 +571,3 @@ class DartNetworkMonitor(
         }
     }
 }
-
-

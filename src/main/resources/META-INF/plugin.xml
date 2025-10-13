@@ -238,8 +238,7 @@
 
         <!--        <psi.referenceContributor-->
         <!-- implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor" language="Dart"/>-->
-        <registryKey defaultValue="false" description="Enable Flutterx VM functionality"
-                     key="flutterx.vm.future.enable"/>
+
     </extensions>
 
     <projectListeners>

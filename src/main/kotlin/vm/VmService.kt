@@ -2,19 +2,22 @@ package vm
 
 
 import com.google.gson.*
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.util.Disposer
 import fleet.multiplatform.shims.ConcurrentHashMap
 import io.ktor.websocket.*
 import io.ktor.websocket.Frame
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import vm.VmService.VmHotResetListener
 import vm.consumer.*
 import vm.element.*
 import vm.log.LoggingController
@@ -23,6 +26,9 @@ import vm.network.DartNetworkMonitor
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+
+
+interface VmServiceComponent : VmHotResetListener, Disposable {}
 
 class VmService : VmServiceBase() {
     val gson: Gson = GsonBuilder()
@@ -38,18 +44,22 @@ class VmService : VmServiceBase() {
 
     //检查管理器
     val inspectorManager by lazy { InspectorStateManager(this) }
+    val dartHttpMonitor by lazy {
+        val comp = DartNetworkMonitor(vmService = this, scope = coroutineScope)
+        Disposer.register(this, comp)
+        comp
+    }
 
     private val listenStreamsEvents = arrayOf(
         *EventKind.entries.map { it.name }.toTypedArray()
     )
 
 
-    var dartHttpMonitor: MutableStateFlow<DartNetworkMonitor?> = MutableStateFlow(null)
-    private var _mainIsolateId: String? = null
+    private var _mainIsolateId: MutableStateFlow<String?> = MutableStateFlow(null)
+    val mainIsolateIdFlow = _mainIsolateId.asStateFlow()
 
     fun getMainIsolateId(): String {
-        if (_mainIsolateId != null) return _mainIsolateId!!
-        return ""
+        return _mainIsolateId.value ?: ""
     }
 
     suspend fun getMainIsolates(): IsolateRef? {
@@ -57,36 +67,9 @@ class VmService : VmServiceBase() {
     }
 
     suspend fun updateMainIsolateId() {
-        _mainIsolateId = mainIsolates()?.getId()
+        _mainIsolateId.value = mainIsolates()?.getId()
     }
 
-    val dartHttpIsMonitoring = MutableStateFlow(false)
-    val getAllRequests get() = dartHttpMonitor.value?.getAllRequests() ?: emptyList()
-
-    suspend fun startMonitoring(
-        intervalMs: Long = 1000L,
-        listener: DartNetworkMonitor.NetworkRequestListener? = null
-    ): Job? {
-        if (dartHttpMonitor.value == null) {
-            dartHttpMonitor.value = DartNetworkMonitor(
-                vmService = this,
-                scope = coroutineScope,
-            )
-        }
-        if (listener != null) {
-            dartHttpMonitor.value?.addListener(listener)
-        }
-        dartHttpMonitor.value?.startMonitoring(intervalMs)
-        dartHttpIsMonitoring.value = true
-
-        return dartHttpMonitor.value?.taskJob
-    }
-
-    fun destroyHttpMonitor() {
-        dartHttpIsMonitoring.value = false
-        dartHttpMonitor.value?.destroy()
-        dartHttpMonitor.value = null
-    }
 
     fun runInScope(action: suspend VmService.() -> Unit) {
         coroutineScope.launch {
@@ -162,7 +145,6 @@ class VmService : VmServiceBase() {
                 return
             }
             val eventIsolateId = event.getIsolate()?.getId()
-            logger.info("[热重启监听]:${event}")
             when (event.getKind()) {
                 EventKind.IsolateExit -> {
                     if (eventIsolateId != null && eventIsolateId == getMainIsolateId()) {
@@ -177,9 +159,10 @@ class VmService : VmServiceBase() {
                         logger.info("✅ 监听到热重启成功！新的主 Isolate (name: $newIsolateName, id: $eventIsolateId) 已启动。")
                         runInScope {
                             updateMainIsolateId()
+                            hotListeners.forEach { it.onStart() }
                         }
                     }
-                    hotListeners.forEach { it.onStart() }
+
                 }
 
                 else -> {
@@ -1946,6 +1929,7 @@ class VmService : VmServiceBase() {
     }
 
     override fun dispose() {
+
         disconnect()
     }
 

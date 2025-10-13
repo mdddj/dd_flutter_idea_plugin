@@ -10,15 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Link
-import org.jetbrains.jewel.ui.component.SimpleTabContent
-import org.jetbrains.jewel.ui.component.TabData
+import org.jetbrains.jewel.ui.component.Text
 import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInstance
 import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.constance.discordUrl
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
-import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 import shop.itbug.fluttercheckversionx.widget.CenterText
 import shop.itbug.fluttercheckversionx.widget.CustomTabRow
 import java.net.URI
@@ -28,40 +27,32 @@ import java.net.URI
 fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterAppInstance) -> Unit) {
     var tabIndex by remember { mutableIntStateOf(0) }
     val flutterAppList by FlutterXVMService.getInstance(project).runningApps.collectAsState()
-    val tabIdList by remember(flutterAppList) { mutableStateOf(flutterAppList.map { it.appInfo.appId }.toList()) }
-    val tabs = remember(tabIdList, tabIndex) {
-        tabIdList.mapIndexed { index, _ ->
-            TabData.Default(
-                selected = index == tabIndex,
-                content = { tabState ->
-                    SimpleTabContent(flutterAppList[index].appInfo.deviceId.firstChatToUpper(), tabState)
-                },
-                closable = false,
-                onClick = {
-                    tabIndex = index
-                }
-            )
-        }
-    }
+    val isEnableFuture = FlutterXVMService.getInstance(project).isEnableFuture.collectAsState().value
     if (flutterAppList.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
+                if (isEnableFuture.not()) {
+                    Text("Feature has been disabled in settings", color = JewelTheme.globalColors.text.error)
+                }
                 CenterText(
                     """Not Found any running flutter app.
 Please make sure the flutter app is running and the observatory is enabled.
 If you are running on a real device, please make sure the device is connected to the computer and the port is forwarded.
 """
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Link(PluginBundle.get("doc"), onClick = {
                         BrowserUtil.browse(URI.create("https://flutterx.itbug.shop/en/vm/dart_vm_panel/"))
                     })
-                    if(PluginConfig.getState(project).showDiscord){
-                        Link("Discord",onClick = {
+                    if (PluginConfig.getState(project).showDiscord) {
+                        Link("Discord", onClick = {
                             BrowserUtil.browse(discordUrl)
                         })
                     }
@@ -76,6 +67,7 @@ If you are running on a real device, please make sure the device is connected to
                         BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
                     })
                 }
+
             }
         }
     } else {
