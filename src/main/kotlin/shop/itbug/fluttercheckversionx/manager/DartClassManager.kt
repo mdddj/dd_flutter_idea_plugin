@@ -1,17 +1,25 @@
 package shop.itbug.fluttercheckversionx.manager
 
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
 import com.jetbrains.lang.dart.psi.impl.DartMetadataImpl
+import shop.itbug.fluttercheckversionx.actions.freezed.generateConstructorString
 import shop.itbug.fluttercheckversionx.util.*
 
 
@@ -90,6 +98,12 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
     }
 
     /**
+     * 所有构造函数
+     */
+    fun getAllFactoryConstructorList() =
+        PsiTreeUtil.findChildrenOfType(psiElement, DartFactoryConstructorDeclarationImpl::class.java)
+
+    /**
      * 查找fromJson函数
      */
     private fun findFromJsonTextByPsiFile(): DartFactoryConstructorDeclarationImpl? {
@@ -165,5 +179,66 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
         }
     }
 
+
+    //构造转属性
+    fun addFinalProperties(factoryElement: DartFactoryConstructorDeclarationImpl) {
+        val project = factoryElement.project
+        val factoryManager = factoryElement.manager()
+        val args = factoryManager.getNamedFields
+        if (args.isNotEmpty()) {
+            val finalElements = args.mapNotNull { it.createFinalField(project) }
+            val dh = DartPsiElementUtil.createDh(project)
+            val classMembers = psiElement.classBody?.classMembers ?: return
+            WriteCommandAction.runWriteCommandAction(project) {
+                finalElements.forEach {
+                    val newEle = classMembers.addBefore(it, factoryElement)
+                    classMembers.addAfter(dh, newEle)
+                }
+            }
+        }
+    }
+
+    //添加构造
+    fun addSimpleFactory(factoryElement: DartFactoryConstructorDeclarationImpl) {
+        val classMembers = psiElement.classBody?.classMembers ?: return
+        val project = factoryElement.project
+        val manager = factoryElement.manager()
+        val args = manager.getPropertiesWrapper
+        val clazz = args.generateConstructorString(manager.getClassName)
+        val createPsi = DartPsiElementUtil.createMethodDeclaration(project, manager.getClassName, clazz)
+        if (createPsi != null) {
+            WriteCommandAction.runWriteCommandAction(project) {
+                classMembers.addBefore(createPsi, factoryElement)
+            }
+        }
+    }
+
+    fun showChooseConstructorPopup(
+        point: RelativePoint,
+        onSelect: (item: DartFactoryConstructorDeclarationImpl) -> Unit
+    ) {
+        lateinit var popup: ListPopup
+        val actionGroup = DefaultActionGroup()
+        val factoryElements = runReadAction { getAllFactoryConstructorList() }
+        if (factoryElements.isEmpty()) return
+        factoryElements.forEach { item: DartFactoryConstructorDeclarationImpl ->
+            val manager = item.manager()
+            val text = runReadAction { manager.getClassName + "(${manager.allFieldList.size})" }
+            actionGroup.add(object : DumbAwareAction(text) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    popup.cancel()
+                    onSelect.invoke(item)
+                }
+            })
+        }
+        popup = JBPopupFactory.getInstance().createActionGroupPopup(
+            "Choose a constructor",
+            actionGroup,
+            SimpleDataContext.EMPTY_CONTEXT,
+            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+            false
+        )
+        popup.show(point)
+    }
 
 }

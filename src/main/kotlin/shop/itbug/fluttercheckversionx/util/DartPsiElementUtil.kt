@@ -6,11 +6,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartComponentNameImpl
 import com.jetbrains.lang.dart.psi.impl.DartTypeImpl
 import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
+import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.manager.myManagerFun
 import shop.itbug.fluttercheckversionx.model.DartClassProperty
 import shop.itbug.fluttercheckversionx.model.covertDartClassPropertyModel
@@ -38,6 +41,23 @@ object DartPsiElementUtil {
     fun getClassProperties(classElement: DartClassDefinitionImpl): List<DartVarDeclarationListImpl> {
         val findChildrenOfType = PsiTreeUtil.findChildrenOfType(classElement, DartVarDeclarationListImpl::class.java)
         return findChildrenOfType.toList()
+    }
+
+    fun createDartVarDeclarationByText(project: Project, text: String): DartVarDeclarationListImpl? {
+        val file = DartElementGenerator.createDummyFile(project, text)
+        return PsiTreeUtil.findChildOfType(file, DartVarDeclarationListImpl::class.java)
+    }
+
+
+    fun createMethodDeclaration(project: Project, className: String, text: String): DartMethodDeclaration? {
+        val file = DartElementGenerator.createDummyFile(
+            project, """
+            class $className {
+                $text
+            }
+        """.trimIndent()
+        )
+        return PsiTreeUtil.findChildOfType(file, DartMethodDeclaration::class.java)
     }
 
     /**
@@ -93,6 +113,10 @@ object DartPsiElementUtil {
     }
 
 
+    fun createDh(project: Project): PsiElement {
+        val statement = DartElementGenerator.createDummyFile(project, "var x = 1;")
+        return PsiTreeUtil.findChildrenOfAnyType(statement, LeafPsiElement::class.java).last()
+    }
 }
 
 

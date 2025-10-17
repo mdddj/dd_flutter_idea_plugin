@@ -419,11 +419,11 @@ class DartNetworkMonitor(
 
 
     override fun onExit() {
-        stop()
     }
 
     override fun onStart() {
         scope.launch {
+            stopMonitoring()
             delay(100)
             startMonitoring()
         }

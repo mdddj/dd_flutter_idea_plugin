@@ -296,7 +296,7 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
         }
     }
 
-    inner class TypeManager(dType: DartSimpleType?) {
+    class TypeManager(dType: DartSimpleType?) {
 
         private val dartType = dType?.firstChild?.reference?.element?.text
 
@@ -345,13 +345,24 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
         var typeString: String = "",
         //节点
         val element: DartDefaultFormalNamedParameter
-    )
+    ) {
+        fun getDefaultValue(): String {
+
+            val type = element.normalFormalParameter.simpleFormalParameter?.type?.simpleType
+                ?: element.normalFormalParameter.fieldFormalParameter?.type?.simpleType
+            if (type == null) return "null";
+            val typeManager = TypeManager(type)
+            return typeManager.getMyDartType()?.defaultValueString ?: "null"
+        }
+    }
 
 }
 
 val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.isRequired get() = !final_type_string.endsWith("?")
 val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.type_string get() = "${typeString}${if (isRequired) "" else ""}"
 val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.constr_type_string get() = if (isRequired) "required this.${name}" else "this.${name}"
+val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.constr_type_string_use_default_value get() = if (isRequired) "this.${name}=${getDefaultValue()}" else "this.${name}"
+
 
 val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.final_type_string: String
     get() {

@@ -82,7 +82,14 @@
             <className>shop.itbug.fluttercheckversionx.actions.internal.L10nKeyExtractIntentionAction</className>
             <language>Dart</language>
         </intentionAction>
-
+        <intentionAction>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddFinalPropsIntentionAction</className>
+            <language>Dart</language>
+        </intentionAction>
+        <intentionAction>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddSimpleConstructionIntentionAction</className>
+            <language>Dart</language>
+        </intentionAction>
 
         <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
 
