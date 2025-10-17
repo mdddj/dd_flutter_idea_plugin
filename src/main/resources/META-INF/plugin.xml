@@ -82,7 +82,14 @@
             <className>shop.itbug.fluttercheckversionx.actions.internal.L10nKeyExtractIntentionAction</className>
             <language>Dart</language>
         </intentionAction>
-
+        <intentionAction>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddFinalPropsIntentionAction</className>
+            <language>Dart</language>
+        </intentionAction>
+        <intentionAction>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddSimpleConstructionIntentionAction</className>
+            <language>Dart</language>
+        </intentionAction>
 
         <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
 
@@ -238,8 +245,7 @@
 
         <!--        <psi.referenceContributor-->
         <!-- implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor" language="Dart"/>-->
-        <registryKey defaultValue="false" description="Enable Flutterx VM functionality"
-                     key="flutterx.vm.future.enable"/>
+
     </extensions>
 
     <projectListeners>

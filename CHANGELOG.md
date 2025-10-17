@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## [6.3.0] - 2025-10-17
+
+* New: Dart VM Service tool window, providing real-time insights into your running Flutter application.
+*   **VM Info**: View detailed information about the Dart Virtual Machine, including memory usage (current/max RSS).
+*   **HTTP Monitor**: Capture and inspect HTTP requests made by your application.
+*   **Logging**: View logs sent via `dart:developer`.
+
+
+## [6.2.0] - 2025-10-13
+
+* Refactor dart vm listener
+
 ## [6.1.0] - 2025-10-08
 
 * New version of the search dialog component (dart package)

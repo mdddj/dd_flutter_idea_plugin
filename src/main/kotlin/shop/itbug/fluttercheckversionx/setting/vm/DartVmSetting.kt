@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
+import shop.itbug.fluttercheckversionx.common.dart.FlutterXVMService
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.widget.PopupWidgets
 import shop.itbug.fluttercheckversionx.window.getDartVmWindow
@@ -41,6 +42,7 @@ class DartVmSetting(val project: Project) : Configurable {
         myPanel.apply()
         PluginConfig.getState(project).enableVmServiceToolWindow = state.enableVmServiceToolWindow
         PluginConfig.getState(project).enableVmServiceListen = state.enableVmServiceListen
+        FlutterXVMService.getInstance(project).settingChanged()
 
     }
 

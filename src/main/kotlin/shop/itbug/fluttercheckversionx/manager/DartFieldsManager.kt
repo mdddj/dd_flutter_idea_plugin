@@ -1,12 +1,18 @@
 package shop.itbug.fluttercheckversionx.manager
 
 import com.google.common.base.CaseFormat
+import com.intellij.openapi.project.Project
+import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.DartDefaultFormalNamedParameter
+import com.jetbrains.lang.dart.psi.DartMetadata
 import com.jetbrains.lang.dart.psi.DartNormalFormalParameter
 import com.jetbrains.lang.dart.psi.impl.DartFieldFormalParameterImpl
 import com.jetbrains.lang.dart.psi.impl.DartSimpleFormalParameterImpl
+import com.jetbrains.lang.dart.psi.impl.DartVarDeclarationListImpl
 import shop.itbug.fluttercheckversionx.document.getDartElementType
+import shop.itbug.fluttercheckversionx.util.DartPsiElementUtil
 
 
 interface FieldManager {
@@ -109,14 +115,36 @@ val MyDartFieldModel.camelCaseName: String get() = camelCaseToUnderscore(fieldNa
  * 封装为模型
  */
 data class MyDartFieldModel(
-
     //类型字符串
     val typeString: String,
     //类型属性的名称
     val fieldNameString: String,
     //是否可以为null,true:可以为null
     val isOption: Boolean = false,
-)
+    val metadata: List<SmartPsiElementPointer<DartMetadata>>,
+    val element: DartNormalFormalParameter
+) {
+
+    //默认值
+    fun getDefaultValueString(): String? {
+        val type = element.simpleFormalParameter?.type?.simpleType
+        val typeManage = DartDefaultFormalNamedParameterActionManager.TypeManager(type)
+        return typeManage.getMyDartType()?.defaultValueString
+    }
+
+    fun getMetaDataStrings(): String =
+        if (metadata.isNotEmpty()) metadata.mapNotNull { it.element?.text }.joinToString("\n") else ""
+
+    fun createFinalField(project: Project): DartVarDeclarationListImpl? {
+        val ele: DartVarDeclarationListImpl? = DartPsiElementUtil.createDartVarDeclarationByText(
+            project, """
+${getMetaDataStrings()}
+final $typeString $fieldNameString;
+        """.trimIndent()
+        )
+        return ele
+    }
+}
 
 /**
  * dart参数的处理
@@ -133,19 +161,30 @@ class DartFieldsManager(val element: DartNormalFormalParameter) : FieldManager {
             var typeString = ""
             var fieldNameString = ""
             val simpleParam = PsiTreeUtil.findChildOfType(element, DartSimpleFormalParameterImpl::class.java)
+            var metadataList = listOf<SmartPsiElementPointer<DartMetadata>>()
+
             if (simpleParam != null) {
                 simpleParam.type?.let {
                     typeString = it.text
                 }
                 fieldNameString = simpleParam.componentName.text
+                metadataList = simpleParam.metadataList.map { metadata ->
+                    return@map SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(metadata)
+                }
             }
             val f = PsiTreeUtil.findChildOfType(element, DartFieldFormalParameterImpl::class.java)
             if (f != null) {
                 typeString = f.referenceExpression.getDartElementType() ?: (f.type?.text ?: "-")
                 fieldNameString = f.referenceExpression.text
                 println("fieldNameString: $fieldNameString,typeString: $typeString")
+                metadataList = f.metadataList.map { metadata ->
+                    return@map SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(metadata)
+                }
             }
-            return MyDartFieldModel(typeString, fieldNameString, typeString.endsWith("?"))
+            return MyDartFieldModel(
+                typeString, fieldNameString, typeString.endsWith("?"), metadataList,
+                element
+            )
         }
 }
 

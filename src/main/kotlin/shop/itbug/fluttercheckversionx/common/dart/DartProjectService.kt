@@ -14,7 +14,6 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +23,6 @@ import vm.VmService
 import vm.VmServiceBase
 import java.util.concurrent.ConcurrentHashMap
 
-val isSupportDartVm = System.getenv("DART_VM") == "true" || Registry.get("flutterx.vm.future.enable").asBoolean()
 
 data class FlutterAppInfo(
     val appId: String,
@@ -111,12 +109,16 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
     val vmServices: List<VmService> get() = flutterApps.values.map { it.vmService }
     val allFlutterApps: List<FlutterAppInstance> get() = flutterApps.values.toList()
 
-    val isEnable by lazy { isSupportDartVm }
+    private val _isEnableFuture by lazy {
+        MutableStateFlow(PluginConfig.getState(project).enableVmServiceListen)
+    }
+
+    val isEnableFuture = _isEnableFuture.asStateFlow()
+    private val eventBus = project.messageBus.connect(parentDisposable = this)
 
     init {
-        log.info("是否启动了 dart vm 的功能:${isEnable}")
-        if (isEnable && PluginConfig.getState(project).enableVmServiceListen) {
-            project.messageBus.connect(parentDisposable = this).subscribe(TOPIC, this)
+        if (_isEnableFuture.value) {
+            eventBus.subscribe(TOPIC, this)
         } else {
             log.info("dart vm service 服务监听已经被禁用")
         }
@@ -412,6 +414,14 @@ class FlutterXVMService(val project: Project) : Disposable, FlutterAppVmServiceL
 
     private fun updateStateFlow() {
         _runningApps.value = flutterApps.values.toList()
+    }
+
+    fun settingChanged() {
+        _isEnableFuture.value = PluginConfig.getState(project).enableVmServiceListen
+        if (_isEnableFuture.value) {
+            eventBus.disconnect()
+            eventBus.subscribe(TOPIC, this)
+        }
     }
 
 

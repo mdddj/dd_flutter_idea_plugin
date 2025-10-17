@@ -144,6 +144,12 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                 }
             }
 
+            group("freezed intention actions") {
+                row {
+                    checkBox("Enable").bindSelected(pluginConfig::enableFreezedIntentionActions)
+                }
+            }
+
             //显示打赏action
             group(PluginBundle.get("reward")) {
                 row {

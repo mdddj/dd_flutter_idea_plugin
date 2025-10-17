@@ -30,6 +30,9 @@ class PluginSetting : BaseState() {
     //启用dart vm service 控制台监听器
     var enableVmServiceListen by property(true)
 
+    //启用 freezed 工具
+    var enableFreezedIntentionActions by property(false)
+
 
 }
 

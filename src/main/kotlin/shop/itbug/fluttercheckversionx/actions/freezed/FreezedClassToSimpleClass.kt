@@ -7,16 +7,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import shop.itbug.fluttercheckversionx.common.MyDialogWrapper
-import shop.itbug.fluttercheckversionx.manager.DartDefaultFormalNamedParameterActionManager
-import shop.itbug.fluttercheckversionx.manager.DartFactoryConstructorDeclarationImplManager
-import shop.itbug.fluttercheckversionx.manager.constr_type_string
-import shop.itbug.fluttercheckversionx.manager.type_string
+import shop.itbug.fluttercheckversionx.manager.*
 import shop.itbug.fluttercheckversionx.widget.DartEditorTextPanel
 import java.awt.Dimension
 import javax.swing.JComponent
 
 
-private data class SettingModel(var className: String = "", var generateClass: String = "")
+data class SettingModel(var className: String = "", var generateClass: String = "")
 
 /**
  * freezed 转成 简单的 class
@@ -52,27 +49,35 @@ fun List<DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper>.gener
     }$className({${joinToString(separator = ",", postfix = "".prependIndent("\n\t\t")) { it.constr_type_string }}});
     }
     """.trimIndent()
-    println(str)
     return str
 }
 
-///转换的弹窗
-private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: DartFactoryConstructorDeclarationImpl) :
-    MyDialogWrapper(project) {
+fun List<DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper>.generateConstructorString(className: String): String {
+    val str = """
+$className({${joinToString(separator = ",\n\t", postfix = "".prependIndent("\n")) { it.constr_type_string_use_default_value }}});
+    """.trimIndent()
+    return str
+}
 
+private class FreezedClassToSimpleClassDialog(
+    project: Project,
+    val psiElement: DartFactoryConstructorDeclarationImpl
+) : MyDialogWrapper(project) {
 
     private val manager: DartFactoryConstructorDeclarationImplManager
         get() = DartFactoryConstructorDeclarationImplManager(psiElement)
 
     private val args: List<DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper> =
         manager.getPropertiesWrapper
+
     private val setting = SettingModel(
-        className = manager.getClassName, generateClass = args.generateClassString(manager.getClassName)
+        className = manager.getClassName,
+        generateClass = args.generateClassString(manager.getClassName)
     )
-    val editor = DartEditorTextPanel(project, setting.generateClass)
+
+    private val editor: DartEditorTextPanel by lazy { DartEditorTextPanel(project, setting.generateClass) }  // 在这里初始化
 
     init {
-
         super.init()
         super.setTitle("Freezed To Simple Class")
     }
@@ -85,11 +90,7 @@ private class FreezedClassToSimpleClassDialog(project: Project, val psiElement: 
         }
     }
 
-
     override fun getPreferredSize(): Dimension {
         return Dimension(500, super.getPreferredSize().height)
     }
-
-
 }
-
