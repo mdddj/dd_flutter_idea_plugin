@@ -4,24 +4,18 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="重构 dart监听器">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/internal/DartAddFinalPropsIntentionAction.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/internal/DartAddSimpleConstructionIntentionAction.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/intentionDescriptions/DartAddFinalPropsIntentionAction/description.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/kotlin/FreezedParseTest.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/testData/freezed.dart" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release6.3.0 &#10;优化部分细节问题">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/yaml/YamlPathResolveHandleInlay.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/build-test.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/test-release.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/freezed/FreezedClassToSimpleClass.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/freezed/FreezedClassToSimpleClass.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/PluginConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartFactoryConstructorDeclarationImplManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartFactoryConstructorDeclarationImplManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartFieldsManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartFieldsManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/setting/AppConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DartPsiElementUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/DartPsiElementUtil.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/network/DartNetworkMonitor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/MyFileUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/YamlExtends.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/YamlExtends.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/PubspecYamlTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/PubspecYamlTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testData/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testData/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,15 +87,15 @@
         <option value="Kotlin Interface" />
         <option value="Kotlin File" />
         <option value="Kotlin Object" />
-        <option value="Kotlin Class" />
         <option value="InspectionDescription" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="6.0.7" />
+        <entry key="$PROJECT_DIR$" value="6.1.0" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -279,6 +273,7 @@
     "Gradle.MyPopupTest.testPopupDisplay.executor": "Run",
     "Gradle.PubspecYamlTest.testAdd.executor": "Run",
     "Gradle.PubspecYamlTest.testAddDeps.executor": "Run",
+    "Gradle.PubspecYamlTest.testPathGet.executor": "Run",
     "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:clean].executor": "Run",
     "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:functionalTestClasses].executor": "Run",
     "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:pingServer].executor": "Run",
@@ -335,7 +330,7 @@
     "dart.analysis.tool.window.visible": "false",
     "dev.sweep.assistant.data.RecentlyUsedFiles": "src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt;build.gradle.kts;sweep://tutorial/SweepTutorial.java",
     "full.screen.before.presentation.mode": "false",
-    "git-widget-placeholder": "6.1.0",
+    "git-widget-placeholder": "6.3.0",
     "ignore.preview.features.used": "true",
     "jdk.selected.JAVA_MODULE": "jbrsdk_jcef-17",
     "junie.onboarding.icon.badge.shown": "true",
@@ -357,7 +352,7 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.16889882",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "http.proxy",
+    "settings.editor.selected.configurable": "ssh.settings",
     "show.migrate.to.gradle.popup": "false",
     "sweep.chatMode": "Manual",
     "ts.external.directory.path": "/Users/ldd/Applications/IntelliJ IDEA Ultimate.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
@@ -472,7 +467,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PubspecYamlTest.testAddDeps" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PubspecYamlTest.testPathGet" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -485,7 +480,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;PubspecYamlTest.testAddDeps&quot;" />
+            <option value="&quot;PubspecYamlTest.testPathGet&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -597,19 +592,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Gradle.PubspecYamlTest.testPathGet" />
       <item itemvalue="Gradle.FreezedParseTest.testParseFreezedClass" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-      <item itemvalue="Gradle.PubspecYamlTest.testAddDeps" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+        <item itemvalue="Gradle.PubspecYamlTest.testPathGet" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.FreezedParseTest.testParseFreezedClass" />
-        <item itemvalue="Gradle.PubspecYamlTest.testAddDeps" />
       </list>
     </recent_temporary>
   </component>
@@ -1960,7 +1955,8 @@
       <workItem from="1760500398786" duration="11490000" />
       <workItem from="1760600095794" duration="741000" />
       <workItem from="1760664093107" duration="333000" />
-      <workItem from="1760682645126" duration="491000" />
+      <workItem from="1760682645126" duration="1147000" />
+      <workItem from="1760930280019" duration="6260000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2305,7 +2301,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="425" />
+    <option name="localTasksCounter" value="426" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2355,7 +2351,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="refactor(AssetsListeningProjectService): 重构 AssetsListeningProjectService 类- 移除 CheckFlutterVersionTask 类中的冗余参数&#10;- 更新 CHANGELOG.md，添加新版本发布说明&#10;- 调整 gradle.properties 中的版本号和 IDE 类型&#10;- 优化项目结构，提高代码可读性和可维护性" />
     <MESSAGE value="refactor(ProjectSocketService): 添加在编辑器中打开 JSON 数据的功能&#10;&#10;- 在 ProjectSocketService 中添加 openJsonDataInEditor 方法&#10;- 更新 plugin.xml 以包含新的 OpenDioJsonDataInEditorAction 动作&#10;- 优化项目结构和依赖配置" />
     <MESSAGE value="refactor(DioApiService): 添加获取当前选中 API 的方法&#10;&#10;- 在 DioApiService 中添加 getCurrentSelectApi 方法&#10;- 更新 Open" />
     <MESSAGE value="添加 dart vm 连接代码" />
@@ -2380,7 +2375,8 @@
     <MESSAGE value="添加阿里云镜像快速添加功能" />
     <MESSAGE value="release 6.1.0" />
     <MESSAGE value="重构 dart监听器" />
-    <option name="LAST_COMMIT_MESSAGE" value="重构 dart监听器" />
+    <MESSAGE value="release6.3.0 &#10;优化部分细节问题" />
+    <option name="LAST_COMMIT_MESSAGE" value="release6.3.0 &#10;优化部分细节问题" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>

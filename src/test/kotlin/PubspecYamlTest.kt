@@ -1,3 +1,4 @@
+
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -30,6 +31,8 @@ dependencies:
   riverpod_annotation: ^2.6.1
   path_provider: ^2.1.5
   flex_color_scheme: ^8.3.0
+  dd_js_util: 
+    path: ../dd_js_util
 """.trimIndent()
 
 
@@ -83,6 +86,16 @@ class PubspecYamlTest : BasePlatformTestCase() {
 
 
         println(yamlFile.text)
+
+
+    }
+
+    fun testPathGet(){
+        val yamlFile = myFixture.configureByText("pubspec.yaml", fileText) as YAMLFile
+
+
+
+
 
 
     }

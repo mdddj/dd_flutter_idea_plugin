@@ -87,7 +87,8 @@
             <language>Dart</language>
         </intentionAction>
         <intentionAction>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddSimpleConstructionIntentionAction</className>
+            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddSimpleConstructionIntentionAction
+            </className>
             <language>Dart</language>
         </intentionAction>
 
@@ -153,16 +154,19 @@
         <config.codeVisionGroupSettingProvider
                 implementation="shop.itbug.fluttercheckversionx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
                 id="KtsAliyunMirrorInlayGroupSetting"/>
-<!--        <codeInsight.daemonBoundCodeVisionProvider-->
-<!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
-<!--        <config.codeVisionGroupSettingProvider-->
-<!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
-<!--                id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
+        <!--        <codeInsight.daemonBoundCodeVisionProvider-->
+        <!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
+        <!--        <config.codeVisionGroupSettingProvider-->
+        <!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
+        <!--                id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
 
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogInlay"
-                language="yaml" id="DartPackageSearchDialogInlay" />
-        <!--        <codeInsight.daemonBoundCodeVisionProvider-->
+                language="yaml" id="DartPackageSearchDialogInlay"/>
+        <codeInsight.inlayProvider
+                implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.YamlPathResolveHandleInlay"
+                language="yaml"
+        />        <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
 
         <externalAnnotator implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"
