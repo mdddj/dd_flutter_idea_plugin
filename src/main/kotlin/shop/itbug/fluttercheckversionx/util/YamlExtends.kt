@@ -20,6 +20,7 @@ import shop.itbug.fluttercheckversionx.model.FlutterPluginType
 import shop.itbug.fluttercheckversionx.model.PubVersionDataModel
 import shop.itbug.fluttercheckversionx.services.MyDartPackage
 import shop.itbug.fluttercheckversionx.tools.YAML_DART_PACKAGE_INFO_KEY
+import java.io.File
 
 
 private val devPattern = Regex("""\bdev\b""")
@@ -125,6 +126,46 @@ class YamlExtends(val element: PsiElement) {
         val models = tryGetModels()
         return models.find { it.name == pluginName }?.pubData
     }
+
+
+    //是否 path节点
+    fun isPathElement(): Boolean {
+        val firstKeyVal = getFirstSubKeyValue() ?: return false
+        return firstKeyVal.keyText == "path"
+    }
+
+    //获取第一个子节点
+    fun getFirstSubKeyValue(): YAMLKeyValue? {
+        if (element is YAMLKeyValue && element.value is YAMLMapping) {
+            val mp = element.value as YAMLMapping
+            val kys = mp.keyValues
+            if (kys.isNotEmpty() && kys.size == 1) {
+                val ky = kys.first()
+                return ky
+            }
+        }
+        return null
+    }
+
+
+    ///获取 ele节点
+    fun getPathElement(): YAMLPlainTextImpl? {
+        val firstKeyValue = getFirstSubKeyValue() ?: return null
+        if (firstKeyValue.keyText == "path") {
+            val plainText = PsiTreeUtil.findChildOfType(firstKeyValue, YAMLPlainTextImpl::class.java)
+            return plainText
+        }
+        return null
+    }
+
+    ///解析到文件
+    fun getPathResolvePath(): File? {
+        val pathEle = getPathElement() ?: return  null
+        val currentFilePath = element.containingFile.virtualFile.path
+        return MyFileUtil.resolveDirectory(currentFilePath, pathEle.textValue.trim())
+    }
+
+
 }
 
 open class MyYamlPsiElementFactory(open val project: Project) {
@@ -171,24 +212,15 @@ class PubspecYamlElementFactory(override val project: Project) : MyYamlPsiElemen
     }
 
     fun addDependenciesToDefault(pluginName: String, pluginVersion: String, yamlFile: YAMLFile) = addDependencies(
-        pluginName,
-        pluginVersion,
-        yamlFile,
-        FlutterPluginType.Dependencies
+        pluginName, pluginVersion, yamlFile, FlutterPluginType.Dependencies
     )
 
     fun addDependenciesToDev(pluginName: String, pluginVersion: String, yamlFile: YAMLFile) = addDependencies(
-        pluginName,
-        pluginVersion,
-        yamlFile,
-        FlutterPluginType.DevDependencies
+        pluginName, pluginVersion, yamlFile, FlutterPluginType.DevDependencies
     )
 
     fun addDependenciesToOverrides(pluginName: String, pluginVersion: String, yamlFile: YAMLFile) = addDependencies(
-        pluginName,
-        pluginVersion,
-        yamlFile,
-        FlutterPluginType.OverridesDependencies
+        pluginName, pluginVersion, yamlFile, FlutterPluginType.OverridesDependencies
     )
 
     //在没有顶级 key的情况下执行
@@ -197,12 +229,11 @@ class PubspecYamlElementFactory(override val project: Project) : MyYamlPsiElemen
             val mp = it.topLevelValue as? YAMLMapping?
             if (mp != null) {
                 val last = mp.keyValues.lastOrNull() ?: return
-                val topElement = YAMLElementGenerator.getInstance(project)
-                    .createYamlKeyValueWithSequence(
-                        key, mapOf(
-                            pluginName to pluginVersion
-                        )
+                val topElement = YAMLElementGenerator.getInstance(project).createYamlKeyValueWithSequence(
+                    key, mapOf(
+                        pluginName to pluginVersion
                     )
+                )
                 WriteCommandAction.runWriteCommandAction(project) {
                     val newLast = mp.addAfter(createEol(), last)
                     mp.addAfter(topElement, newLast)

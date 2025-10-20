@@ -16,6 +16,8 @@ dependencies:
   flutter_hooks: ^0.21.3+1
   riverpod_annotation: ^2.6.1
   path_provider: ^2.1.5
+  dd_js_util:
+    path: ../dd_js_util
 
   
 

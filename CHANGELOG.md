@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+
+## [6.3.1] - 2025-10-20
+
+* Add some actions to parse local package references (pubspec.yaml,inlay)
+
+
 ## [6.3.0] - 2025-10-17
 
 * New: Dart VM Service tool window, providing real-time insights into your running Flutter application.

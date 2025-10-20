@@ -254,4 +254,22 @@ object MyFileUtil {
         return true
     }
 
+    fun resolveDirectory(currentFilePath: String, relativePathStr: String): File? {
+        return resolveDirectory(File(currentFilePath), relativePathStr)
+    }
+
+    fun resolveDirectory(currentFile: File, relativePathStr: String): File? {
+        // 确保 currentFile 是一个文件，如果不是（比如是目录），我们假设它是“当前所在目录”的文件
+        val currentDir = if (currentFile.isFile) currentFile.parentFile else currentFile
+
+        // 构建相对于当前目录的目标路径
+        val targetFile = File(currentDir, relativePathStr).normalize()
+
+        // 检查目标是否存在且是一个目录
+        return if (targetFile.exists() && targetFile.isDirectory) {
+            targetFile
+        } else {
+            null
+        }
+    }
 }
