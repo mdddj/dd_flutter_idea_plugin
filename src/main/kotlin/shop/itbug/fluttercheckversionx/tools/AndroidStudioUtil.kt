@@ -6,12 +6,11 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.SystemInfo
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.Path
 
 
 /**
@@ -55,66 +54,23 @@ class FlutterProjectUtil(val project: Project) {
     val macosDirIsExist: Boolean get() = File(macosPath).exists()
 
 
-    /**
-     * 项目的Android目录
-     */
-    private val androidCommandLineTool = GeneralCommandLine("studio")
-
-    /**
-     * macos as 默认查找路径
-     */
-    private val macAsDefaultFindPath = Path("/Applications/Android Studio.app")
-
-    /**
-     * win as 默认查找路径
-     */
-    private val windowsAsDefaultFindPath = Path("C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe")
-
 
     /**
      * 是否为macos设备
      */
     val isMacos: Boolean = SystemInfo.isMac
 
-    /**
-     * 获取默认查找路径
-     */
-    private val defaultFindPath: Path
-        get() {
-            if (SystemInfo.isMac) {
-                return macAsDefaultFindPath
-            } else if (SystemInfo.isWindows) {
-                return windowsAsDefaultFindPath
-            }
-            throw UnsupportedOperationException("Not implemented")
-        }
 
-    /**
-     * 检查 Android Studio 是否安装
-     */
-    val isAndroidStudioInstalled: Boolean get() = MyFileUtil.pathIsExists(defaultFindPath)
 
     // 在 macOS 或 Linux 上打开指定目录
     fun openAndroidStudioWithDirectory() {
-        if (SystemInfo.isMac) {//macos
-            val openProjectCommandArgs =
-                arrayOf(androidPath)
-            androidCommandLineTool.withParameters(*openProjectCommandArgs)
-            try {
-                ExecUtil.execAndReadLine(androidCommandLineTool)
-            } catch (e: Exception) {
-                openFailed(e.localizedMessage)
-            }
-        } else if (SystemInfo.isWindows) {//macos
-            val openProjectCommandArgs =
-                arrayOf(androidPath)
-            androidCommandLineTool.withParameters(*openProjectCommandArgs)
-            try {
-                ExecUtil.execAndReadLine(androidCommandLineTool)
-            } catch (e: Exception) {
-                openFailed(e.localizedMessage)
-            }
+        val androidFile = File(androidPath)
+        if(androidFile.exists()){
+            ProjectManager.getInstance().loadAndOpenProject(androidPath)
+        }else{
+            showMessage("android dir not exist")
         }
+
     }
 
     /**

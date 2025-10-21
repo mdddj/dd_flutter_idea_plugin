@@ -6,6 +6,7 @@ import vm.VmServiceBase
 import vm.VmServiceListener
 import vm.devtool.*
 import vm.element.Event
+import vm.getInstance
 import vm.logging.Logger
 import vm.logging.Logging
 
@@ -31,7 +32,7 @@ class DartVmClassTest : BasePlatformTestCase() {
             }
         }
 
-    val url = "ws://127.0.0.1:50595/4KEsHVdsVb4=/ws"
+    val url = "ws://127.0.0.1:65197/SBrTL9VPO4c=/ws"
     val createVmService: VmService
         get() = VmServiceBase.connect(url, vmListen)
 
@@ -43,6 +44,7 @@ class DartVmClassTest : BasePlatformTestCase() {
             Logging.setLogger(Logger.IDEA)
             vmService.updateMainIsolateId()
             val providers: List<ProviderNode> = ProviderHelper.getProviderNodes(vmService)
+            val mainIsolateId = vmService.getMainIsolateId()
             assert(providers.isNotEmpty())
             for (provider in providers) {
                 val path = provider.getProviderPath()
@@ -53,9 +55,9 @@ class DartVmClassTest : BasePlatformTestCase() {
                                 PathToProperty.ObjectProperty(field.name, field.ownerUri, field.ownerName, field),
                                 instanceId = field.ref.getId()
                             )
-//                            val instance: InstanceDetails =
-//                                ProviderHelper.getInstanceDetails(vmService, newPath, resultByPath)
-                            println("[${resultByPath.type}][${field.name}]field instance:${field.ref.getValueAsString()}")
+
+                            val instance = vmService.getInstance(mainIsolateId, field.ref.getId())
+                            println("instance:$instance")
                         }
                     }
 
