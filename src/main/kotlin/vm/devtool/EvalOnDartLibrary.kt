@@ -95,7 +95,7 @@ class EvalOnDartLibrary(
      *
      * @param isolateId 目标 isolate 的 ID。
      * @param expression 要执行的 Dart 表达式。
-     * @param scope [可选] 一个变量名到对象ID的映射，用于表达式的作用域。
+     * @param scope  一个变量名到对象ID的映射，用于表达式的作用域。
      * @return 表达式结果的 [InstanceRef]。
      * @throws CancelledException 如果当前协程被取消。
      * @throws LibraryNotFoundException 如果找不到目标库。
@@ -113,7 +113,7 @@ class EvalOnDartLibrary(
         suspendCancellableCoroutine { continuation ->
             vmService.evaluate(
                 isolateId,
-                lib.getId()!!,
+                lib.getId(),
                 expression,
                 scope,
                 disableBreakpoints,
@@ -150,7 +150,7 @@ class EvalOnDartLibrary(
      */
     suspend fun getInstance(isolateId: String, instanceRef: InstanceRef): Instance {
         return suspendCancellableCoroutine { continuation ->
-            vmService.getInstance(isolateId, instanceRef.getId()!!,object : GetInstanceConsumer{
+            vmService.getInstance(isolateId, instanceRef.getId(),object : GetInstanceConsumer{
                 override fun received(response: Instance) {
                     continuation.resume(response)
                 }

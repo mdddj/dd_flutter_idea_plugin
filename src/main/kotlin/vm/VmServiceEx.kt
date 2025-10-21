@@ -648,6 +648,20 @@ suspend fun VmService.getObjectWithClassObj(isolateId: String, instanceId: Strin
 }
 
 
+suspend fun VmService.getInstance(isolateId: String, instanceId: String): Instance? {
+    return suspendCancellableCoroutine { continuation ->
+        getInstance(isolateId,instanceId, object : GetInstanceConsumer{
+            override fun received(response: Instance) {
+                continuation.resume(response)
+            }
+
+            override fun onError(error: RPCError) {
+                continuation.resume(null)
+            }
+        })
+    }
+}
+
 suspend fun VmService.getObjectWithField(isolateId: String,instanceId: String): Field? {
     return suspendCancellableCoroutine { continuation ->
         getObject(isolateId,instanceId,object : GetObjectConsumer{
