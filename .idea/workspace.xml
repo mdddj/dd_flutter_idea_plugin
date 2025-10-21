@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="feat(DartPackageAddCompose): add links to package repository and homepage">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubVersionDataModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/model/PubVersionDataModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/DartPackageAddCompose.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/DartPackageAddCompose.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -584,10 +583,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.FreezedParseTest.testParseFreezedClass" />
       <item itemvalue="Gradle.PubspecYamlTest.testPathGet" />
-      <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+      <item itemvalue="Gradle.FreezedParseTest.testParseFreezedClass" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
     </list>
     <recent_temporary>
@@ -1950,6 +1949,7 @@
       <workItem from="1760682645126" duration="1147000" />
       <workItem from="1760930280019" duration="6334000" />
       <workItem from="1761009120809" duration="1179000" />
+      <workItem from="1761010318739" duration="217000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2294,7 +2294,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="427" />
+    <option name="localTasksCounter" value="428" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2344,7 +2344,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="refactor(DioApiService): 添加获取当前选中 API 的方法&#10;&#10;- 在 DioApiService 中添加 getCurrentSelectApi 方法&#10;- 更新 Open" />
     <MESSAGE value="添加 dart vm 连接代码" />
     <MESSAGE value="完善 dart vm 功能" />
     <MESSAGE value="完善vm http监听功能功能" />
@@ -2369,7 +2368,8 @@
     <MESSAGE value="重构 dart监听器" />
     <MESSAGE value="release6.3.0 &#10;优化部分细节问题" />
     <MESSAGE value="release 6.3.1 - Add actions to parse local package references in pubspec.yaml" />
-    <option name="LAST_COMMIT_MESSAGE" value="release 6.3.1 - Add actions to parse local package references in pubspec.yaml" />
+    <MESSAGE value="feat(DartPackageAddCompose): add links to package repository and homepage" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(DartPackageAddCompose): add links to package repository and homepage" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
