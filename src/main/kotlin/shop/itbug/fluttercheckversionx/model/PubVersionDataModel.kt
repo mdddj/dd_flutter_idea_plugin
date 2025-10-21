@@ -88,6 +88,7 @@ data class Pubspec(
     val description: String,
     val environment: Any?,
     val dependencies: Any?,
+    val repository: String?,
     @SerializedName("dev_dependencies")
     val devDependencies: Any?,
 ) {
