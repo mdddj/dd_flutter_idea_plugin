@@ -26,12 +26,12 @@ class BoundField(json: JsonObject) : Element(json) {
     /**
      * @return <code>String</code> 或 <code>int</code> 之一
      */
-    fun getName(): Any? {
+    fun getName(): String? {
         val elem = json.get("name")
         if (elem != null && elem.isJsonPrimitive) {
             val p = elem as JsonPrimitive
             if (p.isString) return p.asString
-            if (p.isNumber) return p.asInt
+            if (p.isNumber) return p.asInt.toString()
         }
         return null
     }

@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,7 @@ import org.jetbrains.jewel.bridge.JewelComposePanel
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icon.IconKey
+import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.fluttercheckversionx.common.yaml.PubspecYamlFileTools
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -38,6 +40,7 @@ import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import shop.itbug.fluttercheckversionx.util.PubspecYamlElementFactory
 import shop.itbug.fluttercheckversionx.util.TaskRunUtil
 import java.awt.Dimension
+import java.net.URI
 import javax.swing.Action
 import javax.swing.JComponent
 
@@ -226,10 +229,16 @@ private fun SimplePackageItem(
                         fontWeight = FontWeight.Bold,
                         fontSize = uiStyle.titleFontSize.sp,
                     )
+                    IconButton(onClick = {
+                        BrowserUtil.browse(URI.create("https://pub.dev/packages/${details.name}"))
+                    }) {
+                        Icon(key = AllIconsKeys.Ide.External_link_arrow, contentDescription = "")
+                    }
                     Text(
                         details.latest.version,
                         color = JewelTheme.globalColors.text.info
                     )
+
                 }
                 Box(modifier = Modifier.height(4.dp))
                 Row(
@@ -264,46 +273,49 @@ private fun SimplePackageItem(
             }
 
             Box(modifier = Modifier.width(100.dp)) {
-                if (isAdded) {
-                    OutlinedButton(
-                        {}, enabled = false
-                    ) {
-                        Text("Added")
-                    }
-                } else {
-                    if (useSimpleAddButton) {
-                        DefaultButton({
-                            onAdd.invoke(null)
-                        }) {
-                            Text("Add")
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (isAdded) {
+                        OutlinedButton(
+                            {}, enabled = false
+                        ) {
+                            Text("Added")
                         }
                     } else {
-                        DefaultSplitButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                onAdd.invoke(FlutterPluginType.Dependencies)
-                            },
-                            secondaryOnClick = {
-                                println("secondary click")
-                            },
-                            content = { Text("Add") },
-                            menuContent = {
-                                items(
-                                    items = listOf(
-                                        FlutterPluginType.DevDependencies,
-                                        FlutterPluginType.OverridesDependencies
-                                    ),
-                                    isSelected = { false },
-                                    onItemClick = {
-                                        onAdd.invoke(it)
-                                    },
-                                    content = { Text(it.title) },
-                                )
-                            },
-                        )
+                        if (useSimpleAddButton) {
+                            DefaultButton({
+                                onAdd.invoke(null)
+                            }) {
+                                Text("Add")
+                            }
+                        } else {
+                            DefaultSplitButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    onAdd.invoke(FlutterPluginType.Dependencies)
+                                },
+                                secondaryOnClick = {
+                                    println("secondary click")
+                                },
+                                content = { Text("Add") },
+                                menuContent = {
+                                    items(
+                                        items = listOf(
+                                            FlutterPluginType.DevDependencies,
+                                            FlutterPluginType.OverridesDependencies
+                                        ),
+                                        isSelected = { false },
+                                        onItemClick = {
+                                            onAdd.invoke(it)
+                                        },
+                                        content = { Text(it.title) },
+                                    )
+                                },
+                            )
+                        }
+
+
                     }
-
-
+                    GithubAndPub(model)
                 }
             }
 
@@ -313,6 +325,24 @@ private fun SimplePackageItem(
 
 }
 
+
+@Composable
+private fun GithubAndPub(model: PubPackageInfo) {
+    val repository = model.model.latest.pubspec.repository
+    val homepage = model.model.latest.pubspec.homepage
+    Box {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (repository != null && repository.isNotBlank())
+                Link("repository", onClick = {
+                    BrowserUtil.browse(repository)
+                })
+            if (homepage != null && homepage.isNotBlank())
+                Link("homepage", onClick = {
+                    BrowserUtil.browse(homepage)
+                })
+        }
+    }
+}
 
 @Composable
 private fun MiniTag(text: String) {
@@ -418,9 +448,14 @@ class AddPackageDialogIdea(val project: Project, yamlFile: YAMLFile) : DialogWra
         }) {
             var selectIndex by remember { mutableIntStateOf(0) }
             Column(modifier = Modifier.fillMaxSize()) {
-                CustomTabRow(selectIndex, tabs = listOf(PluginBundle.get("search"), PluginBundle.get("sugg")), onTabClick = {
-                    selectIndex = it
-                }, modifier = Modifier.fillMaxWidth())
+                CustomTabRow(
+                    selectIndex,
+                    tabs = listOf(PluginBundle.get("search"), PluginBundle.get("sugg")),
+                    onTabClick = {
+                        selectIndex = it
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
                 when (DartPackageDialogTab.entries[selectIndex]) {
                     DartPackageDialogTab.Search -> {
                         SearchPackage(project, searchViewModel)

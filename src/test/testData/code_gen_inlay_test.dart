@@ -1,0 +1,5 @@
+
+@CopyWith()
+class Test {
+
+}

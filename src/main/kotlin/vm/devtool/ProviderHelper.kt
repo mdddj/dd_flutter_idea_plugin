@@ -5,9 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import vm.VmService
 import vm.element.*
+import vm.getInstance
 import vm.getObject
 import vm.getObjectWithClassObj
-import vm.getObjectWithField
 import vm.logging.Logging
 
 data class ProviderNode(
@@ -88,7 +88,7 @@ suspend fun ObjectField.getFieldInstance(vmService: VmService, parentInstance: I
     )
     val instance = vmService.getObject(
         vmService.getMainIsolateId(),
-        instanceRef.getId()!!
+        instanceRef.getId()
     )
     return instance
 }
@@ -212,15 +212,20 @@ object ProviderHelper {
         path: InstancePath,
         parent: InstanceDetails? = null
     ): InstanceDetails {
+        println("DEBUG: ProviderHelper.getInstanceDetails called with path: $path")
         val mainIsolateId = vm.getMainIsolateId()
         val coreEval = EvalOnDartLibrary("dart:core", vm)
+        println("DEBUG: ProviderHelper.getInstanceDetails - got mainIsolateId: $mainIsolateId")
         val currentRef: InstanceRef? = if (parent == null) when (path) {
             is InstancePath.FromProviderId -> {
                 val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm)
-                providerEval.safeEval(
+                println("DEBUG: ProviderHelper.getInstanceDetails - evaluating provider value for ID: ${path.providerId}")
+                val result = providerEval.safeEval(
                     mainIsolateId,
                     "ProviderBinding.debugInstance.providerDetails[\"${path.providerId}\"]?.value"
                 )
+                println("DEBUG: ProviderHelper.getInstanceDetails - got provider value ref: $result")
+                result
             }
 
             is InstancePath.FromInstanceId -> {
@@ -283,7 +288,9 @@ object ProviderHelper {
         }
 
 
+        println("DEBUG: ProviderHelper.getInstanceDetails - getting instance for ref: $currentRef")
         val instance = coreEval.getInstance(mainIsolateId, currentRef)
+        println("DEBUG: ProviderHelper.getInstanceDetails - got instance: $instance")
         return instanceToDetails(instance, vm, mainIsolateId, path)
     }
 
@@ -295,7 +302,7 @@ object ProviderHelper {
         path: InstancePath
     ): InstanceDetails {
         val coreEval = EvalOnDartLibrary("dart:core", vm)
-        val instanceRefId = instance.getId()!!
+        val instanceRefId = instance.getId()
         val hash = instance.getIdentityHashCode()
 
         return when (instance.getKind()) {
@@ -325,61 +332,81 @@ object ProviderHelper {
                 val libraryUri = classRef.getLibrary()?.getUri() ?: "dart:core"
                 val evalForInstance = EvalOnDartLibrary(libraryUri, vm)
                 val allFields = mutableListOf<ObjectField>()
-                var currentClass = coreEval.getClassObject(isolateId, classRef.getId()!!)
+                var currentClass = coreEval.getClassObject(isolateId, classRef.getId())
                 val evalCache = mutableMapOf<String, EvalOnDartLibrary>()
                 evalCache[libraryUri] = evalForInstance
-                while (currentClass != null) {
-                    currentClass.getFields().forEach { fieldRef: FieldRef ->
-                        try {
-
-                            val classRef: ObjRef = fieldRef.getOwner()
-
-                            val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId()!!)
-
-                            val ownerUri: String = fieldRef.getLocation()!!.getScript().getUri()!!
-                            val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
-
-                            val ownerPackageName: String? = tryParsePackageName(ownerUri)
-                            val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
-                            val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
-                            val eval = EvalOnDartLibrary(
-                                ownerUri,
-                                vm
-                            )
-
-                            val field = vm.getObjectWithField(vm.getMainIsolateId(),classRef.getId())
-                            println(field)
-                            val instanceRef = vm.getObject(vm.getMainIsolateId(), instance.getId()) ?: return@forEach
-                            allFields.add(
-                                ObjectField(
-                                    name = fieldRef.getName(),
-                                    isFinal = fieldRef.isFinal(),
-                                    ownerName = ownerName,
-                                    eval = eval,
-                                    ref = instanceRef,
-                                    ownerUri = ownerUri,
-                                    isDefinedByDependency = ownerPackageName != appName,
-                                    isStatic = fieldRef.isStatic()
-                                )
-                            )
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-
-                    val superClassRef = currentClass.getSuperClass()
-                    currentClass = if (superClassRef != null) {
-                        coreEval.getClassObject(isolateId, superClassRef.getId()!!)
-                    } else {
-                        null
-                    }
+                val objectInstance = vm.getInstance(vm.getMainIsolateId(),instance.getId())
+                objectInstance?.getFields()?.forEach { field ->
+                    val decl = field.getDecl() ?: return@forEach
+                    val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId())
+                    val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
+                    val ownerUri: String = decl.getLocation()!!.getScript().getUri()!!
+                    val ref = field.getValue()!!
+                    val ownerPackageName: String? = tryParsePackageName(ownerUri)
+                    val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
+                    val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
+                    val fieldObject = ObjectField(
+                        name = field.getName() ?: "",
+                        isFinal = field.getDecl()?.isFinal() ?: false,
+                        isStatic = field.getDecl()?.isStatic() ?: false,
+                        eval = EvalOnDartLibrary(
+                            ownerUri,
+                            vm
+                        ),
+                        ref = ref,
+                        ownerUri = ownerUri,
+                        isDefinedByDependency = ownerPackageName != appName,
+                        ownerName = ownerName,
+                    )
+                    allFields.add(fieldObject)
                 }
+//                while (currentClass != null) {
+//                    currentClass.getFields().forEach { fieldRef: FieldRef ->
+//                        try {
+//                            val classRef: ObjRef = fieldRef.getOwner()
+//                            val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId())
+//                            val ownerUri: String = fieldRef.getLocation()!!.getScript().getUri()!!
+//                            val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
+//                            val ownerPackageName: String? = tryParsePackageName(ownerUri)
+//                            val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
+//                            val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
+//                            val eval = EvalOnDartLibrary(
+//                                ownerUri,
+//                                vm
+//                            )
+//                            val fieldInstance = vm.getInstance(vm.getMainIsolateId(),fieldRef.getDeclaredType().getId()) ?: return@forEach
+//
+//                            val instanceRef = vm.getObject(vm.getMainIsolateId(), fieldInstance.getId()) ?: return@forEach
+//                            allFields.add(
+//                                ObjectField(
+//                                    name = fieldRef.getName(),
+//                                    isFinal = fieldRef.isFinal(),
+//                                    ownerName = ownerName,
+//                                    eval = eval,
+//                                    ref = instanceRef,
+//                                    ownerUri = ownerUri,
+//                                    isDefinedByDependency = ownerPackageName != appName,
+//                                    isStatic = fieldRef.isStatic()
+//                                )
+//                            )
+//                        } catch (e: Exception) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//
+//                    val superClassRef = currentClass.getSuperClass()
+//                    currentClass = if (superClassRef != null) {
+//                        coreEval.getClassObject(isolateId, superClassRef.getId())
+//                    } else {
+//                        null
+//                    }
+//                }
 
                 InstanceDetails.Object(
                     type = classRef.getName(),
                     fields = allFields.distinctBy { it.name }.sortedBy { it.name },
                     hash = instance.getIdentityHashCode(),
-                    instanceRefId = instance.getId()!!,
+                    instanceRefId = instance.getId(),
                     evalForInstance = evalForInstance
                 )
             }

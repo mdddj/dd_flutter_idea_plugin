@@ -581,4 +581,8 @@ open class Instance(json: JsonObject) : InstanceRef(json) {
     override fun isNull(): Boolean {
         return getKind() == InstanceKind.Null
     }
+
+    override fun toString(): String {
+        return "类型:${getKind()}, 值:${getValueAsString()}"
+    }
 }

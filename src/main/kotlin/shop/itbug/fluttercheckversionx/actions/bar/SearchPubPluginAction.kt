@@ -168,7 +168,6 @@ class OpenAndroidProjectOnASAction : AnAction() {
         e.project?.let {
             val tool = FlutterProjectUtil(it)
             e.presentation.isVisible = tool.androidDirIsExist
-            e.presentation.isEnabled = tool.isAndroidStudioInstalled
         }
         e.presentation.icon = MyIcons.androidStudio
         e.presentation.text = "Open Android Project"

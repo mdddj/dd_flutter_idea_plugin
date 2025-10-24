@@ -19,36 +19,40 @@ import shop.itbug.fluttercheckversionx.widget.CenterText
 import vm.VmService
 import vm.devtool.*
 
-
-/**
- * flutter provider component for toolwindow
- */
+/** flutter provider component for toolwindow */
 @Composable
 fun ProviderComposeComponent(project: Project) {
+    val isEnv = System.getenv("DEV") == "true"
     FlutterAppsTabComponent(project) {
-        CenterText("Coming soon...")
-//        ProviderBody(project, it.vmService)
+        if (isEnv) {
+            //todo !!半成品
+            ProviderBody(project, it.vmService)
+        } else {
+            CenterText("Coming soon...")
+        }
     }
 }
-
 
 @Composable
 private fun ProviderBody(project: Project, vmService: VmService) {
     var selectProvider by remember { mutableStateOf<ProviderNode?>(null) }
     var outerSplitState by mutableStateOf(SplitLayoutState(0.5f))
+
+    LaunchedEffect(selectProvider) {
+        println("DEBUG: Provider selection changed to: ${selectProvider?.type}")
+    }
     HorizontalSplitLayout(
         state = outerSplitState,
-        first = {
-            ProviderList(project, vmService) {
-                selectProvider = it
-            }
-        },
+        first = { ProviderList(project, vmService) { selectProvider = it } },
         second = {
             if (selectProvider != null) {
                 ProviderDetails(vmService, selectProvider!!)
             } else {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text("Select a provider to see details", color = JewelTheme.globalColors.text.info)
+                    Text(
+                        "Select a provider to see details",
+                        color = JewelTheme.globalColors.text.info
+                    )
                 }
             }
         },
@@ -58,18 +62,25 @@ private fun ProviderBody(project: Project, vmService: VmService) {
     )
 }
 
-//列表
+// 列表
 @Composable
-private fun ProviderList(project: Project, vm: VmService, onSelectChange: (item: ProviderNode) -> Unit) {
+private fun ProviderList(
+    project: Project,
+    vm: VmService,
+    onSelectChange: (item: ProviderNode) -> Unit
+) {
     val scope = vm.coroutineScope
     var providers by remember { mutableStateOf<List<ProviderNode>>(emptyList()) }
     fun refresh() {
         scope.launch {
+            println("DEBUG: ProviderList refreshing providers")
             providers = ProviderHelper.getProviderNodes(vm)
+            println("DEBUG: ProviderList got ${providers.size} providers")
         }
     }
 
     LaunchedEffect(vm) {
+        println("DEBUG: ProviderList starting initial refresh")
         refresh()
     }
 
@@ -78,45 +89,55 @@ private fun ProviderList(project: Project, vm: VmService, onSelectChange: (item:
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Row {
-            IconActionButton(AllIconsKeys.Actions.Refresh, contentDescription = "Refresh", onClick = {
-                refresh()
-            })
+            IconActionButton(
+                AllIconsKeys.Actions.Refresh,
+                contentDescription = "Refresh",
+                onClick = { refresh() }
+            )
         }
-        for (node in providers)
-            Box(modifier = Modifier.clickable(onClick = {
-                onSelectChange.invoke(node)
-            })) {
-                Text(node.type)
-            }
+        for (node in providers) Box(
+            modifier =
+                Modifier.clickable(
+                    onClick = {
+                        println("DEBUG: Clicked on provider: ${node.type}")
+                        onSelectChange.invoke(node)
+                    }
+                )
+        ) { Text(node.type) }
     }
 }
 
-
-/**
- * Provider 详情展示面板
- */
+/** Provider 详情展示面板 */
 @Composable
 private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
-    val rootPath = remember(provider.id) { provider.getProviderPath() }
+    LaunchedEffect(provider) {
+        println("DEBUG: ProviderDetails received new provider: ${provider.type}")
+    }
+    val rootPath = remember(provider) { provider.getProviderPath() }
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(8.dp)) {
         InstanceNodeViewer(vmService = vmService, path = rootPath)
     }
 }
 
-/**
- * 递归的 Composable，用于显示一个实例节点及其子节点。
- */
+/** 递归的 Composable，用于显示一个实例节点及其子节点。 */
 @Composable
-private fun InstanceNodeViewer(vmService: VmService, path: InstancePath, parent: InstanceDetails? = null) {
+private fun InstanceNodeViewer(
+    vmService: VmService,
+    path: InstancePath,
+    parent: InstanceDetails? = null
+) {
     var details by remember(path) { mutableStateOf<InstanceDetails?>(null) }
     var error by remember(path) { mutableStateOf<String?>(null) }
     var isExpanded by remember(path) { mutableStateOf(path.pathToProperty.isEmpty()) } // 根节点默认展开
 
     LaunchedEffect(path) {
+        println("DEBUG: InstanceNodeViewer starting to fetch details for path: $path")
         try {
             details = ProviderHelper.getInstanceDetails(vmService, path, parent)
+            println("DEBUG: InstanceNodeViewer received details: ${details?.javaClass?.simpleName}")
         } catch (e: Exception) {
             error = e.message ?: "An unknown error occurred"
+            println("DEBUG: InstanceNodeViewer error fetching details: $error")
         }
     }
 
@@ -135,6 +156,7 @@ private fun InstanceNodeViewer(vmService: VmService, path: InstancePath, parent:
     }
 
     val currentDetails = details!!
+    println("DEBUG: InstanceNodeViewer rendering details of type: ${currentDetails.javaClass.simpleName}")
 
     Column {
         InstanceHeader(
@@ -149,23 +171,27 @@ private fun InstanceNodeViewer(vmService: VmService, path: InstancePath, parent:
                 when (currentDetails) {
                     is InstanceDetails.Object -> {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            currentDetails.fields
-                                .filter { it.isDefinedByDependency.not() }
-                                .filter { it.isStatic.not() }
+                            currentDetails
+                                .fields
+//                                    .filter { it.isDefinedByDependency.not() }
+//                                    .filter { it.isStatic.not() }
                                 .forEach { field ->
                                     Row(verticalAlignment = Alignment.Top) {
                                         Text("${field.name}: ", fontWeight = FontWeight.Bold)
                                         InstanceNodeViewer(
                                             vmService = vmService,
-                                            path = path.pathForChildWithInstance(
-                                                PathToProperty.ObjectProperty(
-                                                    name = field.name,
-                                                    ownerName = field.ownerName,
-                                                    ownerUri = field.ownerUri,
-                                                    field = field
+                                            path =
+                                                path.pathForChildWithInstance(
+                                                    PathToProperty.ObjectProperty(
+                                                        name = field.name,
+                                                        ownerName =
+                                                            field.ownerName,
+                                                        ownerUri =
+                                                            field.ownerUri,
+                                                        field = field
+                                                    ),
+                                                    field.ref.getId()
                                                 ),
-                                                "${field.ref?.getId()}"
-                                            ),
                                             parent = currentDetails
                                         )
                                     }
@@ -226,9 +252,7 @@ private fun InstanceNodeViewer(vmService: VmService, path: InstancePath, parent:
     }
 }
 
-/**
- * 显示实例头部信息，包括类型、值和展开按钮。
- */
+/** 显示实例头部信息，包括类型、值和展开按钮。 */
 @Composable
 private fun InstanceHeader(
     details: InstanceDetails,
@@ -241,7 +265,9 @@ private fun InstanceHeader(
         modifier = Modifier.clickable(enabled = isExpandable, onClick = onToggleExpand)
     ) {
         if (isExpandable) {
-            val iconKey = if (isExpanded) AllIconsKeys.General.ArrowDown else AllIconsKeys.General.ArrowRight
+            val iconKey =
+                if (isExpanded) AllIconsKeys.General.ArrowDown
+                else AllIconsKeys.General.ArrowRight
             Icon(key = iconKey, contentDescription = "Expand/Collapse")
             Spacer(Modifier.width(4.dp))
         } else {
@@ -249,26 +275,29 @@ private fun InstanceHeader(
         }
 
         when (details) {
-            is InstanceDetails.DartString -> Text("\"${details.displayString}\"", color = Color(0xFFCE9178))
+            is InstanceDetails.DartString -> Text(details.displayString, color = Color(0xFFCE9178))
             is InstanceDetails.Number -> Text(details.displayString, color = Color(0xFFB5CEA8))
             is InstanceDetails.Bool -> Text(details.displayString, color = Color(0xFF569CD6))
             is InstanceDetails.Nill -> Text("null", color = Color(0xFF569CD6))
-            is InstanceDetails.Object -> Text(
-                "${details.type} #${details.hash.toString(16).take(4)}",
-                color = Color(0xFF4EC9B0)
-            )
+            is InstanceDetails.Object ->
+                Text(
+                    "${details.type} #${details.hash.toString(16).take(4)}",
+                    color = Color(0xFF4EC9B0)
+                )
 
-            is InstanceDetails.DartList -> Text(
-                "List (${details.length} elements) #${
-                    details.hash.toString(16).take(4)
-                }"
-            )
+            is InstanceDetails.DartList ->
+                Text(
+                    "List (${details.length} elements) #${
+                        details.hash.toString(16).take(4)
+                    }"
+                )
 
-            is InstanceDetails.Map -> Text(
-                "Map (${details.associations.size} entries) #${
-                    details.hash.toString(16).take(4)
-                }"
-            )
+            is InstanceDetails.Map ->
+                Text(
+                    "Map (${details.associations.size} entries) #${
+                        details.hash.toString(16).take(4)
+                    }"
+                )
 
             is InstanceDetails.Enum -> Text("${details.type}.${details.value}")
         }

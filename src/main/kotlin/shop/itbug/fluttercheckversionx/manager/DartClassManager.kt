@@ -15,6 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.jetbrains.lang.dart.DartTokenTypes
+import com.jetbrains.lang.dart.psi.DartMetadata
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import com.jetbrains.lang.dart.psi.impl.DartFactoryConstructorDeclarationImpl
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
@@ -140,6 +141,11 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
         val eles = findTypesByPsiElement<DartMetadataImpl>()
         val names = eles.map { it.referenceExpression.text }
         return names.any { it in frs }
+    }
+
+    fun hasMetadataByName(name: String): Boolean {
+        val metadataList = findTypesByPsiElement<DartMetadata>()
+        return metadataList.map { it.referenceExpression.text }.contains(name)
     }
 
     /**
