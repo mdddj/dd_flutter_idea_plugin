@@ -4,11 +4,25 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="fix: update return type of getName() and improve instance retrieval in ProviderHelper">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/DownloadSourceDialog.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/icons/FlutterXIconsPreview.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/icons/MyFlutterIconsDownloadSource.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/PluginDescUtil.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/RunCodeGenInlayTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/testData/code_gen_inlay_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/ProviderComposeComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/ProviderComposeComponent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/vm/element/Instance.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/vm/element/Instance.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/DartVmClassTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/DartVmClassTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testData/freezed.dart" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testData/freezed.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +72,12 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="intellij platform" type="c8890929:TasksNode$1" />
               </path>
             </expand>
@@ -79,8 +99,8 @@
         <option value="Action" />
         <option value="Kotlin Interface" />
         <option value="Kotlin File" />
-        <option value="Kotlin Object" />
         <option value="InspectionDescription" />
+        <option value="Kotlin Object" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -267,6 +287,7 @@
     &quot;Gradle.PubspecYamlTest.testAdd.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.PubspecYamlTest.testAddDeps.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.PubspecYamlTest.testPathGet.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:clean].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:functionalTestClasses].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:pingServer].executor&quot;: &quot;Run&quot;,
@@ -329,7 +350,7 @@
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;ktor.last.update.timestamp&quot;: &quot;1687769586955&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/src/main/resources/icons/new&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/src/main/resources/font/cupertino&quot;,
     &quot;llm.McpServerEditPanel.switcher&quot;: &quot;1&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
@@ -345,7 +366,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.16889882&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.inline.completion&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
     &quot;sweep.chatMode&quot;: &quot;Manual&quot;,
     &quot;ts.external.directory.path&quot;: &quot;/Users/ldd/Applications/IntelliJ IDEA Ultimate.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
@@ -378,11 +399,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/font/cupertino" />
       <recent name="$PROJECT_DIR$/src/main/resources/icons/new" />
       <recent name="$PROJECT_DIR$/src/test/testData/project" />
       <recent name="$PROJECT_DIR$/src/test/testData" />
       <recent name="$PROJECT_DIR$/src/test/resources/project/android" />
-      <recent name="$PROJECT_DIR$/src/main/resources/icons" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/test/testData" />
@@ -423,7 +444,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [classes]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -460,7 +481,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PubspecYamlTest.testPathGet" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -473,7 +494,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;PubspecYamlTest.testPathGet&quot;" />
+            <option value="&quot;RunCodeGenInlayTest.testShouldShowRunCodeGenInlay&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -585,21 +606,29 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
       <item itemvalue="Gradle.DartVmClassTest.testGetProviders" />
-      <item itemvalue="Gradle.PubspecYamlTest.testPathGet" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+        <item itemvalue="Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
         <item itemvalue="Gradle.DartVmClassTest.testGetProviders" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
-        <item itemvalue="Gradle.PubspecYamlTest.testPathGet" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.27397.103" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -1953,6 +1982,16 @@
       <workItem from="1761009120809" duration="1179000" />
       <workItem from="1761010318739" duration="6012000" />
       <workItem from="1761017201616" duration="1243000" />
+      <workItem from="1761028132425" duration="314000" />
+      <workItem from="1761030244374" duration="1262000" />
+      <workItem from="1761198228935" duration="490000" />
+      <workItem from="1761198733075" duration="3667000" />
+      <workItem from="1761213164547" duration="800000" />
+      <workItem from="1761267521310" duration="649000" />
+      <workItem from="1761268186580" duration="2634000" />
+      <workItem from="1761270962087" duration="2167000" />
+      <workItem from="1761273553696" duration="7759000" />
+      <workItem from="1761286469566" duration="6618000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2297,7 +2336,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="430" />
+    <option name="localTasksCounter" value="431" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2347,7 +2386,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="完善vm http监听功能功能" />
     <MESSAGE value="完善 vm功能" />
     <MESSAGE value="完善vm功能" />
     <MESSAGE value="release 6.0" />
@@ -2372,7 +2410,8 @@
     <MESSAGE value="feat(DartPackageAddCompose): add links to package repository and homepage" />
     <MESSAGE value="fix(pluginBundle): update Aliyun image description and adjust workspace settings" />
     <MESSAGE value="fix: update return type of getName() and improve instance retrieval in ProviderHelper" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: update return type of getName() and improve instance retrieval in ProviderHelper" />
+    <MESSAGE value="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>

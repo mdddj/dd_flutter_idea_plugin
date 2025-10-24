@@ -5,6 +5,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
+import org.jetbrains.jewel.bridge.addComposeTab
+import shop.itbug.fluttercheckversionx.dialog.icons.CupertinoIconsDialog
+import shop.itbug.fluttercheckversionx.dialog.icons.MaterialIconsDialog
+import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -86,6 +90,18 @@ class FlutterXSocketWindow : ToolWindowFactory {
         toolWindow.contentManager.addContent(l10nWindowContent)
         l10nWindowContent.setDisposer(l10nWindow)
 
+
+        toolWindow.addComposeTab("Cupertino Icons") {
+            CupertinoIconsDialog(project) {
+                it.name.copyTextToClipboard()
+            }
+        }
+
+        toolWindow.addComposeTab("Material Icons") {
+            MaterialIconsDialog(project) {
+                it.name.copyTextToClipboard()
+            }
+        }
 
     }
 
