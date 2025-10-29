@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [6.4.0] - 2025-10-24
+## [6.4.0] - 2025-10-27
 
 * Added Cupertino Icons and Material Icons preview window
 

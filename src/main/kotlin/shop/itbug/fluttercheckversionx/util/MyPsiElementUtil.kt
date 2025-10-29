@@ -21,6 +21,7 @@ import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfigModel
 import shop.itbug.fluttercheckversionx.config.PluginConfig
+import shop.itbug.fluttercheckversionx.services.PubspecService
 import java.io.File
 
 typealias CreatePsiFileSuccess = (psiFile: PsiFile) -> Unit
@@ -265,9 +266,12 @@ object MyDartPsiElementUtil {
         addConstructor: Boolean = true,
         addFromJson: Boolean = true
     ): PsiFile {
+
+        //判断是不是 freezed 3.0
+        val isThan3 = PubspecService.getInstance(project).freezedVersionIsThan3()
         return DartElementGenerator.createDummyFile(
             project,
-            "@freezed\n" + "class $className with _$$className {\n" + (if (addConstructor) "  const $className._();\n\n" else "") +
+            "@freezed\n" + "${if (isThan3) "sealed" else ""} class $className with _$$className {\n" + (if (addConstructor) "  const $className._();\n\n" else "") +
 
                     "  const factory $className({\n$properties    }) = _$className;\n" + (if (addFromJson) "  \n  factory $className.fromJson(Map<String, dynamic> json) => _$${className}FromJson(json);\n\n" else "") + "}"
         )

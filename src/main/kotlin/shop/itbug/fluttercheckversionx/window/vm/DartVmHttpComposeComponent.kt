@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -444,7 +445,11 @@ private fun RequestRow(
             Text(request.duration?.let { "${it.microseconds.inWholeMilliseconds}ms" } ?: "...",
                 modifier = Modifier.width(100.dp), fontSize = 11.sp, color = JewelTheme.globalColors.text.info)
             Text(request.endTime?.let { DartNetworkMonitor.formatTime(it) } ?: "...",
-                modifier = Modifier.width(150.dp), fontSize = 11.sp, color = JewelTheme.globalColors.text.info)
+                modifier = Modifier.width(150.dp),
+                fontSize = 11.sp,
+                color = JewelTheme.globalColors.text.info,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
         }
     }
 }

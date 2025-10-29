@@ -257,6 +257,7 @@
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
         <listener class="shop.itbug.fluttercheckversionx.common.dart.RunConfigListener"
                   topic="com.intellij.execution.ExecutionListener"/>
+        <listener class="shop.itbug.fluttercheckversionx.services.PubspecServiceFileListener" topic="com.intellij.openapi.vfs.newvfs.BulkFileListener" />
     </projectListeners>
 
     <actions>

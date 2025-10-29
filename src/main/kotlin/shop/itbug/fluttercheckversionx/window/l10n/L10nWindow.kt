@@ -89,6 +89,8 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : OnePixelSpl
         this.secondComponent = sp
         this.splitterProportionKey = "FlutterL10nWindowSplitterProportionKey"
 
+
+
     }
 
 
@@ -211,6 +213,8 @@ class MyL10nKeysTree(val project: Project) : DnDAwareTree(DefaultMutableTreeNode
         )
         this.cellRenderer = Render()
         project.messageBus.connect(this).subscribe(FlutterL10nService.ListenKeysChanged, this)
+
+
 
     }
 
