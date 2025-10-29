@@ -78,7 +78,7 @@ class StringToFreezedDialog(val project: Project, jsonString: String) : DialogWr
                             cell(box).bindItem(generateConfig::formJsonType)
                         }
                         // freezed新版本设置
-                        FreezedNewSetting.setting(generateConfig, this)
+                        FreezedNewSetting.setting(generateConfig, this,project)
                     }
                 }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
 
