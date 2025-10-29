@@ -46,7 +46,7 @@ fun DartOptionalFormalParametersImpl.covertDartPropertyModels(): MutableList<Dar
 class FunctionParamsToFreezed : MyAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val element = e.getData(CommonDataKeys.PSI_ELEMENT)!! as DartComponentNameImpl
-        val paramsElement = element.nextSibling as DartFormalParameterListImpl
+        val paramsElement = element.nextSibling as? DartFormalParameterListImpl ?: return
 
         val reqParamsElement = PsiTreeUtil.getChildrenOfType(paramsElement, DartNormalFormalParameterImpl::class.java)
         val optParamsElement =
@@ -69,7 +69,7 @@ class FunctionParamsToFreezed : MyAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.selectTextIsDartMethodElement()
+        e.presentation.isEnabled = e.selectTextIsDartMethodElement() && e.getData(CommonDataKeys.PSI_ELEMENT)?.nextSibling is DartFormalParameterListImpl
         e.presentation.text = PluginBundle.get("editor.freezed.fun.param.to.class")
         super.update(e)
     }
