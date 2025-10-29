@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="优化freezed版本检测">
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="修复部分 action检测逻辑">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/FunctionParamsToFreezed.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/FunctionParamsToFreezed.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -428,7 +429,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -598,8 +599,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
         <item itemvalue="Gradle.DartVmClassTest.testGetProviders" />
@@ -1980,7 +1981,7 @@
       <workItem from="1761558788009" duration="793000" />
       <workItem from="1761613222547" duration="1222000" />
       <workItem from="1761708320711" duration="2071000" />
-      <workItem from="1761716123873" duration="372000" />
+      <workItem from="1761716123873" duration="995000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2325,7 +2326,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="435" />
+    <option name="localTasksCounter" value="436" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2375,7 +2376,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="release 6.0" />
     <MESSAGE value="新增 inlay 支持在左侧显示" />
     <MESSAGE value="添加热重启事件" />
     <MESSAGE value="优化 http请求监听" />
@@ -2400,7 +2400,8 @@
     <MESSAGE value="Added Cupertino Icons and Material Icons preview window" />
     <MESSAGE value="细节更新" />
     <MESSAGE value="优化freezed版本检测" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化freezed版本检测" />
+    <MESSAGE value="修复部分 action检测逻辑" />
+    <option name="LAST_COMMIT_MESSAGE" value="修复部分 action检测逻辑" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
