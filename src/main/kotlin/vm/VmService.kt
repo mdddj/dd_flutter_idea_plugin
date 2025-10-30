@@ -51,8 +51,21 @@ class VmService : VmServiceBase() {
     }
 
     private val listenStreamsEvents = arrayOf(
-        *EventKind.entries.map { it.name }.toTypedArray()
-    )
+//        *EventKind.entries.map { it.name }.toTypedArray()
+        EventKind.Extension,
+        EventKind.Inspect,
+        EventKind.Isolate,
+        EventKind.IsolateExit,
+        EventKind.IsolateUpdate,
+        EventKind.IsolateStart,
+        EventKind.IsolateRunnable,
+        EventKind.Logging,
+        EventKind.ServiceExtensionAdded,
+        EventKind.ServiceUnregistered,
+        EventKind.ToolEvent,
+        EventKind.ServiceReload,
+        EventKind.VM
+    ).map { it.name }
 
 
     private var _mainIsolateId: MutableStateFlow<String?> = MutableStateFlow(null)

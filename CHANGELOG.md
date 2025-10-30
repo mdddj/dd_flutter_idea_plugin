@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-## [6.4.0] - 2025-10-24
+## [6.4.2] - 2025-10-30
+
+* fix: media_kit crashes bugs in debug mode ([#95](https://github.com/mdddj/dd_flutter_idea_plugin/issues/95))
+
+## [6.4.1] - 2025-10-29
+
+* Fixed some known bugs
+
+## [6.4.0] - 2025-10-27
 
 * Added Cupertino Icons and Material Icons preview window
 

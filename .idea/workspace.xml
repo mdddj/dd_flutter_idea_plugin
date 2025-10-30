@@ -4,25 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/DownloadSourceDialog.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/icons/FlutterXIconsPreview.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dialog/icons/MyFlutterIconsDownloadSource.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/PluginDescUtil.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/kotlin/RunCodeGenInlayTest.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/testData/code_gen_inlay_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="#95 移除部分event">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/manager/DartClassManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/SocketWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_en.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_hk.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ja.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages/pluginBundle_ko.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testData/freezed.dart" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testData/freezed.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +93,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="6.3.0" />
+        <entry key="$PROJECT_DIR$" value="6.4.0" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -344,7 +329,7 @@
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;dev.sweep.assistant.data.RecentlyUsedFiles&quot;: &quot;src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt;build.gradle.kts;sweep://tutorial/SweepTutorial.java&quot;,
     &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;6.3.1&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;6.4.1&quot;,
     &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
@@ -366,7 +351,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.16889882&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.inline.completion&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
     &quot;sweep.chatMode&quot;: &quot;Manual&quot;,
     &quot;ts.external.directory.path&quot;: &quot;/Users/ldd/Applications/IntelliJ IDEA Ultimate.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
@@ -1991,7 +1976,15 @@
       <workItem from="1761268186580" duration="2634000" />
       <workItem from="1761270962087" duration="2167000" />
       <workItem from="1761273553696" duration="7759000" />
-      <workItem from="1761286469566" duration="6618000" />
+      <workItem from="1761286469566" duration="6698000" />
+      <workItem from="1761530092533" duration="1478000" />
+      <workItem from="1761558788009" duration="793000" />
+      <workItem from="1761613222547" duration="1222000" />
+      <workItem from="1761708320711" duration="2071000" />
+      <workItem from="1761716123873" duration="1130000" />
+      <workItem from="1761727511876" duration="382000" />
+      <workItem from="1761727922244" duration="1322000" />
+      <workItem from="1761782258884" duration="2032000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2336,7 +2329,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="431" />
+    <option name="localTasksCounter" value="438" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2386,11 +2379,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="完善 vm功能" />
-    <MESSAGE value="完善vm功能" />
-    <MESSAGE value="release 6.0" />
-    <MESSAGE value="新增 inlay 支持在左侧显示" />
-    <MESSAGE value="添加热重启事件" />
     <MESSAGE value="优化 http请求监听" />
     <MESSAGE value="release 6.0.2" />
     <MESSAGE value="feat(devtool): 添加 provider 数据解析功能&#10;&#10;- 实现了 ProviderNode 类，用于表示 provider 节点信息&#10;- 添加了 PathToProperty 类，用于表示对象属性路径&#10;- 实现了 ObjectField 类，用于表示对象字段信息&#10;- 添加了 getInstanceDetails 方法，用于获取实例详细信息&#10;- 实现了 ProviderComposeComponent，用于展示 provider 数据&#10;- 添加了 JsonViewerDemo组件，用于展示 JSON 数据" />
@@ -2398,7 +2386,6 @@
     <MESSAGE value="修复检查器bug" />
     <MESSAGE value="添加了一些按钮" />
     <MESSAGE value="release 6.0.5" />
-    <MESSAGE value="细节更新" />
     <MESSAGE value="添加空path请求过滤" />
     <MESSAGE value="release 6.0.7" />
     <MESSAGE value="添加自动版本号补全功能" />
@@ -2411,7 +2398,13 @@
     <MESSAGE value="fix(pluginBundle): update Aliyun image description and adjust workspace settings" />
     <MESSAGE value="fix: update return type of getName() and improve instance retrieval in ProviderHelper" />
     <MESSAGE value="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM" />
+    <MESSAGE value="Added Cupertino Icons and Material Icons preview window" />
+    <MESSAGE value="细节更新" />
+    <MESSAGE value="优化freezed版本检测" />
+    <MESSAGE value="修复部分 action检测逻辑" />
+    <MESSAGE value="release6.4.1" />
+    <MESSAGE value="#95 移除部分event" />
+    <option name="LAST_COMMIT_MESSAGE" value="#95 移除部分event" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>

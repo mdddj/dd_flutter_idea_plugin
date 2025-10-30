@@ -1,8 +1,10 @@
 package shop.itbug.fluttercheckversionx.widget
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,16 +32,18 @@ fun SearchResultCard(
     maxLines: Int = Int.MAX_VALUE,
     color: Color? = Color.Unspecified
 ) {
-    Text(
-        text = if (enableFuzzyMatch) {
-            animatedFuzzyHighlight(text, searchQuery, enableAnimation)
-        } else {
-            animatedHighlightSearchText(text, searchQuery, enableAnimation)
-        },
-        modifier = modifier ?: Modifier.padding(16.dp),
-        maxLines = maxLines,
-        color = color ?: Color.Unspecified
-    )
+    SelectionContainer {
+        Text(
+            text = if (enableFuzzyMatch) {
+                animatedFuzzyHighlight(text, searchQuery, enableAnimation)
+            } else {
+                animatedHighlightSearchText(text, searchQuery, enableAnimation)
+            },
+            modifier = modifier ?: Modifier.animateContentSize().padding(16.dp),
+            maxLines = maxLines,
+            color = color ?: Color.Unspecified
+        )
+    }
 }
 
 /**

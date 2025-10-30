@@ -11,6 +11,7 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.FlutterL10nService
+import shop.itbug.fluttercheckversionx.services.PubspecService
 import shop.itbug.fluttercheckversionx.tools.FreezedClassConfig
 import shop.itbug.fluttercheckversionx.tools.FreezedClassType
 import shop.itbug.fluttercheckversionx.tools.FreezedVersion
@@ -91,12 +92,17 @@ fun Row.saveToDirectoryConfig(
 
 // freeze 新的设置
 object FreezedNewSetting {
-    fun setting(config: FreezedClassConfig, panel: Panel) {
+    fun setting(config: FreezedClassConfig, panel: Panel, project: Project) {
+        val defaultVersion = if (PubspecService.getInstance(project).freezedVersionIsThan3()) {
+            FreezedVersion.ThreeVersion
+        } else {
+            FreezedVersion.DefaultVersion
+        }
         val box = ComboBox(FreezedVersion.entries.toTypedArray())
         val box2 = ComboBox(FreezedClassType.entries.toTypedArray())
         panel.row("Freezed Setting") {
             cell(box).bindItem({ config.freezedVersion }, {
-                config.freezedVersion = it ?: FreezedVersion.DefaultVersion
+                config.freezedVersion = it ?: defaultVersion
             })
             cell(box2).bindItem(
                 { config.freezedClassType },

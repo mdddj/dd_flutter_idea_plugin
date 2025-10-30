@@ -67,8 +67,8 @@ dependencies {
                 local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
             "252" -> {
-                intellijIdeaCommunity("2025.2.1")
-//                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
+//                intellijIdeaCommunity("2025.2.1")
+                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
 
             "251" -> {
@@ -169,7 +169,8 @@ tasks {
     }
 
     runIde {
-        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
+//        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
+        args=listOf("/Users/hlx/github/media-kit/video_player_media_kit/example")
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "-Didea.kotlin.plugin.use.k2=true",

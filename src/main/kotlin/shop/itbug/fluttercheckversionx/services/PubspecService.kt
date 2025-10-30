@@ -7,7 +7,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import kotlinx.coroutines.CoroutineScope
@@ -34,15 +33,11 @@ class PubspecStartActivity : ProjectActivity, DumbAware {
  * 仅检测主pubspec.yaml
  */
 @Service(Service.Level.PROJECT)
-class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFileListener {
+class PubspecService(val project: Project) : Disposable, CoroutineScope {
 
     private val job = Job()
     private var dependenciesNames = listOf<String>()
     private var details = listOf<DartYamlModel>()
-
-    init {
-        project.messageBus.connect(parentDisposable = this).subscribe(VirtualFileManager.VFS_CHANGES, this)
-    }
 
 
     fun getAllPackages() = details
@@ -73,15 +68,23 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFil
 
     //是否使用了 freezed包
     fun hasFreezed(): Boolean {
-        return hasDependencies("freezed")
+        return hasDependencies("freezed") || hasDependencies("freezed_annotation")
     }
 
-    //判断 freezed使用的版本号是不是大于 3 或者等于 3
+    //判断 freezed 或者freezed_annotation 使用的版本号是不是大于 3 或者等于 3
     fun freezedVersionIsThan3(): Boolean {
         if (!hasFreezed()) return false
-        val version = details.find { it.name == "freezed" } ?: return false
-        if (version.versionType == DartVersionType.Any) return true
-        return isVersionGreaterThanThree(version.version, Version.parse("3.0.0"))
+        val freezedVersion = details.find { it.name == "freezed" }
+        val freezedAnnotationVersion = details.find { it.name == "freezed_annotation" }
+
+        val versionToCheck = when {
+            freezedVersion != null -> freezedVersion
+            freezedAnnotationVersion != null -> freezedAnnotationVersion
+            else -> return false
+        }
+
+        if (versionToCheck.versionType == DartVersionType.Any) return true
+        return isVersionGreaterThanThree(versionToCheck.version, Version.parse("3.0.0"))
     }
 
 
@@ -108,15 +111,28 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope, BulkFil
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
 
-    override fun after(events: List<VFileEvent>) {
-        events.find { it.file?.name == "pubspec.yaml" } ?: return
-        launch(Dispatchers.IO) {
+
+    var reCheckJob: Job? = null
+
+    fun reCheck() {
+        if (reCheckJob?.isActive == true) {
+            reCheckJob?.cancel()
+        }
+        reCheckJob = launch(Dispatchers.IO) {
             startCheck()
         }
-        super.after(events)
     }
 
 }
 
+
+class PubspecServiceFileListener(val project: Project) : BulkFileListener {
+    override fun after(events: List<out VFileEvent>) {
+        events.find { it.file?.name == "pubspec.yaml" } ?: return
+        val service = PubspecService.getInstance(project)
+        service.reCheck()
+        super.after(events)
+    }
+}
 
 

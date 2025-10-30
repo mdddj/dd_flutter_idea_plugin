@@ -92,15 +92,11 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
 
         toolWindow.addComposeTab("Cupertino Icons") {
-            CupertinoIconsDialog(project) {
-                it.name.copyTextToClipboard()
-            }
+            CupertinoIconsDialog(project)
         }
 
         toolWindow.addComposeTab("Material Icons") {
-            MaterialIconsDialog(project) {
-                it.name.copyTextToClipboard()
-            }
+            MaterialIconsDialog(project)
         }
 
     }
