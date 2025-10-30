@@ -169,7 +169,8 @@ tasks {
     }
 
     runIde {
-        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
+//        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
+        args=listOf("/Users/hlx/github/media-kit/video_player_media_kit/example")
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "-Didea.kotlin.plugin.use.k2=true",

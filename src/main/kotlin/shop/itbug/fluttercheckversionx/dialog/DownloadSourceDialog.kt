@@ -1,14 +1,18 @@
 package shop.itbug.fluttercheckversionx.dialog
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.intellij.ide.BrowserUtil
@@ -67,9 +71,10 @@ class DownloadSourceDialog(val project: Project, sources: List<DownloadSource>) 
         val saveToFile = job.source.getSaveToFile()
         return object : Task.Modal(project, PluginBundle.get("downloading"), true) {
             override fun run(indicator: ProgressIndicator) {
-                indicator.isIndeterminate = true
+                indicator.isIndeterminate = false
                 indicator.text = "${PluginBundle.get("downloading")}  ${job.source.url}"
-                HttpRequests.request(job.source.url).connect {
+                 HttpRequests.request(job.source.url).connect {
+                     it.connection.connectTimeout = 10000
                     it.saveToFile(File(saveToFile), indicator)
                 }
             }
@@ -125,12 +130,13 @@ private fun MultiDownloadContent(
     onOpenFile: (File) -> Unit,
     onClose: () -> Unit
 ) {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(modifier = Modifier.weight(1f)) {
+        LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             items(jobs) { job ->
                 DownloadItemRow(
                     job = job,
@@ -177,8 +183,9 @@ private fun DownloadItemRow(
     onOpenFile: (File) -> Unit
 ) {
     val state by job.state.collectAsState()
+    val bgColor = if(JewelTheme.isDark) Color.DarkGray else Color.White
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(bgColor).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -189,7 +196,7 @@ private fun DownloadItemRow(
 
         when (val s = state) {
             is DownloadState.Idle -> {
-                DefaultButton(onClick = onDownload, modifier = Modifier.width(100.dp)) {
+                OutlinedButton(onClick = onDownload, modifier = Modifier.width(100.dp)) {
                     Text(PluginBundle.get("download"))
                 }
             }
