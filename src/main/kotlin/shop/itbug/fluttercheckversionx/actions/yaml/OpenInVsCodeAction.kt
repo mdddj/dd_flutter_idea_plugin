@@ -11,17 +11,8 @@ import shop.itbug.fluttercheckversionx.util.RunUtil
 //在 vscode中打开项目
 class OpenInVsCodeAction : AnAction() {
     override fun actionPerformed(p0: AnActionEvent) {
-        val project = p0.getData(CommonDataKeys.PROJECT)!!
-        val file = p0.getData(CommonDataKeys.VIRTUAL_FILE)!!
-        RunUtil.commandInBackground(
-            project,
-            "Opening vscode",
-            { null },
-            { it.message }
-        ) {
-            val command = GeneralCommandLine("code", ".")
-            command.setWorkDirectory(file.path)
-            command
+        RunUtil.runOpenInBackground(p0,"Opening vscode"){
+            GeneralCommandLine("code", ".")
         }
     }
 

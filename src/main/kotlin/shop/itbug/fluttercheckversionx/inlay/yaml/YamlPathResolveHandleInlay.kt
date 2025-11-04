@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
+import shop.itbug.fluttercheckversionx.actions.components.QuickOpenInActions
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import java.awt.Cursor
@@ -46,23 +47,21 @@ class YamlPathResolveHandleInlay : InlayHintsProvider<NoSettings> {
                 if (findFile != null) {
 
 
-
-
                     sink.addInlineElement(
                         element.textRange.endOffset,
                         false,
                         factory.inset(
                             factory.roundWithBackground(
-                            factory.onClick(
-                                factory.withCursorOnHover(
-                                    factory.seq(
-                                        factory.withTooltip("Open in ...", factory.smallText("${findFile.path}")),
-                                    ), Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-                                ), MouseButton.Left
-                            ) { event , point ->
-                                showOpenInPopup(event,point,editor,findFile)
-                            }
-                        ), left = 5),
+                                factory.onClick(
+                                    factory.withCursorOnHover(
+                                        factory.seq(
+                                            factory.withTooltip("Open in ...", factory.smallText("${findFile.path}")),
+                                        ), Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                                    ), MouseButton.Left
+                                ) { event, point ->
+                                    showOpenInPopup(event, point, editor, findFile)
+                                }
+                            ), left = 5),
                         false
                     )
 
@@ -77,8 +76,8 @@ class YamlPathResolveHandleInlay : InlayHintsProvider<NoSettings> {
                                             factory.smallScaledIcon(MyIcons.moreHorizontal),
                                         ), Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
                                     ), MouseButton.Left
-                                ) { event , point ->
-                                    showOpenInPopup(event,point,editor,findFile)
+                                ) { event, point ->
+                                    showOpenInPopup(event, point, editor, findFile)
                                 }
                             ), left = 5),
                         false
@@ -99,9 +98,17 @@ class YamlPathResolveHandleInlay : InlayHintsProvider<NoSettings> {
                 file: File
             ) {
                 val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(file) ?: return
-                val actionGroup = ActionManager.getInstance().getAction("FlutterXOpenInAction") as DefaultActionGroup
+                val originalActionGroup = ActionManager.getInstance().getAction("FlutterXOpenInAction") as DefaultActionGroup
+                
+                // Create a new temporary action group to avoid accumulation
+                val actionGroup = DefaultActionGroup().apply {
+                    addAll(originalActionGroup)
+                    addSeparator("Custom Open In Action")
+                    add(QuickOpenInActions())
+                }
+                
                 val context = SimpleDataContext.getProjectContext(editor.project!!)
-                val newContext = SimpleDataContext.getSimpleContext(CommonDataKeys.VIRTUAL_FILE,virtualFile,context)
+                val newContext = SimpleDataContext.getSimpleContext(CommonDataKeys.VIRTUAL_FILE, virtualFile, context)
                 val popupCreate = JBPopupFactory.getInstance().createActionGroupPopup(
                     "Open in ...", actionGroup, newContext,
                     JBPopupFactory.ActionSelectionAid.MNEMONICS, true

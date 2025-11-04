@@ -61,7 +61,7 @@ data class AppStateModel(
     var assetsScanEnable: Boolean = true,
 
 
-) {
+)  {
     /**
      * 获取 flutterx 设置的地区
      */
