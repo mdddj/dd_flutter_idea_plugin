@@ -11,6 +11,7 @@ import shop.itbug.fluttercheckversionx.constance.qqGroup
 import shop.itbug.fluttercheckversionx.dialog.JsonToFreezedInputDialog
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.services.PubspecService
 import shop.itbug.fluttercheckversionx.setting.AppConfig
 import shop.itbug.fluttercheckversionx.tools.FlutterProjectUtil
 import shop.itbug.fluttercheckversionx.util.MyActionUtil
@@ -51,7 +52,8 @@ class FlutterRunBuilderCommandAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabled = e.project != null
+        val project = e.project
+        e.presentation.isEnabled = project  != null && PubspecService.getInstance(project).hasDependencies("build_runner")
         e.presentation.text = PluginBundle.get("run.build_runner.build")
     }
 }

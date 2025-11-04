@@ -10,13 +10,20 @@ import vm.getObject
 import vm.getObjectWithClassObj
 import vm.logging.Logging
 
+/**
+ * 检查是否是控制流异常（不应该被记录的异常）
+ */
+internal fun isControlFlowException(e: Throwable): Boolean {
+    val className = e.javaClass.name
+    return className.contains("CancellationException") || 
+           className.contains("LeftCompositionCancellationException") ||
+           e is kotlinx.coroutines.CancellationException
+}
+
 data class ProviderNode(
     val id: String,
     val type: String
 ) {
-    override fun toString(): String {
-        return GsonBuilder().setPrettyPrinting().create().toJson(this)
-    }
 
     fun getProviderPath(): InstancePath.FromProviderId {
         return InstancePath.FromProviderId(id)
@@ -172,6 +179,63 @@ sealed class InstanceDetails {
 
 object ProviderHelper {
 
+    /**
+     * 修改对象字段的值
+     * @param vm VmService
+     * @param parentInstanceId 父对象的实例ID
+     * @param field 要修改的字段
+     * @param newValue 新值
+     * @param triggerNotify 是否触发 notifyListeners (针对 ChangeNotifier)
+     * @return 是否修改成功
+     */
+    suspend fun updateFieldValue(
+        vm: VmService,
+        parentInstanceId: String,
+        field: ObjectField,
+        newValue: String,
+        triggerNotify: Boolean = true
+    ): Boolean {
+        return try {
+            val mainIsolateId = vm.getMainIsolateId()
+            val eval = field.eval
+            
+            // 构建赋值表达式
+            val expression = "(parent as ${field.ownerName}).${field.name} = $newValue"
+            
+            eval.safeEval(
+                mainIsolateId,
+                expression,
+                mapOf("parent" to parentInstanceId)
+            )
+            
+            // 如果需要，触发 notifyListeners
+            if (triggerNotify) {
+                try {
+                    // 尝试调用 notifyListeners (如果对象是 ChangeNotifier)
+                    val notifyExpression = "(parent as dynamic).notifyListeners()"
+                    eval.safeEval(
+                        mainIsolateId,
+                        notifyExpression,
+                        mapOf("parent" to parentInstanceId)
+                    )
+                    Logging.getLogger().logInformation("Triggered notifyListeners for ${field.name}")
+                } catch (e: Exception) {
+                    // 如果对象不是 ChangeNotifier，忽略错误
+                    Logging.getLogger().logInformation("Object is not a ChangeNotifier, skipping notifyListeners")
+                }
+            }
+            
+            Logging.getLogger().logInformation("Successfully updated field ${field.name} to $newValue")
+            true
+        } catch (e: Exception) {
+            // 不记录控制流异常
+            if (!isControlFlowException(e)) {
+                Logging.getLogger().logError("Failed to update field ${field.name}", e)
+            }
+            false
+        }
+    }
+
     suspend fun getProviderNodes(vm: VmService): List<ProviderNode> {
         val mainIsolateId = vm.getMainIsolateId()
         val providerEval = EvalOnDartLibrary("package:provider/src/provider.dart", vm)
@@ -234,6 +298,9 @@ object ProviderHelper {
                 dartEval.safeEval(vm.getMainIsolateId(), "value", mapOf("value" to path.instanceId))
             }
         } else when (parent) {
+
+
+
             is InstanceDetails.Map -> {
                 val keyPath = path.pathToProperty.last() as PathToProperty.MapKey
                 val key = if (keyPath.ref == null) "null" else "key"
@@ -251,6 +318,7 @@ object ProviderHelper {
             }
 
             is InstanceDetails.Enum -> {
+                // Enums are leaf nodes, no further navigation needed
                 null
             }
 
@@ -326,91 +394,93 @@ object ProviderHelper {
                 InstanceDetails.Map(associations, hash, instanceRefId)
             }
 
-            else -> {
-
-                val classRef = instance.getClassRef()
-                val libraryUri = classRef.getLibrary()?.getUri() ?: "dart:core"
-                val evalForInstance = EvalOnDartLibrary(libraryUri, vm)
-                val allFields = mutableListOf<ObjectField>()
-                var currentClass = coreEval.getClassObject(isolateId, classRef.getId())
-                val evalCache = mutableMapOf<String, EvalOnDartLibrary>()
-                evalCache[libraryUri] = evalForInstance
-                val objectInstance = vm.getInstance(vm.getMainIsolateId(),instance.getId())
-                objectInstance?.getFields()?.forEach { field ->
-                    val decl = field.getDecl() ?: return@forEach
-                    val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId())
-                    val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
-                    val ownerUri: String = decl.getLocation()!!.getScript().getUri()!!
-                    val ref = field.getValue()!!
-                    val ownerPackageName: String? = tryParsePackageName(ownerUri)
-                    val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
-                    val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
-                    val fieldObject = ObjectField(
-                        name = field.getName() ?: "",
-                        isFinal = field.getDecl()?.isFinal() ?: false,
-                        isStatic = field.getDecl()?.isStatic() ?: false,
-                        eval = EvalOnDartLibrary(
-                            ownerUri,
-                            vm
-                        ),
-                        ref = ref,
-                        ownerUri = ownerUri,
-                        isDefinedByDependency = ownerPackageName != appName,
-                        ownerName = ownerName,
+            InstanceKind.PlainInstance -> {
+                // Check if this is an enum
+                val enumValue = instance.getEnumValue()
+                if (enumValue != null) {
+                    val enumType = instance.getEnumType() ?: "Unknown"
+                    InstanceDetails.Enum(
+                        type = enumType,
+                        value = enumValue,
+                        instanceRefId = instanceRefId
                     )
-                    allFields.add(fieldObject)
+                } else {
+                    // Regular object
+                    buildObjectDetails(instance, vm, isolateId, instanceRefId, hash)
                 }
-//                while (currentClass != null) {
-//                    currentClass.getFields().forEach { fieldRef: FieldRef ->
-//                        try {
-//                            val classRef: ObjRef = fieldRef.getOwner()
-//                            val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId())
-//                            val ownerUri: String = fieldRef.getLocation()!!.getScript().getUri()!!
-//                            val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
-//                            val ownerPackageName: String? = tryParsePackageName(ownerUri)
-//                            val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()!!.getId()!!)!!
-//                            val appName: String? = tryParsePackageName(isolate.getRootLib()!!.getUri()!!)
-//                            val eval = EvalOnDartLibrary(
-//                                ownerUri,
-//                                vm
-//                            )
-//                            val fieldInstance = vm.getInstance(vm.getMainIsolateId(),fieldRef.getDeclaredType().getId()) ?: return@forEach
-//
-//                            val instanceRef = vm.getObject(vm.getMainIsolateId(), fieldInstance.getId()) ?: return@forEach
-//                            allFields.add(
-//                                ObjectField(
-//                                    name = fieldRef.getName(),
-//                                    isFinal = fieldRef.isFinal(),
-//                                    ownerName = ownerName,
-//                                    eval = eval,
-//                                    ref = instanceRef,
-//                                    ownerUri = ownerUri,
-//                                    isDefinedByDependency = ownerPackageName != appName,
-//                                    isStatic = fieldRef.isStatic()
-//                                )
-//                            )
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                        }
-//                    }
-//
-//                    val superClassRef = currentClass.getSuperClass()
-//                    currentClass = if (superClassRef != null) {
-//                        coreEval.getClassObject(isolateId, superClassRef.getId())
-//                    } else {
-//                        null
-//                    }
-//                }
+            }
 
-                InstanceDetails.Object(
-                    type = classRef.getName(),
-                    fields = allFields.distinctBy { it.name }.sortedBy { it.name },
-                    hash = instance.getIdentityHashCode(),
-                    instanceRefId = instance.getId(),
-                    evalForInstance = evalForInstance
-                )
+            else -> {
+                buildObjectDetails(instance, vm, isolateId, instanceRefId, hash)
             }
         }
+    }
+
+    private suspend fun buildObjectDetails(
+        instance: Instance,
+        vm: VmService,
+        isolateId: String,
+        instanceRefId: String,
+        hash: Int
+    ): InstanceDetails.Object {
+        val classRef = instance.getClassRef()
+        val libraryUri = classRef.getLibrary()?.getUri() ?: "dart:core"
+        val evalForInstance = EvalOnDartLibrary(libraryUri, vm)
+        val allFields = mutableListOf<ObjectField>()
+
+        val objectInstance = vm.getInstance(isolateId, instanceRefId)
+        objectInstance?.getFields()?.forEach { field ->
+            try {
+                val decl = field.getDecl() ?: return@forEach
+                val ref = field.getValue() ?: return@forEach
+                
+                // 检查是否是 Sentinel（过期的引用）
+                val refType = ref.type
+                if (refType == "Sentinel") {
+                    // 跳过已过期的引用
+                    Logging.getLogger().logInformation("Skipping expired field: ${field.getName()}")
+                    return@forEach
+                }
+                
+                val owner: ClassObj? = vm.getObjectWithClassObj(isolateId, classRef.getId())
+                val ownerName: String = (owner?.getMixin()?.getName() ?: owner?.getName()) ?: return@forEach
+                val ownerUri: String = decl.getLocation()?.getScript()?.getUri() ?: return@forEach
+                val ownerPackageName: String? = tryParsePackageName(ownerUri)
+                val isolate: Isolate = vm.getIsolateByIdPub(vm.getMainIsolates()?.getId() ?: return@forEach)
+                    ?: return@forEach
+                val appName: String? = tryParsePackageName(isolate.getRootLib()?.getUri() ?: return@forEach)
+
+                val fieldObject = ObjectField(
+                    name = field.getName() ?: "",
+                    isFinal = decl.isFinal(),
+                    isStatic = decl.isStatic(),
+                    eval = EvalOnDartLibrary(ownerUri, vm),
+                    ref = ref,
+                    ownerUri = ownerUri,
+                    isDefinedByDependency = ownerPackageName != appName,
+                    ownerName = ownerName,
+                )
+                allFields.add(fieldObject)
+            } catch (e: Exception) {
+                // 检查是否是 Sentinel 相关的异常
+                if (e.message?.contains("Sentinel") == true || e.message?.contains("Expired") == true) {
+                    Logging.getLogger().logInformation("Skipping expired field: ${field.getName()}")
+                    return@forEach
+                }
+                // 不记录控制流异常（如 CancellationException）
+                if (!isControlFlowException(e)) {
+                    Logging.getLogger().logError("Error processing field: ${field.getName()}", e)
+                }
+            }
+        }
+
+        return InstanceDetails.Object(
+            type = classRef.getName(),
+            fields = allFields.distinctBy { it.name }.sortedBy { it.name },
+            hash = hash,
+            instanceRefId = instanceRefId,
+            evalForInstance = evalForInstance
+        )
     }
 }
 

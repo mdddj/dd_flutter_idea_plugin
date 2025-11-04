@@ -1,58 +1,86 @@
 package shop.itbug.fluttercheckversionx.window.vm
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import shop.itbug.fluttercheckversionx.widget.CenterText
+import shop.itbug.fluttercheckversionx.i18n.PluginBundle
+import shop.itbug.fluttercheckversionx.services.PubspecService
+import shop.itbug.fluttercheckversionx.util.firstChatToUpper
 import vm.VmService
 import vm.devtool.*
 
 /** flutter provider component for toolwindow */
 @Composable
 fun ProviderComposeComponent(project: Project) {
-    val isEnv = System.getenv("DEV") == "true"
+    val pubspecService = PubspecService.getInstance(project)
+    val dependenciesNames by pubspecService.dependenciesNamesFlow.collectAsState()
+    val isUseProviderDeps = dependenciesNames.contains("provider")
     FlutterAppsTabComponent(project) {
-        if (isEnv) {
-            //todo !!半成品
-            ProviderBody(project, it.vmService)
+        if (!isUseProviderDeps) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(PluginBundle.get("notfound_provider_deps"))
+            }
         } else {
-            CenterText("Coming soon...")
+            ProviderBody(project, it.vmService)
         }
     }
 }
 
 @Composable
 private fun ProviderBody(project: Project, vmService: VmService) {
-    var selectProvider by remember { mutableStateOf<ProviderNode?>(null) }
-    var outerSplitState by mutableStateOf(SplitLayoutState(0.5f))
-
-    LaunchedEffect(selectProvider) {
-        println("DEBUG: Provider selection changed to: ${selectProvider?.type}")
+    val pubspecService = PubspecService.getInstance(project)
+    
+    // 使用状态管理类
+    val providerState = remember(vmService) {
+        ProviderState(vmService).apply {
+            refreshProviders()
+        }
     }
+    
+    val details by pubspecService.detailsFlow.collectAsState()
+    val providerInfo = details.find { it.name == "provider" }
+
     HorizontalSplitLayout(
-        state = outerSplitState,
-        first = { ProviderList(project, vmService) { selectProvider = it } },
+        state = providerState.splitState,
+        first = {
+            ProviderList(providerState)
+        },
         second = {
-            if (selectProvider != null) {
-                ProviderDetails(vmService, selectProvider!!)
+            val select = providerState.selectedProvider
+            if (select != null) {
+                ProviderDetails(vmService, select)
             } else {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        key = AllIconsKeys.General.Beta,
+                        contentDescription = "Beta version"
+                    )
                     Text(
                         "Select a provider to see details",
                         color = JewelTheme.globalColors.text.info
                     )
+                    if (providerInfo != null)
+                        Text("provider: ${providerInfo.version}", color = JewelTheme.globalColors.text.info)
                 }
             }
         },
@@ -62,47 +90,45 @@ private fun ProviderBody(project: Project, vmService: VmService) {
     )
 }
 
-// 列表
 @Composable
-private fun ProviderList(
-    project: Project,
-    vm: VmService,
-    onSelectChange: (item: ProviderNode) -> Unit
-) {
-    val scope = vm.coroutineScope
-    var providers by remember { mutableStateOf<List<ProviderNode>>(emptyList()) }
-    fun refresh() {
-        scope.launch {
-            println("DEBUG: ProviderList refreshing providers")
-            providers = ProviderHelper.getProviderNodes(vm)
-            println("DEBUG: ProviderList got ${providers.size} providers")
-        }
-    }
-
-    LaunchedEffect(vm) {
-        println("DEBUG: ProviderList starting initial refresh")
-        refresh()
-    }
+private fun ProviderList(state: ProviderState) {
+    val bgColor = if (JewelTheme.isDark) Color.DarkGray else Color.White
 
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState()),
+        modifier = Modifier.padding(12.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Row {
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                key = AllIconsKeys.General.Beta,
+                contentDescription = "Beta version"
+            )
             IconActionButton(
                 AllIconsKeys.Actions.Refresh,
                 contentDescription = "Refresh",
-                onClick = { refresh() }
+                onClick = { state.refreshProviders() }
             )
         }
-        for (node in providers) Box(
+        
+        if (state.isLoading) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Loading...")
+            }
+        }
+        
+        if (state.error != null) {
+            Text("Error: ${state.error}", color = JewelTheme.globalColors.text.error)
+        }
+        
+        for (node in state.providers) Box(
             modifier =
-                Modifier.clickable(
+                Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor).clickable(
                     onClick = {
-                        println("DEBUG: Clicked on provider: ${node.type}")
-                        onSelectChange.invoke(node)
+                        state.selectProvider(node)
                     }
-                )
+                ).pointerHoverIcon(PointerIcon.Hand).fillMaxWidth().padding(12.dp)
         ) { Text(node.type) }
     }
 }
@@ -110,10 +136,8 @@ private fun ProviderList(
 /** Provider 详情展示面板 */
 @Composable
 private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
-    LaunchedEffect(provider) {
-        println("DEBUG: ProviderDetails received new provider: ${provider.type}")
-    }
-    val rootPath = remember(provider) { provider.getProviderPath() }
+    println("provider详情:$provider")
+    val rootPath = remember(provider, provider.id) { provider.getProviderPath() }
     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(8.dp)) {
         InstanceNodeViewer(vmService = vmService, path = rootPath)
     }
@@ -124,20 +148,20 @@ private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
 private fun InstanceNodeViewer(
     vmService: VmService,
     path: InstancePath,
-    parent: InstanceDetails? = null
+    parent: InstanceDetails? = null,
+    parentInstanceId: String? = null,
+    field: ObjectField? = null
 ) {
     var details by remember(path) { mutableStateOf<InstanceDetails?>(null) }
     var error by remember(path) { mutableStateOf<String?>(null) }
     var isExpanded by remember(path) { mutableStateOf(path.pathToProperty.isEmpty()) } // 根节点默认展开
+    var refreshTrigger by remember { mutableStateOf(0) } // 刷新触发器
 
-    LaunchedEffect(path) {
-        println("DEBUG: InstanceNodeViewer starting to fetch details for path: $path")
+    LaunchedEffect(path, path.pathToProperty, refreshTrigger) {
         try {
             details = ProviderHelper.getInstanceDetails(vmService, path, parent)
-            println("DEBUG: InstanceNodeViewer received details: ${details?.javaClass?.simpleName}")
         } catch (e: Exception) {
             error = e.message ?: "An unknown error occurred"
-            println("DEBUG: InstanceNodeViewer error fetching details: $error")
         }
     }
 
@@ -156,14 +180,20 @@ private fun InstanceNodeViewer(
     }
 
     val currentDetails = details!!
-    println("DEBUG: InstanceNodeViewer rendering details of type: ${currentDetails.javaClass.simpleName}")
 
     Column {
         InstanceHeader(
             details = currentDetails,
             isExpanded = isExpanded,
             isExpandable = currentDetails.isExpandable,
-            onToggleExpand = { isExpanded = !isExpanded }
+            onToggleExpand = { isExpanded = !isExpanded },
+            vmService = vmService,
+            parentInstanceId = parentInstanceId,
+            field = field,
+            onValueUpdated = {
+                // 触发刷新
+                refreshTrigger++
+            }
         )
 
         if (isExpanded) {
@@ -178,6 +208,7 @@ private fun InstanceNodeViewer(
                                 .forEach { field ->
                                     Row(verticalAlignment = Alignment.Top) {
                                         Text("${field.name}: ", fontWeight = FontWeight.Bold)
+
                                         InstanceNodeViewer(
                                             vmService = vmService,
                                             path =
@@ -192,7 +223,9 @@ private fun InstanceNodeViewer(
                                                     ),
                                                     field.ref.getId()
                                                 ),
-                                            parent = currentDetails
+                                            parent = currentDetails,
+                                            parentInstanceId = currentDetails.instanceRefId,
+                                            field = field
                                         )
                                     }
                                 }
@@ -218,31 +251,31 @@ private fun InstanceNodeViewer(
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             currentDetails.associations.forEach { assoc ->
                                 Row(verticalAlignment = Alignment.Top) {
-                                    // Key 部分 (也需要一个新的根路径)
-                                    val keyId = assoc.getKey()?.getId()
-                                    if (keyId != null) {
+                                    // Key 部分 - 直接显示，不需要展开
+                                    val keyRef = assoc.getKey()
+                                    if (keyRef != null) {
                                         InstanceNodeViewer(
                                             vmService = vmService,
-                                            path = InstancePath.FromInstanceId(keyId)
+                                            path = InstancePath.FromInstanceId(keyRef.getId())
                                         )
                                     } else {
                                         Text("null")
                                     }
                                     Text(": ")
-                                    // Value 部分
-                                    val valueId = assoc.getValue()?.getId()
-                                    if (valueId != null) {
-                                        InstanceNodeViewer(
-                                            vmService = vmService,
-                                            path = InstancePath.FromInstanceId(valueId),
-                                            parent = currentDetails
-                                        )
-                                    } else {
-                                        Text("null")
-                                    }
+                                    // Value 部分 - 通过 MapKey 路径获取
+                                    val keyId = keyRef?.getId()
+                                    InstanceNodeViewer(
+                                        vmService = vmService,
+                                        path = path.pathForChild(PathToProperty.MapKey(keyId)),
+                                        parent = currentDetails
+                                    )
                                 }
                             }
                         }
+                    }
+
+                    is InstanceDetails.Enum -> {
+                        Text("${currentDetails.type}.${currentDetails.value}")
                     }
 
                     else -> {}
@@ -253,13 +286,25 @@ private fun InstanceNodeViewer(
 }
 
 /** 显示实例头部信息，包括类型、值和展开按钮。 */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun InstanceHeader(
     details: InstanceDetails,
     isExpanded: Boolean,
     isExpandable: Boolean,
-    onToggleExpand: () -> Unit
+    onToggleExpand: () -> Unit,
+    vmService: VmService? = null,
+    parentInstanceId: String? = null,
+    field: ObjectField? = null,
+    onValueUpdated: (() -> Unit)? = null
 ) {
+    var isEditing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    // 判断是否可编辑
+    val isEditable = field != null && !field.isFinal && parentInstanceId != null && vmService != null &&
+            (details is InstanceDetails.DartString || details is InstanceDetails.Number ||
+                    details is InstanceDetails.Bool || details is InstanceDetails.Enum)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable(enabled = isExpandable, onClick = onToggleExpand)
@@ -274,32 +319,103 @@ private fun InstanceHeader(
             Spacer(Modifier.width(20.dp))
         }
 
-        when (details) {
-            is InstanceDetails.DartString -> Text(details.displayString, color = Color(0xFFCE9178))
-            is InstanceDetails.Number -> Text(details.displayString, color = Color(0xFFB5CEA8))
-            is InstanceDetails.Bool -> Text(details.displayString, color = Color(0xFF569CD6))
-            is InstanceDetails.Nill -> Text("null", color = Color(0xFF569CD6))
-            is InstanceDetails.Object ->
-                Text(
-                    "${details.type} #${details.hash.toString(16).take(4)}",
-                    color = Color(0xFF4EC9B0)
-                )
+        if (isEditing && isEditable) {
+            // 编辑模式
+            EditValueField(
+                details = details,
+                onConfirm = { newValue ->
+                    scope.launch {
+                        val success = ProviderHelper.updateFieldValue(
+                            vmService,
+                            parentInstanceId,
+                            field,
+                            newValue,
+                            triggerNotify = true
+                        )
+                        if (success) {
+                            isEditing = false
+                            // 延迟一下再刷新，确保 VM 已经更新
+                            delay(3000)
+                            onValueUpdated?.invoke()
+                        }
+                    }
+                },
+                onCancel = { isEditing = false }
+            )
+        } else {
+            // 显示模式
+            when (details) {
+                is InstanceDetails.DartString -> Text(details.displayString, color = Color(0xFFCE9178))
+                is InstanceDetails.Number -> Text(details.displayString, color = Color(0xFFB5CEA8))
+                is InstanceDetails.Bool -> Text(details.displayString, color = Color(0xFF569CD6))
+                is InstanceDetails.Nill -> Text("null", color = Color(0xFF569CD6))
+                is InstanceDetails.Object ->
+                    Text(
+                        "${details.type} #${details.hash.toString(16).take(4)}",
+                        color = Color(0xFF4EC9B0)
+                    )
 
-            is InstanceDetails.DartList ->
-                Text(
-                    "List (${details.length} elements) #${
-                        details.hash.toString(16).take(4)
-                    }"
-                )
+                is InstanceDetails.DartList ->
+                    Text(
+                        "List (${details.length} elements) #${
+                            details.hash.toString(16).take(4)
+                        }"
+                    )
 
-            is InstanceDetails.Map ->
-                Text(
-                    "Map (${details.associations.size} entries) #${
-                        details.hash.toString(16).take(4)
-                    }"
-                )
+                is InstanceDetails.Map ->
+                    Text(
+                        "Map (${details.associations.size} entries) #${
+                            details.hash.toString(16).take(4)
+                        }"
+                    )
 
-            is InstanceDetails.Enum -> Text("${details.type}.${details.value}")
+                is InstanceDetails.Enum -> Text("${details.type}.${details.value}")
+            }
+
+            // 编辑按钮
+            if (isEditable) {
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    PluginBundle.get("edit").firstChatToUpper(),
+                    color = JewelTheme.globalColors.text.info,
+                    modifier = Modifier.clickable { isEditing = true }.pointerHoverIcon(PointerIcon.Hand)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun EditValueField(
+    details: InstanceDetails,
+    onConfirm: (String) -> Unit,
+    onCancel: () -> Unit
+) {
+    val initialValue = when (details) {
+        is InstanceDetails.DartString -> "\"${details.displayString}\""
+        is InstanceDetails.Number -> details.displayString
+        is InstanceDetails.Bool -> details.displayString
+        is InstanceDetails.Enum -> "${details.type}.${details.value}"
+        else -> ""
+    }
+
+    val textState = rememberTextFieldState(initialValue)
+
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        TextField(
+            state = textState,
+            modifier = Modifier.width(200.dp)
+        )
+        OutlinedButton(
+            onClick = { onConfirm(textState.text.toString()) }
+        ) {
+            Text(PluginBundle.get("submit").firstChatToUpper())
+        }
+        OutlinedButton(
+            onClick = onCancel
+        ) {
+            Text(PluginBundle.get("cancel").firstChatToUpper())
         }
     }
 }

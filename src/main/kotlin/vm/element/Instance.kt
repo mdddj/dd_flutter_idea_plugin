@@ -583,6 +583,35 @@ open class Instance(json: JsonObject) : InstanceRef(json) {
     }
 
     override fun toString(): String {
-        return "类型:${getKind()}, 值:${getValueAsString()}"
+        return "类型:${getKind()}, 值:${getValueAsString()}, 名称:${getName()}, DebugName:${getDebugName()}"
+    }
+
+
+    //获取枚举的值
+    fun getEnumValueString(): String? {
+        val type = getEnumType()
+        val value = getEnumValue()
+        if (type != null && value != null) {
+            return "$type.$value"
+        }
+        return null
+    }
+
+    fun getEnumType(): String? {
+        if (getKind() == InstanceKind.PlainInstance) {
+            return getClassRef().getName()
+        }
+        return null
+    }
+
+    fun getEnumValue(): String? {
+        if (getKind() == InstanceKind.PlainInstance) {
+            val nameField = getFields()?.find { it.getName() == "_name" }
+            if (nameField != null) {
+                val enumValueString = nameField.getValue()?.getValueAsString()
+                return enumValueString
+            }
+        }
+        return null
     }
 }

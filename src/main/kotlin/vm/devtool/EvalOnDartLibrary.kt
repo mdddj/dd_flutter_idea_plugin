@@ -147,6 +147,7 @@ class EvalOnDartLibrary(
      * @param isolateId 目标 isolate 的 ID。
      * @param instanceRef 要获取详情的对象的引用。
      * @return 完整的 [Instance] 对象。
+     * @throws DartVMRPCException 如果对象已过期（Sentinel）
      */
     suspend fun getInstance(isolateId: String, instanceRef: InstanceRef): Instance {
         return suspendCancellableCoroutine { continuation ->
@@ -156,11 +157,38 @@ class EvalOnDartLibrary(
                 }
 
                 override fun onError(error: RPCError) {
-                    continuation.resumeWithException(error.exception)
+                    // 检查是否是 Sentinel 错误
+                    val exception = error.exception
+                    if (exception.message?.contains("Sentinel") == true || 
+                        exception.message?.contains("Expired") == true) {
+                        // 创建一个特殊的 Sentinel Instance 来表示过期的对象
+                        val sentinelInstance = createSentinelInstance(instanceRef.getId())
+                        continuation.resume(sentinelInstance)
+                    } else {
+                        continuation.resumeWithException(exception)
+                    }
                 }
 
             })
         }
+    }
+    
+    /**
+     * 创建一个表示 Sentinel 的 Instance 对象
+     */
+    private fun createSentinelInstance(id: String): Instance {
+        val json = com.google.gson.JsonObject().apply {
+            addProperty("type", "Instance")
+            addProperty("id", id)
+            addProperty("kind", "Null")
+            addProperty("valueAsString", "<expired>")
+            add("class", com.google.gson.JsonObject().apply {
+                addProperty("type", "@Class")
+                addProperty("id", "classes/0")
+                addProperty("name", "Expired")
+            })
+        }
+        return Instance(json)
     }
 
 

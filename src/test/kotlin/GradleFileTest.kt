@@ -15,7 +15,7 @@ import shop.itbug.fluttercheckversionx.util.GrPsiElementHelper
 import shop.itbug.fluttercheckversionx.util.MyGrPsiElementFactory
 
 class GradleFileTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): @NonNls String {
+    override fun getTestDataPath():  String {
         return "src/test/testData/project"
     }
 

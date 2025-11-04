@@ -73,8 +73,10 @@ class FlutterAndroidMigrateManager(val project: Project) : Disposable {
             runReadAction { PsiTreeUtil.findChildrenOfType(psiFile, GrMethodCallExpressionImpl::class.java).toList() }
         val buildscriptElements = runReadAction { methods.filter { it.invokedExpression.text == "buildscript" } }
         ApplicationManager.getApplication().invokeLater({
-            WriteCommandAction.runWriteCommandAction(project) {
-                buildscriptElements.forEach { it.delete() }
+            if(!project.isDisposed){
+                WriteCommandAction.runWriteCommandAction(project) {
+                    buildscriptElements.forEach { it.delete() }
+                }
             }
         }, ModalityState.defaultModalityState())
     }
