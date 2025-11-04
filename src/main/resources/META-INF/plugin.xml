@@ -551,6 +551,7 @@
                 text="Test Flutter VM Notification"/>
 
 
+
     </actions>
 
     <actions>
@@ -694,5 +695,14 @@
     </actions>
 
 
+    <actions>
+        <action id="DioStatusCheckAction" class="shop.itbug.fluttercheckversionx.actions.dio.DioStatusCheckAction"
+                text="FlutterX Socket Status">
+            <add-to-group group-id="FlutterX Window Top Actions" anchor="first" />
+            <add-to-group group-id="SpPanelToolbar" anchor="last" />
+            <add-to-group group-id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" anchor="last" />
+            <add-to-group group-id="FlutterXLoggerWindowToolbarActionGroup" />
+        </action>
+    </actions>
 </idea-plugin>
 

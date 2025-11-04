@@ -52,16 +52,32 @@ fun settingPanel(
 
 
         group("Dio") {
-            row("Dio ${PluginBundle.get("setting.listening.port")}") {
-                textField().bindText(model::serverPort).onChanged { component ->
-                    PluginStateService.changeState { it.copy(serverPort = component.text) }
-                }
+
+            threeColumnsRow({
+                checkBox("Enable Dio Socket").bindSelected(dioxSetting::enableFlutterXDioSocket)
+                contextHelp(PluginBundle.get("enable_flutterx_socket_setting_contexthelp")+"(Dio,SP,Hive,Log)","Tips")
+            }, {
+                intTextField().bindIntText({ model.serverPort.toInt() }, { model.serverPort = it.toString() })
+                    .label("Dio ${PluginBundle.get("setting.listening.port")}", LabelPosition.LEFT)
+                    .onChanged { component ->
+                        PluginStateService.changeState { it.copy(serverPort = component.text) }
+                    }
+            }, {
                 button(PluginBundle.get("reset")) {
                     DioApiService.getInstance().reset(project)
                 }
             }
-            //.comment(PluginBundle.get("setting.reset.tip"))
+            )
 
+            //.comment(PluginBundle.get("setting.reset.tip"))
+//            row("Dio ${PluginBundle.get("setting.listening.port")}") {
+//                textField().bindText(model::serverPort).onChanged { component ->
+//                    PluginStateService.changeState { it.copy(serverPort = component.text) }
+//                }
+//                button(PluginBundle.get("reset")) {
+//                    DioApiService.getInstance().reset(project)
+//                }
+//            }
 
 //            新接口弹出提醒
             row(PluginBundle.get("setting.new.tips")) {

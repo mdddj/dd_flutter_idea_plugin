@@ -77,6 +77,8 @@ data class DoxListeningSetting(
     ///是否倒序显示接口,默认false,版本5.0.5新增
     var isReverseApi: Boolean = false,
 
+    ///是否启用 socket
+    var enableFlutterXDioSocket: Boolean = true,
     )
 
 

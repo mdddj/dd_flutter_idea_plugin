@@ -59,6 +59,8 @@ data class AppStateModel(
 
     ///是否启用资产自动补全功能
     var assetsScanEnable: Boolean = true,
+
+
 ) {
     /**
      * 获取 flutterx 设置的地区

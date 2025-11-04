@@ -6,6 +6,7 @@ import com.google.gson.ToNumberPolicy
 import com.intellij.execution.ui.RunContentManagerImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -23,6 +24,8 @@ import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.socket.StringProtocol
 import shop.itbug.fluttercheckversionx.socket.service.DioApiService.Companion.getInstance
 import shop.itbug.fluttercheckversionx.tools.MyToolWindowTools
+import shop.itbug.fluttercheckversionx.util.TaskRunUtil
+import shop.itbug.fluttercheckversionx.util.toast
 import shop.itbug.fluttercheckversionx.util.toastWithError
 import java.util.concurrent.TimeUnit
 
@@ -89,6 +92,27 @@ class DioApiService : Disposable {
         MyToolWindowTools.setToolWindowNullActive(project)
         dispose()
         MyToolWindowTools.resetDioRequestListenServer(project)
+    }
+
+    fun tryStart(project: Project) {
+        TaskRunUtil.runBackground(project,"Try start FlutterX Socket service") {
+            if(aioServer==null) {
+                ApplicationManager.getApplication().invokeLater {
+                    reset(project)
+                }
+            }
+        }
+    }
+
+
+    fun stopAll(project: Project) {
+        TaskRunUtil.runBackground(project,"Stop all Dio server"){
+            ApplicationManager.getApplication().invokeLater {
+                MyToolWindowTools.setToolWindowNullActive(project)
+            }
+            dispose()
+            project.toast("FlutterX socket stopped.")
+        }
     }
 
     fun sendByAnyObject(obj: Any) {
@@ -170,6 +194,7 @@ class DioApiService : Disposable {
         sessions.map(AioSession::close)
         sessions.clear()
         aioServer?.shutdown()
+        aioServer = null
     }
 
     

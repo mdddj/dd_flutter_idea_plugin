@@ -1,10 +1,8 @@
 package shop.itbug.fluttercheckversionx.actions
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.diagnostic.fileLogger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -15,12 +13,7 @@ import shop.itbug.fluttercheckversionx.setting.AppConfig
  */
 class OpenSettingAnAction : DumbAwareAction({ PluginBundle.get("setting.flutterx") }, AllIcons.General.Settings) {
     override fun actionPerformed(e: AnActionEvent) {
-        fileLogger().debug("打开系统设置")
+        thisLogger().debug("打开系统设置")
         e.project?.let { ShowSettingsUtil.getInstance().showSettingsDialog(it, AppConfig::class.java) }
-    }
-
-    companion object {
-        fun getInstance(): AnAction =
-            ActionManager.getInstance().getAction("shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction")
     }
 }
