@@ -3,6 +3,7 @@ package shop.itbug.fluttercheckversionx.util
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.wm.ToolWindowManager
@@ -69,4 +70,47 @@ object RunUtil {
     }
 
     fun runPubget(project: Project) = runCommand(project, "flutter pub get")
+
+
+    //执行dart run build 命令
+    fun dartBuildInBackground(project: Project) {
+        commandInBackground(project, "Dart Building", { "Dart Building success" }, { it.message }) {
+            val workDirectory = project.guessProjectDir()?.toNioPath()?.toFile()
+            val command = GeneralCommandLine("dart", "pub", "run", "build_runner", "build")
+            command.workDirectory = workDirectory
+            command
+        }
+    }
+
+    fun commandInBackground(
+        project: Project, title: String, onSuccess: (() -> String?)? = null,
+        onError: ((error: Throwable) -> String?)? = null,
+        generalCommand: () -> GeneralCommandLine,
+    ) {
+        val task = object : com.intellij.openapi.progress.Task.Backgroundable(project, title) {
+            override fun run(p0: ProgressIndicator) {
+                val command = generalCommand()
+                ExecUtil.execAndGetOutput(command)
+            }
+
+            override fun onThrowable(error: Throwable) {
+
+                val msg = onError?.invoke(error)
+                msg?.let {
+                    project.toastWithError(it)
+                }
+                super.onThrowable(error)
+            }
+
+            override fun onSuccess() {
+                val msg = onSuccess?.invoke()
+                msg?.let {
+                    project.toast(it)
+                }
+                super.onSuccess()
+            }
+        }
+        task.queue()
+    }
+
 }

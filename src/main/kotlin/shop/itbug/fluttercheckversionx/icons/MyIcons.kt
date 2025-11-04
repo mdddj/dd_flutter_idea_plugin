@@ -20,6 +20,7 @@ object MyIcons {
     val image = IconLoader.getIcon("/icons/image.svg", MyIcons::class.java)
     val imageIconPath = PathIconKey("/icons/image.svg",MyIcons::class.java)
 
+    val moreHorizontal = IconLoader.getIcon("/icons/moreHorizontal.svg", MyIcons::class.java)
 
     /// compose
     val download = IntelliJIconKey("/icons/new/download.svg","/icons/new/download.svg", MyIcons::class.java)

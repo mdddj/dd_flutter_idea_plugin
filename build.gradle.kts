@@ -13,12 +13,12 @@ val ideType: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.2.20"
-    id("org.jetbrains.intellij.platform") version "2.9.0"
+    kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.intellij.platform") version "2.10.4"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
 }
 
 group = "shop.itbug"
@@ -68,7 +68,7 @@ dependencies {
             }
             "252" -> {
 //                intellijIdeaCommunity("2025.2.1")
-                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
+                local("/Applications/Android Studio.app")
             }
 
             "251" -> {
@@ -169,8 +169,8 @@ tasks {
     }
 
     runIde {
-//        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
-        args=listOf("/Users/hlx/github/media-kit/video_player_media_kit/example")
+        args = listOf("/Users/hlx/github/dd_flutter_idea_plugin/flutterdemo")
+//        args=listOf("/Users/hlx/github/media-kit/video_player_media_kit/example")
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "-Didea.kotlin.plugin.use.k2=true",

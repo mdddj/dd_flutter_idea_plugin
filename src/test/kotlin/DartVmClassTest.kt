@@ -6,6 +6,7 @@ import vm.VmServiceBase
 import vm.VmServiceListener
 import vm.devtool.*
 import vm.element.Event
+import vm.element.Instance
 import vm.getInstance
 import vm.logging.Logger
 import vm.logging.Logging
@@ -32,7 +33,7 @@ class DartVmClassTest : BasePlatformTestCase() {
             }
         }
 
-    val url = "ws://127.0.0.1:65197/SBrTL9VPO4c=/ws"
+    val url = "ws://127.0.0.1:65121/-dAil_N_bf8=/ws"
     val createVmService: VmService
         get() = VmServiceBase.connect(url, vmListen)
 
@@ -56,8 +57,11 @@ class DartVmClassTest : BasePlatformTestCase() {
                                 instanceId = field.ref.getId()
                             )
 
-                            val instance = vmService.getInstance(mainIsolateId, field.ref.getId())
-                            println("instance:$instance")
+                            val instance: Instance? = vmService.getInstance(mainIsolateId, field.ref.getId())
+                            println("字段名:${field.name},实例:$instance")
+                            if(field.name == "apiStatus"){
+                                println(instance?.getEnumValueString())
+                            }
                         }
                     }
 

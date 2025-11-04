@@ -3,10 +3,11 @@ package shop.itbug.fluttercheckversionx.inlay.freezed
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
 import com.intellij.codeInsight.codeVision.settings.CodeVisionGroupSettingProvider
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -67,8 +68,9 @@ class FreezedActionInlay : CodeVisionProviderBase() {
 
     //显示操作菜单
     private fun showFreezedActionMenu(mouseEvent: MouseEvent, psiElement: PsiElement, edit: Editor) {
+        val context = SimpleDataContext.getProjectContext(psiElement.project)
         val popupCreate = JBPopupFactory.getInstance().createActionGroupPopup(
-            "Freezed Actions", createFreezedActionGroup(psiElement, mouseEvent, edit), DataContext.EMPTY_CONTEXT,
+            "Freezed Actions", createFreezedActionGroup(psiElement, mouseEvent, edit), context,
             JBPopupFactory.ActionSelectionAid.MNEMONICS, true
         )
         popupCreate.show(RelativePoint.fromScreen(mouseEvent.locationOnScreen))
@@ -197,7 +199,7 @@ class FreezedActionInlay : CodeVisionProviderBase() {
                     RunUtil.runCommand(psiElement.project, "FlutterX run build", "flutter pub run build_runner build")
                 }
             })
-
+            add(ActionManager.getInstance().getAction("DartBuildAction"))
 
         }
     }

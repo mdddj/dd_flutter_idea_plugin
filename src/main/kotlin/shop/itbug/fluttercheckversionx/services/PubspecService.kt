@@ -12,6 +12,9 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import shop.itbug.fluttercheckversionx.common.yaml.DartYamlModel
 import shop.itbug.fluttercheckversionx.common.yaml.PubspecYamlFileTools
@@ -38,6 +41,13 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
     private val job = Job()
     private var dependenciesNames = listOf<String>()
     private var details = listOf<DartYamlModel>()
+    
+    // StateFlow for Compose
+    private val _dependenciesNamesFlow = MutableStateFlow<List<String>>(emptyList())
+    val dependenciesNamesFlow: StateFlow<List<String>> = _dependenciesNamesFlow.asStateFlow()
+    
+    private val _detailsFlow = MutableStateFlow<List<DartYamlModel>>(emptyList())
+    val detailsFlow: StateFlow<List<DartYamlModel>> = _detailsFlow.asStateFlow()
 
 
     fun getAllPackages() = details
@@ -52,6 +62,10 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
             val all = tool.allDependencies()
             details = all
             dependenciesNames = all.map { it.name }
+            
+            // Update flows
+            _detailsFlow.value = all
+            _dependenciesNamesFlow.value = dependenciesNames
         }
     }
 
@@ -91,9 +105,11 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
     /**
      * 检测依赖是否使用了[pluginName]这个包
      */
-    private fun hasDependencies(pluginName: String): Boolean {
+     fun hasDependencies(pluginName: String): Boolean {
         return dependenciesNames.contains(pluginName)
     }
+
+
 
 
     companion object {
@@ -106,6 +122,8 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
         job.cancel()
         dependenciesNames = emptyList()
         details = emptyList()
+        _dependenciesNamesFlow.value = emptyList()
+        _detailsFlow.value = emptyList()
     }
 
     override val coroutineContext: CoroutineContext

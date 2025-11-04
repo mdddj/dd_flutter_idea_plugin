@@ -257,10 +257,24 @@
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
         <listener class="shop.itbug.fluttercheckversionx.common.dart.RunConfigListener"
                   topic="com.intellij.execution.ExecutionListener"/>
-        <listener class="shop.itbug.fluttercheckversionx.services.PubspecServiceFileListener" topic="com.intellij.openapi.vfs.newvfs.BulkFileListener" />
+        <listener class="shop.itbug.fluttercheckversionx.services.PubspecServiceFileListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
 
     <actions>
+
+
+        <action id="OpenInVsCodeAction" class="shop.itbug.fluttercheckversionx.actions.yaml.OpenInVsCodeAction"
+                text="Open in Vscode"/>
+        <action id="OpenInASAction" class="shop.itbug.fluttercheckversionx.actions.yaml.OpenInASAction"
+                text="Open in Android Studio"/>
+        <group id="FlutterXOpenInAction" popup="true">
+            <reference ref="OpenInVsCodeAction"/>
+            <reference ref="OpenInASAction"/>
+            <separator/>
+            <reference ref="RevealGroup"/>
+        </group>
+
         <action class="shop.itbug.fluttercheckversionx.actions.context.HelpContextAction" id="HelpAction"
                 icon="AllIcons.Actions.Help"/>
         <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
@@ -295,6 +309,10 @@
             <separator key="dio.apis.option.title"/>
             <group id="Dio.Request.UI" class="shop.itbug.fluttercheckversionx.form.components.DioUIShowActionGroup"/>
         </group>
+
+        <action id="DartBuildAction" class="shop.itbug.fluttercheckversionx.actions.components.DartBuildAction"
+                text="Dart Run Build (In Background)">
+        </action>
 
 
         <!--        project 连接 项目列表-->
@@ -396,6 +414,7 @@
         <group id="status_bar_actions">
             <reference ref="SearchPubPluginAction"/>
             <reference ref="FlutterRunBuilderCommandAction"/>
+            <reference ref="DartBuildAction"/>
             <separator/>
             <!--            <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>-->
             <reference ref="StatusBarJsonToFreezedClass"/>
@@ -530,6 +549,7 @@
         <action id="TestFlutterVMNotificationAction"
                 class="shop.itbug.fluttercheckversionx.actions.TestNotificationAction"
                 text="Test Flutter VM Notification"/>
+
 
     </actions>
 
@@ -672,6 +692,7 @@
             <reference ref="SpUpdateDoubleValueAction"/>
         </group>
     </actions>
+
 
 </idea-plugin>
 

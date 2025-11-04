@@ -40,8 +40,6 @@ import javax.swing.event.TreeSelectionListener
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
-private const val SETTING_FOLDER_GOT_IT_ID = "got.it.flutter.l10n.setting.folder"
-
 /**
  * l10n多语言窗口
  */
