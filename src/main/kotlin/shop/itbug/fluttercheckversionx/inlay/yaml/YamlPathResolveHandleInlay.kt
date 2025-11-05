@@ -13,7 +13,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.dsl.builder.panel
-import shop.itbug.fluttercheckversionx.actions.components.QuickOpenInActions
 import shop.itbug.fluttercheckversionx.icons.MyIcons
 import shop.itbug.fluttercheckversionx.util.YamlExtends
 import java.awt.Cursor
@@ -101,16 +100,16 @@ class YamlPathResolveHandleInlay : InlayHintsProvider<NoSettings> {
                 val originalActionGroup = ActionManager.getInstance().getAction("FlutterXOpenInAction") as DefaultActionGroup
                 
                 // Create a new temporary action group to avoid accumulation
-                val actionGroup = DefaultActionGroup().apply {
-                    addAll(originalActionGroup)
-                    addSeparator("Custom Open In Action")
-                    add(QuickOpenInActions())
-                }
+//                val actionGroup = DefaultActionGroup().apply {
+//                    addAll(originalActionGroup)
+//                    addSeparator("Custom Open In Action")
+//                    add(QuickOpenInActions())
+//                }
                 
                 val context = SimpleDataContext.getProjectContext(editor.project!!)
                 val newContext = SimpleDataContext.getSimpleContext(CommonDataKeys.VIRTUAL_FILE, virtualFile, context)
                 val popupCreate = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "Open in ...", actionGroup, newContext,
+                    "Open in ...", originalActionGroup, newContext,
                     JBPopupFactory.ActionSelectionAid.MNEMONICS, true
                 )
                 popupCreate.show(RelativePoint.fromScreen(event.locationOnScreen))

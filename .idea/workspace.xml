@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="添加 dio功能监听 #98">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/components/QuickOpenInActions.kt" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="添加自定义快速打开命令">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/yaml/OpenInVsCodeAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/yaml/OpenInVsCodeAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/components/QuickOpenInActions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/components/QuickOpenInActions.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/FlutterXGlobalConfigService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/config/FlutterXGlobalConfigService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/SettingPanel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/SettingPanel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/yaml/YamlPathResolveHandleInlay.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/inlay/yaml/YamlPathResolveHandleInlay.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PluginStateService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/services/PluginStateService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/RunUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/util/RunUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +55,12 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
@@ -427,7 +432,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [buildPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -597,9 +602,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.DartVmClassTest.testGetProviders" />
         <item itemvalue="Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" />
       </list>
@@ -1984,7 +1989,11 @@
       <workItem from="1762226805146" duration="1503000" />
       <workItem from="1762234397490" duration="5584000" />
       <workItem from="1762254079480" duration="98000" />
-      <workItem from="1762261868733" duration="8378000" />
+      <workItem from="1762261868733" duration="8571000" />
+      <workItem from="1762303730721" duration="1439000" />
+      <workItem from="1762305451226" duration="85000" />
+      <workItem from="1762306546687" duration="106000" />
+      <workItem from="1762316419519" duration="90000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2329,7 +2338,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="441" />
+    <option name="localTasksCounter" value="442" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2379,7 +2388,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat(plugin): 添加常用依赖项搜索和添加功能&#10;&#10;- 新增 DartPackageAddCompose 组件，用于展示和搜索常用依赖项&#10;- 实现 AddPackageDialog 和 AddPackageDialogIdea 类，提供依赖项添加功能&#10;- 在主工具窗口添加常用依赖项选项卡&#10;-优化 ProviderComposeComponent，暂时移除 ProviderBody 展示&#10;- 更新搜索插件动作，支持打开新增的依赖项搜索对话框" />
     <MESSAGE value="修复检查器bug" />
     <MESSAGE value="添加了一些按钮" />
     <MESSAGE value="release 6.0.5" />
@@ -2404,7 +2412,8 @@
     <MESSAGE value="#95 release6.4.2" />
     <MESSAGE value="release6.5.0" />
     <MESSAGE value="添加 dio功能监听 #98" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加 dio功能监听 #98" />
+    <MESSAGE value="添加自定义快速打开命令" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加自定义快速打开命令" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>

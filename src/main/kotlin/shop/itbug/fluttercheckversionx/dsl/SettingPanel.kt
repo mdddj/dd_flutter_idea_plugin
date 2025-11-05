@@ -64,8 +64,10 @@ fun settingPanel(
                     }
             }, {
                 button(PluginBundle.get("reset")) {
-                    DioApiService.getInstance().reset(project)
-                }
+                    if(dioxSetting.enableFlutterXDioSocket){
+                        DioApiService.getInstance().reset(project)
+                    }
+                }.enabled(dioxSetting.enableFlutterXDioSocket)
             }
             )
 

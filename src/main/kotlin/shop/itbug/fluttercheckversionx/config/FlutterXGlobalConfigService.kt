@@ -1,8 +1,10 @@
 package shop.itbug.fluttercheckversionx.config
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,17 +12,22 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import org.jetbrains.jewel.bridge.JewelComposePanel
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
-import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.LocalTextStyle
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
+import org.jetbrains.jewel.ui.icons.AllIconsKeys
+import org.jetbrains.jewel.ui.theme.colorPalette
 import java.awt.Dimension
 import javax.swing.JComponent
 import com.intellij.openapi.components.State as IntellijState
@@ -65,49 +72,107 @@ class FlutterConfigQuickOpenInCommandDialog(project: Project) : DialogWrapper(pr
     }
     
     override fun createCenterPanel(): JComponent {
+
         return JewelComposePanel(
             {
-                preferredSize = Dimension(700, 500)
+                preferredSize = Dimension(800, 550)
             }
         ) {
+            val colorPalette = JewelTheme.colorPalette
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(20.dp)
             ) {
-                // Header with Add button
+                // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Quick Open Commands")
-                    DefaultButton(
+                    Column {
+                        Text(
+                            "Quick Open Commands",
+                            style = LocalTextStyle.current.copy(
+                                fontSize = androidx.compose.ui.unit.TextUnit(16f, androidx.compose.ui.unit.TextUnitType.Sp)
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            "Configure custom commands to open files in external applications",
+                            style = LocalTextStyle.current.copy(
+                                fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                color = colorPalette.gray(8)
+                            )
+                        )
+                    }
+                    
+                    IconButton(
                         onClick = {
                             commands.add(CommandItem())
-                        }
+                        },
+                        modifier = Modifier.size(36.dp)
                     ) {
-                        Text("Add")
+                        Icon(
+                            key = AllIconsKeys.General.Add,
+                            contentDescription = "Add command",
+                        )
                     }
                 }
                 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 
                 // Command list
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    itemsIndexed(commands) { index, item ->
-                        CommandItemView(
-                            item = item,
-                            onUpdate = { updated ->
-                                commands[index] = updated
-                            },
-                            onDelete = {
-                                commands.removeAt(index)
-                            }
-                        )
+                if (commands.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(colorPalette.gray(13))
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                               key = AllIconsKeys.General.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Text(
+                                "No commands configured",
+                                style = LocalTextStyle.current.copy(
+                                    color = colorPalette.gray(8)
+                                )
+                            )
+                            Text(
+                                "Click the + button to add a new command",
+                                style = LocalTextStyle.current.copy(
+                                    fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                    color = colorPalette.gray(9)
+                                )
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        itemsIndexed(commands) { index, item ->
+                            CommandItemView(
+                                index = index,
+                                item = item,
+                                onUpdate = { updated ->
+                                    commands[index] = updated
+                                },
+                                onDelete = {
+                                    commands.removeAt(index)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -117,10 +182,12 @@ class FlutterConfigQuickOpenInCommandDialog(project: Project) : DialogWrapper(pr
     @OptIn(ExperimentalJewelApi::class)
     @Composable
     private fun CommandItemView(
+        index: Int,
         item: CommandItem,
         onUpdate: (CommandItem) -> Unit,
         onDelete: () -> Unit
     ) {
+        val colorPalette = JewelTheme.colorPalette
         val titleState = remember { TextFieldState(item.title) }
         val commandState = remember { TextFieldState(item.command) }
         
@@ -129,55 +196,90 @@ class FlutterConfigQuickOpenInCommandDialog(project: Project) : DialogWrapper(pr
             onUpdate(CommandItem(titleState.text.toString(), commandState.text.toString()))
         }
         
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .clip(RoundedCornerShape(8.dp))
+                .background(colorPalette.gray(13))
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Title input
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Index badge
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(colorPalette.blue(4)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text("Title:", modifier = Modifier.width(80.dp))
-                    TextField(
-                        state = titleState,
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("Enter title") }
+                    Text(
+                        "${index + 1}",
+                        style = LocalTextStyle.current.copy(
+                            fontSize = androidx.compose.ui.unit.TextUnit(13f, androidx.compose.ui.unit.TextUnitType.Sp),
+                            color = androidx.compose.ui.graphics.Color.White
+                        )
                     )
                 }
                 
-                // Command input
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Command:", modifier = Modifier.width(80.dp))
-                    TextField(
-                        state = commandState,
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("Enter command") }
+                    // Title input
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            "Title",
+                            style = LocalTextStyle.current.copy(
+                                fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                color = colorPalette.gray(8)
+                            )
+                        )
+                        TextField(
+                            state = titleState,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("e.g., VSCode, Sublime Text") }
+                        )
+                    }
+                    
+                    // Command input
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            "Command",
+                            style = LocalTextStyle.current.copy(
+                                fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                color = colorPalette.gray(8)
+                            )
+                        )
+                        TextField(
+                            state = commandState,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("e.g., code, subl, idea") }
+                        )
+                    }
+                }
+                
+                // Delete icon button
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        key = AllIconsKeys.General.Remove,
+                        contentDescription = "Delete command",
+                        iconClass = AllIcons::class.java,
+                        tint = colorPalette.red(4)
                     )
                 }
             }
-            
-            // Delete button
-            DefaultButton(
-                onClick = onDelete
-            ) {
-                Text("Delete")
-            }
         }
-        
-        Divider(orientation = Orientation.Horizontal)
     }
     
     override fun doOKAction() {

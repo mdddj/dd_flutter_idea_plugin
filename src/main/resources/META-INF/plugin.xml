@@ -155,18 +155,18 @@
                 implementation="shop.itbug.fluttercheckversionx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
                 id="KtsAliyunMirrorInlayGroupSetting"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
-        <!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
+        <!-- implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
         <!--        <config.codeVisionGroupSettingProvider-->
-        <!--                implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
-        <!--                id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
+        <!-- implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
+        <!-- id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
 
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogInlay"
                 language="yaml" id="DartPackageSearchDialogInlay"/>
         <codeInsight.inlayProvider
                 implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.YamlPathResolveHandleInlay"
-                language="yaml"
-        />        <!--        <codeInsight.daemonBoundCodeVisionProvider-->
+                language="yaml"/>
+        <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
 
         <externalAnnotator implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"
@@ -206,8 +206,7 @@
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom" icon="/icons/flutter.svg"/>
         <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowsFactory"
-                    id="FlutterX Dart VM"
-                    icon="/icons/dart.svg" anchor="bottom" doNotActivateOnStart="true"/>
+                    id="FlutterX Dart VM" icon="/icons/dart.svg" anchor="bottom" doNotActivateOnStart="true"/>
 
         <!--   底部状态栏展示小部件     -->
         <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"
@@ -268,6 +267,8 @@
                 text="Open in Vscode"/>
         <action id="OpenInASAction" class="shop.itbug.fluttercheckversionx.actions.yaml.OpenInASAction"
                 text="Open in Android Studio"/>
+
+
         <group id="FlutterXOpenInAction" popup="true">
             <reference ref="OpenInVsCodeAction"/>
             <reference ref="OpenInASAction"/>
@@ -551,14 +552,13 @@
                 text="Test Flutter VM Notification"/>
 
 
-
     </actions>
 
     <actions>
         <!--    dio 请求里面的清空按钮    -->
         <group id="DioTool.CleanService">
             <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService" icon="AllIcons.Actions.GC"
-                    id="DioWindow.Clean" text="清空全部"/>
+                    id="DioWindow.Clean" text="Clean All"/>
             <separator/>
         </group>
         <group id="Yaml.Search">
@@ -698,11 +698,17 @@
     <actions>
         <action id="DioStatusCheckAction" class="shop.itbug.fluttercheckversionx.actions.dio.DioStatusCheckAction"
                 text="FlutterX Socket Status">
-            <add-to-group group-id="FlutterX Window Top Actions" anchor="first" />
-            <add-to-group group-id="SpPanelToolbar" anchor="last" />
-            <add-to-group group-id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" anchor="last" />
-            <add-to-group group-id="FlutterXLoggerWindowToolbarActionGroup" />
+            <add-to-group group-id="FlutterX Window Top Actions" anchor="first"/>
+            <add-to-group group-id="SpPanelToolbar" anchor="last"/>
+            <add-to-group group-id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" anchor="last"/>
+            <add-to-group group-id="FlutterXLoggerWindowToolbarActionGroup"/>
         </action>
+        <!-- Quick Open In Actions Group -->
+        <group id="QuickOpenInActions" class="shop.itbug.fluttercheckversionx.actions.components.QuickOpenInActions"
+               text="Custom Open In" popup="true">
+            <add-to-group group-id="RevealGroup" anchor="last"/>
+        </group>
+
     </actions>
 </idea-plugin>
 

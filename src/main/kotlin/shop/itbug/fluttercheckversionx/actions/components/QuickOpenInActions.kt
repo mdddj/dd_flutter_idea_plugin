@@ -45,4 +45,5 @@ class QuickOpenInActions: DefaultActionGroup(), DumbAware {
         }
         return super.getChildren(e)
     }
+
 }
