@@ -2,6 +2,8 @@ package shop.itbug.fluttercheckversionx.util
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -113,4 +115,19 @@ object RunUtil {
         task.queue()
     }
 
+
+    fun runOpenInBackground(e: AnActionEvent,title: String,generateCommand: ()-> GeneralCommandLine) {
+        val project = e.getData(CommonDataKeys.PROJECT)!!
+        val file = e.getData(CommonDataKeys.VIRTUAL_FILE)!!
+        commandInBackground(
+            project,
+            title,
+            { null },
+            { it.message }
+        ) {
+            val command = generateCommand()
+            command.setWorkDirectory(file.path)
+            command
+        }
+    }
 }

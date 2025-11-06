@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.setting
 
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
@@ -15,18 +16,21 @@ import shop.itbug.fluttercheckversionx.dsl.settingPanel
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.services.FlutterL10nService
 import shop.itbug.fluttercheckversionx.services.PluginStateService
+import shop.itbug.fluttercheckversionx.socket.service.DioApiService
 import javax.swing.JComponent
 
 //
 class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
-
+    private val logger = thisLogger()
     var model = PluginStateService.appSetting
     val disposer = Disposer.newDisposable()
 
     val pluginConfig: PluginSetting = PluginConfig.getState(project)
 
-    private var dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
-    private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
+
+    private val dioSetting get() =  DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
+    private val initDioSetting = dioSetting.copy()
+        private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
     private var generaAssetsSettingPanelModelIs = false
     private var generateSettingPanel =
         GeneraAssetsSettingPanel(
@@ -187,6 +191,8 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
         GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
         PluginConfig.changeState(project) { pluginConfig }
         FlutterL10nService.getInstance(project).configEndTheL10nFolder()
+
+
     }
 
     override fun getDisplayName(): String {
@@ -203,9 +209,28 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
         pluginConfigPanel.reset()
     }
 
+    override fun cancel() {
+        super<SearchableConfigurable>.cancel()
+        logger.info("flutterx config canceled")
+        //重置状态
+        tryHandleDioSettings()
+    }
+
+    private fun tryHandleDioSettings(){
+        if(initDioSetting.enableFlutterXDioSocket != dioSetting.enableFlutterXDioSocket){
+            if(!dioSetting.enableFlutterXDioSocket){
+                DioApiService.getInstance().stopAll(project)
+            }else{
+                DioApiService.getInstance().tryStart(project)
+            }
+        }
+
+    }
 
     override fun disposeUIResources() {
         Disposer.dispose(disposer)
         println("app config disposed...disposeUIResources()")
+        tryHandleDioSettings()
+
     }
 }

@@ -6,9 +6,10 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 import org.jetbrains.jewel.bridge.addComposeTab
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
+import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.dialog.icons.CupertinoIconsDialog
 import shop.itbug.fluttercheckversionx.dialog.icons.MaterialIconsDialog
-import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
 import shop.itbug.fluttercheckversionx.form.socket.SocketRequestForm
 import shop.itbug.fluttercheckversionx.hive.HiveWidget
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
@@ -103,7 +104,10 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
 
     private fun initDioRequestServer(toolWindow: ToolWindow, project: Project) {
-        toolWindow.activate(DioApiService.getInstance().createServerRunner(project, toolWindow))
+        val dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
+        if(dioSetting.enableFlutterXDioSocket){
+            toolWindow.activate(DioApiService.getInstance().createServerRunner(project, toolWindow))
+        }
     }
 
 
