@@ -44,3 +44,10 @@ Thanks to **JETBRAINS** for the free open source license
 
 ![IMG_1839](https://user-images.githubusercontent.com/29020213/169472413-8dad4bf8-a2bb-4eda-bfda-c05b95877b78.JPG)
 
+
+
+# act 本地测试 github action
+
+```bash
+ act -j build-and-release -s GITHUB_TOKEN=github token --env GITHUB_REF=refs/tags/v版本号
+```
