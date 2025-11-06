@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [6.6.0] - 2025-11-06
+
+* Add the dio service listening master switch setting
+* Modify the dart vm http request list UI (new: table list)
+
 ## [6.5.0] - 2025-11-04
 
 * Adds provider panel (dart vm) beta version

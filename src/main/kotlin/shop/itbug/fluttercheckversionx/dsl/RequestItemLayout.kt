@@ -7,6 +7,7 @@ import com.intellij.util.ui.UIUtil
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DioRequestUIStyle
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
+import shop.itbug.fluttercheckversionx.model.IRequest
 import shop.itbug.fluttercheckversionx.model.calculateSize
 import shop.itbug.fluttercheckversionx.socket.Request
 import shop.itbug.fluttercheckversionx.util.MyFontUtil
@@ -31,15 +32,15 @@ fun removePortFromUrl(url: String): String {
 }
 
 //获取 URL 显示
-fun Request.formatUrl(setting: DoxListeningSetting): String {
-    val uri = URI(url)
+fun IRequest.formatUrl(setting: DoxListeningSetting): String {
+    val uri = URI(requestUrl)
     var host = uri.host ?: ""
     val scheme = uri.scheme + "://"
     if (host.isEmpty()) {
-        host = extractIpAddressFromUrl(url)
+        host = extractIpAddressFromUrl(requestUrl)
     }
     val param = uri.rawQuery
-    var string = this.url
+    var string = this.requestUrl
     if (setting.showHost.not()) {
         string = string.replace(host, "").replace(scheme, "")
         if (string.startsWith(":${uri.port}")) {

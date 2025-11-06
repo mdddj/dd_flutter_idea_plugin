@@ -552,6 +552,9 @@
                 text="Test Flutter VM Notification"/>
 
 
+        <action id="DartVmHttpModuleSimpleShowAction"
+                class="shop.itbug.fluttercheckversionx.actions.vm.network.DartVmHttpModuleSimpleShowAction"
+                text="Dart VM Http Requests"/>
     </actions>
 
     <actions>

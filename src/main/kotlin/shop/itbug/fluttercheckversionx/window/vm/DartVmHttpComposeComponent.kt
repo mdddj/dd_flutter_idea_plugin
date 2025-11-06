@@ -43,7 +43,9 @@ import org.jetbrains.jewel.ui.theme.simpleListItemStyle
 import shop.itbug.fluttercheckversionx.actions.isValidJson
 import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInstance
 import shop.itbug.fluttercheckversionx.common.jsonToFreezedRun
+import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.document.copyTextToClipboard
+import shop.itbug.fluttercheckversionx.dsl.formatUrl
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.model.toCurlStringAsDartDevTools
 import shop.itbug.fluttercheckversionx.util.ComposeHelper
@@ -203,6 +205,11 @@ private fun RequestListPanel(
             )
         }
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
+
+        // Table Header
+        RequestTableHeader()
+        Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
+
         if (requests.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("${PluginBundle.get("compose.dart.vm.listener.working")}...")
@@ -409,7 +416,6 @@ private fun RequestRow(
                 enabled = !isOutOfDate,
                 onClick = onClick,
             )
-            .padding(horizontal = 8.dp, vertical = 6.dp)
             .contextMenu(
                 actionGroupId = "dio-window-view-params",
                 dataContext = {
@@ -426,30 +432,166 @@ private fun RequestRow(
                 }
             )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        RequestTableRow(
+            request = request,
+            searchText = searchText,
+            isOutOfDate = isOutOfDate,
+            outOfDateColor = outOfDateColor
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun RequestTableRow(
+    request: NetworkRequest,
+    searchText: String,
+    isOutOfDate: Boolean,
+    outOfDateColor: Color
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Status column - 40dp
+        Box(modifier = Modifier.width(40.dp), contentAlignment = Alignment.Center) {
             StatusIndicator(request.status, if (isOutOfDate) outOfDateColor else null)
-            Text(request.method, modifier = Modifier.width(70.dp), color = outOfDateColor)
-            Text(request.statusCode?.toString() ?: "...", modifier = Modifier.width(50.dp), color = outOfDateColor)
+        }
+
+        // Method column - 70dp
+        Box(modifier = Modifier.width(70.dp)) {
+            Text(
+                request.method,
+                color = outOfDateColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        // Status Code column - 60dp
+        Row(
+            modifier = Modifier.width(60.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            request.statusCode?.let {
+                HttpStatusIndicator(it)
+                Spacer(modifier = Modifier.width(4.dp))
+            }
+            Text(
+                request.statusCode?.toString() ?: "...",
+                color = outOfDateColor,
+                maxLines = 1
+            )
+        }
+
+        // URL column - flexible
+        Box(modifier = Modifier.weight(1f)) {
             Tooltip(tooltip = { Text("Obsolete") }, enabled = isOutOfDate) {
                 SearchResultCard(
-                    request.uri, searchQuery = searchText, true, enableAnimation = true, modifier = Modifier.weight(1f),
+                    request.formatUrl(DioListingUiConfig.setting),
+                    searchQuery = searchText,
+                    true,
+                    enableAnimation = true,
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     color = if (isOutOfDate) JewelTheme.globalColors.text.info else null
                 )
             }
-            Text(request.duration?.let { "${it.microseconds.inWholeMilliseconds}ms" } ?: "...",
-                modifier = Modifier.width(100.dp), fontSize = 11.sp, color = JewelTheme.globalColors.text.info)
-            Text(request.endTime?.let { DartNetworkMonitor.formatTime(it) } ?: "...",
-                modifier = Modifier.width(150.dp),
+        }
+
+        // Duration column - 80dp
+        Box(modifier = Modifier.width(85.dp), contentAlignment = Alignment.CenterEnd) {
+            Text(
+                request.duration?.let { "${it.microseconds.inWholeMilliseconds}ms" } ?: "...",
+                fontSize = 11.sp,
+                color = JewelTheme.globalColors.text.info,
+                maxLines = 1
+            )
+        }
+
+        // Time column - 120dp
+        Box(modifier = Modifier.width(145.dp), contentAlignment = Alignment.CenterEnd) {
+            Text(
+                request.endTime?.let { DartNetworkMonitor.formatTime(it) } ?: "...",
                 fontSize = 11.sp,
                 color = JewelTheme.globalColors.text.info,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis)
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+private fun RequestTableHeader() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(JewelTheme.globalColors.panelBackground)
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Status column - 40dp
+        Box(modifier = Modifier.width(40.dp), contentAlignment = Alignment.Center) {
+            Text(
+                "",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = JewelTheme.globalColors.text.info
+            )
+        }
+
+        // Method column - 70dp
+        Box(modifier = Modifier.width(70.dp)) {
+            Text(
+                "Method",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = JewelTheme.globalColors.text.info
+            )
+        }
+
+        // Status Code column - 60dp
+        Box(modifier = Modifier.width(60.dp), contentAlignment = Alignment.Center) {
+            Text(
+                "Status",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = JewelTheme.globalColors.text.info
+            )
+        }
+
+        // URL column - flexible
+        Box(modifier = Modifier.weight(1f)) {
+            Text(
+                "URL",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = JewelTheme.globalColors.text.info
+            )
+        }
+
+        // Duration column - 80dp
+        Box(modifier = Modifier.width(80.dp), contentAlignment = Alignment.CenterEnd) {
+            Text(
+                "Duration",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = JewelTheme.globalColors.text.info
+            )
+        }
+
+        // Time column - 120dp
+        Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.CenterEnd) {
+            Text(
+                "Time",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = JewelTheme.globalColors.text.info
+            )
         }
     }
 }
@@ -655,7 +797,7 @@ private suspend fun formatJsonAsync(textState: TextFieldState, gson: Gson, text:
 }
 
 //检测 path
-private fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
+fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
     val httpUrl = urlString.toHttpUrlOrNull() ?: return false
     val segments = httpUrl.pathSegments
     return segments.size > 1 || (segments.size == 1 && segments.first().isNotEmpty())
