@@ -69,7 +69,7 @@ private fun FlutterAppStatusPanel(project: Project, app: FlutterAppInstance) {
             second = {
                 VmMemoryDisplay(app,vm!!, vmService, project)
             },
-            state = rememberSplitLayoutState(0.5f)
+            state = rememberSplitLayoutState(0.65f)
         )
     } else {
         CircularProgressIndicator()

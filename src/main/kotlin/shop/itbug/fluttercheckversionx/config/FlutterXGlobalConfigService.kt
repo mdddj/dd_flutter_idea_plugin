@@ -1,9 +1,12 @@
 package shop.itbug.fluttercheckversionx.config
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
@@ -157,22 +160,31 @@ class FlutterConfigQuickOpenInCommandDialog(project: Project) : DialogWrapper(pr
                         }
                     }
                 } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        itemsIndexed(commands) { index, item ->
-                            CommandItemView(
-                                index = index,
-                                item = item,
-                                onUpdate = { updated ->
-                                    commands[index] = updated
-                                },
-                                onDelete = {
-                                    commands.removeAt(index)
-                                }
-                            )
+                    val listState = rememberLazyListState()
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            itemsIndexed(commands) { index, item ->
+                                CommandItemView(
+                                    index = index,
+                                    item = item,
+                                    onUpdate = { updated ->
+                                        commands[index] = updated
+                                    },
+                                    onDelete = {
+                                        commands.removeAt(index)
+                                    }
+                                )
+                            }
                         }
+                        
+                        VerticalScrollbar(
+                            adapter = rememberScrollbarAdapter(listState),
+                            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+                        )
                     }
                 }
             }
