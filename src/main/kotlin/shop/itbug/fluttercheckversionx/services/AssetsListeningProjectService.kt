@@ -30,6 +30,8 @@ import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
+import shop.itbug.fluttercheckversionx.model.FlutterLocalVersion
+import shop.itbug.fluttercheckversionx.model.getVersionText
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.util.DateUtils
 import shop.itbug.fluttercheckversionx.util.MyDartPsiElementUtil
@@ -138,7 +140,8 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
         override fun run(indicator: ProgressIndicator) {
             this.indication = indicator
             val flutterChannel = Util.getFlutterChannel()
-            val currentFlutterVersion = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
+            val currentFlutterVersion: FlutterLocalVersion? =
+                runBlocking { FlutterVersionTool.getLocalFlutterVersion(project) }
             if (flutterChannel == null) {
                 return
             }
@@ -149,7 +152,7 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                         val hash = version.getCurrentReleaseByChannel(flutterChannel)
                         val release = releases.find { o -> o.hash == hash }
                         release?.let { r ->
-                            if (r.version != c.version) {
+                            if (r.version != c.getVersionText()) {
                                 showTip(r, project)
                             }
                         }
@@ -215,8 +218,8 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             ///查看更新日志
             createNotification.addAction(object : DumbAwareAction("What's New") {
                 override fun actionPerformed(e: AnActionEvent) {
-                    val version = release.version.replace(".", "")
-                    BrowserUtil.browse("https://github.com/flutter/flutter/blob/${release.version}/CHANGELOG.md#$version")
+                    val webUrl = FlutterVersionTool.buildChangeLogWebUrl(release.version)
+                    BrowserUtil.browse(webUrl)
                 }
 
                 override fun getActionUpdateThread(): ActionUpdateThread {

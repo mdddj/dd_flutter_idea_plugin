@@ -83,7 +83,7 @@ dependencies {
         javaCompiler()
 
         if(ideType == "253"){
-//            bundledModule("org.intellij.intelliLang")
+            bundledModule("org.intellij.intelliLang")
         }
 
         bundledModule("intellij.libraries.ktor.client")

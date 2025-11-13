@@ -57,7 +57,7 @@ class MySettingDialog(val project: Project) : DialogWrapper(null, true) {
         title = "FlutterX l10n settings"
     }
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
 
         myPanel = panel {
             row {

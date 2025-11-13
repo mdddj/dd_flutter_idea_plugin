@@ -76,7 +76,7 @@ class L10nKeyExtractIntentionAction : PsiElementBaseIntentionAction(), Iconable 
         return familyName
     }
 
-    override fun getIcon(flags: Int): Icon? {
+    override fun getIcon(flags: Int): Icon {
         return MyIcons.flutter
     }
 

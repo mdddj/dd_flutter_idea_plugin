@@ -1,7 +1,6 @@
 package vm.element
 
 import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 
 /**
  * Simple wrapper around a {@link JsonArray} which lazily converts {@link JsonObject} elements to

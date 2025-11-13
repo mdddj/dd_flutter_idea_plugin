@@ -91,13 +91,13 @@ class HiveBoxList : JBList<String>(), DioApiService.NativeMessageProcessing, Lis
     }
 
 
-    private inner class ItemModel(list: List<String>) : DefaultListModel<String>() {
+    private class ItemModel(list: List<String>) : DefaultListModel<String>() {
         init {
             addAll(list)
         }
     }
 
-    private inner class ItemRender : ColoredListCellRenderer<String>() {
+    private class ItemRender : ColoredListCellRenderer<String>() {
         override fun customizeCellRenderer(
             list: JList<out String>, value: String?, index: Int, selected: Boolean, hasFocus: Boolean
         ) {
@@ -161,13 +161,13 @@ private class HiveKeysList(private val boxList: JBList<String>) : JBList<String>
     }
 
 
-    private inner class ItemModel(list: List<String>) : DefaultListModel<String>() {
+    private class ItemModel(list: List<String>) : DefaultListModel<String>() {
         init {
             addAll(list)
         }
     }
 
-    private inner class ItemRender : ColoredListCellRenderer<String>() {
+    private class ItemRender : ColoredListCellRenderer<String>() {
         override fun customizeCellRenderer(
             list: JList<out String>, value: String?, index: Int, selected: Boolean, hasFocus: Boolean
         ) {

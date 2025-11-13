@@ -1,13 +1,17 @@
 package shop.itbug.fluttercheckversionx.widget
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
+import com.intellij.util.ui.components.BorderLayoutPanel
 import kotlinx.coroutines.runBlocking
+import shop.itbug.fluttercheckversionx.model.FlutterLocalVersion
+import shop.itbug.fluttercheckversionx.model.getVersionText
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
-import shop.itbug.fluttercheckversionx.util.Util
 import java.awt.CardLayout
+import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
@@ -51,16 +55,26 @@ abstract class AsyncLoadingPanel<T>(val project: Project) : JPanel(CardLayout())
 
 
 ///flutter 当前版本检测
-class FlutterVersionCheckPanel(project: Project) : AsyncLoadingPanel<String>(project) {
+class FlutterVersionCheckPanel(project: Project) : AsyncLoadingPanel<FlutterLocalVersion?>(project) {
 
-    override fun loadData(): String {
-        val flutterChannel = Util.getFlutterChannel()
-        val currentFlutterVersion = runBlocking { FlutterVersionTool.readVersionFromSdkHome(project) }
-        return "flutter v${currentFlutterVersion?.version ?: "Unknown"}  channel:$flutterChannel"
+    override fun loadData(): FlutterLocalVersion? {
+        val flutterVersion = runBlocking { FlutterVersionTool.getLocalFlutterVersion(project) }
+        return flutterVersion
     }
 
-    override fun createContentPanel(data: String): JComponent {
-        return JBLabel(data)
+    override fun createContentPanel(data: FlutterLocalVersion?): JComponent {
+        if (data == null) return JBLabel("Flutter version not found")
+        val versionText = data.getVersionText()
+        val button = JButton("Changelog")
+        button.addActionListener {
+            BrowserUtil.browse(FlutterVersionTool.buildChangeLogWebUrl(versionText))
+        }
+        return object : BorderLayoutPanel() {
+            init {
+                addToTop(JBLabel("Current Flutter version: $versionText"))
+                addToCenter(button)
+            }
+        }
     }
 
     override fun getTaskName(): String {

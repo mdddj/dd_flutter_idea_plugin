@@ -58,7 +58,6 @@ import shop.itbug.fluttercheckversionx.widget.SearchResultCard
 import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
-import vm.network.RequestStatus
 import kotlin.time.Duration.Companion.microseconds
 
 
@@ -358,26 +357,6 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
         Title("Events")
         Events(request)
     }
-}
-
-
-@Composable
-private fun StatusIndicator(status: RequestStatus, customColor: Color? = null) {
-    var color = when (status) {
-        RequestStatus.PENDING -> Color.Gray
-        RequestStatus.COMPLETED -> Color.Green
-        RequestStatus.ERROR -> Color.Red
-    }
-    if (customColor != null) {
-        color = customColor
-    }
-    when (status) {
-        RequestStatus.PENDING -> CircularProgressIndicator(modifier = Modifier.size(8.dp))
-        else -> Box(
-            modifier = Modifier.size(8.dp).background(color, shape = CircleShape)
-        )
-    }
-
 }
 
 

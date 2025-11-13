@@ -173,7 +173,7 @@ object MyFileUtil {
     }
 
     fun showJsonInEditor(project: Project, text: String){
-        val file = createVirtualFileByJsonText(text,"flutterx.json"){ file, tool ->
+         createVirtualFileByJsonText(text,"flutterx.json"){ file, tool ->
             tool.openInEditor(file,project)
         }
     }

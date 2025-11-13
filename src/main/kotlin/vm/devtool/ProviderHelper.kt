@@ -359,17 +359,15 @@ object ProviderHelper {
         println("DEBUG: ProviderHelper.getInstanceDetails - getting instance for ref: $currentRef")
         val instance = coreEval.getInstance(mainIsolateId, currentRef)
         println("DEBUG: ProviderHelper.getInstanceDetails - got instance: $instance")
-        return instanceToDetails(instance, vm, mainIsolateId, path)
+        return instanceToDetails(instance, vm, mainIsolateId)
     }
 
 
     private suspend fun instanceToDetails(
         instance: Instance,
         vm: VmService,
-        isolateId: String,
-        path: InstancePath
+        isolateId: String
     ): InstanceDetails {
-        val coreEval = EvalOnDartLibrary("dart:core", vm)
         val instanceRefId = instance.getId()
         val hash = instance.getIdentityHashCode()
 
