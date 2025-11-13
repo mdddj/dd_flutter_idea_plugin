@@ -8,11 +8,21 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-
     steps:
+      # ------------------- 新增步骤 -------------------
+      - name: 从 Tag 中提取分支名
+        id: get_branch_from_tag
+        run: |
+          # GITHUB_REF 的值是 'refs/tags/v6.7.0'
+          # 使用 shell 参数扩展移除前缀 'refs/tags/v'
+          BRANCH_NAME=${GITHUB_REF#refs/tags/v}
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "提取到的分支名是: $BRANCH_NAME"
+
       - name: Checkout code
         uses: actions/checkout@v5
         with:
+          ref: ${{ steps.get_branch_from_tag.outputs.branch_name }}
           fetch-depth: 0  # 获取完整历史记录用于生成变更日志
 
       - name: 准备JBR21
