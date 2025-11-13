@@ -20,15 +20,15 @@ class CancelledException : Exception("The request was cancelled before it could 
 /**
  * 当库未在当前 isolate 中找到时抛出。
  */
-class LibraryNotFoundException(val libraryName: String) :
+class LibraryNotFoundException(libraryName: String) :
     Exception("Library '$libraryName' not found in the current isolate.")
 
 /**
  * 当 `evaluate` RPC 返回一个错误引用时抛出。
  */
 class EvalErrorException(
-    val expression: String,
-    val errorRef: ErrorRef,
+    expression: String,
+    errorRef: ErrorRef,
     val scope: Map<String, String>? = null
 ) : Exception("Evaluation of '$expression' failed with error: ${errorRef.getMessage()}")
 
@@ -36,7 +36,7 @@ class EvalErrorException(
  * 当 `evaluate` RPC 返回一个 Sentinel 时抛出。
  */
 class EvalSentinelException(
-    val expression: String,
+    expression: String,
     val sentinel: Sentinel,
     val scope: Map<String, String>? = null
 ) : Exception("Evaluation of '$expression' returned a sentinel: ${sentinel.valueAsString}")

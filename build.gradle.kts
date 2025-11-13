@@ -47,7 +47,6 @@ val bPlugins = mutableListOf(
 )
 
 if (ideType.toInt() >= 243) {
-    println("大于 243")
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
     if(ideType != "253"){
@@ -67,8 +66,8 @@ dependencies {
                 local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
             "252" -> {
-//                intellijIdeaCommunity("2025.2.1")
-                local("/Applications/Android Studio.app")
+                intellijIdeaCommunity("2025.2.1")
+//                local("/Applications/Android Studio.app")
             }
 
             "251" -> {
@@ -84,7 +83,7 @@ dependencies {
         javaCompiler()
 
         if(ideType == "253"){
-//            bundledModule("org.intellij.intelliLang")
+            bundledModule("org.intellij.intelliLang")
         }
 
         bundledModule("intellij.libraries.ktor.client")

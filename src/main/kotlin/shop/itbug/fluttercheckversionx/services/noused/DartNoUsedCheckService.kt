@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl
@@ -117,8 +116,7 @@ class DartNoUsedCheckService(val project: Project) {
             return@runBlocking roots.map { root ->
                 async {
                     readAction {
-                        val vf = root as VirtualDirectoryImpl
-                        vf.getDartNoUsedModel(project)
+                        if (root.isDirectory) root.getDartNoUsedModel(project) else null
                     }
                 }
             }.awaitAll()
@@ -235,7 +233,7 @@ class DartNoUsedCheckService(val project: Project) {
             r.map {
                 async {
                     val path = it.getPath() ?: return@async null
-                    packages.find { it -> isFileInDirectory(path, it.packageDirectory) }
+                    packages.find { isFileInDirectory(path, it.packageDirectory) }
                 }
             }.awaitAll()
         }.filterNotNull().toHashSet()

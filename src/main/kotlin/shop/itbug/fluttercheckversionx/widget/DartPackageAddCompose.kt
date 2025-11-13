@@ -91,7 +91,7 @@ fun AddPackageDialogContent(project: Project, viewModel: PubSearchViewModel) {
             onTabClick = {
                 viewModel.changeTabIndex(it)
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().background(JewelTheme.globalColors.panelBackground)
         )
         Box(modifier = Modifier.weight(1f)) {
             MyFlutterPackageListView(viewModel, groupedPackages.values.toList()[selectIndex], project)

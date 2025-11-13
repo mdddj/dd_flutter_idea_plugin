@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -57,7 +58,6 @@ import shop.itbug.fluttercheckversionx.widget.SearchResultCard
 import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
-import vm.network.RequestStatus
 import kotlin.time.Duration.Companion.microseconds
 
 
@@ -73,7 +73,7 @@ private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
     val vmService = app.vmService
     val httpRequests = vmService.dartHttpMonitor.requests.collectAsState().value.values.reversed()
     var selectedRequest by remember { mutableStateOf<NetworkRequest?>(null) }
-    var outerSplitState by remember { mutableStateOf(SplitLayoutState(0.5f)) }
+    var outerSplitState by remember { mutableStateOf(SplitLayoutState(0.65f)) }
 
     LaunchedEffect(vmService) {
         vmService.dartHttpMonitor.startMonitoring()
@@ -215,17 +215,28 @@ private fun RequestListPanel(
                 Text("${PluginBundle.get("compose.dart.vm.listener.working")}...")
             }
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                itemsIndexed(filteredRequests.ifEmpty { filterImageRequestsAndEmptyPaths(requests.toList()) }) { _, item ->
-                    RequestRow(
-                        vmService = vmService,
-                        request = item,
-                        isSelected = item.id == selectedRequest?.id,
-                        project = project,
-                        searchText = searchState.text.toString(),
-                        onClick = { onSelectionChange(item) }
-                    )
+            val listState = rememberLazyListState()
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    itemsIndexed(filteredRequests.ifEmpty { filterImageRequestsAndEmptyPaths(requests.toList()) }) { _, item ->
+                        RequestRow(
+                            vmService = vmService,
+                            request = item,
+                            isSelected = item.id == selectedRequest?.id,
+                            project = project,
+                            searchText = searchState.text.toString(),
+                            onClick = { onSelectionChange(item) }
+                        )
+                    }
                 }
+
+                VerticalScrollbar(
+                    adapter = rememberScrollbarAdapter(listState),
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+                )
             }
         }
     }
@@ -350,26 +361,6 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
 
 
 @Composable
-private fun StatusIndicator(status: RequestStatus, customColor: Color? = null) {
-    var color = when (status) {
-        RequestStatus.PENDING -> Color.Gray
-        RequestStatus.COMPLETED -> Color.Green
-        RequestStatus.ERROR -> Color.Red
-    }
-    if (customColor != null) {
-        color = customColor
-    }
-    when (status) {
-        RequestStatus.PENDING -> CircularProgressIndicator(modifier = Modifier.size(8.dp))
-        else -> Box(
-            modifier = Modifier.size(8.dp).background(color, shape = CircleShape)
-        )
-    }
-
-}
-
-
-@Composable
 private fun HeadersTab(requestHeaders: Map<String, String>?, responseHeaders: Map<String, String>?) {
     SelectionContainer {
         Column(
@@ -454,11 +445,6 @@ private fun RequestTableRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Status column - 40dp
-        Box(modifier = Modifier.width(40.dp), contentAlignment = Alignment.Center) {
-            StatusIndicator(request.status, if (isOutOfDate) outOfDateColor else null)
-        }
-
         // Method column - 70dp
         Box(modifier = Modifier.width(70.dp)) {
             Text(
@@ -511,7 +497,7 @@ private fun RequestTableRow(
             )
         }
 
-        // Time column - 120dp
+        // Time column - 145dp
         Box(modifier = Modifier.width(145.dp), contentAlignment = Alignment.CenterEnd) {
             Text(
                 request.endTime?.let { DartNetworkMonitor.formatTime(it) } ?: "...",
@@ -534,16 +520,6 @@ private fun RequestTableHeader() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Status column - 40dp
-        Box(modifier = Modifier.width(40.dp), contentAlignment = Alignment.Center) {
-            Text(
-                "",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = JewelTheme.globalColors.text.info
-            )
-        }
-
         // Method column - 70dp
         Box(modifier = Modifier.width(70.dp)) {
             Text(
@@ -585,7 +561,7 @@ private fun RequestTableHeader() {
         }
 
         // Time column - 120dp
-        Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.CenterEnd) {
+        Box(modifier = Modifier.width(145.dp), contentAlignment = Alignment.CenterEnd) {
             Text(
                 "Time",
                 fontSize = 11.sp,

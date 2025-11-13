@@ -55,7 +55,10 @@ fun settingPanel(
 
             threeColumnsRow({
                 checkBox("Enable Dio Socket").bindSelected(dioxSetting::enableFlutterXDioSocket)
-                contextHelp(PluginBundle.get("enable_flutterx_socket_setting_contexthelp")+"(Dio,SP,Hive,Log)","Tips")
+                contextHelp(
+                    PluginBundle.get("enable_flutterx_socket_setting_contexthelp") + "(Dio,SP,Hive,Log)",
+                    "Tips"
+                )
             }, {
                 intTextField().bindIntText({ model.serverPort.toInt() }, { model.serverPort = it.toString() })
                     .label("Dio ${PluginBundle.get("setting.listening.port")}", LabelPosition.LEFT)
@@ -64,7 +67,7 @@ fun settingPanel(
                     }
             }, {
                 button(PluginBundle.get("reset")) {
-                    if(dioxSetting.enableFlutterXDioSocket){
+                    if (dioxSetting.enableFlutterXDioSocket) {
                         DioApiService.getInstance().reset(project)
                     }
                 }.enabled(dioxSetting.enableFlutterXDioSocket)

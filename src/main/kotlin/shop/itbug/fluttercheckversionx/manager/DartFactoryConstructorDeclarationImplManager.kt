@@ -307,7 +307,7 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
 
     }
 
-    inner class MyMetadataManger(metadata: DartMetadataImpl) {
+    class MyMetadataManger(metadata: DartMetadataImpl) {
         ///注解名
         val name: String = metadata.referenceExpression.text
 
@@ -350,7 +350,7 @@ class DartDefaultFormalNamedParameterActionManager(val element: DartDefaultForma
 
             val type = element.normalFormalParameter.simpleFormalParameter?.type?.simpleType
                 ?: element.normalFormalParameter.fieldFormalParameter?.type?.simpleType
-            if (type == null) return "null";
+            if (type == null) return "null"
             val typeManager = TypeManager(type)
             return typeManager.getMyDartType()?.defaultValueString ?: "null"
         }

@@ -547,9 +547,6 @@
         <action id="FlutterL10nAddNewKeyAction"
                 class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nAddNewKeyAction" text="Add new key"/>
 
-        <action id="TestFlutterVMNotificationAction"
-                class="shop.itbug.fluttercheckversionx.actions.TestNotificationAction"
-                text="Test Flutter VM Notification"/>
 
 
         <action id="DartVmHttpModuleSimpleShowAction"

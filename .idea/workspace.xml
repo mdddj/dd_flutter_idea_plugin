@@ -4,16 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="细节优化">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/actions/vm/network/DartVmHttpModuleSimpleShowAction.kt" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="修正 github workflows">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/release.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/release.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/DartProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/common/dart/DartProjectService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/RequestItemLayout.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/dsl/RequestItemLayout.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/AnimatedSearchHighlight.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/widget/AnimatedSearchHighlight.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/DartVmHttpComposeComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/fluttercheckversionx/window/vm/DartVmHttpComposeComponent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +92,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="6.4.2" />
+        <entry key="$PROJECT_DIR$" value="6.6.0" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -228,7 +221,8 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="proportion" value="0.42248908" />
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
     <option name="sortBySeverity" value="false" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
@@ -246,145 +240,145 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Gradle.AutoCompletePackageVersion.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.AutoCompletePackageVersion.test.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.BalloonTest.testBalloonCreationAndVisibility.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build dd_flutter_idea_plugin.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.BuildGradleKtsTest.testAddAliyunMirrorImage.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.BuildGradleKtsTest.testCreateKotlinPsi.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartPluginVersionTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartPluginVersionTest.test.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartPluginVersionTest.testVersion.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartVmClassTest.testGetProviders.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.DartVmTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartVmTest.testCheckTreeIsReady.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.DartVmTest.testConnect.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartVmTest.testGetProperties.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.DartVmTest.testGetSupportProtocolList.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.DartVmTest.testMemoryUsage.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DartVmTest.testSetInspectorOverlay.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.Download IntelliJ Platform sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.FreezedParseTest.testParseFreezedClass.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GradleFileTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GradleFileTest.testAddAliYunMirror.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GradleFileTest.testCheck.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.GradleFileTest.testCreateGVFile.executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.MyPopupTest.testPopupDisplay.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.PubspecYamlTest.testAdd.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.PubspecYamlTest.testAddDeps.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.PubspecYamlTest.testPathGet.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:functionalTestClasses].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:pingServer].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [buildPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [buildSearchableOptions].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [check].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [classes].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [downloadAndroidStudioProductReleasesXml].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [getChangelog].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [initializeIntellijPlatformPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [integrationTest].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [jarSearchableOptions].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [listBundledPlugins].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [mainClasses].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [pingIdeaPublisherServer].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [prepareTest].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [printBundledPlugins].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [printProductsReleases].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [publishAllPublicationsToSonatypeRepository].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [publishPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [publish].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [runIdeForUiTests].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [runIde].executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [setupDependencies].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [verifyPluginConfiguration].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin [verifyPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.dd_flutter_idea_plugin:service [verifyPlugin].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.下载 IntelliJ 平台源.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.下载 IntelliJ 平台源….executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.下载源代码.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.构建 dd_flutter_idea_plugin.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.BalloonTest.testBalloonCreationAndVisibility.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.YamlExtendsKt.executor&quot;: &quot;Run&quot;,
-    &quot;Project.color&quot;: &quot;2a2f05&quot;,
-    &quot;RunOnceActivity.Enable generate summary features in internal mode&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;/Users/ldd/Library/Application Support/JetBrains/IntelliJIdea2025.2/plugins/Shell Script/shellcheck&quot;,
-    &quot;ToolWindowDio Request.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit4&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4&quot;: &quot;&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;dev.sweep.assistant.data.RecentlyUsedFiles&quot;: &quot;src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt;build.gradle.kts;sweep://tutorial/SweepTutorial.java&quot;,
-    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;6.5.0&quot;,
-    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;jbrsdk_jcef-17&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;ktor.last.update.timestamp&quot;: &quot;1687769586955&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/src/main/resources/icons&quot;,
-    &quot;llm.McpServerEditPanel.switcher&quot;: &quot;1&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/hlx/github/dd_flutter_idea_plugin/docs/flutterx-doc/node_modules/prettier&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.16889882&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;sweep.chatMode&quot;: &quot;Manual&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/ldd/Applications/IntelliJ IDEA Ultimate.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Gradle.AutoCompletePackageVersion.executor": "Run",
+    "Gradle.AutoCompletePackageVersion.test.executor": "Run",
+    "Gradle.BalloonTest.testBalloonCreationAndVisibility.executor": "Run",
+    "Gradle.Build dd_flutter_idea_plugin.executor": "Run",
+    "Gradle.BuildGradleKtsTest.testAddAliyunMirrorImage.executor": "Debug",
+    "Gradle.BuildGradleKtsTest.testCreateKotlinPsi.executor": "Run",
+    "Gradle.DartPluginVersionTest.executor": "Run",
+    "Gradle.DartPluginVersionTest.test.executor": "Run",
+    "Gradle.DartPluginVersionTest.testVersion.executor": "Run",
+    "Gradle.DartVmClassTest.testGetProviders.executor": "Debug",
+    "Gradle.DartVmTest.executor": "Run",
+    "Gradle.DartVmTest.testCheckTreeIsReady.executor": "Debug",
+    "Gradle.DartVmTest.testConnect.executor": "Run",
+    "Gradle.DartVmTest.testGetProperties.executor": "Debug",
+    "Gradle.DartVmTest.testGetSupportProtocolList.executor": "Debug",
+    "Gradle.DartVmTest.testMemoryUsage.executor": "Run",
+    "Gradle.DartVmTest.testSetInspectorOverlay.executor": "Debug",
+    "Gradle.Download IntelliJ Platform sources.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.FreezedParseTest.testParseFreezedClass.executor": "Run",
+    "Gradle.GradleFileTest.executor": "Run",
+    "Gradle.GradleFileTest.testAddAliYunMirror.executor": "Run",
+    "Gradle.GradleFileTest.testCheck.executor": "Debug",
+    "Gradle.GradleFileTest.testCreateGVFile.executor": "Debug",
+    "Gradle.MyPopupTest.testPopupDisplay.executor": "Run",
+    "Gradle.PubspecYamlTest.testAdd.executor": "Run",
+    "Gradle.PubspecYamlTest.testAddDeps.executor": "Run",
+    "Gradle.PubspecYamlTest.testPathGet.executor": "Run",
+    "Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay.executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:clean].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:functionalTestClasses].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [:ldd-idea-publisher:plugin:pingServer].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [buildPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [buildSearchableOptions].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [check].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [classes].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [clean].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [downloadAndroidStudioProductReleasesXml].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [generateFlutterPluginInfo].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [getChangelog].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [initializeIntellijPlatformPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [integrationTest].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [jarSearchableOptions].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [listBundledPlugins].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [mainClasses].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [pingIdeaPublisherServer].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [prepareTest].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [printBundledPlugins].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [printProductsReleases].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [publishAllPublicationsToSonatypeRepository].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [publishPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [publish].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [runIdeForUiTests].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [runIde].executor": "Debug",
+    "Gradle.dd_flutter_idea_plugin [setupDependencies].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [verifyPluginConfiguration].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin [verifyPlugin].executor": "Run",
+    "Gradle.dd_flutter_idea_plugin:service [verifyPlugin].executor": "Run",
+    "Gradle.下载 IntelliJ 平台源.executor": "Run",
+    "Gradle.下载 IntelliJ 平台源….executor": "Run",
+    "Gradle.下载源代码.executor": "Run",
+    "Gradle.构建 dd_flutter_idea_plugin.executor": "Run",
+    "JUnit.BalloonTest.testBalloonCreationAndVisibility.executor": "Run",
+    "Kotlin.YamlExtendsKt.executor": "Run",
+    "Project.color": "2a2f05",
+    "RunOnceActivity.Enable generate summary features in internal mode": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "/Users/ldd/Library/Application Support/JetBrains/IntelliJIdea2025.2/plugins/Shell Script/shellcheck",
+    "ToolWindowDio Request.ShowToolbar": "false",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit4",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4": "",
+    "dart.analysis.tool.window.visible": "false",
+    "dev.sweep.assistant.data.RecentlyUsedFiles": "src/main/kotlin/shop/itbug/fluttercheckversionx/window/l10n/L10nWindow.kt;build.gradle.kts;sweep://tutorial/SweepTutorial.java",
+    "full.screen.before.presentation.mode": "false",
+    "git-widget-placeholder": "6.7.0",
+    "ignore.preview.features.used": "true",
+    "jdk.selected.JAVA_MODULE": "jbrsdk_jcef-17",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "ktor.last.update.timestamp": "1687769586955",
+    "last_opened_file_path": "/Users/hlx/github/dd_flutter_idea_plugin/src/main/resources/icons",
+    "llm.McpServerEditPanel.switcher": "1",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "prettierjs.PrettierConfiguration.Package": "/Users/hlx/github/dd_flutter_idea_plugin/docs/flutterx-doc/node_modules/prettier",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.16889882",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "show.migrate.to.gradle.popup": "false",
+    "sweep.chatMode": "Manual",
+    "ts.external.directory.path": "/Users/ldd/Applications/IntelliJ IDEA Ultimate.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlite&quot;,
-      &quot;hsqldb&quot;,
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite",
+      "hsqldb",
+      "mysql"
     ],
-    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
-      &quot;directory&quot;,
-      &quot;module&quot;,
-      &quot;repository&quot;
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
     ],
-    &quot;beansoft.intellij.ide.scratch.LRUPopupBuilderEx$3/新笔记&quot;: [
-      &quot;dart.id&quot;,
-      &quot;kt.id&quot;,
-      &quot;md.id&quot;
+    "beansoft.intellij.ide.scratch.LRUPopupBuilderEx$3/新笔记": [
+      "dart.id",
+      "kt.id",
+      "md.id"
     ],
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/新建临时文件&quot;: [
-      &quot;JSON&quot;
+    "com.intellij.ide.scratch.ScratchImplUtil$2/新建临时文件": [
+      "JSON"
     ],
-    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
+    "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
   }
-}</component>
+}]]></component>
   <component name="RebelAgentSelection">
     <selection>jr</selection>
   </component>
@@ -435,7 +429,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [buildPlugin]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -468,32 +462,11 @@
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
       <DebugAllEnabled>false</DebugAllEnabled>
       <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;RunCodeGenInlayTest.testShouldShowRunCodeGenInlay&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [buildPlugin]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -514,8 +487,36 @@
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
       <DebugAllEnabled>false</DebugAllEnabled>
       <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="dd_flutter_idea_plugin [classes]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="classes" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [publishPlugin]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -536,8 +537,11 @@
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
       <DebugAllEnabled>false</DebugAllEnabled>
       <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [runIde]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -564,8 +568,11 @@
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
       <DebugAllEnabled>false</DebugAllEnabled>
       <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
     <configuration name="dd_flutter_idea_plugin [runIde]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -597,21 +604,29 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-      <item itemvalue="Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" />
       <item itemvalue="Gradle.DartVmClassTest.testGetProviders" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
       <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.DartVmClassTest.testGetProviders" />
-        <item itemvalue="Gradle.RunCodeGenInlayTest.testShouldShowRunCodeGenInlay" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-cffe25b9f5b3-intellij.indexing.shared.core-IU-253.28086.51" />
+        <option value="bundled-js-predefined-d6986cc7102b-c7e53b3be11b-JavaScript-IU-253.28086.51" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -1998,7 +2013,22 @@
       <workItem from="1762306546687" duration="106000" />
       <workItem from="1762316419519" duration="90000" />
       <workItem from="1762332968139" duration="3072000" />
-      <workItem from="1762390958815" duration="574000" />
+      <workItem from="1762390958815" duration="692000" />
+      <workItem from="1762391766735" duration="107000" />
+      <workItem from="1762409174452" duration="545000" />
+      <workItem from="1762412837659" duration="8049000" />
+      <workItem from="1762478040197" duration="234000" />
+      <workItem from="1762478950240" duration="34000" />
+      <workItem from="1762481241620" duration="1781000" />
+      <workItem from="1762486373922" duration="263000" />
+      <workItem from="1762486733332" duration="504000" />
+      <workItem from="1762487243358" duration="29000" />
+      <workItem from="1762487581774" duration="238000" />
+      <workItem from="1762495001733" duration="551000" />
+      <workItem from="1762581008027" duration="842000" />
+      <workItem from="1762743518961" duration="814000" />
+      <workItem from="1762995620866" duration="4363000" />
+      <workItem from="1763001940821" duration="742000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2343,7 +2373,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="443" />
+    <option name="localTasksCounter" value="448" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2393,10 +2423,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="添加了一些按钮" />
-    <MESSAGE value="release 6.0.5" />
-    <MESSAGE value="添加空path请求过滤" />
-    <MESSAGE value="release 6.0.7" />
     <MESSAGE value="添加自动版本号补全功能" />
     <MESSAGE value="添加阿里云镜像快速添加功能" />
     <MESSAGE value="release 6.1.0" />
@@ -2408,7 +2434,6 @@
     <MESSAGE value="fix: update return type of getName() and improve instance retrieval in ProviderHelper" />
     <MESSAGE value="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM" />
     <MESSAGE value="Added Cupertino Icons and Material Icons preview window" />
-    <MESSAGE value="细节更新" />
     <MESSAGE value="优化freezed版本检测" />
     <MESSAGE value="修复部分 action检测逻辑" />
     <MESSAGE value="release6.4.1" />
@@ -2418,7 +2443,12 @@
     <MESSAGE value="添加 dio功能监听 #98" />
     <MESSAGE value="添加自定义快速打开命令" />
     <MESSAGE value="细节优化" />
-    <option name="LAST_COMMIT_MESSAGE" value="细节优化" />
+    <MESSAGE value="release 6.6.0" />
+    <MESSAGE value="完善 github action" />
+    <MESSAGE value="优化 dart vm和移除内部 api" />
+    <MESSAGE value="细节更新" />
+    <MESSAGE value="修正 github workflows" />
+    <option name="LAST_COMMIT_MESSAGE" value="修正 github workflows" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>

@@ -1,5 +1,6 @@
 package shop.itbug.fluttercheckversionx.common.dart
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import shop.itbug.fluttercheckversionx.actions.isValidJson
@@ -7,7 +8,7 @@ import shop.itbug.fluttercheckversionx.actions.isValidJson
 
 object FlutterEventFactory {
 
-    val gson = GsonBuilder().setPrettyPrinting().create()
+    val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     fun formJsonText(text: String): FlutterEvent? {
         if(!text.contains("\"event\"")) return null
         if (!isValidJson(text)) return null

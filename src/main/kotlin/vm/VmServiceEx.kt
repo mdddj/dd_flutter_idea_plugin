@@ -6,12 +6,11 @@ import vm.consumer.*
 import vm.element.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 
 //获取 vm
 suspend fun VmService.getVm(): VM {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         getVM(object : VMConsumer {
             override fun received(response: VM) {
                 continuation.resume(response)
@@ -25,7 +24,7 @@ suspend fun VmService.getVm(): VM {
 }
 
 suspend fun VmService.getVersion(): Version {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         getVersion(object : VersionConsumer {
             override fun received(response: Version) {
                 continuation.resume(response)
@@ -48,7 +47,7 @@ suspend fun VmService.getRootWidgetTree(
     withPreviews: Boolean = false,
     fullDetails: Boolean = false
 ): WidgetTreeResponse? {
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         try {
             val params = JsonObject()
             params.addProperty("isolateId", isolateId)
@@ -102,7 +101,7 @@ suspend fun VmService.getDetailsSubtree(
     params.addProperty("isolateId", isolateId)
     params.addProperty("objectGroup", groupName)
     params.addProperty("arg", diagnosticsNodeId)
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         callServiceExtension(
             isolateId,
             "ext.flutter.inspector.getDetailsSubtree",
@@ -131,7 +130,7 @@ suspend fun VmService.getProperties(
         addProperty("objectGroup", groupName)
         addProperty("arg", diagnosticsNodeId)
     }
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.flutter.inspector.getProperties",
@@ -221,7 +220,7 @@ fun WidgetNode.limitDepth(maxDepth: Int, currentDepth: Int): WidgetNode? {
 suspend fun VmService.setInspectorOverlay(
     isolateId: String,
     enabled: Boolean
-): Boolean = suspendCoroutine { cont ->
+): Boolean = suspendCancellableCoroutine { cont ->
     val params = JsonObject().apply {
         addProperty("enabled", enabled.toString())
     }
@@ -250,7 +249,7 @@ suspend fun VmService.setInspectorOverlay(
  */
 suspend fun VmService.getInspectorOverlayState(
     isolateId: String
-): Boolean = suspendCoroutine { cont ->
+): Boolean = suspendCancellableCoroutine { cont ->
     val params = JsonObject()
 
     // 尝试调用inspector.show方法来获取当前状态
@@ -317,7 +316,7 @@ fun VmService.checkWidgetTreeReady(
 suspend fun VmService.getSelectedWidget(
     isolateId: String,
     groupName: String
-): SelectedWidgetInfo? = suspendCoroutine { cont ->
+): SelectedWidgetInfo? = suspendCancellableCoroutine { cont ->
     val params = JsonObject().apply {
         addProperty("objectGroup", groupName)
     }
@@ -366,7 +365,7 @@ suspend fun VmService.getHttpProfile(isolateId: String,updatedSince: Long? = nul
     if(!isAvailable){
         println("不可用。。")
     }
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getHttpProfile",
@@ -420,13 +419,6 @@ suspend fun VmService.retrieveFullStringValue(
     return suspendCancellableCoroutine { continuation ->
         val objectId = stringRef.getId()
         val length = stringRef.getLength()
-
-        if (objectId == null) {
-            continuation.resumeWithException(
-                IllegalArgumentException("InstanceRef must have a valid id and length for truncation retrieval.")
-            )
-            return@suspendCancellableCoroutine
-        }
 
         getObject(isolateId, objectId, 0, length, object : GetObjectConsumer {
             override fun received(response: Breakpoint) {

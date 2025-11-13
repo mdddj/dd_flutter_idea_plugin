@@ -78,7 +78,7 @@ private class VersionProvider : CompletionProvider<CompletionParameters>() {
             logger.info("versions: $versions")
             versions?.versions?.reversed()?.toList()?.forEach {
                 result
-                    .addElement(LookupElementBuilder.create("$it").withIcon(MyIcons.flutter))
+                    .addElement(LookupElementBuilder.create(it).withIcon(MyIcons.flutter))
             }
             result.runRemainingContributors(parameters, false)
         }

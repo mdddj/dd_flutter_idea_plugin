@@ -28,7 +28,6 @@ class DartVmHttpModuleSimpleShowAction : AnAction(), DumbAware {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val component = e.inputEvent?.component ?: return
 
         val actionGroup = FlutterAppsActionGroup(project)
         val popup = JBPopupFactory.getInstance().createActionGroupPopup(

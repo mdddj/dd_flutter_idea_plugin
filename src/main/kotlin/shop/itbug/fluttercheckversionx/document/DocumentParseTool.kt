@@ -23,20 +23,20 @@ class DocumentParseTool(val element: PsiElement) {
 
             is DartNamedConstructorDeclarationImpl -> {
                 val c = element.getClassText
-                return c
+                c
             }
 
             is DartMethodDeclarationImpl -> {
-                return element.myManager.generateDocString()
+                element.myManager.generateDocString()
             }
 
             is DartClassDefinitionImpl -> {
-                return element.getDefinition
+                element.getDefinition
             }
 
             is DartFactoryConstructorDeclarationImpl -> {
                 val manager = MyDartConstructorManager(element)
-                return manager.generateDocument()
+                manager.generateDocument()
             }
 
             is DartVarAccessDeclarationImpl -> {
@@ -45,12 +45,12 @@ class DocumentParseTool(val element: PsiElement) {
                 if (type != null && txt.contains(type)) {
                     return txt
                 }
-                return "${type ?: ""} ${element.text}"
+                "${type ?: ""} ${element.text}"
             }
 
             is DartIdImpl -> {
                 val type = element.getDartElementType()
-                return "${type ?: ""} ${element.text}"
+                "${type ?: ""} ${element.text}"
             }
 
             else -> {

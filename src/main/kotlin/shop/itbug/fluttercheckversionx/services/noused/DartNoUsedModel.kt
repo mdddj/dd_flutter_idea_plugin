@@ -1,9 +1,8 @@
 package shop.itbug.fluttercheckversionx.services.noused
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
-import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
 import com.intellij.psi.PsiManager
 import org.jetbrains.yaml.YAMLUtil
 import org.jetbrains.yaml.psi.YAMLFile
@@ -13,9 +12,9 @@ import java.nio.file.Path
 /**
  * 获取包模型
  */
-fun VirtualDirectoryImpl.getDartNoUsedModel(project: Project): DartNoUsedModel? {
+fun VirtualFile.getDartNoUsedModel(project: Project): DartNoUsedModel? {
     val pubspecName = "pubspec.yaml"
-    val pubspecYamlFile: VirtualFileSystemEntry =
+    val pubspecYamlFile: VirtualFile =
         (if (name == "lib") parent.findChild(pubspecName) else findChild(pubspecName)) ?: return null
     val vf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(pubspecYamlFile.path)) ?: return null
     val psi = PsiManager.getInstance(project).findFile(vf) as? YAMLFile ?: return null
@@ -29,7 +28,6 @@ fun VirtualDirectoryImpl.getDartNoUsedModel(project: Project): DartNoUsedModel? 
         packageDirectory = packPath,
         version = version
     )
-    println("model is $model")
     return model
 }
 

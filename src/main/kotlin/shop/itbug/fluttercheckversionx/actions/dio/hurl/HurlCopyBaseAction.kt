@@ -41,7 +41,7 @@ class HurlCopyBaseActionImpl : HurlCopyBaseAction() {
         request: IRequest,
         generate: HurlGenerate,
         e: AnActionEvent
-    ): String? {
+    ): String {
         val base = generate.base()
         return base
     }

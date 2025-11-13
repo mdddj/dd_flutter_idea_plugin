@@ -1,9 +1,6 @@
 package vm.element
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-
-fun WidgetTreeResponse.getJson() = Gson().toJson(this)
 
 data class WidgetTreeResponse(
     @SerializedName("result")
