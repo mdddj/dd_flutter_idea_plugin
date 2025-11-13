@@ -47,7 +47,7 @@ jobs:
         run: |
           ./gradlew buildPlugin --no-daemon --stacktrace
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetasaspaceSize=512m"
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetaspaceSize=512m"
 
       # 这一步是导致错误的元凶之三，已移除 working-directory
       - name: 获取构建的插件包(文件名和路径)
