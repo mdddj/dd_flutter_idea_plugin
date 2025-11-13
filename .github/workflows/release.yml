@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'zulu' # 推荐使用 zulu 或 temurin
+          distribution: 'jetbrains'
 
       - name: 获取标签版本号
         id: get_version
