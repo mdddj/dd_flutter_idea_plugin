@@ -8,84 +8,87 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      with:
-        fetch-depth: 0  # 获取完整历史记录用于生成变更日志
-    
-    - name: 准备JBR21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'zulu'
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # 获取完整历史记录用于生成变更日志
 
-    - name: 获取标签版本号
-      id: get_version
-      run: |
-        VERSION=${GITHUB_REF#refs/tags/v}
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT 
-    
-    - name: 授予gradlew执行权限
-      run: chmod +x gradlew
-      working-directory: dd_flutter_idea_plugin
+      - name: 准备JBR21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu' # 推荐使用 zulu 或 temurin
 
-    - name: 打包插件
-      run: |
-        ./gradlew buildPlugin --no-daemon --stacktrace
-      working-directory: dd_flutter_idea_plugin
-      env:
-        GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetaspaceSize=512m"
-    
-    - name: 获取构建的插件包(文件名和路径)
-      id: find_plugin
-      run: |
-        PLUGIN_FILE=$(find build/distributions -name "*.zip" | head -1)
-        if [ -z "$PLUGIN_FILE" ]; then
-          echo "No plugin file found!"
-          exit 1
-        fi
-        echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
-        echo "plugin_name=$(basename $PLUGIN_FILE)" >> $GITHUB_OUTPUT
-        echo "Found plugin: $PLUGIN_FILE"
-      working-directory: dd_flutter_idea_plugin
-    
-    - name: 获取版本更新说明
-      id: release_notes
-      run: |
-        CHANGELOG_CONTENT=$(./gradlew getChangelog --quiet)
-        echo -n "$CHANGELOG_CONTENT" > release-notes.md
-        echo 'changelog<<EOF' >> $GITHUB_OUTPUT
-        echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
-        echo 'EOF' >> $GITHUB_OUTPUT
-      working-directory: dd_flutter_idea_plugin
+      - name: 获取标签版本号
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT 
 
-    - name: 创建发布版本
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.get_version.outputs.tag_name }}
-        name: FlutterX  ${{ steps.get_version.outputs.tag_name }}
-        body_path: dd_flutter_idea_plugin/release-notes.md
-        files: |
-          dd_flutter_idea_plugin/${{ steps.find_plugin.outputs.plugin_file }}
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 这一步是导致错误的元凶之一，已移除 working-directory
+      - name: 授予gradlew执行权限
+        run: chmod +x gradlew
 
-    - name: 上传资产文件
-      uses: actions/upload-artifact@v4
-      with:
-        name: FlutterX-${{ steps.get_version.outputs.version }}
-        path: dd_flutter_idea_plugin/${{ steps.find_plugin.outputs.plugin_file }}
-        retention-days: 30
+      # 这一步是导致错误的元凶之二，已移除 working-directory
+      - name: 打包插件
+        run: |
+          ./gradlew buildPlugin --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetasaspaceSize=512m"
 
-    - name: 插件验证
-      run: |
-        echo "✅ Plugin built successfully!"
-        echo "📁 Plugin file: ${{ steps.find_plugin.outputs.plugin_name }}"
-        echo "🏷️ Version: ${{ steps.get_version.outputs.version }}"
-        echo "📦 Release created: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.tag_name }}"
-      working-directory: dd_flutter_idea_plugin
+      # 这一步是导致错误的元凶之三，已移除 working-directory
+      - name: 获取构建的插件包(文件名和路径)
+        id: find_plugin
+        run: |
+          PLUGIN_FILE=$(find build/distributions -name "*.zip" | head -1)
+          if [ -z "$PLUGIN_FILE" ]; then
+            echo "No plugin file found!"
+            exit 1
+          fi
+          echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
+          echo "plugin_name=$(basename $PLUGIN_FILE)" >> $GITHUB_OUTPUT
+          echo "Found plugin: $PLUGIN_FILE"
+
+      # 这一步是导致错误的元凶之四，已移除 working-directory
+      - name: 获取版本更新说明
+        id: release_notes
+        run: |
+          CHANGELOG_CONTENT=$(./gradlew getChangelog --quiet)
+          echo -n "$CHANGELOG_CONTENT" > release-notes.md
+          echo 'changelog<<EOF' >> $GITHUB_OUTPUT
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: 创建发布版本
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.tag_name }}
+          name: FlutterX  ${{ steps.get_version.outputs.tag_name }}
+          # body_path 需要指向正确的位置，现在是项目根目录
+          body_path: release-notes.md
+          # files 也需要指向正确的位置
+          files: |
+            ${{ steps.find_plugin.outputs.plugin_file }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 上传资产文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlutterX-${{ steps.get_version.outputs.version }}
+          # path 也需要指向正确的位置
+          path: ${{ steps.find_plugin.outputs.plugin_file }}
+          retention-days: 30
+
+      # 这一步的 working-directory 也应该移除
+      - name: 插件验证
+        run: |
+          echo "✅ Plugin built successfully!"
+          echo "📁 Plugin file: ${{ steps.find_plugin.outputs.plugin_name }}"
+          echo "🏷️ Version: ${{ steps.get_version.outputs.version }}"
+          echo "📦 Release created: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.tag_name }}"

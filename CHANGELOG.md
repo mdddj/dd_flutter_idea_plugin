@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 6.7.0 - 2025-11-13
+
+- Adjust the UI of the dart vm http listening panel
+- Compatible with the new stable version of flutter (v3.38.0)
+- Add a button for quick access to changelog in the settings panel
+
 ## 6.6.0 - 2025-11-06
 
 - Add the dio service listening master switch setting
