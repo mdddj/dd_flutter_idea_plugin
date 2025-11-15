@@ -176,9 +176,11 @@ class FlutterL10nService(val project: Project) : Disposable {
     suspend fun checkAllKeys() {
         val folder = config.l10nFolder ?: return
         val file = readAction { LocalFileSystem.getInstance().findFileByPath(folder) } ?: return
-        val directory = ApplicationManager.getApplication().executeOnPooledThread<PsiDirectory?> {
-            return@executeOnPooledThread runReadAction { PsiManager.getInstance(project).findDirectory(file) }
-        }.get()
+        val directory = withContext(Dispatchers.IO) {
+            ApplicationManager.getApplication().executeOnPooledThread<PsiDirectory?> {
+                return@executeOnPooledThread runReadAction { PsiManager.getInstance(project).findDirectory(file) }
+            }.get()
+        }
         if (directory != null) {
             val files = readAction { directory.files }
             suspend fun handleArbFile(psiFile: PsiFile): ArbFile? {

@@ -20,7 +20,7 @@ object FlutterVersionTool {
     /**
      * 获取 flutter安装目录
      */
-    private fun getFlutterHome(project: Project): VirtualFile? {
+     fun getFlutterHome(project: Project): VirtualFile? {
         val dartSdkHome = DartSdk.getDartSdk(project) ?: return null
         val dartPath = dartSdkHome.homePath
         if (dartPath.endsWith(DART_SDK_SUFFIX).not()) {

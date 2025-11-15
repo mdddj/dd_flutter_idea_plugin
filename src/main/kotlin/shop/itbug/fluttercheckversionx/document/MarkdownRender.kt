@@ -134,7 +134,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             nodeText = nodeText.replace("{@end-tool}", "</pre>")
         }
 
-        println("\nnode text: $nodeText   ✅NodeType=$nodeType \n")
+//        println("\nnode text: $nodeText   ✅NodeType=$nodeType \n")
 
         when (nodeType) {
             MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)

@@ -1,11 +1,22 @@
 package shop.itbug.fluttercheckversionx.common.yaml
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
+import com.intellij.psi.PsiManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import shop.itbug.fluttercheckversionx.services.MyPackageGroup
+
+// 判断项目是否为 flutter 项目
+suspend fun Project.isFlutterProject(): Boolean {
+    val baseDir = guessProjectDir() ?: return false
+    val pubFile = baseDir.findChild("pubspec.yaml") ?: return false
+    val pubPsiFile = PsiManager.getInstance(this).findFile(pubFile) as? YAMLFile? ?: return false
+    return PubspecYamlFileTools.create(pubPsiFile).isFlutterProject()
+}
 
 /**
  * flutter yaml 操作相关工具函数

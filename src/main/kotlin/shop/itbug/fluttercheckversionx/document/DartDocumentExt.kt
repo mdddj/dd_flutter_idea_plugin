@@ -51,6 +51,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
         )
         if (result.isEmpty()) return "Document not found"
         val docInfo = result.first()
+        println("kind类型:${docInfo.elementKind}")
         val dartFormalParameterList =
             reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
         return renderView(

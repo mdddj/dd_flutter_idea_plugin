@@ -46,13 +46,13 @@ val bPlugins = mutableListOf(
     "org.intellij.groovy"
 )
 
+println(ideType)
 if (ideType.toInt() >= 243) {
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
-    if(ideType != "253"){
+    if(ideType.toInt() < 253) {
         bPlugins.add("org.intellij.intelliLang")
     }
-
 }
 
 dependencies {
@@ -82,14 +82,15 @@ dependencies {
         zipSigner()
         javaCompiler()
 
-        if(ideType == "253"){
-            bundledModule("org.intellij.intelliLang")
+
+
+        if(ideType.toInt() < 253){
+            bundledModule("intellij.libraries.ktor.client")
+            bundledModule("intellij.libraries.ktor.client.cio")
+            testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
+            testPlugins("Dart:$dartVersion")
         }
 
-        bundledModule("intellij.libraries.ktor.client")
-        bundledModule("intellij.libraries.ktor.client.cio")
-
-        testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
 
         testFramework(TestFrameworkType.Platform)
 
@@ -151,7 +152,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
-        untilBuild.set(untilBuildVersion)
+//        untilBuild.set(untilBuildVersion)
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
