@@ -1,11 +1,10 @@
 package shop.itbug.fluttercheckversionx.services
 
-import com.google.dart.server.AnalysisServerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -20,15 +19,18 @@ import com.jetbrains.lang.dart.DartFileType
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.DartNamedArgument
 import com.jetbrains.lang.dart.psi.DartReferenceExpression
+import com.jetbrains.lang.dart.psi.DartShorthandExpression
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import org.dartlang.analysis.server.protocol.*
 import shop.itbug.fluttercheckversionx.util.MyFileUtil
 import kotlin.coroutines.CoroutineContext
 
 data class DotRemoveElement(
     val element: SmartPsiElementPointer<PsiElement>,
+    val removedElement: SmartPsiElementPointer<PsiElement>,
     val removeOffsetStart: Int,
     val removeOffsetEnd: Int,
     val enumType: String,
@@ -46,46 +48,85 @@ data class ScanProgress(
 )
 
 @Service(Service.Level.PROJECT)
-class DotMigrateService(val project: Project) : Disposable, CoroutineScope, AnalysisServerListener {
+class DotMigrateService(val project: Project) : Disposable, CoroutineScope {
     private val job = SupervisorJob()
     private val smartPointerManager = SmartPointerManager.getInstance(project)
     private val logger = thisLogger()
     private val dartService = DartAnalysisServerService.getInstance(project)
-    private var cachedElements: MutableList<DotRemoveElement> = mutableListOf()
+    private var _cachedElements = MutableStateFlow<MutableList<DotRemoveElement>>(mutableListOf())
+    val cachedElements = _cachedElements.asStateFlow()
 
-    init {
-        dartService.addAnalysisServerListener(this)
-    }
+    // UI 状态变量
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+    private var _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
+    private var _scanProgress = MutableStateFlow<ScanProgress?>(null)
+    val scanProgress = _scanProgress.asStateFlow()
+    private var _currentAnalysisFile = MutableStateFlow<String?>(null)
+    val currentAnalysisFile = _currentAnalysisFile.asStateFlow()
 
-    fun getScannedElements(): List<DotRemoveElement> {
-        return cachedElements.toList()
-    }
+    // 当前扫描任务的 Job，用于取消
+    private var currentScanJob: Job? = null
 
     fun removeElement(element: DotRemoveElement) {
-        cachedElements.remove(element)
+        val newList = _cachedElements.value.toMutableList()
+        newList.remove(element)
+        _cachedElements.value = newList
+    }
+
+    fun cleanElements() {
+        _cachedElements.value = mutableListOf()
+    }
+
+    fun clearError() {
+        _errorMessage.value = null
+    }
+
+    fun cancelScan() {
+        currentScanJob?.cancel()
+        currentScanJob = null
+        _isLoading.value = false
+        _scanProgress.value = null
+        _currentAnalysisFile.value = null
     }
 
     suspend fun refreshScan(
         onProgress: (ScanProgress) -> Unit = {},
         onElementFound: (DotRemoveElement) -> Unit = {}
     ): List<DotRemoveElement> {
-        logger.info("开始刷新扫描所有枚举类型")
-        cachedElements.clear()
-        cachedElements.addAll(startScanProjectFiles(onProgress, onElementFound))
-        logger.info("刷新扫描完成: ${cachedElements.size}个")
-        return cachedElements.toList()
-    }
+        // 取消之前的扫描任务
+        cancelScan()
 
-    fun startCheck() {
-        DumbService.getInstance(project).runWhenSmart {
-            launch {
-                logger.info("开始扫描所有枚举类型")
-                cachedElements.clear()
-                cachedElements.addAll(startScanProjectFiles())
-                logger.info("扫描到所有枚举的赋值: ${cachedElements.size}个, 详情: $cachedElements")
+        _isLoading.value = true
+        _errorMessage.value = null
+        _scanProgress.value = null
+        _currentAnalysisFile.value = null
+
+        logger.info("开始刷新扫描所有枚举类型")
+        _cachedElements.value.clear()
+
+        currentScanJob = launch {
+            try {
+                _cachedElements.value.addAll(startScanProjectFiles(onProgress, onElementFound))
+                logger.info("刷新扫描完成: ${_cachedElements.value.size}个")
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    logger.info("扫描被取消")
+                    throw e
+                }
+                _errorMessage.value = "Scan error: ${e.message}"
+                logger.warn("扫描失败", e)
+            } finally {
+                _isLoading.value = false
+                _scanProgress.value = null
+                _currentAnalysisFile.value = null
+                currentScanJob = null
             }
         }
 
+        currentScanJob?.join() // 等待任务完成
+        return _cachedElements.value.toList()
     }
 
     private suspend fun startScanProjectFiles(
@@ -100,7 +141,10 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope, Anal
             allDartFiles.flatMap { virtualFile ->
                 val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return@flatMap emptyList()
                 PsiTreeUtil.collectElementsOfType(psiFile, DartNamedArgument::class.java)
-            }
+            }.filter {
+                PsiTreeUtil.findChildOfType(it, DartShorthandExpression::class.java) == null
+                        && PsiTreeUtil.findChildOfType(it, DartReferenceExpression::class.java) != null
+            }.filterNotNull()
         }
         logger.info("所有参数节点:${allNamedArguments.size}")
 
@@ -113,7 +157,7 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope, Anal
         logger.info("开始循环遍历分析枚举赋值")
 
         withContext(Dispatchers.IO) {
-            allNamedArguments.map { argument ->
+            allNamedArguments.map { argument: DartNamedArgument ->
                 async {
                     semaphore.withPermit {
                         val result = analyzeArgument(argument)
@@ -124,9 +168,11 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope, Anal
                                 results.add(result)
                                 onElementFound(result)
                             }
-                            onProgress(ScanProgress(totalCount, processedCount, foundCount))
+                            val progress = ScanProgress(totalCount, processedCount, foundCount)
+                            _scanProgress.value = progress
+                            onProgress(progress)
                         }
-                        delay(10)
+                        delay(1) //需要添加延迟,dart分析服务器会检测到 null
                         result
                     }
                 }
@@ -143,31 +189,30 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope, Anal
      */
     private suspend fun analyzeArgument(element: DartNamedArgument): DotRemoveElement? {
         return readAction {
-            val file = element.containingFile.virtualFile ?: return@readAction  null
             if (!element.isValid) return@readAction null
+            _currentAnalysisFile.value = element.containingFile.name
+
             val argNameEle = element.parameterReferenceExpression
             val argNameInfo = getElementKind(argNameEle)
-            logger.info("arg:${argNameEle.text} : info: $argNameInfo")
             val argType = argNameInfo?.type
-            if(argType == "dynamic" || argType == "Object" || argType == "Object?") {
-                logger.info("参数:${argNameEle.text}被忽略")
+            if (argType == "dynamic" || argType == "Object" || argType == "Object?" || argType == "T") {
                 return@readAction null
             }
+
 
             val expression = element.expression
-            val firstExp = expression.firstChild as? DartReferenceExpression ?: return@readAction null
-
+            val firstExp: DartReferenceExpression =
+                expression.firstChild as? DartReferenceExpression ?: return@readAction null
             val childrenRefSize = PsiTreeUtil.countChildrenOfType(firstExp, DartReferenceExpression::class.java)
-            if(childrenRefSize>=2){
-                logger.info("${element.text}被忽略,存在多个 dart 引用")
+            if (childrenRefSize >= 2) {
                 return@readAction null
             }
-
             if (expression.lastChild !is DartReferenceExpression) return@readAction null
-            val eleKind = getElementKind(firstExp) ?: return@readAction null
-            if (eleKind.kind == "enum") {
+            val referenceEleIsEnum = getElementKind(firstExp)?.kind == "enum"
+            if (referenceEleIsEnum) {
                 DotRemoveElement(
                     element = smartPointerManager.createSmartPsiElementPointer(element),
+                    removedElement = smartPointerManager.createSmartPsiElementPointer(firstExp),
                     removeOffsetStart = firstExp.startOffset,
                     removeOffsetEnd = firstExp.endOffset,
                     enumType = firstExp.text,
@@ -179,133 +224,33 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope, Anal
         }
     }
 
-    private data class KindAndType(val type: String,val kind: String)
+    private data class KindAndType(val type: String, val kind: String)
+
     private fun getElementKind(element: PsiElement): KindAndType? {
         val file = element.containingFile.virtualFile ?: return null
         val result = dartService.analysis_getHover(file, element.textOffset)
         if (result.isNotEmpty()) {
             val r = result[0]
-            val t =r.staticType
-            return KindAndType(t ?: "",r.elementKind)
+            val t = r.staticType
+            return KindAndType(t ?: "", r.elementKind ?: "")
         }
         return null
     }
 
+    fun stop() {
+        cancelScan()
+        logger.info("停止所有任务")
+    }
+
     override fun dispose() {
-        dartService.removeAnalysisServerListener(this)
         job.cancel()
     }
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
 
-    override fun computedAnalyzedFiles(p0: List<String?>?) {
-        val files: List<String> = p0?.filterNotNull() ?: emptyList()
-        logger.info("完成的分析文件:${files}")
 
-    }
-
-    override fun computedAvailableSuggestions(
-        p0: List<AvailableSuggestionSet?>,
-        p1: IntArray
-    ) {
-    }
-
-    override fun computedCompletion(
-        p0: String?,
-        p1: Int,
-        p2: Int,
-        p3: List<CompletionSuggestion?>?,
-        p4: List<IncludedSuggestionSet?>?,
-        p5: List<String?>?,
-        p6: List<IncludedSuggestionRelevanceTag?>?,
-        p7: Boolean,
-        p8: String?
-    ) {
-    }
-
-    override fun computedErrors(
-        p0: String?,
-        p1: List<AnalysisError?>?
-    ) {
-    }
-
-    override fun computedHighlights(
-        p0: String?,
-        p1: List<HighlightRegion?>?
-    ) {
-    }
-
-    override fun computedImplemented(
-        p0: String?,
-        p1: List<ImplementedClass?>?,
-        p2: List<ImplementedMember?>?
-    ) {
-    }
-
-    override fun computedLaunchData(p0: String?, p1: String?, p2: Array<out String?>?) {
-    }
-
-    override fun computedNavigation(
-        p0: String?,
-        p1: List<NavigationRegion?>?
-    ) {
-    }
-
-    override fun computedOccurrences(
-        p0: String?,
-        p1: List<Occurrences?>?
-    ) {
-    }
-
-    override fun computedOutline(p0: String?, p1: Outline?) {
-    }
-
-    override fun computedOverrides(
-        p0: String?,
-        p1: List<OverrideMember?>?
-    ) {
-    }
-
-    override fun computedClosingLabels(
-        p0: String?,
-        p1: List<ClosingLabel?>?
-    ) {
-    }
-
-    override fun computedSearchResults(
-        p0: String?,
-        p1: List<SearchResult?>?,
-        p2: Boolean
-    ) {
-    }
-
-    override fun flushedResults(p0: List<String?>?) {
-    }
-
-    override fun requestError(p0: RequestError?) {
-    }
-
-    override fun serverConnected(p0: String?) {
-        logger.info("分析服务器已连接:$p0")
-//        startCheck()
-    }
-
-    override fun serverError(p0: Boolean, p1: String?, p2: String?) {
-    }
-
-    override fun serverIncompatibleVersion(p0: String?) {
-    }
-
-    override fun serverStatus(
-        p0: AnalysisStatus?,
-        p1: PubStatus?
-    ) {
-    }
-
-    override fun computedExistingImports(
-        p0: String?,
-        p1: Map<String?, Map<String?, Set<String?>?>?>?
-    ) {
+    companion object {
+        fun getInstance(project: Project) = project.service<DotMigrateService>()
     }
 }

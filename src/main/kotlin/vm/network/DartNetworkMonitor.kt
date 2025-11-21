@@ -250,21 +250,28 @@ class DartNetworkMonitor(
         }
     }
 
-    /**
-     * 更新请求数据
-     */
     suspend fun updateRequests() {
         if (!_isMonitoring.value) return
 
         try {
-            val result = vmService.getHttpProfile(isolateId, lastUpdateTime)
+            // 注意：如果 lastUpdateTime 为 0，传 null 给 VM 比较好，获取全量
+            val since = if (lastUpdateTime == 0L) null else lastUpdateTime
+
+            val result = vmService.getHttpProfile(isolateId, since)
+
             result?.let { profileData ->
                 parseHttpProfile(profileData)
-                lastUpdateTime = timeSource.currentTimeMicros()
+
+                // --- 修复点 ---
+                // 尝试从 VM 返回的数据中获取 timestamp，保证时间同步
+                // 如果没有 timestamp，才回退到本地时间
+                val vmTimestamp = profileData.get("timestamp")?.asLong
+                lastUpdateTime = vmTimestamp ?: timeSource.currentTimeMicros()
             }
         } catch (e: Exception) {
             logger.error("更新网络请求数据失败", e)
-            throw e
+            // 不要抛出异常中断轮询，记录错误即可
+            // throw e
         }
     }
 
@@ -311,19 +318,26 @@ class DartNetworkMonitor(
         }
     }
 
-    /**
-     * 更新现有请求(不可变方式)
-     */
     private fun mergeRequests(existing: NetworkRequest, updated: NetworkRequest): NetworkRequest {
         // 合并事件列表
         val mergedEvents = mergeEvents(existing.events, updated.events)
 
         return existing.copy(
-            endTime = updated.endTime,
-            status = updated.status,
-            statusCode = updated.statusCode,
-            responseHeaders = updated.responseHeaders,
-            error = updated.error,
+            // 只有当 updated 的 endTime 有值时才更新，否则保持原样（或者如果现有已经结束，就不应该变回未结束）
+            endTime = updated.endTime ?: existing.endTime,
+
+            // 状态合并逻辑：如果新状态是 COMPLETED/ERROR，则更新。如果新状态是 PENDING 但旧状态已经是 COMPLETED，则保持 COMPLETED
+            status = if (existing.isComplete) existing.status else updated.status,
+
+            // 关键点：使用 Elvis 操作符 (?:) 防止 valid 数据被 null 覆盖
+            statusCode = updated.statusCode ?: existing.statusCode,
+            requestHeaders = updated.requestHeaders ?: existing.requestHeaders,
+            responseHeaders = updated.responseHeaders ?: existing.responseHeaders,
+            requestBody = updated.requestBody ?: existing.requestBody,
+            responseBody = updated.responseBody ?: existing.responseBody,
+            contentLength = updated.contentLength ?: existing.contentLength,
+            error = updated.error ?: existing.error,
+
             events = mergedEvents.toMutableList()
         )
     }
@@ -511,29 +525,47 @@ class DartNetworkMonitor(
          * 解析响应数据
          */
         private fun parseResponseData(request: NetworkRequest, responseJson: JsonObject) {
+            // 1. 单独解析 statusCode，互不影响
             try {
-                // 状态码
-                request.statusCode = responseJson.get("statusCode")?.asInt
+                if (responseJson.has("statusCode")) {
+                    request.statusCode = responseJson.get("statusCode").asInt
+                }
+            } catch (e: Exception) {
+                // ignore
+            }
 
-                // 响应头
+            // 2. 单独解析 Headers，增加类型安全性
+            try {
                 responseJson.get("headers")?.asJsonObject?.let { headers ->
-                    request.responseHeaders = headers.entrySet().associate {
-                        it.key to it.value.asJsonArray.joinToString(",") { it1 -> it1.asString }
+                    request.responseHeaders = headers.entrySet().associate { entry ->
+                        val key = entry.key
+                        val value = entry.value
+                        // 兼容处理：如果是数组则 join，如果是字符串直接使用
+                        val stringValue = if (value.isJsonArray) {
+                            value.asJsonArray.joinToString(",") { it.asString }
+                        } else {
+                            value.asString
+                        }
+                        key to stringValue
                     }
                 }
+            } catch (e: Exception) {
+                thisLogger().warn("解析响应头失败: ${e.message}")
+            }
 
-                // 检查错误
+            // 3. 单独解析错误和结束时间
+            try {
                 responseJson.get("error")?.asString?.let { error ->
                     request.error = error
                     request.status = RequestStatus.ERROR
                 }
 
-                // 检查是否完成
-                responseJson.get("endTime")?.let {
+                // 检查是否完成 (Response 里的 endTime 往往比外层的更准确用于判断是否传输结束)
+                if (responseJson.has("endTime")) {
                     request.status = RequestStatus.COMPLETED
                 }
             } catch (e: Exception) {
-                thisLogger().warn("解析响应数据失败", e)
+                thisLogger().warn("解析响应元数据失败", e)
             }
         }
 

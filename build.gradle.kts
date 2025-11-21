@@ -46,7 +46,6 @@ val bPlugins = mutableListOf(
     "org.intellij.groovy"
 )
 
-println(ideType)
 if (ideType.toInt() >= 243) {
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
@@ -66,8 +65,8 @@ dependencies {
                 local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
             "252" -> {
-                intellijIdeaCommunity("2025.2.1")
-//                local("/Applications/Android Studio.app")
+//                intellijIdeaCommunity("2025.2.1")
+                local("/Applications/Android Studio.app")
             }
 
             "251" -> {
@@ -81,6 +80,8 @@ dependencies {
         pluginVerifier()
         zipSigner()
         javaCompiler()
+        bundledPlugin("com.intellij.java")
+
 
 
 
@@ -234,13 +235,6 @@ idea {
 val generateFlutterPluginInfo by tasks.registering {
     group = "codegen"
     description = "Generates FlutterPluginInfo class with version info"
-
-    println(
-        """
-        changelog : \n
-        ${currentVersionChangelog.get()}
-    """.trimIndent()
-    )
 
     // 定义输出目录和文件路径
     val outputDir = file("src/main/kotlin/codegen")

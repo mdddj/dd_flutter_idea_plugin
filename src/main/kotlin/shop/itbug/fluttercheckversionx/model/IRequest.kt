@@ -97,7 +97,11 @@ fun IRequest.getHtmlPrefix(): String {
     fun getColorStyle(color: String) = "style='color:${color}'"
 
     return """
-            <span ${getColorStyle(color)}>${httpStatusCode}</span> <span ${getColorStyle(secColor)}>${httpMethod}</span> <span ${getColorStyle(secColor)}>${durationMs}ms</span>
+            <span ${getColorStyle(color)}>${httpStatusCode}</span> <span ${getColorStyle(secColor)}>${httpMethod}</span> <span ${
+        getColorStyle(
+            secColor
+        )
+    }>${durationMs}ms</span>
         """.trimIndent()
 }
 
@@ -196,7 +200,7 @@ class HurlGenerate(private val request: IRequest) {
 
     private fun getPostBody(): String {
         return when (val body = request.httpRequestBody) {
-            is String -> if(body.isNotBlank()) body else ""
+            is String -> if (body.isNotBlank()) body else ""
             is Map<*, *> -> if (body.isNotEmpty()) GsonBuilder().setPrettyPrinting().create().toJson(body) else ""
             else -> body?.toString() ?: ""
         }
@@ -217,8 +221,6 @@ fun formatSize(sizeInBytes: Long): String {
 }
 
 
-
-
 /**
  * 将 IRequest 对象转换为与 Dart/Flutter DevTools "Copy as cURL" 功能风格完全一致的命令字符串。
  *
@@ -228,16 +230,34 @@ fun formatSize(sizeInBytes: Long): String {
  * - 精确的参数顺序 (`--request METHOD 'URL' ...`)。
  * - 自动过滤掉由 cURL 管理的冗余头信息 (Host, Content-Length, Accept-Encoding)。
  * - 格式化为易于阅读和粘贴的多行命令。
+ * - 跨平台支持：自动适配 Windows (CMD/PowerShell) 和 Unix-like 系统的语法差异。
  *
  * @param gsonInstance 一个可选的 Gson 实例，用于序列化 JSON 请求体。如果为 null，将创建一个新的实例。
  * @return 格式化后的 cURL 命令字符串。
  */
 fun IRequest.toCurlStringAsDartDevTools(gsonInstance: Gson? = null): String {
-    // 创建一个列表来收集 cURL 命令的所有部分，方便最后用 `\` 连接
+    // 检测操作系统
+    val isWindows = System.getProperty("os.name").lowercase().contains("win")
+
+    // 根据操作系统选择引号和转义方式
+    val quote = if (isWindows) "\"" else "'"
+    val lineContinuation = if (isWindows) " `" else " \\"
+
+    // 转义函数：根据操作系统选择不同的转义策略
+    fun escapeForShell(text: String): String {
+        return if (isWindows) {
+            // Windows: 转义双引号和反斜杠
+            text.replace("\\", "\\\\").replace("\"", "\\\"")
+        } else {
+            // Unix: 转义单引号
+            text.replace("'", "'\\''")
+        }
+    }
+
+    // 创建一个列表来收集 cURL 命令的所有部分
     val commandParts = mutableListOf<String>()
 
     // 1. HTTP 方法 (--request)
-    // Dart DevTools 总是显式包含方法
     httpMethod?.let {
         commandParts.add("--request ${it.uppercase()}")
     }
@@ -259,17 +279,15 @@ fun IRequest.toCurlStringAsDartDevTools(gsonInstance: Gson? = null): String {
             }
         }
     }
-    // 对 URL 中的特殊字符（主要是单引号）进行转义
-    commandParts.add("'${finalUrl.replace("'", "'\\''")}'")
+    commandParts.add("$quote${escapeForShell(finalUrl)}$quote")
 
     // 3. 添加请求头 (--header)
-    // 过滤掉 cURL 会自动处理或通过标志管理的头
     val headersToFilter = setOf("host", "accept-encoding", "content-length")
     httpRequestHeaders
         .filterKeys { key -> !headersToFilter.contains(key.lowercase()) }
         .forEach { (key, value) ->
-            val escapedValue = value.toString().replace("'", "'\\''")
-            commandParts.add("--header '$key: $escapedValue'")
+            val escapedValue = escapeForShell(value.toString())
+            commandParts.add("--header $quote$key: $escapedValue$quote")
         }
 
     // 4. 智能处理请求体 (--data-raw, --data)
@@ -284,28 +302,30 @@ fun IRequest.toCurlStringAsDartDevTools(gsonInstance: Gson? = null): String {
                     is String -> body
                     else -> (gsonInstance ?: Gson()).toJson(body)
                 }
-                val escapedBody = jsonBody.replace("'", "'\\''")
-                "--data-raw '$escapedBody'"
+                val escapedBody = escapeForShell(jsonBody)
+                "--data-raw $quote$escapedBody$quote"
             }
+
             contentType.contains("application/x-www-form-urlencoded") && body is Map<*, *> -> {
                 val formData = body.map { (key, value) ->
                     val encodedKey = URLEncoder.encode(key.toString(), "UTF-8")
                     val encodedValue = URLEncoder.encode(value?.toString() ?: "", "UTF-8")
                     "$encodedKey=$encodedValue"
                 }.joinToString("&")
-                "--data '$formData'"
+                "--data $quote$formData$quote"
             }
+
             else -> {
-                val escapedBody = body.toString().replace("'", "'\\''")
-                "--data '$escapedBody'"
+                val escapedBody = escapeForShell(body.toString())
+                "--data $quote$escapedBody$quote"
             }
         }
         commandParts.add(bodyPart)
     }
 
     // 5. 组合所有部分
-    // `curl --location --compressed` 是固定的前缀
-    // 使用 `joinToString` 来优雅地处理 `\` 和换行，确保最后一行没有 `\`
-    return "curl --location --compressed " + commandParts.joinToString(separator = " \\\n  ")
+    // 使用适合当前操作系统的续行符
+    return "curl --location --compressed$lineContinuation\n  " +
+            commandParts.joinToString(separator = "$lineContinuation\n  ")
 }
 

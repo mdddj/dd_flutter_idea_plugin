@@ -12,5 +12,6 @@ fun AnActionEvent.api(): IRequest? {
     val dioApi = data as? IRequest?
     if (dioApi != null) return dioApi
     val dart = getData(ComposeHelper.networkRequestDataKey)
+    
     return dart as? IRequest?
 }
