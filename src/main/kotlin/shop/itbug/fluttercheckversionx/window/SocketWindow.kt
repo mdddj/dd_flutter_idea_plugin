@@ -100,6 +100,10 @@ class FlutterXSocketWindow : ToolWindowFactory {
             MaterialIconsDialog(project)
         }
 
+        toolWindow.addComposeTab("Enum Migrate") {
+            shop.itbug.fluttercheckversionx.window.migrate.EnumMigrateWindow(project)
+        }
+
     }
 
 

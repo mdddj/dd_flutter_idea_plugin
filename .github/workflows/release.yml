@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'zulu' # 推荐使用 zulu 或 temurin
+          distribution: 'jetbrains'
 
       - name: 获取标签版本号
         id: get_version
@@ -47,7 +47,7 @@ jobs:
         run: |
           ./gradlew buildPlugin --no-daemon --stacktrace
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetasaspaceSize=512m"
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetaspaceSize=512m"
 
       # 这一步是导致错误的元凶之三，已移除 working-directory
       - name: 获取构建的插件包(文件名和路径)

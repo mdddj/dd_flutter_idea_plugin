@@ -44,3 +44,11 @@ More than 100+ flutter auxiliary tools...
 ```bash
 act -j build-and-release -s GITHUB_TOKEN=github token --env GITHUB_REF=refs/tags/v版本号
 ```
+
+# 发布版本
+
+```bash
+ ./scripts/release_tag.sh v版本号
+```
+
+例子: `./scripts/release_tag.sh v6.7.1`

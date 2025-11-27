@@ -49,10 +49,9 @@ val bPlugins = mutableListOf(
 if (ideType.toInt() >= 243) {
     bPlugins.add("com.intellij.modules.json")
     bPlugins.add("com.intellij.platform.images")
-    if(ideType != "253"){
+    if(ideType.toInt() < 253) {
         bPlugins.add("org.intellij.intelliLang")
     }
-
 }
 
 dependencies {
@@ -66,8 +65,8 @@ dependencies {
                 local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
             "252" -> {
-                intellijIdeaCommunity("2025.2.1")
-//                local("/Applications/Android Studio.app")
+//                intellijIdeaCommunity("2025.2.1")
+                local("/Applications/Android Studio.app")
             }
 
             "251" -> {
@@ -76,20 +75,23 @@ dependencies {
             }
         }
         bundledPlugins(bPlugins)
-        //"io.flutter:88.0.0"
-        plugins("Dart:$dartVersion", "io.flutter:88.0.0")
+        //"io.flutter:88.1.0"
+        plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
         javaCompiler()
+        bundledPlugin("com.intellij.java")
 
-        if(ideType == "253"){
-            bundledModule("org.intellij.intelliLang")
+
+
+
+        if(ideType.toInt() < 253){
+            bundledModule("intellij.libraries.ktor.client")
+            bundledModule("intellij.libraries.ktor.client.cio")
+            testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
+            testPlugins("Dart:$dartVersion")
         }
 
-        bundledModule("intellij.libraries.ktor.client")
-        bundledModule("intellij.libraries.ktor.client.cio")
-
-        testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
 
         testFramework(TestFrameworkType.Platform)
 
@@ -151,7 +153,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
-        untilBuild.set(untilBuildVersion)
+//        untilBuild.set(untilBuildVersion)
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
@@ -233,13 +235,6 @@ idea {
 val generateFlutterPluginInfo by tasks.registering {
     group = "codegen"
     description = "Generates FlutterPluginInfo class with version info"
-
-    println(
-        """
-        changelog : \n
-        ${currentVersionChangelog.get()}
-    """.trimIndent()
-    )
 
     // 定义输出目录和文件路径
     val outputDir = file("src/main/kotlin/codegen")

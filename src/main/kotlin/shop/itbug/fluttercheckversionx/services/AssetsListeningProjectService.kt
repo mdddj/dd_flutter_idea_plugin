@@ -7,7 +7,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -30,7 +30,6 @@ import shop.itbug.fluttercheckversionx.config.GenerateAssetsClassConfig
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.i18n.PluginBundle
 import shop.itbug.fluttercheckversionx.icons.MyIcons
-import shop.itbug.fluttercheckversionx.model.FlutterLocalVersion
 import shop.itbug.fluttercheckversionx.model.getVersionText
 import shop.itbug.fluttercheckversionx.tools.FlutterVersionTool
 import shop.itbug.fluttercheckversionx.util.DateUtils
@@ -40,7 +39,6 @@ import shop.itbug.fluttercheckversionx.util.Util
 
 //
 class MyAssetGenPostStart : ProjectActivity {
-    val logger = thisLogger()
     override suspend fun execute(project: Project) {
         AssetsListeningProjectService.getInstance(project).initListening()
         FlutterL10nService.getInstance(project).checkAllKeys()
@@ -49,10 +47,11 @@ class MyAssetGenPostStart : ProjectActivity {
             if (!project.isDisposed && setting.state.scanDartStringInStart) {
                 FlutterL10nService.getInstance(project).startScanStringElements()
             }
+
         }
-
-
         FlutterXVMService.getInstance(project)
+        FlutterVersionService.getInstance(project).refreshAndGetFlutterVersion()
+        project.service<DotMigrateService>()
     }
 }
 
@@ -67,7 +66,6 @@ class MyProjectListening : ProjectManagerListener {
 
 @Service(Service.Level.PROJECT)
 class AssetsListeningProjectService(val project: Project) : Disposable {
-    private val logger = thisLogger()
     private val connect: MessageBusConnection = project.messageBus.connect(this)
     private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
 
@@ -134,32 +132,20 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
     }
 
     ///检测flutter新版本弹出
-    private inner class CheckFlutterVersionTask() :
+    private inner class CheckFlutterVersionTask :
         Task.Backgroundable(project, "Detecting Flutter version...") {
         var indication: ProgressIndicator? = null
         override fun run(indicator: ProgressIndicator) {
             this.indication = indicator
-            val flutterChannel = Util.getFlutterChannel()
-            val currentFlutterVersion: FlutterLocalVersion? =
-                runBlocking { FlutterVersionTool.getLocalFlutterVersion(project) }
-            if (flutterChannel == null) {
-                return
-            }
-            currentFlutterVersion?.let { c ->
-                try {
-                    val version = FlutterService.getVersion()
-                    version.apply {
-                        val hash = version.getCurrentReleaseByChannel(flutterChannel)
-                        val release = releases.find { o -> o.hash == hash }
-                        release?.let { r ->
-                            if (r.version != c.getVersionText()) {
-                                showTip(r, project)
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    logger.warn("检查 flutter 版本失败:${e.localizedMessage}")
-                }
+            val flutterVersionService = FlutterVersionService.getInstance(project)
+            val flutterChannel = Util.getFlutterChannel() ?: return
+            val currentFlutterVersion =
+                runBlocking { flutterVersionService.refreshAndGetFlutterVersion() } ?: return
+            val version = flutterVersionService.getRemoteFlutterVersion() ?: return
+            val hash = version.getCurrentReleaseByChannel(flutterChannel)
+            val release = version.releases.find { o -> o.hash == hash } ?: return
+            if (release.version != currentFlutterVersion.getVersionText()) {
+                showTip(release, project)
             }
         }
 

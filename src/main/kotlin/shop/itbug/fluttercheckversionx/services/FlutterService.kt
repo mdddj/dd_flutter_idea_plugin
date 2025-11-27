@@ -1,25 +1,7 @@
 package shop.itbug.fluttercheckversionx.services
 
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import com.intellij.util.io.HttpRequests
-import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
-
-class FlutterVersionCheckException(message: String) : Exception(message)
-
-object FlutterService {
-    fun getVersion(): FlutterVersions {
-        try {
-            val url = DioListingUiConfig.setting.checkFlutterVersionUrl
-            val get: String = HttpRequests.request(url).readString()
-            return Gson().fromJson(get, FlutterVersions::class.java)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw FlutterVersionCheckException("Failed to detect new version of flutter:${e.localizedMessage}")
-        }
-    }
-}
 
 
 ///使用channel来判断版本

@@ -31,6 +31,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
 
 
+
         //判断是不是资产
         val strElement = DartPsiElementHelper.findTargetFilePsiElement(element)
         if (strElement != null) {
@@ -39,9 +40,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
                 return result
             }
         }
-
         //生成普通的文档
-
         val reference = element.parent?.parent?.reference?.resolve()
         val file = element.containingFile.virtualFile ?: return null
         val project = element.project
@@ -51,6 +50,7 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
         )
         if (result.isEmpty()) return "Document not found"
         val docInfo = result.first()
+        println("kind类型:${docInfo.elementKind}")
         val dartFormalParameterList =
             reference?.parent?.children?.filterIsInstance<DartFormalParameterListImpl>() ?: emptyList()
         return renderView(
