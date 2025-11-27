@@ -75,8 +75,8 @@ dependencies {
             }
         }
         bundledPlugins(bPlugins)
-        //"io.flutter:88.0.0"
-        plugins("Dart:$dartVersion", "io.flutter:88.0.0")
+        //"io.flutter:88.1.0"
+        plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
         javaCompiler()

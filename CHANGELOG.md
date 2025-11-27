@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 6.7.2 - 2025-11-27
+
+- Fixed known issues (dart vm http monitor)
+- Adaptation IDE 2025.3
+
 ## 6.7.0 - 2025-11-13
 
 - Adjust the UI of the dart vm http listening panel
