@@ -158,13 +158,13 @@ class DartNetworkMonitor(
         return try {
             val isAvailable = vmService.isHttpProfilingAvailable(isolateId)
             if (!isAvailable) {
-                logger.error("HTTP分析功能不可用")
+                logger.warn("HTTP分析功能不可用")
                 return false
             }
 
             val timelineResult = vmService.setHttpTimelineLogging(isolateId, true)
             if (timelineResult == null) {
-                logger.error("启用HTTP时间线日志失败")
+                logger.warn("启用HTTP时间线日志失败")
                 return false
             }
 
@@ -210,7 +210,7 @@ class DartNetworkMonitor(
             vmService.setHttpTimelineLogging(isolateId, false)
             logger.info("网络监控已停止")
         } catch (e: Exception) {
-            logger.error("停止监控时出错", e)
+            logger.warn("停止监控时出错", e)
         }
     }
 
@@ -245,7 +245,7 @@ class DartNetworkMonitor(
                 logger.debug("网络监控轮询已取消")
                 throw e
             } catch (e: Exception) {
-                logger.error("轮询过程中发生严重错误", e)
+                logger.warn("轮询过程中发生严重错误", e)
             }
         }
     }
@@ -268,8 +268,11 @@ class DartNetworkMonitor(
                 val vmTimestamp = profileData.get("timestamp")?.asLong
                 lastUpdateTime = vmTimestamp ?: timeSource.currentTimeMicros()
             }
+        } catch (e: CancellationException) {
+            // 协程取消异常必须重新抛出，不能记录
+            throw e
         } catch (e: Exception) {
-            logger.error("更新网络请求数据失败", e)
+            logger.warn("更新网络请求数据失败", e)
             // 不要抛出异常中断轮询，记录错误即可
             // throw e
         }

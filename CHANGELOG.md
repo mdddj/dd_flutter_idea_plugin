@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 6.7.3 - 2025-12-05
+
+- Adaptation `AS 2025.2.2`
+
 ## 6.7.2 - 2025-11-27
 
 - Fixed known issues (dart vm http monitor)
