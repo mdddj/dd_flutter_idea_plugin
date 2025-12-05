@@ -65,8 +65,8 @@ dependencies {
                 local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
             }
             "252" -> {
-//                intellijIdeaCommunity("2025.2.1")
-                local("/Applications/Android Studio.app")
+                intellijIdeaCommunity("2025.2.1")
+//                local("/Applications/Android Studio.app")
             }
 
             "251" -> {
