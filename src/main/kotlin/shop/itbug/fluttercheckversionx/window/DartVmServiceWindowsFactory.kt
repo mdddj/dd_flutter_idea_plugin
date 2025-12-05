@@ -8,10 +8,7 @@ import org.jetbrains.jewel.bridge.addComposeTab
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.widget.AddPackageDialog
 import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
-import shop.itbug.fluttercheckversionx.window.vm.DartHttpUI
-import shop.itbug.fluttercheckversionx.window.vm.DartVmLoggingComponent
-import shop.itbug.fluttercheckversionx.window.vm.DartVmStatusComponent
-import shop.itbug.fluttercheckversionx.window.vm.ProviderComposeComponent
+import shop.itbug.fluttercheckversionx.window.vm.*
 
 // dart http
 class DartVmServiceWindowsFactory : ToolWindowFactory {
@@ -30,6 +27,9 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         }
         toolWindow.addComposeTab("Provider") {
             ProviderComposeComponent(project)
+        }
+        toolWindow.addComposeTab("Shared Preferences") {
+            DartVmSharedPreferencesComponent(project)
         }
 
         if (System.getenv("DEV") == "true") {
