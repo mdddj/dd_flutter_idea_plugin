@@ -5,6 +5,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.jewel.bridge.addComposeTab
+import shop.itbug.fluttercheckversionx.common.yaml.hasPubspecYamlFile
 import shop.itbug.fluttercheckversionx.config.PluginConfig
 import shop.itbug.fluttercheckversionx.widget.AddPackageDialog
 import shop.itbug.fluttercheckversionx.widget.JsonViewerDemo
@@ -45,6 +46,9 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
     }
 
     override fun shouldBeAvailable(project: Project): Boolean {
+        if(!project.hasPubspecYamlFile()){
+            return false
+        }
         return PluginConfig.getInstance(project).state.enableVmServiceToolWindow
     }
 

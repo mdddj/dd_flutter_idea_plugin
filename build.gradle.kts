@@ -6,9 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dartVersion: String by project
 val sinceBuildVersion: String by project
-val untilBuildVersion: String by project
 val pluginVersion: String by project
-val ideType: String by project
 
 
 plugins {
@@ -22,7 +20,7 @@ plugins {
 }
 
 group = "shop.itbug"
-version = pluginVersion + ideType
+version = pluginVersion
 
 repositories {
     mavenCentral()
@@ -43,60 +41,31 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.terminal",
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
-    "org.intellij.groovy"
+    "org.intellij.groovy",
+    "com.intellij.modules.json",
+    "com.intellij.platform.images",
+    "org.intellij.intelliLang"
 )
-
-if (ideType.toInt() >= 243) {
-    bPlugins.add("com.intellij.modules.json")
-    bPlugins.add("com.intellij.platform.images")
-    if(ideType.toInt() < 253) {
-        bPlugins.add("org.intellij.intelliLang")
-    }
-}
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
-        when (ideType) {
-            "253" -> {
-//                intellijIdeaCommunity("2025.2.1")
-                local("/Users/ldd/Applications/IntelliJ IDEA Ultimate.app")
-            }
-            "252" -> {
-                intellijIdeaCommunity("2025.2.1")
-//                local("/Applications/Android Studio.app")
-            }
-
-            "251" -> {
-//                intellijIdeaCommunity("2025.1.4.1")
-                local("/Applications/Android Studio.app")
-            }
-        }
+        //intellijIdeaCommunity("2025.2.1")
+        local("/Applications/Android Studio.app")
         bundledPlugins(bPlugins)
         //"io.flutter:88.1.0"
-        plugins("Dart:$dartVersion","io.flutter:88.1.0")
+        plugins("Dart:$dartVersion", "io.flutter:88.1.0")
         pluginVerifier()
         zipSigner()
         javaCompiler()
         bundledPlugin("com.intellij.java")
-
-
-
-
-        if(ideType.toInt() < 253){
-            bundledModule("intellij.libraries.ktor.client")
-            bundledModule("intellij.libraries.ktor.client.cio")
-            testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
-            testPlugins("Dart:$dartVersion")
-        }
-
-
+        bundledModule("intellij.libraries.ktor.client")
+        bundledModule("intellij.libraries.ktor.client.cio")
+        testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
+        testPlugins("Dart:$dartVersion")
         testFramework(TestFrameworkType.Platform)
-
-
-
         // jewel
         bundledModule("intellij.platform.jewel.foundation")
         bundledModule("intellij.platform.jewel.ui")
@@ -153,7 +122,6 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
-//        untilBuild.set(untilBuildVersion)
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
@@ -193,7 +161,6 @@ tasks {
 
     printProductsReleases {
         sinceBuild.set(sinceBuildVersion)
-        untilBuild.set(untilBuildVersion)
     }
 
 
@@ -209,7 +176,7 @@ tasks {
 val getChannel = tasks.publishPlugin.get().channels.get()
 
 changelog {
-    version = pluginVersion.removeSuffix(".")
+    version = pluginVersion
     path = file("CHANGELOG.md").canonicalPath
     groups.empty()
 }
@@ -288,7 +255,7 @@ tasks.clean {
 tasks.test {
     dependencies {
         intellijPlatform {
-            bundledPlugins("org.jetbrains.kotlin","org.jetbrains.plugins.yaml","org.intellij.groovy")
+            bundledPlugins("org.jetbrains.kotlin", "org.jetbrains.plugins.yaml", "org.intellij.groovy")
         }
     }
 }

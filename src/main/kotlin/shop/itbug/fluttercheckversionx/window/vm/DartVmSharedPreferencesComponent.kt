@@ -1,7 +1,6 @@
 package shop.itbug.fluttercheckversionx.window.vm
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -10,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -248,10 +248,6 @@ private fun KeyItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val alpha by animateFloatAsState(
-        targetValue = if (isSelected) 1f else 0f,
-        animationSpec = tween(200)
-    )
 
     val bgColor = if (isSelected) {
         JewelTheme.globalColors.outlines.focused.copy(alpha = 0.2f)
@@ -488,13 +484,13 @@ private fun DataContent(
     onSave: (SharedPreferencesData) -> Unit
 ) {
     // 对于 StringListData，直接使用列表值；其他类型使用 valueAsString
-    var editValue by remember(data) { 
+    var editValue by remember(data) {
         mutableStateOf(
             when (data) {
                 is SharedPreferencesData.StringListData -> data.value.joinToString("\n")
                 else -> data.valueAsString
             }
-        ) 
+        )
     }
     val scrollState = rememberScrollState()
 
@@ -618,7 +614,9 @@ private fun ValueDisplay(data: SharedPreferencesData) {
         }
 
         else -> {
-            Text(data.valueAsString)
+            SelectionContainer {
+                Text(data.valueAsString)
+            }
         }
     }
 }
@@ -642,7 +640,7 @@ private fun EditableValue(
                 ) {
                     RadioButtonRow(
                         selected = value == "true",
-                        onClick = { 
+                        onClick = {
                             onValueChange("true")
                             onEnterPressed()
                         }
@@ -651,7 +649,7 @@ private fun EditableValue(
                     }
                     RadioButtonRow(
                         selected = value == "false",
-                        onClick = { 
+                        onClick = {
                             onValueChange("false")
                             onEnterPressed()
                         }

@@ -18,6 +18,11 @@ suspend fun Project.isFlutterProject(): Boolean {
     return PubspecYamlFileTools.create(pubPsiFile).isFlutterProject()
 }
 
+fun Project.hasPubspecYamlFile(): Boolean {
+    val baseDir = guessProjectDir() ?: return false
+    return baseDir.findChild("pubspec.yaml") != null
+}
+
 /**
  * flutter yaml 操作相关工具函数
  */

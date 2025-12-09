@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 import org.jetbrains.jewel.bridge.addComposeTab
+import shop.itbug.fluttercheckversionx.common.yaml.hasPubspecYamlFile
 import shop.itbug.fluttercheckversionx.config.DioListingUiConfig
 import shop.itbug.fluttercheckversionx.config.DoxListeningSetting
 import shop.itbug.fluttercheckversionx.dialog.icons.CupertinoIconsDialog
@@ -114,5 +115,9 @@ class FlutterXSocketWindow : ToolWindowFactory {
         }
     }
 
+
+    override fun shouldBeAvailable(project: Project): Boolean {
+        return project.hasPubspecYamlFile() //简单判断一下.
+    }
 
 }
