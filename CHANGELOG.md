@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 6.8.0 - 2025-12-12
+
+- New features: Shared Preferences panel (Dart Vm Service)
+- Fixed an issue where the format of Alibaba Cloud images added by KTS was confusing
+- Added a flutter downloader
+- Added "This version no longer prompts" option (Flutter new version detection update)
+- Optimized some startup logic to not execute in non-flutter projects
+
 ## 6.7.3 - 2025-12-05
 
 - Adaptation `AS 2025.2.2`

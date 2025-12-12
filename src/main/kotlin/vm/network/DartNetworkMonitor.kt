@@ -7,8 +7,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import shop.itbug.fluttercheckversionx.model.IRequest
-import shop.itbug.fluttercheckversionx.model.formatDate
+import shop.itbug.flutterx.model.IRequest
+import shop.itbug.flutterx.model.formatDate
 import vm.VmService
 import vm.VmServiceComponent
 import vm.getHttpProfile

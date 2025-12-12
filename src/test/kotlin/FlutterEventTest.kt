@@ -1,5 +1,5 @@
 import org.junit.Test
-import shop.itbug.fluttercheckversionx.common.dart.FlutterEventFactory
+import shop.itbug.flutterx.common.dart.FlutterEventFactory
 
 class FlutterEventTest {
     

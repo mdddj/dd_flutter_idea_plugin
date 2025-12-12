@@ -7,7 +7,7 @@
 ```xml
 
 <psi.referenceContributor
-        implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor"
+        implementation="shop.itbug.flutterx.reference.AssetReferenceContributor"
         language="Dart"
 />
 ```

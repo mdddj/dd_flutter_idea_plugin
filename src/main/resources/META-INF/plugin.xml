@@ -1,41 +1,7 @@
 <idea-plugin>
     <id>shop.itbug.FlutterCheckVersionX</id>
     <name>FlutterX</name>
-    <description>
-        &lt;blockquote&gt;
-        &lt;p&gt;Links: &lt;a href=&quot;https://github.com/mdddj/dd_flutter_idea_plugin&quot;&gt;Github&lt;/a&gt;,&lt;a
-        href=&quot;https://flutterx.itbug.shop/starter.html&quot;&gt;Document&lt;/a&gt;&lt;/p&gt;
-        &lt;/blockquote&gt;
-        &lt;ul&gt;
-        &lt;li&gt;Author: LiangDianDian &lt;/li&gt;
-        &lt;li&gt;QQ Group: 706438100&lt;/li&gt;
-        &lt;li&gt;&lt;a href=&quot;https://discord.com/invite/ethKNxKRcZ&quot;&gt;Discord&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-        &lt;h2&gt;package autocomplete&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at15.03.38___1732777496374___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 15.03.38.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;package Version detection&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.19.39___1732775000905___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.19.39.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;package detail panel&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.25.43___1732775218121___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.25.43.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;package quick operation&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.28.03___1732775335724___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.28.03.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;Assets autocomplete&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.31.45___1732775582151___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.31.45.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;Assets preview panel&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.35.24___1732775773227___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.35.24.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;Part of autocomplete&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.38.10___1732775948518___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.38.10.gif&quot; /&gt;&lt;/p&gt;
-        &lt;h2&gt;Widget to Riverpod Widget Tool&lt;/h2&gt;
-        &lt;p&gt;&lt;img src=&quot;https://minio.itbug.shop/blog/simple-file/Kapture2024-11-28at14.40.09___1732776112608___.gif&quot;
-        alt=&quot;Kapture 2024-11-28 at 14.40.09.gif&quot; /&gt;&lt;/p&gt;
-    </description>
+
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
 
@@ -79,23 +45,23 @@
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <intentionAction>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.L10nKeyExtractIntentionAction</className>
+            <className>shop.itbug.flutterx.actions.internal.L10nKeyExtractIntentionAction</className>
             <language>Dart</language>
         </intentionAction>
         <intentionAction>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddFinalPropsIntentionAction</className>
+            <className>shop.itbug.flutterx.actions.internal.DartAddFinalPropsIntentionAction</className>
             <language>Dart</language>
         </intentionAction>
         <intentionAction>
-            <className>shop.itbug.fluttercheckversionx.actions.internal.DartAddSimpleConstructionIntentionAction
+            <className>shop.itbug.flutterx.actions.internal.DartAddSimpleConstructionIntentionAction
             </className>
             <language>Dart</language>
         </intentionAction>
 
-        <annotator language="Dart" implementationClass="shop.itbug.fluttercheckversionx.annotator.DartAssetsAnnotator"/>
+        <annotator language="Dart" implementationClass="shop.itbug.flutterx.annotator.DartAssetsAnnotator"/>
 
         <annotator language="yaml"
-                   implementationClass="shop.itbug.fluttercheckversionx.annotator.PubspecPackageDiscontinuedAnnotator"/>
+                   implementationClass="shop.itbug.flutterx.annotator.PubspecPackageDiscontinuedAnnotator"/>
 
         <notificationGroup id="plugin_new_version_notify" displayType="BALLOON"/>
         <notificationGroup displayType="BALLOON" id="dio_socket_notify"/>
@@ -108,164 +74,164 @@
 
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
-                                        implementationClass="shop.itbug.fluttercheckversionx.linemark.PluginDartIconLineMark"/>
+                                        implementationClass="shop.itbug.flutterx.linemark.PluginDartIconLineMark"/>
 
         <!--    plugin版本自动联想功能    -->
 
         <completion.contributor language="yaml" order="first"
-                                implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPackageAutoCompletion"/>
+                                implementationClass="shop.itbug.flutterx.autoCompletion.DartPackageAutoCompletion"/>
         <completion.contributor language="Dart"
-                                implementationClass="shop.itbug.fluttercheckversionx.hints.AssetsFilePathAutoComplete"/>
+                                implementationClass="shop.itbug.flutterx.hints.AssetsFilePathAutoComplete"/>
         <completion.contributor language="Dart"
-                                implementationClass="shop.itbug.fluttercheckversionx.autoCompletion.DartPartAutoCompletion"/>
+                                implementationClass="shop.itbug.flutterx.autoCompletion.DartPartAutoCompletion"/>
         <completion.contributor language="Dart"
-                                implementationClass="shop.itbug.fluttercheckversionx.hints.FreezedPartAutoComplicate"/>
+                                implementationClass="shop.itbug.flutterx.hints.FreezedPartAutoComplicate"/>
         <completion.contributor language="Dart"
-                                implementationClass="shop.itbug.fluttercheckversionx.hints.IpHostAutoCompletionContributor"/>
+                                implementationClass="shop.itbug.flutterx.hints.IpHostAutoCompletionContributor"/>
 
         <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
-                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
+                                              implementationClass="shop.itbug.flutterx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
                                               isEnabledByDefault="true" language="yaml" nameKey="lastupdate_date_time"
                                               bundle="messages.pluginBundle"
                                               providerId="flutterxWithPubspecUpdateTime"/>
 
 
         <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartWidgetToRiverpodWidgetCodeVisit"/>
+                implementation="shop.itbug.flutterx.inlay.dartfile.DartWidgetToRiverpodWidgetCodeVisit"/>
         <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartFileInsertPartOfString"/>
+                implementation="shop.itbug.flutterx.inlay.dartfile.DartFileInsertPartOfString"/>
         <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShow"/>
+                implementation="shop.itbug.flutterx.inlay.dartfile.DartAssetsIconInlineShow"/>
         <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartAssetsIconInlineShowSettingGroup"
+                implementation="shop.itbug.flutterx.inlay.dartfile.DartAssetsIconInlineShowSettingGroup"
                 id="DartAssetsIconInlineShowSettingGroup"/>
         <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlay"/>
+                implementation="shop.itbug.flutterx.inlay.freezed.FreezedActionInlay"/>
         <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.freezed.FreezedActionInlaySettingProvider"
+                implementation="shop.itbug.flutterx.inlay.freezed.FreezedActionInlaySettingProvider"
                 id="FreezedActionInlaySettingProvider"/>
         <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
+                implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
         <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.GradleAliyuMirrorImageInlayGroupSetting"
+                implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlayGroupSetting"
                 id="GradleAliyuMirrorImageInlayGroupSetting"/>
         <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.KtsAliyunMirrorInlay"/>
+                implementation="shop.itbug.flutterx.inlay.gradle.KtsAliyunMirrorInlay"/>
         <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.fluttercheckversionx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
+                implementation="shop.itbug.flutterx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
                 id="KtsAliyunMirrorInlayGroupSetting"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
-        <!-- implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
+        <!-- implementation="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
         <!--        <config.codeVisionGroupSettingProvider-->
-        <!-- implementation="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
+        <!-- implementation="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogCodeVisionGroupSetting"-->
         <!-- id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
 
         <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.DartPackageSearchDialogInlay"
+                implementationClass="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogInlay"
                 language="yaml" id="DartPackageSearchDialogInlay"/>
         <codeInsight.inlayProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.yaml.YamlPathResolveHandleInlay"
+                implementationClass="shop.itbug.flutterx.inlay.yaml.YamlPathResolveHandleInlay"
                 language="yaml"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
-        <!-- implementation="shop.itbug.fluttercheckversionx.inlay.dartfile.DartUseageCountInlay"/>-->
+        <!-- implementation="shop.itbug.flutterx.inlay.dartfile.DartUseageCountInlay"/>-->
 
-        <externalAnnotator implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheckV2"
+        <externalAnnotator implementationClass="shop.itbug.flutterx.tools.DartPluginVersionCheckV2"
                            language="yaml"/>
 
         <codeInsight.declarativeInlayProvider group="TYPES_GROUP"
-                                              implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlayProvider"
+                                              implementationClass="shop.itbug.flutterx.inlay.dartfile.DartTypeInlayProvider"
                                               isEnabledByDefault="true" language="Dart" bundle="messages.pluginBundle"
                                               nameKey="dart_type_params_show_name_key" providerId="DartTypeShow"
                                               descriptionKey="dart_type_params_show_name_key"/>
         <codeInsight.declarativeInlayProviderCustomSettingsProvider
-                implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeInlaySettingProvider"
+                implementationClass="shop.itbug.flutterx.inlay.dartfile.DartTypeInlaySettingProvider"
                 language="Dart" providerId="DartTypeShow"/>
 
         <codeInsight.inlayActionHandler handlerId="dartTypeInlayProviderId"
-                                        implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartTypeClickActionHandle"/>
+                                        implementationClass="shop.itbug.flutterx.inlay.dartfile.DartTypeClickActionHandle"/>
 
         <!--        <codeInsight.inlayProvider-->
-        <!-- implementationClass="shop.itbug.fluttercheckversionx.inlay.dartfile.DartStringIconShowInlay"-->
+        <!-- implementationClass="shop.itbug.flutterx.inlay.dartfile.DartStringIconShowInlay"-->
         <!-- language="Dart"/>-->
 
 
         <!--   Json编辑器悬停显示预览图片     -->
-        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.inlay.json.JsonPreviewDocument"
+        <lang.documentationProvider implementationClass="shop.itbug.flutterx.inlay.json.JsonPreviewDocument"
                                     language="JSON"/>
 
         <!--    pubspec.yaml插鼠标悬停显示插件信息     -->
-        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.YamlDocument"
+        <lang.documentationProvider implementationClass="shop.itbug.flutterx.document.YamlDocument"
                                     language="yaml" order="first"/>
 
         <!--    dart文档的HTML实现    -->
-        <lang.documentationProvider implementationClass="shop.itbug.fluttercheckversionx.document.DartDocumentExt"
+        <lang.documentationProvider implementationClass="shop.itbug.flutterx.document.DartDocumentExt"
                                     language="Dart"
                                     order="first, after Translation.TranslatedDocumentationProvider.Dart"/>
 
         <!--   dio监听http请求小窗口   -->
-        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.FlutterXSocketWindow" id="Dio Request"
+        <toolWindow factoryClass="shop.itbug.flutterx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom" icon="/icons/flutter.svg"/>
-        <toolWindow factoryClass="shop.itbug.fluttercheckversionx.window.DartVmServiceWindowsFactory"
+        <toolWindow factoryClass="shop.itbug.flutterx.window.DartVmServiceWindowsFactory"
                     id="FlutterX Dart VM" icon="/icons/dart.svg" anchor="bottom" doNotActivateOnStart="true"/>
 
         <!--   底部状态栏展示小部件     -->
-        <statusBarWidgetFactory implementation="shop.itbug.fluttercheckversionx.services.MyUserBarFactory"
+        <statusBarWidgetFactory implementation="shop.itbug.flutterx.services.MyUserBarFactory"
                                 id="myUserBarFactory"/>
 
-        <!--        <diff.DiffExtension implementation="shop.itbug.fluttercheckversionx.diff.PubYamlGithubAndPathDiff"/>-->
+        <!--        <diff.DiffExtension implementation="shop.itbug.flutterx.diff.PubYamlGithubAndPathDiff"/>-->
 
         <!--        系统设置-->
-        <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.AppConfig" parentId="language"
+        <projectConfigurable instance="shop.itbug.flutterx.setting.AppConfig" parentId="language"
                              id="setting.flutterx" displayName="FlutterX"/>
 
-        <projectConfigurable instance="shop.itbug.fluttercheckversionx.setting.vm.DartVmSetting"
+        <projectConfigurable instance="shop.itbug.flutterx.setting.vm.DartVmSetting"
                              parentId="setting.flutterx" id="dart.vm.test" displayName="Dart Vm"/>
 
         <editorNotificationProvider
-                implementation="shop.itbug.fluttercheckversionx.notif.PubPluginVersionCheckNotification"/>
+                implementation="shop.itbug.flutterx.notif.PubPluginVersionCheckNotification"/>
         <editorNotificationProvider
-                implementation="shop.itbug.fluttercheckversionx.notif.DartFreezedClassFixNotification"/>
+                implementation="shop.itbug.flutterx.notif.DartFreezedClassFixNotification"/>
 
 
         <!--        插件新版本检测-->
 
         <!--        <externalAnnotator-->
-        <!-- implementationClass="shop.itbug.fluttercheckversionx.tools.DartPluginVersionCheck"-->
+        <!-- implementationClass="shop.itbug.flutterx.tools.DartPluginVersionCheck"-->
         <!-- language="yaml"/>-->
 
 
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.MyAssetGenPostStart"/>
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.PubspecStartActivity"/>
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.hints.FlutterAssetsStartHandle"/>
-        <postStartupActivity implementation="shop.itbug.fluttercheckversionx.services.UserDartLibServiceInit"/>
+        <postStartupActivity implementation="shop.itbug.flutterx.services.MyAssetGenPostStart"/>
+        <postStartupActivity implementation="shop.itbug.flutterx.services.PubspecStartActivity"/>
+        <postStartupActivity implementation="shop.itbug.flutterx.hints.FlutterAssetsStartHandle"/>
+        <postStartupActivity implementation="shop.itbug.flutterx.services.UserDartLibServiceInit"/>
         <!--        错误处理-->
-        <!--                <errorHandler implementation="shop.itbug.fluttercheckversionx.common.PluginErrorHandle"/>-->
-        <!--        <configurationType implementation="shop.itbug.fluttercheckversionx.run.FlutterXRunConfigType"/>-->
-        <!--        <fileEditorProvider implementation="shop.itbug.fluttercheckversionx.editor.MyYamlSplitEditorProvider"/>-->
+        <!--                <errorHandler implementation="shop.itbug.flutterx.common.PluginErrorHandle"/>-->
+        <!--        <configurationType implementation="shop.itbug.flutterx.run.FlutterXRunConfigType"/>-->
+        <!--        <fileEditorProvider implementation="shop.itbug.flutterx.editor.MyYamlSplitEditorProvider"/>-->
 
-        <!--        <navbar implementation="shop.itbug.fluttercheckversionx.navbar.DartStructureAwareNavbar"/>-->
+        <!--        <navbar implementation="shop.itbug.flutterx.navbar.DartStructureAwareNavbar"/>-->
 
 
         <!--        <psi.referenceContributor-->
-        <!-- implementation="shop.itbug.fluttercheckversionx.reference.AssetReferenceContributor" language="Dart"/>-->
+        <!-- implementation="shop.itbug.flutterx.reference.AssetReferenceContributor" language="Dart"/>-->
 
     </extensions>
 
     <projectListeners>
-        <listener class="shop.itbug.fluttercheckversionx.services.MyProjectListening"
+        <listener class="shop.itbug.flutterx.services.MyProjectListening"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
-        <listener class="shop.itbug.fluttercheckversionx.common.dart.RunConfigListener"
+        <listener class="shop.itbug.flutterx.common.dart.RunConfigListener"
                   topic="com.intellij.execution.ExecutionListener"/>
-        <listener class="shop.itbug.fluttercheckversionx.services.PubspecServiceFileListener"
+        <listener class="shop.itbug.flutterx.services.PubspecServiceFileListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
 
     <actions>
 
 
-        <action id="OpenInVsCodeAction" class="shop.itbug.fluttercheckversionx.actions.yaml.OpenInVsCodeAction"
+        <action id="OpenInVsCodeAction" class="shop.itbug.flutterx.actions.yaml.OpenInVsCodeAction"
                 text="Open in Vscode"/>
-        <action id="OpenInASAction" class="shop.itbug.fluttercheckversionx.actions.yaml.OpenInASAction"
+        <action id="OpenInASAction" class="shop.itbug.flutterx.actions.yaml.OpenInASAction"
                 text="Open in Android Studio"/>
 
 
@@ -276,63 +242,63 @@
             <reference ref="RevealGroup"/>
         </group>
 
-        <action class="shop.itbug.fluttercheckversionx.actions.context.HelpContextAction" id="HelpAction"
+        <action class="shop.itbug.flutterx.actions.context.HelpContextAction" id="HelpAction"
                 icon="AllIcons.Actions.Help"/>
-        <action id="FlutterPubPackageSearch" class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
-                text="搜索pub包">
+        <action id="FlutterPubPackageSearch" class="shop.itbug.flutterx.actions.FlutterPubPackageSearch"
+                text="Search Package">
         </action>
         <action id="AssetsAutoGenerateClassAction"
-                class="shop.itbug.fluttercheckversionx.actions.AssetsAutoGenerateClassAction">
+                class="shop.itbug.flutterx.actions.AssetsAutoGenerateClassAction">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
 
         <!--        打开设置-->
-        <action id="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"
-                class="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction" text="Setting"
+        <action id="shop.itbug.flutterx.actions.OpenSettingAnAction"
+                class="shop.itbug.flutterx.actions.OpenSettingAnAction" text="Setting"
                 icon="AllIcons.General.Settings"/>
 
-        <action id="IosFrameworkScanAction" class="shop.itbug.fluttercheckversionx.actions.IosFrameworkScanAction"
+        <action id="IosFrameworkScanAction" class="shop.itbug.flutterx.actions.IosFrameworkScanAction"
                 text="FrameworkScan">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
-        <action id="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"
-                class="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction" text="SpRefresh"/>
-        <group id="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
-               class="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"
+        <action id="shop.itbug.flutterx.window.sp.SpRefreshAction"
+                class="shop.itbug.flutterx.window.sp.SpRefreshAction" text="SpRefresh"/>
+        <group id="shop.itbug.flutterx.form.components.ChangeDioRequestItemUi"
+               class="shop.itbug.flutterx.form.components.ChangeDioRequestItemUi"
                text="DioRequestRenderStyle"/>
 
 
         <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">
             <separator key="ui.render"/>
-            <reference ref="shop.itbug.fluttercheckversionx.form.components.ChangeDioRequestItemUi"/>
+            <reference ref="shop.itbug.flutterx.form.components.ChangeDioRequestItemUi"/>
             <separator key="dio.apis.option.title"/>
-            <group id="Dio.Request.UI" class="shop.itbug.fluttercheckversionx.form.components.DioUIShowActionGroup"/>
+            <group id="Dio.Request.UI" class="shop.itbug.flutterx.form.components.DioUIShowActionGroup"/>
         </group>
 
-        <action id="DartBuildAction" class="shop.itbug.fluttercheckversionx.actions.components.DartBuildAction"
+        <action id="DartBuildAction" class="shop.itbug.flutterx.actions.components.DartBuildAction"
                 text="Dart Run Build (In Background)">
         </action>
 
 
         <!--        project 连接 项目列表-->
-        <action class="shop.itbug.fluttercheckversionx.form.actions.ProjectFilter" id="FlutterProjects"/>
+        <action class="shop.itbug.flutterx.form.actions.ProjectFilter" id="FlutterProjects"/>
         <!--        dio 接口搜索-->
-        <action id="DioApiSearchAction" class="shop.itbug.fluttercheckversionx.form.actions.DioApiSearchAction"
+        <action id="DioApiSearchAction" class="shop.itbug.flutterx.form.actions.DioApiSearchAction"
                 text="Dio Apis Search" icon="AllIcons.Actions.Search"/>
 
         <!--        清理接口-->
-        <action id="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"
-                class="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction" icon="AllIcons.Actions.GC"
+        <action id="shop.itbug.flutterx.form.socket.DioRequestCleanAction"
+                class="shop.itbug.flutterx.form.socket.DioRequestCleanAction" icon="AllIcons.Actions.GC"
                 text="Clean Dio Request List"/>
         <action id="DioRequestBodyToFreezedAction"
-                class="shop.itbug.fluttercheckversionx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
+                class="shop.itbug.flutterx.actions.DioRequestBodyToFreezedAction" text="Json to Freezed"
                 icon="/icons/freezed.svg"/>
         <group id="FlutterX Window Top Actions">
             <reference ref="Dio.Request.Item.Render.Option"/>
-            <reference ref="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
-            <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference ref="shop.itbug.flutterx.form.socket.DioRequestCleanAction"/>
+            <reference ref="shop.itbug.flutterx.actions.OpenSettingAnAction"/>
             <reference ref="FlutterProjects"/>
         </group>
 
@@ -341,20 +307,20 @@
         <group id="FlutterX window Left Action">
             <reference ref="Dio.Request.Item.Render.Option"/>
             <separator/>
-            <reference ref="shop.itbug.fluttercheckversionx.form.socket.DioRequestCleanAction"/>
-            <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference ref="shop.itbug.flutterx.form.socket.DioRequestCleanAction"/>
+            <reference ref="shop.itbug.flutterx.actions.OpenSettingAnAction"/>
         </group>
 
 
         <!--        获取 hive盒子列表操作-->
-        <action class="shop.itbug.fluttercheckversionx.hive.action.HiveGetBoxListAction" id="GetHiveBoxList"
+        <action class="shop.itbug.flutterx.hive.action.HiveGetBoxListAction" id="GetHiveBoxList"
                 icon="AllIcons.Actions.Refresh"/>
         <!--        hive 的使用说明-->
-        <action id="HiveTutorialHelp" class="shop.itbug.fluttercheckversionx.hive.action.HiveTutorialHelp"
+        <action id="HiveTutorialHelp" class="shop.itbug.flutterx.hive.action.HiveTutorialHelp"
                 icon="AllIcons.Actions.Help" description="Hive help" text="Help"/>
 
         <!--        hive 的操作工具栏-->
-        <group id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup">
+        <group id="shop.itbug.flutterx.hive.action.HiveDefaultActionGroup">
             <reference ref="FlutterProjects"/>
             <reference ref="GetHiveBoxList"/>
             <!--            <reference id="HiveTutorialHelp"/>-->
@@ -363,23 +329,23 @@
 
 
         <!--  riverpod 操作 -->
-        <action id="StatelessToConsumer" class="shop.itbug.fluttercheckversionx.actions.riverpod.StatelessToConsumer"
+        <action id="StatelessToConsumer" class="shop.itbug.flutterx.actions.riverpod.StatelessToConsumer"
                 text="StatelessWidget to ConsumerWidget">
             <keyboard-shortcut keymap="$default" first-keystroke="meta alt M"/>
         </action>
         <action id="StatefulToConsumer"
-                class="shop.itbug.fluttercheckversionx.actions.riverpod.StatefulToConsumerAction"
+                class="shop.itbug.flutterx.actions.riverpod.StatefulToConsumerAction"
                 text="StatefulWidget to ConsumerStatefulWidget"/>
         <action id="RiverpodActionsSetting"
-                class="shop.itbug.fluttercheckversionx.actions.riverpod.RiverpodActionsSetting"
+                class="shop.itbug.flutterx.actions.riverpod.RiverpodActionsSetting"
                 text="Enable Riverpod Tool"/>
 
 
         <action id="FreezedFactoryAddDefaultValue"
-                class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedFactoryAddDefaultValue"
+                class="shop.itbug.flutterx.actions.freezed.FreezedFactoryAddDefaultValue"
                 text="Add Default Value"/>
         <action id="FreezedClassToSimpleClass"
-                class="shop.itbug.fluttercheckversionx.actions.freezed.FreezedClassToSimpleClass"
+                class="shop.itbug.flutterx.actions.freezed.FreezedClassToSimpleClass"
                 text="Freezed to Simple Class"/>
 
 
@@ -393,31 +359,33 @@
 
 
         <!--    status bar widgets    -->
-        <action id="SearchPubPluginAction" class="shop.itbug.fluttercheckversionx.actions.bar.SearchPubPluginAction"/>
+        <action id="SearchPubPluginAction" class="shop.itbug.flutterx.actions.bar.SearchPubPluginAction"/>
         <action id="FlutterRunBuilderCommandAction"
-                class="shop.itbug.fluttercheckversionx.actions.bar.FlutterRunBuilderCommandAction"/>
+                class="shop.itbug.flutterx.actions.bar.FlutterRunBuilderCommandAction"/>
         <action id="StatusBarJsonToFreezedClass"
-                class="shop.itbug.fluttercheckversionx.actions.bar.JsonToFreezedClass"/>
-        <action id="StatusBarOpenSettingAction" class="shop.itbug.fluttercheckversionx.actions.bar.OpenSettingAction"/>
-        <action id="GoToDiscordAction" class="shop.itbug.fluttercheckversionx.actions.bar.GoToDiscordAction"/>
-        <action id="GoToQQGroupAction" class="shop.itbug.fluttercheckversionx.actions.bar.GoToQQGroupAction"/>
-        <action id="GoToDocumentAction" class="shop.itbug.fluttercheckversionx.actions.bar.GoToDocumentAction"/>
-        <!--        <action id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"-->
-        <!-- class="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction" text="Json to Dart Macro"/>-->
-        <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenAndroidProjectOnASAction"
+                class="shop.itbug.flutterx.actions.bar.JsonToFreezedClass"/>
+        <action id="StatusBarOpenSettingAction" class="shop.itbug.flutterx.actions.bar.OpenSettingAction"/>
+        <action id="GoToDiscordAction" class="shop.itbug.flutterx.actions.bar.GoToDiscordAction"/>
+        <action id="GoToQQGroupAction" class="shop.itbug.flutterx.actions.bar.GoToQQGroupAction"/>
+        <action id="GoToDocumentAction" class="shop.itbug.flutterx.actions.bar.GoToDocumentAction"/>
+        <!--        <action id="shop.itbug.flutterx.dialog.macro.DartMacroAction"-->
+        <!-- class="shop.itbug.flutterx.dialog.macro.DartMacroAction" text="Json to Dart Macro"/>-->
+        <action class="shop.itbug.flutterx.actions.bar.OpenAndroidProjectOnASAction"
                 id="OpenAndroidProjectOnASAction"/>
-        <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenIosProjectInXcodeAction"
+        <action class="shop.itbug.flutterx.actions.bar.OpenIosProjectInXcodeAction"
                 id="OpenIosProjectInXcodeAction"/>
-        <action class="shop.itbug.fluttercheckversionx.actions.bar.OpenMacosProjectInXcodeAction"
+        <action class="shop.itbug.flutterx.actions.bar.OpenMacosProjectInXcodeAction"
                 id="OpenMacosProjectInXcodeAction"/>
-        <action class="shop.itbug.fluttercheckversionx.actions.bar.LanguagePopupSettingsAction"
+        <action class="shop.itbug.flutterx.actions.bar.LanguagePopupSettingsAction"
                 id="LanguagePopupSettingsAction"/>
+        <action id="FlutterDownloaderAction" class="shop.itbug.flutterx.dialog.FlutterDownloaderAction"
+                text="Flutter Downloader" icon="AllIcons.Actions.Download"/>
         <group id="status_bar_actions">
             <reference ref="SearchPubPluginAction"/>
             <reference ref="FlutterRunBuilderCommandAction"/>
             <reference ref="DartBuildAction"/>
             <separator/>
-            <!--            <reference id="shop.itbug.fluttercheckversionx.dialog.macro.DartMacroAction"/>-->
+            <!--            <reference id="shop.itbug.flutterx.dialog.macro.DartMacroAction"/>-->
             <reference ref="StatusBarJsonToFreezedClass"/>
             <separator/>
             <reference ref="GoToQQGroupAction"/>
@@ -430,37 +398,39 @@
             <reference ref="OpenAndroidProjectOnASAction"/>
             <reference ref="OpenIosProjectInXcodeAction"/>
             <reference ref="OpenMacosProjectInXcodeAction"/>
+            <separator text="Other" />
+            <reference ref="FlutterDownloaderAction"/>
         </group>
         <!--    status bar widgets  end   -->
         <action id="SimpleClassToFreezedAction"
-                class="shop.itbug.fluttercheckversionx.actions.freezed.SimpleClassToFreezedAction">
+                class="shop.itbug.flutterx.actions.freezed.SimpleClassToFreezedAction">
         </action>
-        <!--        <action id="FlutterXRunHotRefresh" class="shop.itbug.fluttercheckversionx.actions.run.FlutterXRunHotRefresh"-->
+        <!--        <action id="FlutterXRunHotRefresh" class="shop.itbug.flutterx.actions.run.FlutterXRunHotRefresh"-->
         <!-- text="FlutterXRunHotRefresh">-->
         <!--            <add-to-group group-id="RunTab.TopToolbar" anchor="after" relative-to-action="Stop"/>-->
         <!--        </action>-->
 
         <action id="RiverpodAutoImportTextConfig"
-                class="shop.itbug.fluttercheckversionx.actions.riverpod.RiverpodAutoImportTextConfig">
+                class="shop.itbug.flutterx.actions.riverpod.RiverpodAutoImportTextConfig">
             <add-to-group group-id="WidgetToRiverpod" anchor="after" relative-to-action="RiverpodActionsSetting"/>
         </action>
-        <action id="DioApiSortToggleAction" class="shop.itbug.fluttercheckversionx.actions.dio.DioApiSortToggleAction"/>
+        <action id="DioApiSortToggleAction" class="shop.itbug.flutterx.actions.dio.DioApiSortToggleAction"/>
         <action id="OpenFlutterAndroidProjectInAsAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.OpenFlutterAndroidProjectInAsAction"
+                class="shop.itbug.flutterx.actions.tool.OpenFlutterAndroidProjectInAsAction"
                 text="Android Studio">
             <add-to-group group-id="RevealGroup" anchor="last"/>
         </action>
         <action id="OpenFlutterIosProjectInAsAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.OpenFlutterIosProjectInAsAction" text="Xcode"
+                class="shop.itbug.flutterx.actions.tool.OpenFlutterIosProjectInAsAction" text="Xcode"
                 description="XCode">
             <add-to-group group-id="RevealGroup" anchor="last"/>
         </action>
         <action id="Freezed3ClassFixActionWithSealed"
-                class="shop.itbug.fluttercheckversionx.actions.freezed.Freezed3ClassFixBySealed"
+                class="shop.itbug.flutterx.actions.freezed.Freezed3ClassFixBySealed"
                 text="freezed class add `sealed`"/>
 
         <action id="Freezed3ClassFixActionWitAbstract"
-                class="shop.itbug.fluttercheckversionx.actions.freezed.Freezed3ClassFixByAbstract"
+                class="shop.itbug.flutterx.actions.freezed.Freezed3ClassFixByAbstract"
                 text="freezed class add `abstract`"/>
 
         <group id="Fix Freezed Class Tool" popup="true">
@@ -469,16 +439,16 @@
         </group>
 
         <action id="FlutterXCopyAssetPathAction"
-                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXCopyAssetPathAction"
+                class="shop.itbug.flutterx.actions.imagePreview.FlutterXCopyAssetPathAction"
                 text="Copy Path"/>
         <action id="FlutterXAssetsCopyImageComponentAction"
-                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsCopyImageComponentAction"
+                class="shop.itbug.flutterx.actions.imagePreview.FlutterXAssetsCopyImageComponentAction"
                 text="Copy Image.asset"/>
         <action id="FlutterXAssetsOpenFileAction"
-                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsOpenFileAction"
+                class="shop.itbug.flutterx.actions.imagePreview.FlutterXAssetsOpenFileAction"
                 text="Open..."/>
         <action id="FlutterXAssetsSvgCopyAction"
-                class="shop.itbug.fluttercheckversionx.actions.imagePreview.FlutterXAssetsSvgCopyAction"
+                class="shop.itbug.flutterx.actions.imagePreview.FlutterXAssetsSvgCopyAction"
                 text="Copy SvgPicture.asset"/>
 
         <group id="FlutterXAssetsImagePreviewPopup" popup="true" class="com.intellij.ide.actions.CopyReferencePopup">
@@ -494,30 +464,30 @@
 
 
         <action id="FlutterXAssetsPanelRefreshAction"
-                class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterXAssetsPanelRefreshAction"
+                class="shop.itbug.flutterx.actions.imagePreview.toolbar.FlutterXAssetsPanelRefreshAction"
                 text="Refresh"/>
 
         <group id="FlutterXAssetsImagePreviewToolBar"
-               class="shop.itbug.fluttercheckversionx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup">
+               class="shop.itbug.flutterx.actions.imagePreview.toolbar.FlutterAssetsPreviewPanelToolbarActionGroup">
             <reference ref="FlutterXAssetsPanelRefreshAction"/>
-            <reference ref="shop.itbug.fluttercheckversionx.actions.OpenSettingAnAction"/>
+            <reference ref="shop.itbug.flutterx.actions.OpenSettingAnAction"/>
             <reference ref="HelpAction"/>
         </group>
 
 
         <action id="FlutterL10nWindowTreeRefreshAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nWindowTreeRefreshAction"
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nWindowTreeRefreshAction"
                 text="Refresh keys"/>
         <action id="FlutterL10nSettingChangeAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nSettingChangeAction"
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nSettingChangeAction"
                 text="Change l10n folder"/>
         <action id="FlutterL10nRunGenAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRunGenAction"
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nRunGenAction"
                 text="Run Flutter gen-l10n"/>
         <action id="FlutterL10nRemoveKeyAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRemoveKeyAction" text="Delete Key"/>
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nRemoveKeyAction" text="Delete Key"/>
         <action id="FlutterL10nRenameKeyAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nRenameKeyAction" text="Rename Key"/>
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nRenameKeyAction" text="Rename Key"/>
         <group id="flutter-l10n-right-menu">
             <reference ref="FlutterL10nRemoveKeyAction"/>
             <reference ref="FlutterL10nRenameKeyAction"/>
@@ -529,7 +499,7 @@
         </group>
 
         <action id="FlutterL10nOpenFileWithKeyAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nOpenFileWithKeyAction"
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nOpenFileWithKeyAction"
                 text="Show in file" icon="AllIcons.General.Locate"/>
         <group id="FlutterL10nEditorPanelActionGroup">
             <reference ref="FlutterL10nOpenFileWithKeyAction"/>
@@ -538,44 +508,45 @@
 
 
         <action id="LoggerCleanAllAction"
-                class="shop.itbug.fluttercheckversionx.window.logger.action.LoggerCleanAllAction"/>
+                class="shop.itbug.flutterx.window.logger.action.LoggerCleanAllAction"/>
         <group id="FlutterXLoggerWindowToolbarActionGroup">
             <reference ref="LoggerCleanAllAction"/>
         </group>
 
 
         <action id="FlutterL10nAddNewKeyAction"
-                class="shop.itbug.fluttercheckversionx.actions.tool.FlutterL10nAddNewKeyAction" text="Add new key"/>
+                class="shop.itbug.flutterx.actions.tool.FlutterL10nAddNewKeyAction" text="Add new key"/>
 
 
 
         <action id="DartVmHttpModuleSimpleShowAction"
-                class="shop.itbug.fluttercheckversionx.actions.vm.network.DartVmHttpModuleSimpleShowAction"
+                class="shop.itbug.flutterx.actions.vm.network.DartVmHttpModuleSimpleShowAction"
                 text="Dart VM Http Requests"/>
+
     </actions>
 
     <actions>
         <!--    dio 请求里面的清空按钮    -->
         <group id="DioTool.CleanService">
-            <action class="shop.itbug.fluttercheckversionx.form.actions.DioCleanService" icon="AllIcons.Actions.GC"
+            <action class="shop.itbug.flutterx.form.actions.DioCleanService" icon="AllIcons.Actions.GC"
                     id="DioWindow.Clean" text="Clean All"/>
             <separator/>
         </group>
         <group id="Yaml.Search">
-            <action class="shop.itbug.fluttercheckversionx.actions.FlutterPubPackageSearch"
+            <action class="shop.itbug.flutterx.actions.FlutterPubPackageSearch"
                     icon="AllIcons.Actions.Search" id="Yaml.Search.Icon" text="搜索Pub Dart 包"/>
         </group>
     </actions>
     <actions>
         <group id="dart-file-actions" text="FlutterX Tools" popup="true" icon="/icons/flutter.svg">
-            <action id="gen-fun-doc" class="shop.itbug.fluttercheckversionx.actions.GenerateFunctionDocument"
+            <action id="gen-fun-doc" class="shop.itbug.flutterx.actions.GenerateFunctionDocument"
                     text="Add Comments to Functions">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta K"/>
             </action>
-            <action id="fx-model-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FxModelToFreezedModel"
+            <action id="fx-model-to-freezed" class="shop.itbug.flutterx.actions.FxModelToFreezedModel"
                     text="Model to Freezed">
             </action>
-            <action id="fun-params-to-freezed" class="shop.itbug.fluttercheckversionx.actions.FunctionParamsToFreezed"
+            <action id="fun-params-to-freezed" class="shop.itbug.flutterx.actions.FunctionParamsToFreezed"
                     text="Function Params To Freezed"/>
             <reference ref="FreezedFactoryAddDefaultValue"/>
             <reference ref="FreezedClassToSimpleClass"/>
@@ -590,25 +561,25 @@
     <actions>
         <group id="dio-window-view-params">
             <action id="DioWindowShowDetailPanel"
-                    class="shop.itbug.fluttercheckversionx.actions.DioWindowAutoScrollToMaxAction"/>
+                    class="shop.itbug.flutterx.actions.DioWindowAutoScrollToMaxAction"/>
             <reference ref="DioApiSortToggleAction"/>
             <separator/>
-            <action id="DioWindowCopy" class="shop.itbug.fluttercheckversionx.actions.DioWindowCopyAction"/>
-            <action id="ApiCopyPathAction" class="shop.itbug.fluttercheckversionx.actions.ApiCopyPathAction"/>
-            <action id="ApiCopyAll" class="shop.itbug.fluttercheckversionx.actions.ApiCopyAll"/>
+            <action id="DioWindowCopy" class="shop.itbug.flutterx.actions.DioWindowCopyAction"/>
+            <action id="ApiCopyPathAction" class="shop.itbug.flutterx.actions.ApiCopyPathAction"/>
+            <action id="ApiCopyAll" class="shop.itbug.flutterx.actions.ApiCopyAll"/>
             <action id="HttpCopyToCurlAction"
-                    class="shop.itbug.fluttercheckversionx.actions.vm.network.HttpCopyToCurlAction"/>
-            <action class="shop.itbug.fluttercheckversionx.actions.dio.DioJsonCopyToClipboard"
+                    class="shop.itbug.flutterx.actions.vm.network.HttpCopyToCurlAction"/>
+            <action class="shop.itbug.flutterx.actions.dio.DioJsonCopyToClipboard"
                     id="DioJsonCopyToClipboard"/>
             <separator/>
             <action id="DioWindowViewHeadersAction"
-                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewHeadersAction"/>
+                    class="shop.itbug.flutterx.actions.DioWindowViewHeadersAction"/>
             <action id="DioViewResponseHeadersAction"
-                    class="shop.itbug.fluttercheckversionx.actions.dio.DioResponseHeadersViewJsonAction"/>
+                    class="shop.itbug.flutterx.actions.dio.DioResponseHeadersViewJsonAction"/>
             <action id="dio-window-view-GET"
-                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewGetParamsAction"/>
+                    class="shop.itbug.flutterx.actions.DioWindowViewGetParamsAction"/>
             <action id="DioWindowViewPostParamsAction"
-                    class="shop.itbug.fluttercheckversionx.actions.DioWindowViewPostParamsAction"/>
+                    class="shop.itbug.flutterx.actions.DioWindowViewPostParamsAction"/>
             <separator/>
             <reference ref="DioRequestBodyToFreezedAction"/>
         </group>
@@ -617,10 +588,10 @@
 
     <actions>
         <action id="DioCopyAllPathsAction"
-                class="shop.itbug.fluttercheckversionx.actions.dio.other.DioCopyAllPathsAction"
+                class="shop.itbug.flutterx.actions.dio.other.DioCopyAllPathsAction"
                 text="Copy All Api Paths"/>
         <action id="OpenDioJsonDataInEditorAction"
-                class="shop.itbug.fluttercheckversionx.actions.dio.other.OpenDioJsonDataInEditorAction"
+                class="shop.itbug.flutterx.actions.dio.other.OpenDioJsonDataInEditorAction"
                 text="Show Data In Editor">
 
         </action>
@@ -636,10 +607,10 @@
 
 
     <actions>
-        <action id="HurlCopyAllAction" class="shop.itbug.fluttercheckversionx.actions.dio.hurl.HurlCopyAllAction"
+        <action id="HurlCopyAllAction" class="shop.itbug.flutterx.actions.dio.hurl.HurlCopyAllAction"
                 text="Copy All Request Hurl Base"/>
         <action id="HurlCopyBaseActionImpl"
-                class="shop.itbug.fluttercheckversionx.actions.dio.hurl.HurlCopyBaseActionImpl" text="Copy Base"/>
+                class="shop.itbug.flutterx.actions.dio.hurl.HurlCopyBaseActionImpl" text="Copy Base"/>
         <group id="HurlGenerateActions" popup="true" text="Hurl Generate">
             <reference ref="HurlCopyBaseActionImpl"/>
             <reference ref="HurlCopyAllAction"/>
@@ -662,7 +633,7 @@
     <actions>
         <group id="SpPanelToolbar">
             <reference ref="FlutterProjects"/>
-            <reference ref="shop.itbug.fluttercheckversionx.window.sp.SpRefreshAction"/>
+            <reference ref="shop.itbug.flutterx.window.sp.SpRefreshAction"/>
             <reference ref="HelpAction"/>
         </group>
     </actions>
@@ -671,17 +642,17 @@
     <!--sp 右键菜单-->
     <actions>
         <action id="SpUpdateStringValueAction"
-                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateStringValueAction"/>
+                class="shop.itbug.flutterx.window.sp.action.SpUpdateStringValueAction"/>
         <action id="SpUpdateBoolValueAction"
-                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateBoolValueAction"/>
+                class="shop.itbug.flutterx.window.sp.action.SpUpdateBoolValueAction"/>
 
         <action id="SpUpdateIntValueAction"
-                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateIntValueAction"/>
+                class="shop.itbug.flutterx.window.sp.action.SpUpdateIntValueAction"/>
 
         <action id="SpUpdateDoubleValueAction"
-                class="shop.itbug.fluttercheckversionx.window.sp.action.SpUpdateDoubleValueAction"/>
-        <action id="SpRemoveKeyAction" class="shop.itbug.fluttercheckversionx.window.sp.action.SpRemoveKeyAction"/>
-        <action id="SPRemoveAllAction" class="shop.itbug.fluttercheckversionx.window.sp.action.SPRemoveAllAction"/>
+                class="shop.itbug.flutterx.window.sp.action.SpUpdateDoubleValueAction"/>
+        <action id="SpRemoveKeyAction" class="shop.itbug.flutterx.window.sp.action.SpRemoveKeyAction"/>
+        <action id="SPRemoveAllAction" class="shop.itbug.flutterx.window.sp.action.SPRemoveAllAction"/>
 
         <group id="SPRightMenuAction">
             <reference ref="SpRemoveKeyAction"/>
@@ -696,15 +667,15 @@
 
 
     <actions>
-        <action id="DioStatusCheckAction" class="shop.itbug.fluttercheckversionx.actions.dio.DioStatusCheckAction"
+        <action id="DioStatusCheckAction" class="shop.itbug.flutterx.actions.dio.DioStatusCheckAction"
                 text="FlutterX Socket Status">
             <add-to-group group-id="FlutterX Window Top Actions" anchor="first"/>
             <add-to-group group-id="SpPanelToolbar" anchor="last"/>
-            <add-to-group group-id="shop.itbug.fluttercheckversionx.hive.action.HiveDefaultActionGroup" anchor="last"/>
+            <add-to-group group-id="shop.itbug.flutterx.hive.action.HiveDefaultActionGroup" anchor="last"/>
             <add-to-group group-id="FlutterXLoggerWindowToolbarActionGroup"/>
         </action>
         <!-- Quick Open In Actions Group -->
-        <group id="QuickOpenInActions" class="shop.itbug.fluttercheckversionx.actions.components.QuickOpenInActions"
+        <group id="QuickOpenInActions" class="shop.itbug.flutterx.actions.components.QuickOpenInActions"
                text="Custom Open In" popup="true">
             <add-to-group group-id="RevealGroup" anchor="last"/>
         </group>

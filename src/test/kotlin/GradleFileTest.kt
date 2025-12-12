@@ -3,16 +3,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
-import shop.itbug.fluttercheckversionx.inlay.gradle.aliyunGradleMirrorImages
-import shop.itbug.fluttercheckversionx.util.GrPsiElementHelper
-import shop.itbug.fluttercheckversionx.util.MyGrPsiElementFactory
+import shop.itbug.flutterx.inlay.gradle.aliyunGradleMirrorImages
+import shop.itbug.flutterx.util.GrPsiElementHelper
+import shop.itbug.flutterx.util.MyGrPsiElementFactory
 
 class GradleFileTest : BasePlatformTestCase() {
     override fun getTestDataPath():  String {

@@ -1,0 +1,85 @@
+package shop.itbug.flutterx.window.vm
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.project.Project
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.ui.component.Link
+import org.jetbrains.jewel.ui.component.Text
+import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.common.dart.FlutterXVMService
+import shop.itbug.flutterx.config.PluginConfig
+import shop.itbug.flutterx.constance.discordUrl
+import shop.itbug.flutterx.i18n.PluginBundle
+import shop.itbug.flutterx.widget.CenterText
+import shop.itbug.flutterx.widget.CustomTabRow
+import java.net.URI
+
+
+@Composable
+fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterAppInstance) -> Unit) {
+    var tabIndex by remember { mutableIntStateOf(0) }
+    val flutterAppList by FlutterXVMService.getInstance(project).runningApps.collectAsState()
+    val isEnableFuture = FlutterXVMService.getInstance(project).isEnableFuture.collectAsState().value
+    if (flutterAppList.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
+                if (isEnableFuture.not()) {
+                    Text("Feature has been disabled in settings", color = JewelTheme.globalColors.text.error)
+                }
+                CenterText(
+                    """Not Found any running flutter app.
+Please make sure the flutter app is running and the observatory is enabled.
+If you are running on a real device, please make sure the device is connected to the computer and the port is forwarded.
+"""
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Link(PluginBundle.get("doc"), onClick = {
+                        BrowserUtil.browse(URI.create("https://flutterx.itbug.shop/en/vm/dart_vm_panel/"))
+                    })
+                    if (PluginConfig.getState(project).showDiscord) {
+                        Link("Discord", onClick = {
+                            BrowserUtil.browse(discordUrl)
+                        })
+                    }
+
+                    if (PluginConfig.getState(project).showRewardAction) {
+                        Link(PluginBundle.get("reward") + "(wechat)", onClick = {
+                            BrowserUtil.browse(URI.create("https://itbug.shop/static/ds.68eb4cac.jpg"))
+                        })
+                    }
+
+                    Link(PluginBundle.get("bugs"), onClick = {
+                        BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
+                    })
+                }
+
+            }
+        }
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            CustomTabRow(tabIndex, tabs = flutterAppList.map { it.appInfo.deviceId }.toList(), onTabClick = {
+                tabIndex = it
+            })
+            val selectApp = flutterAppList.getOrNull(tabIndex)
+            if (selectApp != null) {
+                body.invoke(selectApp)
+            }
+        }
+    }
+}
+

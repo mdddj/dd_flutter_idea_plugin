@@ -6,8 +6,8 @@ import org.jetbrains.yaml.YAMLElementGenerator
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YAMLMapping
-import shop.itbug.fluttercheckversionx.model.FlutterPluginType
-import shop.itbug.fluttercheckversionx.util.PubspecYamlElementFactory
+import shop.itbug.flutterx.model.FlutterPluginType
+import shop.itbug.flutterx.util.PubspecYamlElementFactory
 
 
 private val fileText = """
