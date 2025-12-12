@@ -1,7 +1,7 @@
 <idea-plugin>
 
     <actions>
-        <action class="shop.itbug.fluttercheckversionx.actions.vm.network.HttpProfileCopyAction" id="HttpProfileCopyAction" />
+        <action class="shop.itbug.flutterx.actions.vm.network.HttpProfileCopyAction" id="HttpProfileCopyAction" />
         <group id="FlutterVmHttpProfile">
             <reference ref="HttpProfileCopyAction" />
         </group>

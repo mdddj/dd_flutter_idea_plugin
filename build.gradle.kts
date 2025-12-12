@@ -12,7 +12,7 @@ val pluginVersion: String by project
 plugins {
     idea
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.10.4"
+    id("org.jetbrains.intellij.platform") version "2.10.5"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
@@ -26,7 +26,7 @@ repositories {
     mavenCentral()
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-    maven { url = uri("https://plugins.gradle.org/m2/") }
+    maven("https://plugins.gradle.org/m2/")
     intellijPlatform {
         defaultRepositories()
         releases()
@@ -34,6 +34,25 @@ repositories {
         androidStudioInstallers()
         intellijDependencies()
     }
+    //------------------------阿里云镜像-----------------------------
+    maven("https://maven.aliyun.com/repository/google")
+    maven("https://maven.aliyun.com/repository/public")
+    maven("https://maven.aliyun.com/repository/jcenter")
+    maven("https://maven.aliyun.com/repository/central")
+    maven("https://maven.aliyun.com/repository/gradle-plugin")
+    maven {
+        url = uri("http://maven.aliyun.com/nexus/content/groups/public")
+        isAllowInsecureProtocol = true
+    }
+    maven {
+        url = uri("http://maven.aliyun.com/nexus/content/groups/public/")
+        isAllowInsecureProtocol = true
+    }
+    maven {
+        url = uri("http://maven.aliyun.com/nexus/content/repositories/releases/")
+        isAllowInsecureProtocol = true
+    }
+    //------------------------阿里云镜像END-----------------------------
 }
 
 
@@ -55,8 +74,8 @@ dependencies {
         //intellijIdeaCommunity("2025.2.1")
         local("/Applications/Android Studio.app")
         bundledPlugins(bPlugins)
-        //"io.flutter:88.1.0"
-        plugins("Dart:$dartVersion", "io.flutter:88.1.0")
+        //"io.flutter:88.2.0"
+        plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
         javaCompiler()
@@ -146,7 +165,6 @@ tasks {
                 "-Didea.log.level=DEBUG",
                 "-Didea.log.debug=true",
                 "-Didea.log.verbose=true",
-                "-Dlog4j.logger.shop.itbug.fluttercheckversionx=DEBUG"
             )
         }
         systemProperty("idea.log.trace.categories", "shop.itbug.fluttercheckversionx")

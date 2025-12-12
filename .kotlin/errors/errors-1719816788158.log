@@ -50,18 +50,18 @@ The root cause java.lang.RuntimeException was thrown at: org.jetbrains.kotlin.ba
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
 	at java.base/java.lang.Thread.run(Thread.java:840)
 Caused by: java.lang.RuntimeException: Exception while generating code for:
-FUN LOCAL_FUNCTION_FOR_LAMBDA name:handle$lambda$1 visibility:private modality:FINAL <> (this$0:shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay, <unused var>:java.awt.event.MouseEvent, <unused var>:java.awt.Point) returnType:kotlin.Unit?
-  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:this$0 index:0 type:shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay
+FUN LOCAL_FUNCTION_FOR_LAMBDA name:handle$lambda$1 visibility:private modality:FINAL <> (this$0:shop.itbug.flutterx.inlay.DartLibraryInlay, <unused var>:java.awt.event.MouseEvent, <unused var>:java.awt.Point) returnType:kotlin.Unit?
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:this$0 index:0 type:shop.itbug.flutterx.inlay.DartLibraryInlay
   VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:1 type:java.awt.event.MouseEvent
   VALUE_PARAMETER UNDERSCORE_PARAMETER name:<unused var> index:2 type:java.awt.Point
   BLOCK_BODY
     CALL 'public final fun run <T, R> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.run, R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
-      <T>: shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay
+      <T>: shop.itbug.flutterx.inlay.DartLibraryInlay
       <R>: kotlin.Unit
-      $receiver: GET_VAR 'this$0: shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay declared in shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay.handle$lambda$1' type=shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay origin=null
-      block: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay, kotlin.Unit> origin=LAMBDA
+      $receiver: GET_VAR 'this$0: shop.itbug.flutterx.inlay.DartLibraryInlay declared in shop.itbug.flutterx.inlay.DartLibraryInlay.handle$lambda$1' type=shop.itbug.flutterx.inlay.DartLibraryInlay origin=null
+      block: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<shop.itbug.flutterx.inlay.DartLibraryInlay, kotlin.Unit> origin=LAMBDA
         COMPOSITE type=kotlin.Unit origin=null
-        FUNCTION_REFERENCE 'private final fun handle$lambda$1$lambda$0 (): kotlin.Unit declared in shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay' type=@[ExtensionFunctionType] kotlin.Function1<shop.itbug.fluttercheckversionx.inlay.DartLibraryInlay, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget=null
+        FUNCTION_REFERENCE 'private final fun handle$lambda$1$lambda$0 (): kotlin.Unit declared in shop.itbug.flutterx.inlay.DartLibraryInlay' type=@[ExtensionFunctionType] kotlin.Function1<shop.itbug.flutterx.inlay.DartLibraryInlay, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget=null
 
 	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
 	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate$default(FunctionCodegen.kt:42)

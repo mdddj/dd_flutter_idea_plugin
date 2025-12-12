@@ -22,7 +22,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
-import shop.itbug.fluttercheckversionx.common.dart.FlutterAppInfo
+import shop.itbug.flutterx.common.dart.FlutterAppInfo
 import vm.consumer.*
 import vm.element.*
 import vm.internal.RequestSink

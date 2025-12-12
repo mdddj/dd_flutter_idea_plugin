@@ -1,11 +1,13 @@
-
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
-import shop.itbug.fluttercheckversionx.inlay.gradle.aliyunGradleMirrorImages
-import shop.itbug.fluttercheckversionx.util.MyKotlinPsiElementFactory
+import shop.itbug.flutterx.inlay.gradle.aliyunKtsMirrorImages
+import shop.itbug.flutterx.util.MyKotlinPsiElementFactory
+import shop.itbug.flutterx.util.reformatText
 
 
 class BuildGradleKtsTest : BasePlatformTestCase() {
@@ -39,15 +41,18 @@ class BuildGradleKtsTest : BasePlatformTestCase() {
         assert(ktFunLit != null)
         if (ktFunLit != null) {
             val block = ktFunLit.bodyExpression ?: return
-            val ele = aliyunGradleMirrorImages.map(factory::createCallExpression)
-            val last = block.statements.lastOrNull() ?: return
-
+            val ele = aliyunKtsMirrorImages.map(factory::createCallExpression)
+            var last: PsiElement = block.statements.lastOrNull() ?: return
+            val whiteSpaceFromText = PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\n")
             WriteCommandAction.runWriteCommandAction(project) {
-//                ele.forEach(block::add)
+                last = block.addAfter(whiteSpaceFromText, last)
                 ele.forEach {
-                    block.addAfter(it, last)
+                    last = block.addAfter(it, last)
+                    last = block.addAfter(whiteSpaceFromText, last)
                 }
             }
+            // 格式化
+            ktFile.reformatText()
             println(ktFile.text)
         }
 

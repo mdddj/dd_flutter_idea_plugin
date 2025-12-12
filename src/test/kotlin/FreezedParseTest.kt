@@ -2,8 +2,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
-import shop.itbug.fluttercheckversionx.manager.DartClassManager
-import shop.itbug.fluttercheckversionx.manager.myManagerFun
+import shop.itbug.flutterx.manager.DartClassManager
+import shop.itbug.flutterx.manager.myManagerFun
 
 class FreezedParseTest : BasePlatformTestCase() {
 
