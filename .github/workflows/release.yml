@@ -62,6 +62,29 @@ jobs:
           echo "plugin_name=$(basename $PLUGIN_FILE)" >> $GITHUB_OUTPUT
           echo "Found plugin: $PLUGIN_FILE"
 
+      # ------------------- FlutterX-MCP 构建 -------------------
+      - name: 授予 FlutterX-MCP gradlew 执行权限
+        run: chmod +x extras/FlutterX-MCP/gradlew
+
+      - name: 打包 FlutterX-MCP 插件
+        run: |
+          cd extras/FlutterX-MCP
+          ./gradlew buildPlugin --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetaspaceSize=512m"
+
+      - name: 获取 FlutterX-MCP 插件包
+        id: find_mcp_plugin
+        run: |
+          MCP_PLUGIN_FILE=$(find extras/FlutterX-MCP/build/distributions -name "*.zip" | head -1)
+          if [ -z "$MCP_PLUGIN_FILE" ]; then
+            echo "No MCP plugin file found!"
+            exit 1
+          fi
+          echo "mcp_plugin_file=$MCP_PLUGIN_FILE" >> $GITHUB_OUTPUT
+          echo "mcp_plugin_name=$(basename $MCP_PLUGIN_FILE)" >> $GITHUB_OUTPUT
+          echo "Found MCP plugin: $MCP_PLUGIN_FILE"
+
       # 这一步是导致错误的元凶之四，已移除 working-directory
       - name: 获取版本更新说明
         id: release_notes
@@ -82,12 +105,13 @@ jobs:
           # files 也需要指向正确的位置
           files: |
             ${{ steps.find_plugin.outputs.plugin_file }}
+            ${{ steps.find_mcp_plugin.outputs.mcp_plugin_file }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 上传资产文件
+      - name: 上传 FlutterX 资产文件
         uses: actions/upload-artifact@v4
         with:
           name: FlutterX-${{ steps.get_version.outputs.version }}
@@ -95,10 +119,18 @@ jobs:
           path: ${{ steps.find_plugin.outputs.plugin_file }}
           retention-days: 30
 
+      - name: 上传 FlutterX-MCP 资产文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlutterX-MCP-${{ steps.get_version.outputs.version }}
+          path: ${{ steps.find_mcp_plugin.outputs.mcp_plugin_file }}
+          retention-days: 30
+
       # 这一步的 working-directory 也应该移除
       - name: 插件验证
         run: |
           echo "✅ Plugin built successfully!"
-          echo "📁 Plugin file: ${{ steps.find_plugin.outputs.plugin_name }}"
+          echo "📁 FlutterX Plugin file: ${{ steps.find_plugin.outputs.plugin_name }}"
+          echo "📁 FlutterX-MCP Plugin file: ${{ steps.find_mcp_plugin.outputs.mcp_plugin_name }}"
           echo "🏷️ Version: ${{ steps.get_version.outputs.version }}"
           echo "📦 Release created: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.tag_name }}"

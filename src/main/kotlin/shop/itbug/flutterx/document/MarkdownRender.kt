@@ -143,12 +143,20 @@ fun MarkdownNode.toHtml(project: Project): String {
             MarkdownElementTypes.EMPH -> wrapChildren("em")
             MarkdownElementTypes.STRONG -> wrapChildren("strong")
             GFMElementTypes.STRIKETHROUGH -> wrapChildren("del")
-            MarkdownElementTypes.ATX_1 -> wrapChildren("h1")
-            MarkdownElementTypes.ATX_2 -> wrapChildren("h2")
-            MarkdownElementTypes.ATX_3 -> wrapChildren("h3")
-            MarkdownElementTypes.ATX_4 -> wrapChildren("h4")
-            MarkdownElementTypes.ATX_5 -> wrapChildren("h5")
-            MarkdownElementTypes.ATX_6 -> wrapChildren("h6")
+            MarkdownTokenTypes.HORIZONTAL_RULE -> sb.append("<hr style='border:none;border-top:1px solid #555;margin:8px 0;'/>")
+            MarkdownElementTypes.ATX_1, MarkdownElementTypes.ATX_2, MarkdownElementTypes.ATX_3,
+            MarkdownElementTypes.ATX_4, MarkdownElementTypes.ATX_5, MarkdownElementTypes.ATX_6 -> {
+                val tag = when (nodeType) {
+                    MarkdownElementTypes.ATX_1 -> "h1"
+                    MarkdownElementTypes.ATX_2 -> "h2"
+                    MarkdownElementTypes.ATX_3 -> "h3"
+                    MarkdownElementTypes.ATX_4 -> "h4"
+                    MarkdownElementTypes.ATX_5 -> "h5"
+                    else -> "h6"
+                }
+                val content = node.child(MarkdownTokenTypes.ATX_CONTENT)?.text?.trim() ?: ""
+                sb.append("<$tag>$content</$tag>")
+            }
             MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
             MarkdownElementTypes.PARAGRAPH -> {
                 sb.trimEnd()
@@ -216,11 +224,36 @@ fun MarkdownNode.toHtml(project: Project): String {
                         sb.append(node.text)
                     }
                 }
-
             }
 
-            MarkdownTokenTypes.TEXT, MarkdownTokenTypes.WHITE_SPACE, MarkdownTokenTypes.COLON, MarkdownTokenTypes.SINGLE_QUOTE, MarkdownTokenTypes.DOUBLE_QUOTE, MarkdownTokenTypes.LPAREN, MarkdownTokenTypes.RPAREN, MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET, MarkdownTokenTypes.EXCLAMATION_MARK, GFMTokenTypes.CHECK_BOX, GFMTokenTypes.GFM_AUTOLINK -> {
+            MarkdownElementTypes.IMAGE -> {
+                val altText = node.child(MarkdownElementTypes.INLINE_LINK)
+                    ?.child(MarkdownElementTypes.LINK_TEXT)?.children
+                    ?.drop(1)?.dropLast(1)?.joinToString("") { it.text }
+                    ?: node.child(MarkdownElementTypes.LINK_TEXT)?.children
+                        ?.drop(1)?.dropLast(1)?.joinToString("") { it.text } ?: ""
+                val destination = node.child(MarkdownElementTypes.INLINE_LINK)
+                    ?.child(MarkdownElementTypes.LINK_DESTINATION)?.text
+                    ?: node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
+                if (destination != null) {
+                    sb.append(HtmlChunk.tag("img").attr("src", destination).attr("alt", altText).attr("style", "max-width:100%;"))
+                } else {
+                    sb.append(node.text)
+                }
+            }
+
+            MarkdownTokenTypes.TEXT, MarkdownTokenTypes.WHITE_SPACE, MarkdownTokenTypes.COLON, MarkdownTokenTypes.SINGLE_QUOTE, MarkdownTokenTypes.DOUBLE_QUOTE, MarkdownTokenTypes.LPAREN, MarkdownTokenTypes.RPAREN, MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET, MarkdownTokenTypes.EXCLAMATION_MARK -> {
                 sb.append(nodeText)
+            }
+
+            GFMTokenTypes.GFM_AUTOLINK -> {
+                sb.append(HtmlChunk.tag("a").attr("href", nodeText).addText(nodeText))
+            }
+
+            GFMTokenTypes.CHECK_BOX -> {
+                val checked = nodeText.contains("x", ignoreCase = true)
+                val icon = if (checked) "☑" else "☐"
+                sb.append("<span style='margin-right:4px;'>$icon</span>")
             }
 
             MarkdownTokenTypes.CODE_FENCE_START -> {
