@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.JBColor
 import com.intellij.util.MathUtil
 import com.jetbrains.lang.dart.DartLanguage
 import org.intellij.markdown.IElementType
@@ -23,6 +24,22 @@ import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.intellij.markdown.parser.MarkdownParser
+
+/**
+ * 获取代码块背景色（兼容亮色/暗色主题）
+ */
+private fun getCodeBlockBgColor(): String {
+    val color = JBColor(0xF5F5F5, 0x2b2b2b) // 亮色模式用浅灰，暗色模式用深灰
+    return String.format("#%06X", color.rgb and 0xFFFFFF)
+}
+
+/**
+ * 获取行内代码背景色（兼容亮色/暗色主题）
+ */
+private fun getInlineCodeBgColor(): String {
+    val color = JBColor(0xE8E8E8, 0x3c3f41) // 亮色模式用浅灰，暗色模式用深灰
+    return String.format("#%06X", color.rgb and 0xFFFFFF)
+}
 
 /**
  * markdown节点
@@ -157,6 +174,7 @@ fun MarkdownNode.toHtml(project: Project): String {
                 val content = node.child(MarkdownTokenTypes.ATX_CONTENT)?.text?.trim() ?: ""
                 sb.append("<$tag>$content</$tag>")
             }
+
             MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
             MarkdownElementTypes.PARAGRAPH -> {
                 sb.trimEnd()
@@ -165,11 +183,12 @@ fun MarkdownNode.toHtml(project: Project): String {
 
             MarkdownElementTypes.CODE_SPAN -> {
                 val startDelimiter = node.child(MarkdownTokenTypes.BACKTICK)?.text
+                val codeStyle = "background-color:${getInlineCodeBgColor()};padding:2px 6px;"
                 if (startDelimiter != null) {
                     val text = node.text.substring(startDelimiter.length).removeSuffix(startDelimiter)
-                    sb.append(HtmlChunk.tag("code").addText(text))
+                    sb.append(HtmlChunk.tag("code").attr("style", codeStyle).addText(text))
                 } else {
-                    sb.append(HtmlChunk.tag("code").addText(nodeText))
+                    sb.append(HtmlChunk.tag("code").attr("style", codeStyle).addText(nodeText))
                 }
             }
 
@@ -211,13 +230,17 @@ fun MarkdownNode.toHtml(project: Project): String {
             }
 
             MarkdownElementTypes.INLINE_LINK -> {
-                val label = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml(project)
+                val linkTextNode = node.child(MarkdownElementTypes.LINK_TEXT)
+                // 提取链接文本：去掉首尾的方括号，获取纯文本内容
+                val label = linkTextNode?.children
+                    ?.drop(1)?.dropLast(1)  // 去掉 [ 和 ]
+                    ?.joinToString("") { it.text }
                 val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                 val videoHtmlText = generateFlutterMp4Preview(destination ?: "")
                 if (videoHtmlText != null) {
                     sb.append(videoHtmlText)
                 } else {
-                    if (label != null && destination != null) {
+                    if (!label.isNullOrEmpty() && destination != null) {
                         val atag = HtmlChunk.tag("a").attr("href", destination).addText(label).toString()
                         sb.append(atag)
                     } else {
@@ -236,7 +259,10 @@ fun MarkdownNode.toHtml(project: Project): String {
                     ?.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                     ?: node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                 if (destination != null) {
-                    sb.append(HtmlChunk.tag("img").attr("src", destination).attr("alt", altText).attr("style", "max-width:100%;"))
+                    sb.append(
+                        HtmlChunk.tag("img").attr("src", destination).attr("alt", altText)
+                            .attr("style", "max-width:100%;")
+                    )
                 } else {
                     sb.append(node.text)
                 }
@@ -257,7 +283,7 @@ fun MarkdownNode.toHtml(project: Project): String {
             }
 
             MarkdownTokenTypes.CODE_FENCE_START -> {
-                sb.append("<pre style='padding-bottom:0px;'>")
+                sb.append("<pre style='padding:8px 12px;background-color:${getCodeBlockBgColor()};'>")
             }
 
             MarkdownTokenTypes.CODE_FENCE_END -> {
@@ -265,15 +291,20 @@ fun MarkdownNode.toHtml(project: Project): String {
             }
 
             MarkdownTokenTypes.CODE_LINE, MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
-                sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-                    comment.project, lang, nodeText
-                )
+                // 去掉开头的第一个换行符，避免代码块第一行有空行
+                val codeText = if (nodeText.startsWith("\n")) nodeText.substring(1) else nodeText
+                if (codeText.isNotEmpty()) {
+                    sb.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
+                        comment.project, lang, codeText
+                    )
+                }
             }
 
             MarkdownTokenTypes.EOL -> {
                 val parentType = node.parent?.type
                 if (parentType == MarkdownElementTypes.CODE_BLOCK || parentType == MarkdownElementTypes.CODE_FENCE) {
-                    sb.append("\n")
+                    // 在 pre 标签内使用换行符
+                    sb.append("<br>")
                 } else {
                     sb.append(" ")
                 }
@@ -378,15 +409,21 @@ private fun getTableAlignment(node: MarkdownNode): List<String> {
 private fun StringBuilder.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
     project: Project, language: Language, codeSnippet: String
 ): StringBuilder {
-    val codeSnippetBuilder = StringBuilder()
-    HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
-        codeSnippetBuilder, project, language, codeSnippet, false, getSaturationFactor()
-    )
-    val codeAttributes =
-        EditorColorsManager.getInstance().globalScheme.getAttributes(TextAttributesKey.createTextAttributesKey("DART"))
-            .clone()
-    codeAttributes.backgroundColor = null
-    appendStyledSpan(true, codeAttributes, codeSnippetBuilder.toString())
+    // 按行分割，逐行高亮后用换行符连接
+    val lines = codeSnippet.split("\n")
+    lines.forEachIndexed { index, line ->
+        if (line.isNotEmpty()) {
+            val lineBuilder = StringBuilder()
+            HtmlSyntaxInfoUtil.appendHighlightedByLexerAndEncodedAsHtmlCodeSnippet(
+                lineBuilder, project, language, line, false, getSaturationFactor()
+            )
+            append(lineBuilder.toString())
+        }
+        // 除了最后一行，每行后面加换行
+        if (index < lines.size - 1) {
+            append("\n")
+        }
+    }
     return this
 }
 

@@ -1,11 +1,13 @@
 <div style="text-align: center;">
 <h1>FlutterX</h1>
+<a href="https://deepwiki.com/mdddj/dd_flutter_idea_plugin"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </div>
 
 <div style="text-align: center;">
     <a href="https://mdddj.github.io/flutterx-doc">📄Document</a>
     <span>·</span>
     <a href="https://plugins.jetbrains.com/plugin/18986-fluttercheckversionx">🔗Download</a>
+
 </div>
 
 Flutter development assistant, Dio monitoring, variable type display, generation of asset file dictionary,
