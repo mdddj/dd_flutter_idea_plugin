@@ -24,7 +24,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:3.3.3")
     implementation("io.ktor:ktor-server-sse:3.3.3")
     intellijPlatform {
-        local("/Applications/Android Studio.app")
+        intellijIdeaCommunity("2025.2.1")
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
         plugins("shop.itbug.FlutterCheckVersionX:6.8.0","Dart:500.0.0")
     }

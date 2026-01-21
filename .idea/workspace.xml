@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="增加 shared preferences模块并优化项目配置">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="release6.9.0">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extras/FlutterX-MCP/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/extras/FlutterX-MCP/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -432,7 +430,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [runIde]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -611,10 +609,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.BuildGradleKtsTest.testAddAliyunMirrorImage" />
       </list>
     </recent_temporary>
@@ -2092,7 +2090,7 @@
       <workItem from="1768811739917" duration="5201000" />
       <workItem from="1768819744445" duration="13652000" />
       <workItem from="1768876685841" duration="14834000" />
-      <workItem from="1768957993511" duration="7529000" />
+      <workItem from="1768957993511" duration="8033000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
@@ -2437,7 +2435,7 @@
       <option name="project" value="LOCAL" />
       <updated>1686622337912</updated>
     </task>
-    <option name="localTasksCounter" value="459" />
+    <option name="localTasksCounter" value="460" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2487,7 +2485,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="fix(pluginBundle): update Aliyun image description and adjust workspace settings" />
     <MESSAGE value="fix: update return type of getName() and improve instance retrieval in ProviderHelper" />
     <MESSAGE value="fix: streamline Android Studio project opening and improve instance retrieval in Dart VM" />
     <MESSAGE value="Added Cupertino Icons and Material Icons preview window" />
@@ -2512,7 +2509,8 @@
     <MESSAGE value="修复已知问题" />
     <MESSAGE value="增加 shared preferences模块" />
     <MESSAGE value="增加 shared preferences模块并优化项目配置" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加 shared preferences模块并优化项目配置" />
+    <MESSAGE value="release6.9.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="release6.9.0" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
