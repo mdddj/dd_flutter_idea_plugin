@@ -264,7 +264,11 @@ class PrivacyScanWindow(val project: Project) : BorderLayoutPanel(), Disposable,
 
     override fun valueChanged(e: ListSelectionEvent) {
         if (!e.valueIsAdjusting) {
-            openOnEditor(pathList.selectedIndex)
+            val selectedIndex = pathList.selectedIndex
+            // 确保索引有效
+            if (selectedIndex >= 0 && selectedIndex < getListModel().size()) {
+                openOnEditor(selectedIndex)
+            }
         }
     }
 }
