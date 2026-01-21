@@ -71,11 +71,11 @@ dependencies {
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
-//        intellijIdeaCommunity("2025.2.1")
-        local("/Applications/Android Studio.app")
+        intellijIdeaCommunity("2025.2.1")
+//        local("/Applications/Android Studio.app")
         bundledPlugins(bPlugins)
         //"io.flutter:88.2.0"
-        plugins("Dart:$dartVersion")
+        plugins("Dart:$dartVersion","io.flutter:88.2.0")
         pluginVerifier()
         zipSigner()
         javaCompiler()

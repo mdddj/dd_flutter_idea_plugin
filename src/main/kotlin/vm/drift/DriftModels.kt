@@ -1,3 +1,5 @@
+package vm.drift
+
 import com.google.gson.JsonObject
 
 /**
@@ -74,3 +76,28 @@ fun parseDatabaseDescription(id: Int, dbName: String, json: JsonObject): DriftDa
     
     return DriftDatabase(id, dbName, dateTimeAsText, tables)
 }
+
+/**
+ * 筛选操作符
+ */
+enum class DriftFilterOperator(val label: String, val sql: String) {
+    Equals("=", "="),
+    GreaterThan(">", ">"),
+    LessThan("<", "<"),
+    Contains("Contains", "LIKE"),
+    IsNo("Is No", "="),
+    IsYes("Is Yes", "="),
+    Before("Before", "<"),
+    After("After", ">"),
+    OnDate("On Date", "=")
+}
+
+/**
+ * 筛选条件
+ */
+data class DriftFilter(
+    val columnName: String,
+    val columnType: String,
+    val operator: DriftFilterOperator,
+    val value: String
+)

@@ -56,10 +56,20 @@ object SafeGsonConfig {
             }
             
             // 递归处理子节点
-            val children = jsonObject.get("children")?.asJsonArray?.let { childrenArray ->
-                if (childrenArray.size() > 20) {
-                    // 如果子节点太多，只取前20个
-                    childrenArray.take(20).map { childElement ->
+            val childrenElement = jsonObject.get("children")
+            if (currentDepth == 0) {
+                println("Deserializing Root Node. keys: ${jsonObject.keySet()}")
+                if (childrenElement != null && childrenElement.isJsonArray) {
+                    println("Root has ${childrenElement.asJsonArray.size()} children.")
+                } else {
+                    println("Root has NO children field or it is not an array: $childrenElement")
+                }
+            }
+
+            val children = childrenElement?.asJsonArray?.let { childrenArray ->
+                if (childrenArray.size() > 500) {
+                    // 如果子节点太多，只取前500个
+                    childrenArray.take(500).map { childElement ->
                         deserializeWithDepth(childElement, context, currentDepth + 1)
                     }
                 } else {
@@ -82,7 +92,7 @@ object SafeGsonConfig {
                 hasChildren = jsonObject.get("hasChildren")?.asBoolean,
                 allowsInspection = jsonObject.get("allowsInspection")?.asBoolean,
                 locationId = jsonObject.get("locationId")?.asString,
-                creationLocation = null, // 暂时不处理creationLocation
+                creationLocation = context.deserialize(jsonObject.get("creationLocation"), vm.element.CreationLocation::class.java),
                 isStateful = jsonObject.get("isStateful")?.asBoolean
             )
         }

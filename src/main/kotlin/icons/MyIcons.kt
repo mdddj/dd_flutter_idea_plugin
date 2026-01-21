@@ -13,6 +13,7 @@ object MyImages {
     val ignore: Icon = load("/icons/ignore.svg")
 
 
+
     @JvmStatic
     fun load(path: String): Icon {
         return IconLoader.getIcon(path, MyImages::class.java)

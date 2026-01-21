@@ -20,6 +20,7 @@ import shop.itbug.flutterx.constance.discordUrl
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.widget.CenterText
 import shop.itbug.flutterx.widget.CustomTabRow
+import shop.itbug.flutterx.widget.KofiWidget
 import java.net.URI
 
 
@@ -28,6 +29,7 @@ fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterApp
     var tabIndex by remember { mutableIntStateOf(0) }
     val flutterAppList by FlutterXVMService.getInstance(project).runningApps.collectAsState()
     val isEnableFuture = FlutterXVMService.getInstance(project).isEnableFuture.collectAsState().value
+    val showRewardAction = PluginConfig.getState(project).showRewardAction
     if (flutterAppList.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -57,15 +59,19 @@ If you are running on a real device, please make sure the device is connected to
                         })
                     }
 
-                    if (PluginConfig.getState(project).showRewardAction) {
+                    Link(PluginBundle.get("bugs"), onClick = {
+                        BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
+                    })
+
+                    if (showRewardAction) {
                         Link(PluginBundle.get("reward") + "(wechat)", onClick = {
                             BrowserUtil.browse(URI.create("https://itbug.shop/static/ds.68eb4cac.jpg"))
                         })
                     }
 
-                    Link(PluginBundle.get("bugs"), onClick = {
-                        BrowserUtil.open("https://github.com/mdddj/dd_flutter_idea_plugin/issues")
-                    })
+                    if (showRewardAction) {
+                        KofiWidget()
+                    }
                 }
 
             }

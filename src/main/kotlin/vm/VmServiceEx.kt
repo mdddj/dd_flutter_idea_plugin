@@ -120,6 +120,25 @@ suspend fun VmService.getDetailsSubtree(
     }
 }
 
+/**
+ * 获取某个节点的详细信息 (包括 creationLocation)
+ */
+suspend fun VmService.getWidgetNodeDetails(
+    isolateId: String,
+    groupName: String,
+    diagnosticsNodeId: String
+): WidgetNode? {
+    return try {
+        val json = getDetailsSubtree(isolateId, groupName, diagnosticsNodeId)
+        // 使用 WidgetTreeResponse 来解析，因为返回的 json 包含 "result" 包装
+        val response = SafeGsonConfig.gson.fromJson(json, WidgetTreeResponse::class.java)
+        response.result
+    } catch (e: Exception) {
+        println("解析详细节点信息失败: ${e.message}")
+        null
+    }
+}
+
 
 suspend fun VmService.getProperties(
     isolateId: String,
@@ -149,38 +168,60 @@ suspend fun VmService.getProperties(
     }
 }
 
+
 /**
- * 获取带有Text预览的Widget Tree
- * 使用保守的参数设置来避免过深的嵌套
+ * 获取 Widget Tree
+ * @param isolateId Isolate ID
+ * @param groupName 对象组名称，用于后续释放资源
+ * @param isSummaryTree 是否为摘要树（不包含大部分属性）
+ * @param withPreviews 是否包含文本预览（会增加开销）
  */
-suspend fun VmService.getDetailedWidgetTree(
+suspend fun VmService.getWidgetTree(
+    isolateId: String,
+    groupName: String,
+    isSummaryTree: Boolean = true,
+    withPreviews: Boolean = false
+): WidgetTreeResponse? {
+    return getRootWidgetTree(
+        isolateId = isolateId,
+        groupName = groupName,
+        isSummaryTree = isSummaryTree,
+        withPreviews = withPreviews,
+        fullDetails = false
+    )
+}
+
+/**
+ * 释放对象组
+ * 在不需要时必须调用此方法以防止Dart VM内存泄漏
+ */
+suspend fun VmService.disposeGroup(
     isolateId: String,
     groupName: String
-): WidgetTreeResponse? {
-    return try {
-        // 第一次尝试：启用预览但保持摘要模式
-        getRootWidgetTree(
-            isolateId = isolateId,
-            groupName = groupName,
-            isSummaryTree = true,   // 保持摘要模式
-            withPreviews = true,    // 启用预览获取Text内容
-            fullDetails = false     // 不启用完整详细信息
-        )
-    } catch (e: Exception) {
-        println("获取带预览的Widget Tree失败: ${e.message}")
-        try {
-            // 第二次尝试：只使用基本参数
-            getRootWidgetTree(
-                isolateId = isolateId,
-                groupName = groupName,
-                isSummaryTree = true,
-                withPreviews = false,
-                fullDetails = false
+) {
+    val params = JsonObject()
+    params.addProperty("isolateId", isolateId)
+    params.addProperty("objectGroup", groupName)
+    try {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            callServiceExtension(
+                isolateId,
+                "ext.flutter.inspector.disposeGroup",
+                params,
+                object : ServiceExtensionConsumer {
+                    override fun received(result: JsonObject) {
+                        continuation.resume(Unit)
+                    }
+
+                    override fun onError(error: RPCError) {
+                        // 忽略释放错误
+                        continuation.resume(Unit)
+                    }
+                }
             )
-        } catch (fallbackException: Exception) {
-            println("获取基本Widget Tree也失败: ${fallbackException.message}")
-            null
         }
+    } catch (e: Exception) {
+        // ignore
     }
 }
 
@@ -306,6 +347,142 @@ fun VmService.checkWidgetTreeReady(
     )
 }
 
+// ============== Flutter Debug Paint Extensions ==============
+
+/**
+ * 切换慢动画模式
+ * 当启用时，动画会以 5x 慢速播放
+ * 注意：ext.flutter.timeDilation 需要参数名为 "timeDilation"，值格式为数字字符串
+ */
+suspend fun VmService.toggleSlowAnimations(
+    isolateId: String,
+    enabled: Boolean
+): Boolean = callBooleanExtension(
+    isolateId, 
+    "ext.flutter.timeDilation", 
+    enabled, 
+    if (enabled) "5.0" else "1.0",
+    "timeDilation"
+)
+
+/**
+ * 切换 Debug Paint 模式
+ * 显示 Widget 的边界、padding 等调试信息
+ */
+suspend fun VmService.toggleDebugPaint(
+    isolateId: String,
+    enabled: Boolean
+): Boolean = callBooleanExtension(isolateId, "ext.flutter.debugPaint", enabled)
+
+/**
+ * 切换 Paint Baselines 模式
+ * 显示文本基线
+ */
+suspend fun VmService.togglePaintBaselines(
+    isolateId: String,
+    enabled: Boolean
+): Boolean = callBooleanExtension(isolateId, "ext.flutter.debugPaintBaselinesEnabled", enabled)
+
+/**
+ * 切换 Repaint Rainbow 模式
+ * 每次重绘时显示彩虹色覆盖层
+ */
+suspend fun VmService.toggleRepaintRainbow(
+    isolateId: String,
+    enabled: Boolean
+): Boolean = callBooleanExtension(isolateId, "ext.flutter.repaintRainbow", enabled)
+
+/**
+ * 切换反转超大图片模式
+ * 高亮显示可能消耗过多内存的图片
+ */
+suspend fun VmService.toggleInvertOversizedImages(
+    isolateId: String,
+    enabled: Boolean
+): Boolean = callBooleanExtension(isolateId, "ext.flutter.invertOversizedImages", enabled)
+
+/**
+ * 获取当前慢动画状态
+ */
+suspend fun VmService.getSlowAnimationsEnabled(isolateId: String): Boolean =
+    getExtensionState(isolateId, "ext.flutter.timeDilation")?.let { it != "1.0" } ?: false
+
+/**
+ * 获取 Debug Paint 状态
+ */
+suspend fun VmService.getDebugPaintEnabled(isolateId: String): Boolean =
+    getExtensionState(isolateId, "ext.flutter.debugPaint")?.toBooleanStrictOrNull() ?: false
+
+/**
+ * 获取 Paint Baselines 状态
+ */
+suspend fun VmService.getPaintBaselinesEnabled(isolateId: String): Boolean =
+    getExtensionState(isolateId, "ext.flutter.debugPaintBaselinesEnabled")?.toBooleanStrictOrNull() ?: false
+
+/**
+ * 获取 Repaint Rainbow 状态
+ */
+suspend fun VmService.getRepaintRainbowEnabled(isolateId: String): Boolean =
+    getExtensionState(isolateId, "ext.flutter.repaintRainbow")?.toBooleanStrictOrNull() ?: false
+
+/**
+ * 通用的布尔值扩展调用
+ */
+private suspend fun VmService.callBooleanExtension(
+    isolateId: String,
+    method: String,
+    enabled: Boolean,
+    enabledValue: String = "true",
+    paramName: String = "enabled"
+): Boolean = suspendCancellableCoroutine { cont ->
+    val params = JsonObject().apply {
+        addProperty(paramName, if (enabled) enabledValue else "false")
+    }
+    callServiceExtension(
+        isolateId = isolateId,
+        method = method,
+        params = params,
+        consumer = object : ServiceExtensionConsumer {
+            override fun received(result: JsonObject) {
+                cont.resume(true)
+            }
+
+            override fun onError(error: RPCError) {
+                cont.resume(false)
+            }
+        }
+    )
+}
+
+/**
+ * 获取扩展的当前状态值
+ */
+private suspend fun VmService.getExtensionState(
+    isolateId: String,
+    method: String
+): String? = suspendCancellableCoroutine { cont ->
+    callServiceExtension(
+        isolateId = isolateId,
+        method = method,
+        params = JsonObject(),
+        consumer = object : ServiceExtensionConsumer {
+            override fun received(result: JsonObject) {
+                try {
+                    val value = result.get("enabled")?.asString
+                        ?: result.get("result")?.asString
+                    cont.resume(value)
+                } catch (e: Exception) {
+                    cont.resume(null)
+                }
+            }
+
+            override fun onError(error: RPCError) {
+                cont.resume(null)
+            }
+        }
+    )
+}
+
 /**
  * 获取当前选中的Widget信息
  *
@@ -341,6 +518,49 @@ suspend fun VmService.getSelectedWidget(
             }
         }
     )
+}
+
+/**
+ * 设置 Flutter 项目的根目录
+ * 这对于让 Inspector 识别哪些 Widget 是本地创建的至关重要
+ * 从而正确返回 creationLocation 信息
+ */
+suspend fun VmService.setPubRootDirectories(
+    isolateId: String,
+    rootDirectories: List<String>
+) {
+    // 很多 Flutter 工具使用这个 API 来通知 VM 哪些路径是项目源码
+    // 参数通常是一个列表，但在 JSON-RPC 中需要放在 params 对象里
+    // 参数名通常是 "arg" 或者直接传递
+    // 参考 DevTools 实现，通常传递的是一个 List<String>
+    val params = JsonObject()
+    val array = com.google.gson.JsonArray()
+    rootDirectories.forEach { array.add(it) }
+    params.add("arg", array)
+    params.addProperty("isolateId", isolateId)
+
+    try {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            callServiceExtension(
+                isolateId,
+                "ext.flutter.inspector.setPubRootDirectories",
+                params,
+                object : ServiceExtensionConsumer {
+                    override fun received(result: JsonObject) {
+                        continuation.resume(Unit)
+                    }
+
+                    override fun onError(error: RPCError) {
+                        // 忽略错误，但这可能导致跳转失败
+                        println("设置 PubRootDirectories 失败: ${error.message}")
+                        continuation.resume(Unit)
+                    }
+                }
+            )
+        }
+    } catch (e: Exception) {
+        println("设置 PubRootDirectories 异常: ${e.message}")
+    }
 }
 
 //ext.dart.io.socketProfilingEnabled
