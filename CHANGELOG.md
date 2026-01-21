@@ -2,6 +2,39 @@
 
 ## Unreleased
 
+## 6.9.0 - 2025-01-21
+
+### ✨ New Features
+- **Drift Database Viewer**: Added complete Drift database viewer with real-time data inspection
+  - View and manage Drift database tables and data
+  - Support for filtering, sorting, and editing data
+  - Export database functionality
+  - Multi-language support (EN, CN, HK, JA, KO)
+- **Widget Tree Visualization**: New widget tree viewer for better UI debugging
+- **Kofi Integration**: Added Kofi donation widget support
+
+### 🐛 Bug Fixes
+- Fixed `IndexOutOfBoundsException` in Flutter downloader when switching channels
+- Fixed `ArrayIndexOutOfBoundsException` in Privacy Scanner when clearing list
+- Fixed download location selector not showing when version is auto-selected
+- Fixed Drift component split layout not being draggable
+
+### 🌍 Internationalization
+- Added complete i18n support for Drift Database Viewer
+  - English, Chinese, Traditional Chinese (HK), Japanese, Korean
+- All UI components now support multiple languages
+
+### 🎨 UI/UX Improvements
+- Drift viewer now has resizable split panels for better workspace management
+- Improved Flutter downloader UX with auto-selection of first version
+- Enhanced error handling and user feedback
+
+### 🔧 Technical Improvements
+- Optimized VM Service extensions
+- Improved Gson safety configuration
+- Better icon resource management
+- Code cleanup and optimization
+
 ## 6.8.0 - 2025-12-12
 
 - New features: Shared Preferences panel (Dart Vm Service)
