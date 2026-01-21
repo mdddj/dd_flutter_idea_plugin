@@ -10,7 +10,6 @@
   - Support for filtering, sorting, and editing data
   - Export database functionality
   - Multi-language support (EN, CN, HK, JA, KO)
-- **Widget Tree Visualization**: New widget tree viewer for better UI debugging
 - **Kofi Integration**: Added Kofi donation widget support
 
 ### 🐛 Bug Fixes
