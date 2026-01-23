@@ -38,6 +38,7 @@ data class DriftState(
     val logs: List<String> = emptyList(),
     val selectedColumns: Set<String> = emptySet(),
     val filters: List<DriftFilter> = emptyList(),
+    val orderBy: List<DriftOrderBy> = emptyList(),
     val limit: Int = 100
 )
 
@@ -136,7 +137,8 @@ class DriftServices(val vmService: VmService) : CoroutineScope, VmServiceListene
             selectedTable = null,
             queryResult = null,
             selectedColumns = emptySet(),
-            filters = emptyList()
+            filters = emptyList(),
+            orderBy = emptyList()
         )
     }
 
@@ -147,7 +149,8 @@ class DriftServices(val vmService: VmService) : CoroutineScope, VmServiceListene
         _state.value = _state.value.copy(
             selectedTable = table,
             selectedColumns = table.columns.map { it.name }.toSet(),
-            filters = emptyList()
+            filters = emptyList(),
+            orderBy = emptyList()
         )
         executeSelect(table.name)
     }
@@ -184,6 +187,12 @@ class DriftServices(val vmService: VmService) : CoroutineScope, VmServiceListene
             if (whereClauses.isNotEmpty()) {
                 sql += " WHERE ${whereClauses.joinToString(" AND ")}"
             }
+        }
+
+        val orderBy = _state.value.orderBy
+        if (orderBy.isNotEmpty()) {
+            val orderClauses = orderBy.joinToString(", ") { "${it.columnName} ${if (it.isAscending) "ASC" else "DESC"}" }
+            sql += " ORDER BY $orderClauses"
         }
         
         if (limit > 0) sql += " LIMIT $limit"
@@ -230,6 +239,29 @@ class DriftServices(val vmService: VmService) : CoroutineScope, VmServiceListene
      */
     fun clearFilters() {
         _state.value = _state.value.copy(filters = emptyList())
+        applyFilters()
+    }
+
+    /**
+     * 切换排序
+     */
+    fun toggleOrderBy(columnName: String) {
+        val current = _state.value.orderBy
+        val existing = current.find { it.columnName == columnName }
+        val next = when {
+            existing == null -> current + DriftOrderBy(columnName, true)
+            existing.isAscending -> current.filter { it.columnName != columnName } + DriftOrderBy(columnName, false)
+            else -> current.filter { it.columnName != columnName }
+        }
+        _state.value = _state.value.copy(orderBy = next)
+        applyFilters()
+    }
+
+    /**
+     * 清空排序
+     */
+    fun clearOrderBy() {
+        _state.value = _state.value.copy(orderBy = emptyList())
         applyFilters()
     }
 

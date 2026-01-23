@@ -1,6 +1,7 @@
 package icons
 
 import com.intellij.openapi.util.IconLoader
+import org.jetbrains.jewel.ui.icon.PathIconKey
 import javax.swing.Icon
 
 object MyImages {
@@ -18,4 +19,6 @@ object MyImages {
     fun load(path: String): Icon {
         return IconLoader.getIcon(path, MyImages::class.java)
     }
+
+    val wxDs = PathIconKey("images/wx.png", MyImages::class.java)
 }

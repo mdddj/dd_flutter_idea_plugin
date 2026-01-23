@@ -1,16 +1,18 @@
 package shop.itbug.flutterx.window.vm
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
+import icons.MyImages
 import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.Link
 import org.jetbrains.jewel.ui.component.Text
 import shop.itbug.flutterx.common.dart.FlutterAppInstance
@@ -27,6 +29,7 @@ import java.net.URI
 @Composable
 fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterAppInstance) -> Unit) {
     var tabIndex by remember { mutableIntStateOf(0) }
+    var showRewardPopup by remember { mutableStateOf(false) }
     val flutterAppList by FlutterXVMService.getInstance(project).runningApps.collectAsState()
     val isEnableFuture = FlutterXVMService.getInstance(project).isEnableFuture.collectAsState().value
     val showRewardAction = PluginConfig.getState(project).showRewardAction
@@ -64,9 +67,27 @@ If you are running on a real device, please make sure the device is connected to
                     })
 
                     if (showRewardAction) {
-                        Link(PluginBundle.get("reward") + "(wechat)", onClick = {
-                            BrowserUtil.browse(URI.create("https://itbug.shop/static/ds.68eb4cac.jpg"))
-                        })
+                        Box {
+                            Link(PluginBundle.get("reward") + "(WeChat)", onClick = {
+                                showRewardPopup = !showRewardPopup
+                            })
+
+                            if (showRewardPopup) {
+                                Popup(onDismissRequest = { showRewardPopup = false }) {
+                                    Box(
+                                        modifier = Modifier.background(JewelTheme.globalColors.panelBackground)
+                                            .border(1.dp, JewelTheme.globalColors.borders.normal)
+                                            .padding(12.dp)
+                                    ) {
+                                        Icon(
+                                            MyImages.wxDs,
+                                            modifier = Modifier.size(200.dp),
+                                            contentDescription = "微信打赏"
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     if (showRewardAction) {

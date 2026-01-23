@@ -72,10 +72,9 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
         intellijIdeaCommunity("2025.2.1")
-//        local("/Applications/Android Studio.app")
         bundledPlugins(bPlugins)
         //"io.flutter:88.2.0"
-        plugins("Dart:$dartVersion","io.flutter:88.2.0")
+        plugins("Dart:$dartVersion")
         pluginVerifier()
         zipSigner()
         javaCompiler()
@@ -85,7 +84,6 @@ dependencies {
         testBundledModules("intellij.libraries.ktor.client", "intellij.libraries.ktor.client.cio")
         testPlugins("Dart:$dartVersion")
         testFramework(TestFrameworkType.Platform)
-        // jewel
         bundledModule("intellij.platform.jewel.foundation")
         bundledModule("intellij.platform.jewel.ui")
         bundledModule("intellij.platform.jewel.ideLafBridge")
@@ -141,6 +139,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
+        untilBuild.set("253.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }

@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,16 +20,16 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.intellij.ide.BrowserUtil
 import com.intellij.json.JsonFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
@@ -49,6 +50,7 @@ import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.constance.Links
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
 import vm.drift.*
@@ -143,9 +145,12 @@ private fun DriftMainPanel(app: FlutterAppInstance, project: Project) {
                             queryResult = state.queryResult,
                             selectedColumns = state.selectedColumns,
                             filters = state.filters,
+                            orderBy = state.orderBy,
                             limit = state.limit,
                             onExecuteSql = { scope.launch { service.executeQuery(state.selectedDatabase!!.id, it) } },
                             onToggleColumn = { service.toggleColumn(it) },
+                            onToggleOrderBy = { service.toggleOrderBy(it) },
+                            onClearOrderBy = { service.clearOrderBy() },
                             onAddFilter = { service.addFilter(it) },
                             onRemoveFilter = { service.removeFilter(it) },
                             onClearFilters = { service.clearFilters() },
@@ -166,6 +171,34 @@ private fun DriftMainPanel(app: FlutterAppInstance, project: Project) {
                                 scope.launch {
                                     service.deleteData(state.selectedTable!!.name, keyName, value)
                                 }
+                            },
+                            onExportCsv = { result ->
+                                scope.launch(Dispatchers.IO) {
+                                    val csvContent = result.toCsv()
+                                    withContext(Dispatchers.EDT) {
+                                        val descriptor =
+                                            FileSaverDescriptor("Export CSV", "Save table data to CSV file", "csv")
+                                        val saveDialog =
+                                            FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project)
+                                        val homePath = System.getProperty("user.home")
+                                        val baseDir = LocalFileSystem.getInstance().findFileByPath(homePath)
+                                        val wrapper = saveDialog.save(baseDir, "${state.selectedTable!!.name}.csv")
+                                        if (wrapper != null) {
+                                            WriteCommandAction.runWriteCommandAction(project) {
+                                                try {
+                                                    val file = wrapper.file
+                                                    file.writeText(csvContent)
+                                                    VfsUtil.markDirtyAndRefresh(true, true, true, wrapper.virtualFile)
+                                                } catch (ioe: IOException) {
+                                                    // handle error
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            onPreviewCsv = { result ->
+                                result.openInEditor(project)
                             },
                             project = project
                         )
@@ -195,12 +228,23 @@ private fun DatabaseListPanel(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(PluginBundle.get("drift.databases"), fontWeight = FontWeight.Bold)
-            IconActionButton(
-                key = AllIconsKeys.Actions.Refresh,
-                contentDescription = PluginBundle.get("drift.refresh"),
-                onClick = onRefresh
-            ) {
-                Text(PluginBundle.get("drift.refresh"))
+            Row {
+                IconActionButton(
+                    key = AllIconsKeys.Actions.Help,
+                    contentDescription = PluginBundle.get("doc"),
+                    onClick = {
+                        BrowserUtil.browse(Links.DriftDocument)
+                    }
+                ) {
+                    Text(PluginBundle.get("doc"))
+                }
+                IconActionButton(
+                    key = AllIconsKeys.Actions.Refresh,
+                    contentDescription = PluginBundle.get("drift.refresh"),
+                    onClick = onRefresh
+                ) {
+                    Text(PluginBundle.get("drift.refresh"))
+                }
             }
         }
         Divider(Orientation.Horizontal)
@@ -282,9 +326,12 @@ private fun DataViewerPanel(
     queryResult: DriftAsyncState<DriftQueryResult>?,
     selectedColumns: Set<String>,
     filters: List<DriftFilter>,
+    orderBy: List<DriftOrderBy>,
     limit: Int,
     onExecuteSql: (String) -> Unit,
     onToggleColumn: (String) -> Unit,
+    onToggleOrderBy: (String) -> Unit,
+    onClearOrderBy: () -> Unit,
     onAddFilter: (DriftFilter) -> Unit,
     onRemoveFilter: (DriftFilter) -> Unit,
     onClearFilters: () -> Unit,
@@ -292,11 +339,15 @@ private fun DataViewerPanel(
     onUpdateLimit: (Int) -> Unit,
     onDeleteRow: (String, Any) -> Unit,
     onUpdateCellValue: (String, Any, String, String) -> Unit,
+    onExportCsv: (DriftQueryResult) -> Unit,
+    onPreviewCsv: (DriftQueryResult) -> Unit,
     project: Project
 ) {
     var showColumnsPopup by remember { mutableStateOf(false) }
     var showFilterBuilder by remember { mutableStateOf(false) }
     var showLimitPopup by remember { mutableStateOf(false) }
+
+    val columnWidths = remember(selectedTable?.name) { mutableStateMapOf<String, Dp>() }
 
     Column(modifier = Modifier.fillMaxSize().animateContentSize()) {
         if (selectedTable == null) {
@@ -375,6 +426,26 @@ private fun DataViewerPanel(
                             )
                         }
                     }
+
+                    if (queryResult is DriftAsyncState.Data) {
+                        Spacer(Modifier.width(8.dp))
+                        IconActionButton(
+                            key = AllIconsKeys.ToolbarDecorator.Export,
+                            contentDescription = PluginBundle.get("drift.export.csv"),
+                            onClick = { onExportCsv(queryResult.data) }
+                        ) {
+                            Text(PluginBundle.get("drift.export.csv"))
+                        }
+
+                        Spacer(Modifier.width(8.dp))
+                        IconActionButton(
+                            key = AllIconsKeys.Actions.Preview,
+                            contentDescription = PluginBundle.get("drift.preview.csv"),
+                            onClick = { onPreviewCsv(queryResult.data) }
+                        ) {
+                            Text(PluginBundle.get("drift.preview.csv"))
+                        }
+                    }
                 }
 
                 AnimatedVisibility(visible = filters.isNotEmpty()) {
@@ -414,6 +485,42 @@ private fun DataViewerPanel(
                         }
                     }
                 }
+
+                AnimatedVisibility(visible = orderBy.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
+                            .background(JewelTheme.globalColors.panelBackground.copy(alpha = 0.3f)).padding(8.dp)
+                    ) {
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            itemVerticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text("${PluginBundle.get("drift.order.by") ?: "Sort"}:", fontWeight = FontWeight.Bold)
+
+                            orderBy.forEach { order ->
+                                Row(
+                                    modifier = Modifier
+                                        .background(JewelTheme.globalColors.panelBackground, RoundedCornerShape(4.dp))
+                                        .border(1.dp, JewelTheme.globalColors.borders.normal, RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("${order.columnName} ${if (order.isAscending) "ASC" else "DESC"}")
+                                    Spacer(Modifier.width(4.dp))
+                                    IconActionButton(
+                                        key = AllIconsKeys.General.Close,
+                                        contentDescription = "Remove Sort",
+                                        onClick = { onToggleOrderBy(order.columnName) }
+                                    )
+                                }
+                            }
+
+                            OutlinedButton(onClick = onClearOrderBy) { Text(PluginBundle.get("drift.clear.all")) }
+                        }
+                    }
+                }
             }
             Divider(Orientation.Horizontal)
 
@@ -436,6 +543,9 @@ private fun DataViewerPanel(
                             project = project,
                             tableName = selectedTable.name,
                             result = result.data,
+                            orderBy = orderBy,
+                            columnWidths = columnWidths,
+                            onToggleOrderBy = onToggleOrderBy,
                             onDelete = { row ->
                                 val firstCol = result.data.columns.firstOrNull()
                                 if (firstCol != null) {
@@ -461,18 +571,77 @@ private fun ResultTable(
     project: Project,
     tableName: String,
     result: DriftQueryResult,
+    orderBy: List<DriftOrderBy>,
+    columnWidths: MutableMap<String, Dp>,
+    onToggleOrderBy: (String) -> Unit,
     onDelete: (DriftRow) -> Unit,
     onUpdateCell: (String, Any, String, String) -> Unit
 ) {
     val horizontalScrollState = rememberScrollState()
     val lazyListState = rememberLazyListState()
+    val density = LocalDensity.current
+
+    // Initialize widths
+    LaunchedEffect(result.columns) {
+        result.columns.forEach { col ->
+            if (!columnWidths.containsKey(col)) {
+                columnWidths[col] = 150.dp
+            }
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().horizontalScroll(horizontalScrollState)) {
             // Headers
-            Row(Modifier.background(JewelTheme.globalColors.panelBackground).padding(4.dp)) {
+            Row(
+                Modifier.background(JewelTheme.globalColors.panelBackground).padding(vertical = 4.dp)
+                    .height(IntrinsicSize.Min)
+            ) {
                 result.columns.forEach { col ->
-                    Text(col, fontWeight = FontWeight.Bold, modifier = Modifier.width(150.dp).padding(4.dp))
+                    val sort = orderBy.find { it.columnName == col }
+                    val currentWidth = columnWidths[col] ?: 150.dp
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier
+                                .width(currentWidth)
+                                .clickable { onToggleOrderBy(col) }
+                                .padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                col,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            if (sort != null) {
+                                Icon(
+                                    if (sort.isAscending) AllIconsKeys.General.ArrowUp else AllIconsKeys.General.ArrowDown,
+                                    contentDescription = "Sort Icon",
+                                    modifier = Modifier.size(12.dp)
+                                )
+                            }
+                        }
+
+                        // Resize Handle
+                        Box(
+                            Modifier
+                                .fillMaxHeight()
+                                .width(4.dp)
+                                .pointerHoverIcon(PointerIcon(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.E_RESIZE_CURSOR)))
+                                .pointerInput(col) {
+                                    detectHorizontalDragGestures { change, dragAmount ->
+                                        change.consume()
+                                        val newWidth =
+                                            (columnWidths[col] ?: 150.dp) + with(density) { dragAmount.toDp() }
+                                        columnWidths[col] = newWidth.coerceAtLeast(50.dp)
+                                    }
+                                }
+                                .background(JewelTheme.globalColors.borders.normal.copy(alpha = 0.5f))
+                        )
+                    }
                 }
                 if (result.rows.isNotEmpty()) {
                     Text(
@@ -493,12 +662,14 @@ private fun ResultTable(
                         val isEven = index % 2 == 0
                         val rowBg =
                             if (isEven) Color.Transparent else JewelTheme.globalColors.panelBackground.copy(alpha = 0.4f)
-                        Row(Modifier.fillMaxWidth().background(rowBg).padding(4.dp).animateContentSize()) {
+                        Row(Modifier.fillMaxWidth().background(rowBg).padding(vertical = 4.dp).animateContentSize()) {
                             for (col in result.columns) {
+                                val currentWidth = columnWidths[col] ?: 150.dp
                                 DataCell(
                                     project = project,
                                     value = row.data[col],
                                     columnName = col,
+                                    width = currentWidth,
                                     onEdit = { newValue ->
                                         val firstCol = result.columns.firstOrNull()
                                         if (firstCol != null) {
@@ -780,6 +951,7 @@ private fun DataCell(
     project: Project,
     value: Any?,
     columnName: String,
+    width: Dp,
     onEdit: (String) -> Unit
 ) {
     var isHovered by remember { mutableStateOf(false) }
@@ -803,7 +975,7 @@ private fun DataCell(
 
     Box(
         modifier = Modifier
-            .width(150.dp)
+            .width(width)
             .height(32.dp)
             .padding(horizontal = 4.dp)
             .onPointerEvent(PointerEventType.Enter) { isHovered = true }
