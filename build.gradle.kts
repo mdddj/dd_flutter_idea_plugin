@@ -74,7 +74,7 @@ dependencies {
         intellijIdeaCommunity("2025.2.1")
         bundledPlugins(bPlugins)
         //"io.flutter:88.2.0"
-        plugins("Dart:$dartVersion")
+        plugins("Dart:$dartVersion","io.flutter:88.2.0")
         pluginVerifier()
         zipSigner()
         javaCompiler()

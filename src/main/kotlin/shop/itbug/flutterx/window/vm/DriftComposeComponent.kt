@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.platform.LocalDensity
@@ -212,6 +214,9 @@ private fun DriftMainPanel(app: FlutterAppInstance, project: Project) {
     }
 }
 
+/**
+ * 数据库列表
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DatabaseListPanel(
@@ -288,6 +293,9 @@ private fun DatabaseListPanel(
     }
 }
 
+/**
+ * 表列表
+ */
 @Composable
 private fun TableListPanel(
     selectedDb: DriftDatabase?,
@@ -319,6 +327,10 @@ private fun TableListPanel(
     }
 }
 
+
+/**
+ * 数据展示区域
+ */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun DataViewerPanel(
@@ -497,7 +509,7 @@ private fun DataViewerPanel(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             itemVerticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text("${PluginBundle.get("drift.order.by") ?: "Sort"}:", fontWeight = FontWeight.Bold)
+                            Text("${PluginBundle.get("drift.order.by")}:", fontWeight = FontWeight.Bold)
 
                             orderBy.forEach { order ->
                                 Row(
@@ -565,7 +577,6 @@ private fun DataViewerPanel(
         }
     }
 }
-
 @Composable
 private fun ResultTable(
     project: Project,
@@ -581,7 +592,13 @@ private fun ResultTable(
     val lazyListState = rememberLazyListState()
     val density = LocalDensity.current
 
-    // Initialize widths
+    // --- 颜色定义 ---
+    val isDark = JewelTheme.isDark
+    val borderColor = if (isDark) Color(0xFF4E5157) else Color(0xFFD1D1D1)
+    val stripeColor = if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.03f)
+
+    val cellHorizontalPadding = 8.dp
+
     LaunchedEffect(result.columns) {
         result.columns.forEach { col ->
             if (!columnWidths.containsKey(col)) {
@@ -590,32 +607,33 @@ private fun ResultTable(
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
+    // 表格最外层边框
+    Box(Modifier.fillMaxSize().border(1.dp, borderColor)) {
         Column(Modifier.fillMaxWidth().horizontalScroll(horizontalScrollState)) {
-            // Headers
+
+            // --- 表头 ---
             Row(
-                Modifier.background(JewelTheme.globalColors.panelBackground).padding(vertical = 4.dp)
+                Modifier
+                    .background(JewelTheme.globalColors.panelBackground)
                     .height(IntrinsicSize.Min)
+                    .drawBehind {
+                        // 表头底部的横线
+                        drawLine(borderColor, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth = 1.dp.toPx())
+                    }
             ) {
                 result.columns.forEach { col ->
                     val sort = orderBy.find { it.columnName == col }
                     val currentWidth = columnWidths[col] ?: 150.dp
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier.width(currentWidth).fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
                         Row(
                             modifier = Modifier
-                                .width(currentWidth)
+                                .weight(1f)
                                 .clickable { onToggleOrderBy(col) }
-                                .padding(4.dp),
+                                .padding(horizontal = cellHorizontalPadding, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                col,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.weight(1f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            Text(col, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                             if (sort != null) {
                                 Icon(
                                     if (sort.isAscending) AllIconsKeys.General.ArrowUp else AllIconsKeys.General.ArrowDown,
@@ -625,86 +643,110 @@ private fun ResultTable(
                             }
                         }
 
-                        // Resize Handle
-                        Box(
-                            Modifier
-                                .fillMaxHeight()
-                                .width(4.dp)
-                                .pointerHoverIcon(PointerIcon(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.E_RESIZE_CURSOR)))
-                                .pointerInput(col) {
-                                    detectHorizontalDragGestures { change, dragAmount ->
-                                        change.consume()
-                                        val newWidth =
-                                            (columnWidths[col] ?: 150.dp) + with(density) { dragAmount.toDp() }
-                                        columnWidths[col] = newWidth.coerceAtLeast(50.dp)
-                                    }
+                        // 列与列之间的竖线
+                        Box(Modifier.fillMaxHeight().width(1.dp).background(borderColor)
+                            .pointerHoverIcon(PointerIcon(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.E_RESIZE_CURSOR)))
+                            .pointerInput(col) {
+                                detectHorizontalDragGestures { change, dragAmount ->
+                                    change.consume()
+                                    val newWidth = (columnWidths[col] ?: 150.dp) + with(density) { dragAmount.toDp() }
+                                    columnWidths[col] = newWidth.coerceAtLeast(50.dp)
                                 }
-                                .background(JewelTheme.globalColors.borders.normal.copy(alpha = 0.5f))
+                            }
                         )
                     }
                 }
+
+                // 【修改点】操作列的表头也加上右侧竖线
                 if (result.rows.isNotEmpty()) {
-                    Text(
-                        PluginBundle.get("drift.actions"),
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(100.dp).padding(4.dp)
-                    )
+                    Row(modifier = Modifier.width(100.dp).fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f).padding(horizontal = cellHorizontalPadding, vertical = 8.dp)) {
+                            Text(PluginBundle.get("drift.actions"), fontWeight = FontWeight.Bold)
+                        }
+                        // 操作列最右侧的竖线
+                        Box(Modifier.fillMaxHeight().width(1.dp).background(borderColor))
+                    }
                 }
             }
-            Divider(Orientation.Horizontal)
 
-            Box(Modifier.weight(1f).fillMaxWidth()) {
-                LazyColumn(
-                    state = lazyListState,
-                    modifier = Modifier.fillMaxSize()
-                ) {
+            // --- 数据内容 ---
+            Box(Modifier.weight(1f)) {
+                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize()) {
                     itemsIndexed(result.rows) { index, row ->
                         val isEven = index % 2 == 0
-                        val rowBg =
-                            if (isEven) Color.Transparent else JewelTheme.globalColors.panelBackground.copy(alpha = 0.4f)
-                        Row(Modifier.fillMaxWidth().background(rowBg).padding(vertical = 4.dp).animateContentSize()) {
+                        val rowBg = if (isEven) Color.Transparent else stripeColor
+
+                        Row(
+                            Modifier
+                                .background(rowBg)
+                                .height(IntrinsicSize.Min)
+                                .drawBehind {
+                                    // 每一行底部的横线
+                                    drawLine(borderColor, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth = 1.dp.toPx())
+                                }
+                        ) {
                             for (col in result.columns) {
                                 val currentWidth = columnWidths[col] ?: 150.dp
-                                DataCell(
-                                    project = project,
-                                    value = row.data[col],
-                                    columnName = col,
-                                    width = currentWidth,
-                                    onEdit = { newValue ->
-                                        val firstCol = result.columns.firstOrNull()
-                                        if (firstCol != null) {
-                                            row.data[firstCol]?.let { pkVal ->
-                                                onUpdateCell(firstCol, pkVal, col, newValue)
+
+                                Box(modifier = Modifier.width(currentWidth).fillMaxHeight()) {
+                                    DataCell(
+                                        project = project,
+                                        value = row.data[col],
+                                        columnName = col,
+                                        width = currentWidth,
+                                        horizontalPadding = cellHorizontalPadding,
+                                        onEdit = { newValue ->
+                                            val firstCol = result.columns.firstOrNull()
+                                            if (firstCol != null) {
+                                                row.data[firstCol]?.let { pkVal ->
+                                                    onUpdateCell(firstCol, pkVal, col, newValue)
+                                                }
                                             }
                                         }
-                                    }
-                                )
+                                    )
+                                    // 单元格右侧竖线
+                                    Box(Modifier.fillMaxHeight().width(1.dp).background(borderColor).align(Alignment.CenterEnd))
+                                }
                             }
+
+                            // 【修改点】操作按钮这一格也加上右侧竖线
                             if (result.rows.isNotEmpty()) {
-                                OutlinedButton(onClick = { onDelete(row) }, modifier = Modifier.width(100.dp)) {
-                                    Text(PluginBundle.get("delete_base_text"))
+                                Row(
+                                    modifier = Modifier.width(100.dp).fillMaxHeight(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        IconActionButton(
+                                            key = AllIconsKeys.General.Delete,
+                                            contentDescription = PluginBundle.get("delete_base_text"),
+                                            onClick = {
+                                                onDelete(row)
+                                            },
+                                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                                        )
+
+                                    }
+                                    // 操作列最右侧的竖线
+                                    Box(Modifier.fillMaxHeight().width(1.dp).background(borderColor))
                                 }
                             }
                         }
-                        Divider(Orientation.Horizontal)
                     }
                 }
 
                 VerticalScrollbar(
                     adapter = rememberScrollbarAdapter(lazyListState),
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .fillMaxHeight()
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
                 )
             }
         }
 
         HorizontalScrollbar(
             adapter = rememberScrollbarAdapter(horizontalScrollState),
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .fillMaxWidth()
-                .padding(end = 12.dp)
+            modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(end = 12.dp)
         )
     }
 }
@@ -828,7 +870,7 @@ private fun FilterBuilderPopup(
     Popup(
         onDismissRequest = onDismiss,
         properties = PopupProperties(focusable = true),
-        offset = androidx.compose.ui.unit.IntOffset(0, 40)
+        offset = IntOffset(0, 40)
     ) {
         Box(
             modifier = Modifier
@@ -859,7 +901,6 @@ private fun FilterBuilderPopup(
 
                 Divider(Orientation.Horizontal)
 
-                // Operator Selection
                 Text("${PluginBundle.get("drift.condition")}:", modifier = Modifier.alpha(0.7f))
                 FlowRow(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
@@ -912,7 +953,7 @@ private fun SettingsPopup(
     Popup(
         onDismissRequest = onDismiss,
         properties = PopupProperties(focusable = true),
-        offset = androidx.compose.ui.unit.IntOffset(0, 40)
+        offset = IntOffset(0, 40)
     ) {
         Box(
             modifier = Modifier
@@ -944,7 +985,6 @@ private fun SettingsPopup(
         }
     }
 }
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun DataCell(
@@ -952,6 +992,7 @@ private fun DataCell(
     value: Any?,
     columnName: String,
     width: Dp,
+    horizontalPadding: Dp,
     onEdit: (String) -> Unit
 ) {
     var isHovered by remember { mutableStateOf(false) }
@@ -976,10 +1017,10 @@ private fun DataCell(
     Box(
         modifier = Modifier
             .width(width)
-            .height(32.dp)
-            .padding(horizontal = 4.dp)
+            .fillMaxHeight()
             .onPointerEvent(PointerEventType.Enter) { isHovered = true }
-            .onPointerEvent(PointerEventType.Exit) { isHovered = false },
+            .onPointerEvent(PointerEventType.Exit) { isHovered = false }
+            .padding(horizontal = horizontalPadding),
         contentAlignment = Alignment.CenterStart
     ) {
         SelectionContainer {
@@ -1053,7 +1094,7 @@ private fun CellDropdownMenu(
             .background(JewelTheme.globalColors.panelBackground)
             .border(1.dp, JewelTheme.globalColors.borders.normal)
             .padding(4.dp)
-            .width(IntrinsicSize.Max) // 宽度自适应内容
+            .width(IntrinsicSize.Max)
     ) {
         Column {
             SelectableItem(PluginBundle.get("copy"), isSelected = false, onClick = { onAction("copy") })
@@ -1111,6 +1152,7 @@ private fun EditCellPopup(
         }
     }
 }
+
 
 private fun openInEditor(project: Project, content: String, isJson: Boolean) {
     ApplicationManager.getApplication().invokeLater {

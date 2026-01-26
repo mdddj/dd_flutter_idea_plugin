@@ -2,7 +2,33 @@
 
 ## Unreleased
 
-## 6.9.0 - 2025-01-21
+
+## 6.9.1 - 2026-01-26
+
+### ✨ Drift Debugger Optimizations
+- **Column Resizing**: Support dynamic column resizing by dragging header borders.
+- **CSV Support**: Added options to export table data to CSV and preview CSV content in the editor.
+- **Cell Interactions**: Added a context menu for table cells on hover:
+  - One-click copy cell value to clipboard.
+  - Inline editing of cell values.
+  - Open content in a standalone editor (supports Plain Text and JSON).
+  - Quick toggle between timestamp and formatted date/time display.
+- **Filtering & UI**: 
+  - Improved Filter Builder with type-aware operators.
+  - Added zebra-striped rows for better table readability.
+  - Refined database and table list interfaces.
+  - Added a status bar to display operation logs and status.
+
+### 🎨 UI/UX Improvements
+- **Donation Support**: Added a WeChat donation popup on the home page.
+- **Internationalization**: Improved localization for English, Traditional Chinese (HK), Japanese, and Korean.
+
+### 🐛 Bug Fixes & Technical
+- Fixed Drift database component layout issues.
+- Fixed MCP (Model Context Protocol) build configuration.
+- Improved selection feedback and animations across the tool windows.
+
+## 6.9.0 - 2026-01-21
 
 ### ✨ New Features
 - **Drift Database Viewer**: Added complete Drift database viewer with real-time data inspection

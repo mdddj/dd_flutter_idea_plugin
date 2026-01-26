@@ -3,6 +3,7 @@ package shop.itbug.flutterx.common.yaml
 import com.intellij.openapi.application.readAction
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
@@ -71,10 +72,14 @@ data class DartYamlModel(
     companion object {
 
         suspend fun create(element: YAMLKeyValueImpl): DartYamlModel? {
-            val pt = element.findChild<YAMLPlainTextImpl>() ?: return null
-            val hasBlock = element.findChild<YAMLBlockMappingImpl>() != null
-            if (hasBlock) return null
+            // 在 readAction 内部进行所有 PSI 访问，避免元素在异步操作中失效
             return readAction {
+                // 检查元素是否仍然有效
+                if (!element.isValid) return@readAction null
+                val pt = PsiTreeUtil.findChildOfType(element,YAMLPlainTextImpl::class.java) ?: return@readAction null
+                val hasBlock = PsiTreeUtil.findChildOfType(element,YAMLBlockMappingImpl::class.java) != null
+                if (hasBlock) return@readAction null
+                
                 val version = element.valueText.trim()
                 if (version.isBlank()) return@readAction null
                 val name = element.keyText.trim()
@@ -92,8 +97,11 @@ data class DartYamlModel(
          */
         suspend fun fetch(element: YAMLKeyValueImpl): DartYamlModel? {
             val model = create(element) ?: return null
-            val file = readAction { element.containingFile }
-            val project = readAction { element.project }
+            val fileAndProject = readAction {
+                if (!element.isValid) return@readAction null
+                element.containingFile to element.project
+            } ?: return null
+            val (file, project) = fileAndProject
             val isIgnored = YamlFileIgDartPackageCache.getInstance(project).state.hasItem(file, model.name)
             if (isIgnored) return null
             val data = PubService.callPluginDetails(model.name) ?: return null
