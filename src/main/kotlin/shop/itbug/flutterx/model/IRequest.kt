@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -220,69 +221,70 @@ fun formatSize(sizeInBytes: Long): String {
     return DecimalFormat("#,##0.#").format(sizeInBytes / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
 }
 
-
 /**
- * 将 IRequest 对象转换为与 Dart/Flutter DevTools "Copy as cURL" 功能风格完全一致的命令字符串。
- *
- * 特点:
- * - 使用 `--location` 自动处理重定向。
- * - 使用 `--compressed` 处理压缩。
- * - 精确的参数顺序 (`--request METHOD 'URL' ...`)。
- * - 自动过滤掉由 cURL 管理的冗余头信息 (Host, Content-Length, Accept-Encoding)。
- * - 格式化为易于阅读和粘贴的多行命令。
- * - 跨平台支持：自动适配 Windows (CMD/PowerShell) 和 Unix-like 系统的语法差异。
- *
- * @param gsonInstance 一个可选的 Gson 实例，用于序列化 JSON 请求体。如果为 null，将创建一个新的实例。
- * @return 格式化后的 cURL 命令字符串。
+ * 优化后的 cURL 生成函数
  */
 fun IRequest.toCurlStringAsDartDevTools(gsonInstance: Gson? = null): String {
-    // 检测操作系统
-    val isWindows = System.getProperty("os.name").lowercase().contains("win")
+    val isWindows = SystemInfo.isWindows
 
-    // 根据操作系统选择引号和转义方式
+    // 1. 确定 Shell 环境下的引号和换行符
+    // 即使在 Windows 上，我们也倾向于生成 curl.exe 以规避 PowerShell 别名问题
+    val cmdBase = if (isWindows) "curl.exe" else "curl"
     val quote = if (isWindows) "\"" else "'"
     val lineContinuation = if (isWindows) " `" else " \\"
 
-    // 转义函数：根据操作系统选择不同的转义策略
+    // 2. 增强型转义函数
     fun escapeForShell(text: String): String {
         return if (isWindows) {
-            // Windows: 转义双引号和反斜杠
-            text.replace("\\", "\\\\").replace("\"", "\\\"")
+            // Windows 双引号内：转义双引号
+            // 特殊情况：PowerShell 里的 $ 需要转义，但 curl.exe 本身在 CMD 运行不需要。
+            // 综合考虑，转义双引号是最基础的。
+            text.replace("\"", "\\\"")
         } else {
-            // Unix: 转义单引号
+            // Unix 单引号内：将 ' 替换为 '\'' (结束当前单引号，转义单引号，开始新单引号)
             text.replace("'", "'\\''")
         }
     }
 
-    // 创建一个列表来收集 cURL 命令的所有部分
     val commandParts = mutableListOf<String>()
 
-    // 1. HTTP 方法 (--request)
+    // 3. HTTP 方法
     httpMethod?.let {
         commandParts.add("--request ${it.uppercase()}")
     }
 
-    // 2. 构建并添加最终的 URL (包含查询参数)
+    // 4. 处理 URL 和多值查询参数
     val finalUrl = buildString {
         append(requestUrl)
         if (queryParams.isNotEmpty()) {
-            val queryString = queryParams.map { (key, value) ->
+            val queryString = queryParams.entries.flatMap { (key, value) ->
                 val encodedKey = URLEncoder.encode(key, "UTF-8")
-                val encodedValue = URLEncoder.encode(value?.toString() ?: "", "UTF-8")
-                "$encodedKey=$encodedValue"
+                // 处理 List 类型的多值参数，例如 id=1&id=2
+                val values = when (value) {
+                    is Iterable<*> -> value
+                    is Array<*> -> value.toList()
+                    else -> listOf(value)
+                }
+                values.map { v ->
+                    val encodedValue = URLEncoder.encode(v?.toString() ?: "", "UTF-8")
+                    "$encodedKey=$encodedValue"
+                }
             }.joinToString("&")
 
-            if (requestUrl.contains("?")) {
-                append("&$queryString")
-            } else {
-                append("?$queryString")
+            if (queryString.isNotEmpty()) {
+                append(if (requestUrl.contains("?")) "&" else "?")
+                append(queryString)
             }
         }
     }
     commandParts.add("$quote${escapeForShell(finalUrl)}$quote")
 
-    // 3. 添加请求头 (--header)
-    val headersToFilter = setOf("host", "accept-encoding", "content-length")
+    // 5. 添加通用的配置参数
+    commandParts.add("--location")
+    commandParts.add("--compressed")
+
+    // 6. 添加请求头
+    val headersToFilter = setOf("host", "content-length") // 允许 accept-encoding，因为 curl 可以处理
     httpRequestHeaders
         .filterKeys { key -> !headersToFilter.contains(key.lowercase()) }
         .forEach { (key, value) ->
@@ -290,42 +292,112 @@ fun IRequest.toCurlStringAsDartDevTools(gsonInstance: Gson? = null): String {
             commandParts.add("--header $quote$key: $escapedValue$quote")
         }
 
-    // 4. 智能处理请求体 (--data-raw, --data)
+    // 7. 处理请求体
     httpRequestBody?.let { body ->
         val contentType = httpRequestHeaders.entries
             .firstOrNull { it.key.equals("Content-Type", ignoreCase = true) }
             ?.value?.toString()?.lowercase() ?: ""
 
-        val bodyPart = when {
+        when {
             contentType.contains("application/json") -> {
                 val jsonBody = when (body) {
                     is String -> body
-                    else -> (gsonInstance ?: Gson()).toJson(body)
+                    else -> (gsonInstance ?: GsonBuilder().disableHtmlEscaping().create()).toJson(body)
                 }
-                val escapedBody = escapeForShell(jsonBody)
-                "--data-raw $quote$escapedBody$quote"
+                commandParts.add("--data-raw ${quote}${escapeForShell(jsonBody)}${quote}")
             }
+            contentType.contains("application/x-www-form-urlencoded") -> {
+                val formData = if (body is Map<*, *>) {
+                    body.map { (k, v) ->
+                        "${URLEncoder.encode(k.toString(), "UTF-8")}=${URLEncoder.encode(v?.toString() ?: "", "UTF-8")}"
+                    }.joinToString("&")
+                } else body.toString()
+                commandParts.add("--data ${quote}${escapeForShell(formData)}${quote}")
+            }
+            else -> {
+                commandParts.add("--data-binary ${quote}${escapeForShell(body.toString())}${quote}")
+            }
+        }
+    }
 
-            contentType.contains("application/x-www-form-urlencoded") && body is Map<*, *> -> {
-                val formData = body.map { (key, value) ->
-                    val encodedKey = URLEncoder.encode(key.toString(), "UTF-8")
+    // 8. 组装命令
+    return "$cmdBase " + commandParts.joinToString(separator = "$lineContinuation\n  ")
+}
+
+
+
+/**
+ * 将 IRequest 转换为 PowerShell 的 Invoke-RestMethod 命令字符串
+ */
+fun IRequest.toPowerShellString(gsonInstance: Gson? = null): String {
+    val gson = gsonInstance ?: GsonBuilder().setPrettyPrinting().create()
+    val indent = "    " // 用于美化输出的缩进
+    val lineContinuation = " `" // PowerShell 的换行符
+
+    return buildString {
+        append("Invoke-RestMethod")
+        append(lineContinuation)
+        append("\n")
+
+        // 1. Method
+        val method = (httpMethod ?: "GET").uppercase()
+        append("$indent-Method $method")
+        append(lineContinuation)
+        append("\n")
+
+        // 2. Uri (处理查询参数)
+        val finalUrl = buildString {
+            append(requestUrl)
+            if (queryParams.isNotEmpty()) {
+                val queryString = queryParams.map { (key, value) ->
+                    val encodedKey = URLEncoder.encode(key, "UTF-8")
                     val encodedValue = URLEncoder.encode(value?.toString() ?: "", "UTF-8")
                     "$encodedKey=$encodedValue"
                 }.joinToString("&")
-                "--data $quote$formData$quote"
-            }
 
-            else -> {
-                val escapedBody = escapeForShell(body.toString())
-                "--data $quote$escapedBody$quote"
+                if (requestUrl.contains("?")) {
+                    append("&$queryString")
+                } else {
+                    append("?$queryString")
+                }
             }
         }
-        commandParts.add(bodyPart)
+        // PowerShell 中 URL 如果包含 $ 符号需要转义，这里简单处理
+        val escapedUrl = finalUrl.replace("$", "`$")
+        append("$indent-Uri \"$escapedUrl\"")
+
+        // 3. Headers
+        if (httpRequestHeaders.isNotEmpty()) {
+            append(lineContinuation)
+            append("\n")
+            append("$indent-Headers @{")
+            append("\n")
+            httpRequestHeaders.forEach { (key, value) ->
+                // 转义头信息中的双引号
+                val escapedValue = value.toString().replace("\"", "`\"")
+                append("$indent$indent\"$key\" = \"$escapedValue\"\n")
+            }
+            append("$indent}")
+        }
+
+        // 4. Body (如果是 POST/PUT/PATCH 且有请求体)
+        val methodsWithBody = listOf("POST", "PUT", "PATCH", "DELETE")
+        if (method in methodsWithBody && httpRequestBody != null) {
+            append(lineContinuation)
+            append("\n")
+
+            val bodyString = when (val body = httpRequestBody) {
+                is String -> body
+                else -> gson.toJson(body)
+            }
+
+            // 在 PowerShell 双引号字符串中，内部双引号建议使用 "" 来表示
+            val escapedBody = bodyString.replace("\"", "\"\"")
+
+            append("$indent-ContentType \"application/json; charset=utf-8\"")
+            append(lineContinuation)
+            append("\n")
+            append("$indent-Body \"$escapedBody\"")
+        }
     }
-
-    // 5. 组合所有部分
-    // 使用适合当前操作系统的续行符
-    return "curl --location --compressed$lineContinuation\n  " +
-            commandParts.joinToString(separator = "$lineContinuation\n  ")
 }
-
