@@ -30,6 +30,7 @@ import com.google.gson.JsonObject
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,6 +50,7 @@ import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.dsl.formatUrl
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.model.toCurlStringAsDartDevTools
+import shop.itbug.flutterx.model.toPowerShellString
 import shop.itbug.flutterx.util.ComposeHelper
 import shop.itbug.flutterx.util.MyFileUtil
 import shop.itbug.flutterx.util.RunUtil
@@ -306,6 +308,7 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
     }
 
     val curlText = request.toCurlStringAsDartDevTools()
+    val powerShellText = request.toPowerShellString()
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp),
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -351,6 +354,18 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
                 RunUtil.runCommand(project, "cURL", curlText)
             }) {
                 Text("Run Command To Terminal")
+            }
+        }
+        if (SystemInfo.isWindows) {
+            Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())
+            Title("PowerShell")
+            Text(powerShellText)
+            Row {
+                IconActionButton(AllIconsKeys.Actions.Copy, contentDescription = "", onClick = {
+                    powerShellText.copyTextToClipboard()
+                }) {
+                    Text(PluginBundle.get("copy") + " PowerShell")
+                }
             }
         }
         Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())

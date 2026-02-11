@@ -3,6 +3,15 @@
 ## Unreleased
 
 
+## 6.9.2 - 2026-02-11
+
+### ✨ Network Inspector Enhancements
+- **Multi-Platform cURL**: Optimized cURL command generation for better compatibility across Windows (CMD/PowerShell) and Unix-like systems.
+- **PowerShell Support**: Added "Copy as PowerShell" functionality in the Network Overview tab (Windows only).
+- **Query Parameter Optimization**: Improved handling of multi-value query parameters in generated commands.
+- **UI Refinement**: Added scrolling support for the Flutter version ignore list in the settings panel.
+
+
 ## 6.9.1 - 2026-01-26
 
 ### ✨ Drift Debugger Optimizations

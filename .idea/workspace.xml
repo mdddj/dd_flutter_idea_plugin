@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c30b6c48-d043-455a-ba95-1e33c1a2ac37" name="变更" comment="优化 drift 功能">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/flutterx/dsl/SettingPanel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/flutterx/dsl/SettingPanel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/flutterx/model/IRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/flutterx/model/IRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/icons/kofi.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/icons/kofi.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/flutterx/window/vm/DartVmHttpComposeComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/shop/itbug/flutterx/window/vm/DartVmHttpComposeComponent.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +55,12 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="FlutterX" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="FlutterX" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="intellij platform" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -423,7 +424,7 @@
       <command value="gradle integrationTest" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [publishPlugin]">
+  <component name="RunManager" selected="Gradle.dd_flutter_idea_plugin [buildPlugin]">
     <configuration default="true" type="docker-deploy" factoryName="docker-image" temporary="true">
       <deployment type="docker-image">
         <settings />
@@ -602,8 +603,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [buildPlugin]" />
+        <item itemvalue="Gradle.dd_flutter_idea_plugin [publishPlugin]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [runIde]" />
         <item itemvalue="Gradle.dd_flutter_idea_plugin [classes]" />
         <item itemvalue="Gradle.BuildGradleKtsTest.testAddAliyunMirrorImage" />
@@ -2099,7 +2100,7 @@
       <workItem from="1770616484690" duration="196000" />
       <workItem from="1770616696254" duration="215000" />
       <workItem from="1770778973617" duration="1419000" />
-      <workItem from="1770813660846" duration="162000" />
+      <workItem from="1770813660846" duration="883000" />
     </task>
     <task id="LOCAL-00239" summary=":memo:  3.0.0">
       <created>1676944982231</created>
