@@ -1,5 +1,5 @@
+
 import org.jetbrains.changelog.Changelog
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -11,12 +11,12 @@ val pluginVersion: String by project
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.10.5"
+    kotlin("jvm") version "2.3.0"
+    id("org.jetbrains.intellij.platform") version "2.11.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
-    id("org.jetbrains.compose") version "1.8.2"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
+    id("org.jetbrains.compose") version "1.10.1"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
 }
 
 group = "shop.itbug"
@@ -71,10 +71,11 @@ dependencies {
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
-        intellijIdeaCommunity("2025.2.1")
+//        intellijIdeaCommunity("2025.2.1")
+        local("/Users/ldd/Applications/IntelliJ IDEA.app")
         bundledPlugins(bPlugins)
-        //"io.flutter:88.2.0"
-        plugins("Dart:$dartVersion","io.flutter:88.2.0")
+        //"io.flutter:88.2.0" 261: "90.0.0"
+        plugins("Dart:$dartVersion","io.flutter:90.0.0")
         pluginVerifier()
         zipSigner()
         javaCompiler()
@@ -95,7 +96,8 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
+//            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
+
         }
     }
 }
@@ -133,7 +135,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set(sinceBuildVersion)
-        untilBuild.set("253.*")
+        untilBuild.set("261.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }

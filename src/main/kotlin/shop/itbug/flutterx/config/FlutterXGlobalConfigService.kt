@@ -73,6 +73,8 @@ class FlutterXGlobalConfigService : SimplePersistentStateComponent<FlutterXGloba
         updateData()
     }
 
+
+
     companion object {
         fun getInstance() = service<FlutterXGlobalConfigService>()
     }
@@ -100,6 +102,7 @@ class FlutterConfigQuickOpenInCommandDialog(project: Project) : DialogWrapper(pr
     override fun createCenterPanel(): JComponent {
 
         return JewelComposePanel(
+            true,
             {
                 preferredSize = Dimension(800, 550)
             }

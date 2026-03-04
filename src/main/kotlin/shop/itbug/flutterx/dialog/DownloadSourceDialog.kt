@@ -74,8 +74,10 @@ class DownloadSourceDialog(val project: Project, sources: List<DownloadSource>) 
                 indicator.isIndeterminate = false
                 indicator.text = "${PluginBundle.get("downloading")}  ${job.source.url}"
                  HttpRequests.request(job.source.url).connect {
+
                      it.connection.connectTimeout = 10000
                     it.saveToFile(File(saveToFile), indicator)
+
                 }
             }
 
@@ -97,7 +99,7 @@ class DownloadSourceDialog(val project: Project, sources: List<DownloadSource>) 
     }
 
     override fun createCenterPanel(): JComponent {
-        return JewelComposePanel({
+        return JewelComposePanel(true,{
             preferredSize = Dimension(550, 350)
         }) {
             Box(

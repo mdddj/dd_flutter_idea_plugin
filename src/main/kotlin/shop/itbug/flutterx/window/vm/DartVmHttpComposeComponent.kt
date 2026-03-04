@@ -35,7 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -60,6 +59,7 @@ import shop.itbug.flutterx.widget.SearchResultCard
 import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
+import java.net.URL
 import kotlin.time.Duration.Companion.microseconds
 
 
@@ -137,7 +137,7 @@ private fun RequestListPanel(
     //过滤图片请求,和空 path请求
     fun filterImageRequestsAndEmptyPaths(request: List<NetworkRequest>): List<NetworkRequest> {
         val requests = if (showImageRequest) request else request.filter { !it.isLikelyImage }
-        return requests.filter { hasMeaningfulPathWithOkHttp(it.uri) }
+        return requests.filter { hasMeanfulPathWithOkHttp(it.uri) }
     }
 
     val filteredRequests by derivedStateOf {
@@ -788,8 +788,47 @@ private suspend fun formatJsonAsync(textState: TextFieldState, gson: Gson, text:
 }
 
 //检测 path
-fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
-    val httpUrl = urlString.toHttpUrlOrNull() ?: return false
-    val segments = httpUrl.pathSegments
+//fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
+//    val httpUrl = urlString.toHttpUrlOrNull() ?: return false
+//    val segments = httpUrl.pathSegments
+//    return segments.size > 1 || (segments.size == 1 && segments.first().isNotEmpty())
+//}
+
+/**
+ * 检查给定的 [urlString] 是否拥有有意义的路径。
+ *
+ * 所谓"有意义"的路径定义为：
+ * - 至少包含一个非空段；
+ * - 或者包含多于一个路径段。
+ *
+ * @param urlString 要检查的 URL 字符串。
+ * @return 如果 URL 具有有意义的路径，则返回 true；否则返回 false。
+ */
+fun hasMeanfulPathWithOkHttp(urlString: String): Boolean {
+    val segments = toHttpUrlOrNull(urlString) ?: return false
     return segments.size > 1 || (segments.size == 1 && segments.first().isNotEmpty())
+}
+
+/**
+ * 将给定的 [urlString] 转换为 HTTP URL，并返回路径段列表。
+ *
+ * 如果 URL 无效或路径为空，则返回 null。
+ *
+ * @param urlString 要转换的 URL 字符串。
+ * @return 包含路径段的列表，或者在 URL 无效或路径为空时返回 null。
+ */
+ fun toHttpUrlOrNull(urlString: String): List<String>? {
+    return try {
+        val url = URL(urlString)
+        val path = url.path
+        if (path.isNullOrEmpty()) {
+            null
+        } else {
+            path.split("/").filter { it.isNotEmpty() }
+        }
+    } catch (e: Exception) {
+        // 处理 URL 解析异常
+        println("Invalid URL: $urlString, error: ${e.message}")
+        null
+    }
 }

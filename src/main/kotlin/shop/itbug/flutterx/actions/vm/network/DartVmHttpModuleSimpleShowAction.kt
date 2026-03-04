@@ -11,7 +11,7 @@ import shop.itbug.flutterx.common.dart.FlutterXVMService
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.model.toCurlStringAsDartDevTools
 import shop.itbug.flutterx.util.MyFileUtil
-import shop.itbug.flutterx.window.vm.hasMeaningfulPathWithOkHttp
+import shop.itbug.flutterx.window.vm.hasMeanfulPathWithOkHttp
 import vm.network.NetworkRequest
 import java.awt.event.MouseEvent
 import kotlin.time.Duration.Companion.microseconds
@@ -124,7 +124,7 @@ private class HttpRequestsActionGroup(
 
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
         val requests = app.vmService.dartHttpMonitor.requests.value.values.filter {
-            it.isLikelyImage.not() && hasMeaningfulPathWithOkHttp(it.requestUrl)
+            it.isLikelyImage.not() && hasMeanfulPathWithOkHttp(it.requestUrl)
         }
 
             .toList()
