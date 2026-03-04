@@ -35,7 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -61,6 +60,7 @@ import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
 import kotlin.time.Duration.Companion.microseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -126,11 +126,12 @@ private fun RequestListPanel(
 ) {
 
     val isRunning by vmService.dartHttpMonitor.isMonitoring.collectAsState()
+    val statusMessage by vmService.dartHttpMonitor.statusMessage.collectAsState()
     val searchState = rememberTextFieldState("")
     var debouncedSearchText by remember { mutableStateOf("") }
     var showImageRequest by remember { mutableStateOf(false) }
     LaunchedEffect(searchState.text.toString()) {
-        delay(300)
+        delay(300.milliseconds)
         debouncedSearchText = searchState.text.toString()
     }
 
@@ -213,12 +214,24 @@ private fun RequestListPanel(
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
 
         if (requests.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("${PluginBundle.get("compose.dart.vm.listener.working")}...")
+            Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("${PluginBundle.get("compose.dart.vm.listener.working")}...")
+                    if (statusMessage.isNotBlank()) {
+                        Text(
+                            statusMessage,
+                            fontSize = 11.sp,
+                            color = JewelTheme.globalColors.text.info
+                        )
+                    }
+                }
             }
         } else {
             val listState = rememberLazyListState()
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().weight(1f)) {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize()
@@ -238,6 +251,29 @@ private fun RequestListPanel(
                 VerticalScrollbar(
                     adapter = rememberScrollbarAdapter(listState),
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+                )
+            }
+        }
+
+        // Status bar
+        if (statusMessage.isNotBlank()) {
+            Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    key = AllIconsKeys.General.Information,
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp)
+                )
+                Text(
+                    statusMessage,
+                    fontSize = 11.sp,
+                    color = JewelTheme.globalColors.text.info,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -792,4 +828,17 @@ fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
     val httpUrl = urlString.toHttpUrlOrNull() ?: return false
     val segments = httpUrl.pathSegments
     return segments.size > 1 || (segments.size == 1 && segments.first().isNotEmpty())
+}
+
+private data class SimpleHttpUrl(val pathSegments: List<String>)
+
+private fun String.toHttpUrlOrNull(): SimpleHttpUrl? {
+    return try {
+        val uri = java.net.URI(this)
+        val path = uri.path ?: return null
+        val segments = path.split('/').filter { it.isNotEmpty() }
+        SimpleHttpUrl(segments)
+    } catch (_: Exception) {
+        null
+    }
 }
