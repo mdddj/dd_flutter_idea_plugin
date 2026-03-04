@@ -1,14 +1,15 @@
 package shop.itbug.flutterx.common.yaml
 
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.psi.PsiManager
+import com.intellij.psi.SmartPointerManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
-import shop.itbug.flutterx.services.MyPackageGroup
 
 // 判断项目是否为 flutter 项目
 suspend fun Project.isFlutterProject(): Boolean {
@@ -44,26 +45,36 @@ class PubspecYamlFileTools private constructor(yaml: YAMLFile) : YamlFileToolBas
     suspend fun getDependencyOverrides() = getChsWith("dependency_overrides")
 
 
+    private val YAMLKeyValueImpl.point
+        get() = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
+
     /**
      * 获取全部的插件模型
      */
-    suspend fun allDependencies() =
-        (getDependencies().map {
-            DartYamlModel.create(it)?.copy(
-                type = MyPackageGroup.Dependencies
-            )
-        } + getDevDependencies().map {
-            DartYamlModel.create(it)?.copy(type = MyPackageGroup.DevDependencies)
-        } + getDependencyOverrides().map {
-            DartYamlModel.create(it)?.copy(type = MyPackageGroup.DependencyOverrides)
-        }).filterNotNull()
+    suspend fun allDependencies(): List<DartYamlModel> = coroutineScope {
+        val deps = getDependencies()
+        val devDeps = getDevDependencies()
+        val overrideDeps = getDependencyOverrides()
 
-    /**
-     * 获取插件列表模型
-     */
+        val pointers = readAction {
+            (deps + devDeps + overrideDeps)
+                .filter { it.isValid }
+                .map { SmartPointerManager.createPointer(it) }
+        }
+
+        pointers.map { ptr ->
+            async { DartYamlModel.create(ptr) }
+        }.awaitAll().filterNotNull()
+    }
+
     suspend fun getDependenciesModel(list: List<YAMLKeyValueImpl>): List<DartYamlModel> {
+        val pointers = readAction {
+            list.filter { it.isValid }.map { SmartPointerManager.createPointer(it) }
+        }
         return coroutineScope {
-            list.map { async { DartYamlModel.fetch(it) } }.awaitAll().filterNotNull()
+            pointers.map { ptr ->
+                async { DartYamlModel.fetch(ptr) }
+            }.awaitAll().filterNotNull()
         }
     }
 
