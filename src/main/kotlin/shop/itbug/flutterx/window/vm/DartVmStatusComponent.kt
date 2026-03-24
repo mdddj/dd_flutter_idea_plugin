@@ -52,10 +52,10 @@ private fun FlutterAppStatusPanel(project: Project, app: FlutterAppInstance) {
 
     if (vm != null) {
         HorizontalSplitLayout(
-            modifier = Modifier.fillMaxWidth().border(1.dp, color = JewelTheme.globalColors.borders.normal),
+            modifier = Modifier.fillMaxSize().border(1.dp, color = JewelTheme.globalColors.borders.normal),
             first = {
                 Column(
-                    modifier = Modifier.padding(12.dp).verticalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxSize().padding(12.dp).verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     VmInfoDisplay(vm!!)
@@ -90,7 +90,7 @@ private fun VmMemoryDisplay(app: FlutterAppInstance, vm: VM, vmService: VmServic
     }
 
     Column(
-        modifier = Modifier.padding(12.dp).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().padding(12.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {

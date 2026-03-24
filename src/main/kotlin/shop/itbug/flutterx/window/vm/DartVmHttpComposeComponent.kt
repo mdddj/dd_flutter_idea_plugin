@@ -83,7 +83,7 @@ private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
 
     HorizontalSplitLayout(
         state = outerSplitState,
-        modifier = Modifier.fillMaxWidth().border(1.dp, color = JewelTheme.globalColors.borders.normal),
+        modifier = Modifier.fillMaxSize().border(1.dp, color = JewelTheme.globalColors.borders.normal),
         first = {
             RequestListPanel(
                 vmService = vmService,
@@ -316,11 +316,16 @@ private fun RequestDetailPanel(
 
 
     Column(modifier = Modifier.fillMaxSize()) {
-        CustomTabRow(selectedTabIndex, tabs = tabs.map { it }, onTabClick = {
-            selectedTabIndex = it
-        })
+        CustomTabRow(
+            selectedTabIndex,
+            tabs = tabs,
+            onTabClick = {
+                selectedTabIndex = it
+            },
+            modifier = Modifier.fillMaxWidth().background(JewelTheme.globalColors.panelBackground)
+        )
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
-        Box(modifier = Modifier.weight(1f).padding(8.dp)) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(8.dp)) {
             when (selectedTabIndex) {
                 0 -> OverviewTab(detailedRequest, project)
                 1 -> HeadersTab(detailedRequest.requestHeaders, detailedRequest.responseHeaders)
@@ -347,7 +352,7 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
     val powerShellText = request.toPowerShellString()
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
     ) {
         SelectionContainer {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {

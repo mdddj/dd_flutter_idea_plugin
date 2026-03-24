@@ -99,14 +99,20 @@ If you are running on a real device, please make sure the device is connected to
         }
     } else {
         Column(modifier = Modifier.fillMaxSize()) {
-            CustomTabRow(tabIndex, tabs = flutterAppList.map { it.appInfo.deviceId }.toList(), onTabClick = {
-                tabIndex = it
-            })
+            CustomTabRow(
+                tabIndex,
+                tabs = flutterAppList.map { it.appInfo.deviceId },
+                onTabClick = {
+                    tabIndex = it
+                },
+                modifier = Modifier.fillMaxWidth().background(JewelTheme.globalColors.panelBackground)
+            )
             val selectApp = flutterAppList.getOrNull(tabIndex)
             if (selectApp != null) {
-                body.invoke(selectApp)
+                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    body.invoke(selectApp)
+                }
             }
         }
     }
 }
-

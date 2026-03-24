@@ -3,6 +3,16 @@
 ## Unreleased
 
 
+## 6.9.3 - 2026-03-24
+
+### 🐛 Bug Fixes
+- Fixed a Compose/Jewel layout crash when opening the Dart VM Service tool window on newer Android Studio builds.
+- Replaced the VM tool window's tab strip implementation to avoid `ScrollableContainer` constraint exceptions during focus and measure.
+- Stabilized several Dart VM panes so split layouts and scrollable content receive consistent full-size constraints.
+
+### 🔧 Compatibility
+- Updated bundled IDE plugin dependencies to `Dart 503.0.0` and `io.flutter 90.0.0`.
+
 ## 6.9.2 - 2026-02-11
 
 ### ✨ Network Inspector Enhancements
