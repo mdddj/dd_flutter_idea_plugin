@@ -83,6 +83,7 @@ data class RenderObjectInfo(
     @SerializedName("properties")
     val properties: List<WidgetProperty>?
 )
+
 /*
 * 表示来自 VM 服务（如 flutter.inspector）的位置信息。
 *

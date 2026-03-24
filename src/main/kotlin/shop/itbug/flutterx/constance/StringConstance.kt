@@ -16,6 +16,7 @@ object Links {
     const val OPEN_IN =
         "https://mdddj.github.io/flutterx-doc/en/settings/quick-open-subdirectory/"
 
+    const val DriftDocument = "https://mdddj.github.io/flutterx-doc/en/vm/drift/"
 
     //链接
     const val LINK = "https://mdddj.github.io/flutterx-doc/en/settings/links/"

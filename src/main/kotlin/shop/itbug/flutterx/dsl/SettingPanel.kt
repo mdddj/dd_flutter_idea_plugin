@@ -49,7 +49,7 @@ fun settingPanel(
                 cell(FlutterVersionCheckPanel(project = project))
             }
             row(PluginBundle.get("ignore_this_version_to_check")) {
-                cell(FlutterVersionIgnoreList())
+                scrollCell(FlutterVersionIgnoreList())
             }
             documentCommentRow(Links.CHECK_FLUTTER_VERSION_DOC_LINK)
         }

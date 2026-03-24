@@ -20,6 +20,10 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         toolWindow.addComposeTab("Vm") {
             DartVmStatusComponent(project)
         }
+        //TODO  widget tree 有点不好弄!
+//        toolWindow.addComposeTab("Widget Tree") {
+//            WidgetTreeWindowContent(project)
+//        }
         toolWindow.addComposeTab("Http Monitor") {
             DartHttpUI(project)
         }
@@ -31,6 +35,9 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         }
         toolWindow.addComposeTab("Shared Preferences") {
             DartVmSharedPreferencesComponent(project)
+        }
+        toolWindow.addComposeTab("Drift DB") {
+            DriftComposeComponent(project)
         }
 
         if (System.getenv("DEV") == "true") {

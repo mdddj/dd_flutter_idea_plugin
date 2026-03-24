@@ -95,7 +95,7 @@ private fun ProviderList(state: ProviderState) {
     val bgColor = if (JewelTheme.isDark) Color.DarkGray else Color.White
 
     Column(
-        modifier = Modifier.padding(12.dp).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().padding(12.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -138,7 +138,7 @@ private fun ProviderList(state: ProviderState) {
 private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
     println("provider详情:$provider")
     val rootPath = remember(provider, provider.id) { provider.getProviderPath() }
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(8.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState())) {
         InstanceNodeViewer(vmService = vmService, path = rootPath)
     }
 }

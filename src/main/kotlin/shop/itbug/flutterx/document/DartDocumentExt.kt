@@ -29,9 +29,6 @@ class DartDocumentExt : AbstractDocumentationProvider(), ExternalDocumentationHa
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
-
-
-
         //判断是不是资产
         val strElement = DartPsiElementHelper.findTargetFilePsiElement(element)
         if (strElement != null) {

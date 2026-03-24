@@ -113,6 +113,7 @@ fun FlutterDownloadPanel(project: Project, onClose: () -> Unit = {}) {
             is LoadingState.Success -> state.data.releases
                 .filter { it.channel == selectedChannel }
                 .take(30)
+
             else -> emptyList()
         }
     }
@@ -144,7 +145,7 @@ fun FlutterDownloadPanel(project: Project, onClose: () -> Unit = {}) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // 标题
-        Text("Flutter SDK Downloader", fontWeight = FontWeight.Bold)
+        Text(PluginBundle.get("flutter.downloader.title"), fontWeight = FontWeight.Bold)
         Divider(Orientation.Horizontal)
 
         // 平台选择 - SegmentedControl
@@ -204,7 +205,7 @@ private fun PlatformSelector(
     onPlatformSelected: (Int) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Text("Platform:", modifier = Modifier.alpha(0.8f))
+        Text(PluginBundle.get("flutter.downloader.platform") + ":", modifier = Modifier.alpha(0.8f))
 
         val buttons = remember(selectedIndex) {
             PlatformType.entries.mapIndexed { index, platform ->
@@ -228,7 +229,7 @@ private fun ChannelSelector(
     val channels = listOf("Stable", "Beta", "Dev")
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        Text("Channel:", modifier = Modifier.alpha(0.8f))
+        Text(PluginBundle.get("flutter.downloader.channel") + ":", modifier = Modifier.alpha(0.8f))
 
         val buttons = remember(selectedIndex) {
             channels.mapIndexed { index, channel ->
@@ -253,31 +254,45 @@ private fun VersionSelector(
     onReleaseSelected: (Int) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Version:", modifier = Modifier.alpha(0.8f))
+        Text(PluginBundle.get("flutter.downloader.version") + ":", modifier = Modifier.alpha(0.8f))
 
         when (releasesState) {
             is LoadingState.Idle -> {
-                Text("Please select a platform first", modifier = Modifier.alpha(0.5f))
+                Text(PluginBundle.get("flutter.downloader.select.platform.first"), modifier = Modifier.alpha(0.5f))
             }
+
             is LoadingState.Loading -> {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                    Text("Loading versions...")
+                    Text(PluginBundle.get("flutter.downloader.loading.versions"))
                 }
             }
+
             is LoadingState.Error -> {
                 Text(releasesState.message, color = JewelTheme.globalColors.text.error)
             }
+
             is LoadingState.Success -> {
                 if (filteredReleases.isEmpty()) {
-                    Text("No releases found", modifier = Modifier.alpha(0.5f))
+                    Text(PluginBundle.get("flutter.downloader.no.releases.found"), modifier = Modifier.alpha(0.5f))
                 } else {
+                    // 确保 selectedIndex 在有效范围内，如果无效则使用 0 并更新状态
+                    val safeSelectedIndex = if (selectedIndex in filteredReleases.indices) {
+                        selectedIndex
+                    } else {
+                        // 自动选中第一个版本
+                        LaunchedEffect(Unit) {
+                            onReleaseSelected(0)
+                        }
+                        0
+                    }
+
                     ListComboBox(
                         items = filteredReleases,
-                        selectedIndex = selectedIndex,
+                        selectedIndex = safeSelectedIndex,
                         onSelectedItemChange = { index -> onReleaseSelected(index) },
                         modifier = Modifier.fillMaxWidth(),
                         maxPopupHeight = 250.dp,
@@ -285,8 +300,8 @@ private fun VersionSelector(
                         itemContent = { release, isSelected, isActive ->
                             SimpleListItem(
                                 text = "${release.displayName} - ${release.releaseDate?.substringBefore("T") ?: ""}",
-                                isSelected = isSelected,
-                                isActive = isActive,
+                                selected = isSelected,
+                                active = isActive,
                             )
                         },
                     )
@@ -303,26 +318,26 @@ private fun DownloadPathSelector(
     onPathSelected: (String) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Download Location:", modifier = Modifier.alpha(0.8f))
+        Text(PluginBundle.get("flutter.downloader.download.location") + ":", modifier = Modifier.alpha(0.8f))
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            val displayPath = if (downloadPath.isEmpty()) "Select download folder..." else downloadPath
+            val displayPath = downloadPath.ifEmpty { PluginBundle.get("flutter.downloader.select.download.folder") }
             Text(
                 displayPath,
                 modifier = Modifier.weight(1f).alpha(if (downloadPath.isEmpty()) 0.5f else 1f)
             )
             OutlinedButton(onClick = {
                 val descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
-                descriptor.title = "Select Download Location"
+                descriptor.title = PluginBundle.get("flutter.downloader.select.download.location")
                 val chooser = FileChooserFactory.getInstance().createPathChooser(descriptor, project, null)
                 chooser.choose(null) { files ->
                     files.firstOrNull()?.let { onPathSelected(it.path) }
                 }
             }) {
-                Text("Browse...")
+                Text(PluginBundle.get("flutter.downloader.browse"))
             }
         }
     }
@@ -353,10 +368,10 @@ private fun DownloadSection(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                when (val state = downloadState) {
+                when (downloadState) {
                     is FlutterDownloadState.Progress -> {
                         val animatedProgress by animateFloatAsState(
-                            targetValue = state.fraction.toFloat(),
+                            targetValue = downloadState.fraction.toFloat(),
                             animationSpec = tween(100)
                         )
                         HorizontalProgressBar(
@@ -364,14 +379,16 @@ private fun DownloadSection(
                             modifier = Modifier.fillMaxWidth().height(8.dp)
                         )
                         Text(
-                            "${(state.fraction * 100).toInt()}% - ${state.text}",
+                            "${(downloadState.fraction * 100).toInt()}% - ${downloadState.text}",
                             modifier = Modifier.alpha(0.7f)
                         )
                     }
+
                     is FlutterDownloadState.Downloading -> {
                         CircularProgressIndicator(modifier = Modifier.fillMaxWidth().height(8.dp))
-                        Text("Preparing download...", modifier = Modifier.alpha(0.7f))
+                        Text(PluginBundle.get("flutter.downloader.preparing.download"), modifier = Modifier.alpha(0.7f))
                     }
+
                     else -> {}
                 }
             }
@@ -392,8 +409,8 @@ private fun DownloadSection(
                         key = AllIconsKeys.General.InspectionsOK,
                         contentDescription = "Success"
                     )
-                    Text("Download completed!")
-                    Link("Open folder",{
+                    Text(PluginBundle.get("flutter.downloader.download.completed"))
+                    Link(PluginBundle.get("flutter.downloader.open.folder"), {
                         BrowserUtil.browse(downloadState.file.parentFile)
                     })
                 }
@@ -423,7 +440,7 @@ private fun DownloadSection(
         // 选中版本信息
         selectedRelease?.let { release ->
             Text(
-                "Selected: Flutter ${release.version} (${release.channel})",
+                "${PluginBundle.get("flutter.downloader.selected")}: Flutter ${release.version} (${release.channel})",
                 modifier = Modifier.alpha(0.6f)
             )
         }
@@ -432,9 +449,9 @@ private fun DownloadSection(
 
         // 下载按钮
         val canDownload = selectedRelease != null &&
-            downloadPath.isNotEmpty() &&
-            downloadState !is FlutterDownloadState.Downloading &&
-            downloadState !is FlutterDownloadState.Progress
+                downloadPath.isNotEmpty() &&
+                downloadState !is FlutterDownloadState.Downloading &&
+                downloadState !is FlutterDownloadState.Progress
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -547,7 +564,7 @@ private fun startDownload(
 
         override fun onCancel() {
             targetFile.delete()
-            onStateChange(FlutterDownloadState.Error("Download cancelled"))
+            onStateChange(FlutterDownloadState.Error(PluginBundle.get("flutter.downloader.download.cancelled")))
         }
     }.queue()
 }
@@ -556,7 +573,7 @@ private fun startDownload(
 class FlutterDownloadDialog(val project: Project) : DialogWrapper(project) {
     init {
         super.init()
-        title = "Flutter Downloader"
+        title = PluginBundle.get("flutter.downloader.title")
     }
 
     override fun createCenterPanel(): JComponent {
@@ -573,7 +590,7 @@ class FlutterDownloadDialog(val project: Project) : DialogWrapper(project) {
 }
 
 /// 启动 flutter下载器
-class FlutterDownloaderAction : AnAction(){
+class FlutterDownloaderAction : AnAction() {
     override fun actionPerformed(p0: AnActionEvent) {
         p0.project?.let { FlutterDownloadDialog(it) }?.show()
     }

@@ -1,8 +1,10 @@
 package shop.itbug.flutterx.common.yaml
 
 import com.intellij.openapi.application.readAction
+import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
@@ -70,19 +72,36 @@ data class DartYamlModel(
 
     companion object {
 
-        suspend fun create(element: YAMLKeyValueImpl): DartYamlModel? {
-            val pt = element.findChild<YAMLPlainTextImpl>() ?: return null
-            val hasBlock = element.findChild<YAMLBlockMappingImpl>() != null
-            if (hasBlock) return null
+        suspend fun create(elementPointer: SmartPsiElementPointer<YAMLKeyValueImpl>): DartYamlModel? {
+            // 1. 获取 project 时也要注意安全性
+            val project = try { elementPointer.project } catch (_: Exception) { return null }
+
             return readAction {
-                val version = element.valueText.trim()
-                if (version.isBlank()) return@readAction null
-                val name = element.keyText.trim()
-                val point = SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(element)
-                val plainText = SmartPointerManager.getInstance(element.project).createSmartPsiElementPointer(pt)
-                DartYamlModel(
-                    name, version, tryParseDartVersionType(version), point, plainText,
-                )
+                try {
+                    // 2. 检查 element 是否还在
+                    val element = elementPointer.element ?: return@readAction null
+                    if (!element.isValid || project.isDisposed) return@readAction null
+
+                    // 3. 这里的 pt 指针还是需要的，因为它是 element 的子元素
+                    val pt = PsiTreeUtil.findChildOfType(element, YAMLPlainTextImpl::class.java) ?: return@readAction null
+
+                    // 检查是否有 block (比如有些 pubspec 是 key: { version: 1.0.0 } 这种结构)
+                    val hasBlock = PsiTreeUtil.findChildOfType(element, YAMLBlockMappingImpl::class.java) != null
+                    if (hasBlock) return@readAction null
+
+                    val version = element.valueText.trim()
+                    if (version.isBlank()) return@readAction null
+                    val name = element.keyText.trim()
+
+                    // 创建 pt 的指针
+                    val pointerManager = SmartPointerManager.getInstance(project)
+                    val plainTextPointer = pointerManager.createSmartPsiElementPointer(pt)
+
+                    // 直接复用传入的 elementPointer，不需要再 create 一次
+                    DartYamlModel(name, version, tryParseDartVersionType(version), elementPointer, plainTextPointer)
+                } catch (_: PsiInvalidElementAccessException) {
+                    null
+                }
             }
         }
 
@@ -90,10 +109,12 @@ data class DartYamlModel(
          * 解析model的时候同时请求pub.dev的包数据
          * 多了一个请求
          */
-        suspend fun fetch(element: YAMLKeyValueImpl): DartYamlModel? {
+        suspend fun fetch(element: SmartPsiElementPointer<YAMLKeyValueImpl>): DartYamlModel? {
             val model = create(element) ?: return null
-            val file = readAction { element.containingFile }
-            val project = readAction { element.project }
+            val (file, project) = readAction {
+                val psi = model.element.element ?: return@readAction null
+                psi.containingFile to psi.project
+            } ?: return null
             val isIgnored = YamlFileIgDartPackageCache.getInstance(project).state.hasItem(file, model.name)
             if (isIgnored) return null
             val data = PubService.callPluginDetails(model.name) ?: return null

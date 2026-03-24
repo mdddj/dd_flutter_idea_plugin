@@ -30,11 +30,11 @@ import com.google.gson.JsonObject
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -49,6 +49,7 @@ import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.dsl.formatUrl
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.model.toCurlStringAsDartDevTools
+import shop.itbug.flutterx.model.toPowerShellString
 import shop.itbug.flutterx.util.ComposeHelper
 import shop.itbug.flutterx.util.MyFileUtil
 import shop.itbug.flutterx.util.RunUtil
@@ -59,6 +60,7 @@ import vm.VmService
 import vm.network.DartNetworkMonitor
 import vm.network.NetworkRequest
 import kotlin.time.Duration.Companion.microseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -81,7 +83,7 @@ private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
 
     HorizontalSplitLayout(
         state = outerSplitState,
-        modifier = Modifier.fillMaxWidth().border(1.dp, color = JewelTheme.globalColors.borders.normal),
+        modifier = Modifier.fillMaxSize().border(1.dp, color = JewelTheme.globalColors.borders.normal),
         first = {
             RequestListPanel(
                 vmService = vmService,
@@ -124,11 +126,12 @@ private fun RequestListPanel(
 ) {
 
     val isRunning by vmService.dartHttpMonitor.isMonitoring.collectAsState()
+    val statusMessage by vmService.dartHttpMonitor.statusMessage.collectAsState()
     val searchState = rememberTextFieldState("")
     var debouncedSearchText by remember { mutableStateOf("") }
     var showImageRequest by remember { mutableStateOf(false) }
     LaunchedEffect(searchState.text.toString()) {
-        delay(300)
+        delay(300.milliseconds)
         debouncedSearchText = searchState.text.toString()
     }
 
@@ -211,12 +214,24 @@ private fun RequestListPanel(
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
 
         if (requests.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("${PluginBundle.get("compose.dart.vm.listener.working")}...")
+            Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("${PluginBundle.get("compose.dart.vm.listener.working")}...")
+                    if (statusMessage.isNotBlank()) {
+                        Text(
+                            statusMessage,
+                            fontSize = 11.sp,
+                            color = JewelTheme.globalColors.text.info
+                        )
+                    }
+                }
             }
         } else {
             val listState = rememberLazyListState()
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().weight(1f)) {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize()
@@ -236,6 +251,29 @@ private fun RequestListPanel(
                 VerticalScrollbar(
                     adapter = rememberScrollbarAdapter(listState),
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+                )
+            }
+        }
+
+        // Status bar
+        if (statusMessage.isNotBlank()) {
+            Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    key = AllIconsKeys.General.Information,
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp)
+                )
+                Text(
+                    statusMessage,
+                    fontSize = 11.sp,
+                    color = JewelTheme.globalColors.text.info,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -278,11 +316,16 @@ private fun RequestDetailPanel(
 
 
     Column(modifier = Modifier.fillMaxSize()) {
-        CustomTabRow(selectedTabIndex, tabs = tabs.map { it }, onTabClick = {
-            selectedTabIndex = it
-        })
+        CustomTabRow(
+            selectedTabIndex,
+            tabs = tabs,
+            onTabClick = {
+                selectedTabIndex = it
+            },
+            modifier = Modifier.fillMaxWidth().background(JewelTheme.globalColors.panelBackground)
+        )
         Divider(Orientation.Horizontal, Modifier.fillMaxWidth())
-        Box(modifier = Modifier.weight(1f).padding(8.dp)) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(8.dp)) {
             when (selectedTabIndex) {
                 0 -> OverviewTab(detailedRequest, project)
                 1 -> HeadersTab(detailedRequest.requestHeaders, detailedRequest.responseHeaders)
@@ -306,9 +349,10 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
     }
 
     val curlText = request.toCurlStringAsDartDevTools()
+    val powerShellText = request.toPowerShellString()
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
     ) {
         SelectionContainer {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -351,6 +395,18 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
                 RunUtil.runCommand(project, "cURL", curlText)
             }) {
                 Text("Run Command To Terminal")
+            }
+        }
+        if (SystemInfo.isWindows) {
+            Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())
+            Title("PowerShell")
+            Text(powerShellText)
+            Row {
+                IconActionButton(AllIconsKeys.Actions.Copy, contentDescription = "", onClick = {
+                    powerShellText.copyTextToClipboard()
+                }) {
+                    Text(PluginBundle.get("copy") + " PowerShell")
+                }
             }
         }
         Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())
@@ -777,4 +833,17 @@ fun hasMeaningfulPathWithOkHttp(urlString: String): Boolean {
     val httpUrl = urlString.toHttpUrlOrNull() ?: return false
     val segments = httpUrl.pathSegments
     return segments.size > 1 || (segments.size == 1 && segments.first().isNotEmpty())
+}
+
+private data class SimpleHttpUrl(val pathSegments: List<String>)
+
+private fun String.toHttpUrlOrNull(): SimpleHttpUrl? {
+    return try {
+        val uri = java.net.URI(this)
+        val path = uri.path ?: return null
+        val segments = path.split('/').filter { it.isNotEmpty() }
+        SimpleHttpUrl(segments)
+    } catch (_: Exception) {
+        null
+    }
 }

@@ -1,0 +1,51 @@
+<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN, cannot be changed between the plugin versions. -->
+    <id>shop.itbug.FlutterX-MCP</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
+    <name>FlutterX-MCP</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor url="https://itbug.shop">梁典典</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
+    <description><![CDATA[
+        使用 MCP 访问 FlutterX 插件里面的内容，提供 Dart VM 调试和监控工具。
+        <br/><br/>
+        <b>功能特性:</b>
+        <ul>
+            <li>获取运行中的 Flutter 应用列表</li>
+            <li>获取 Dart VM 详细信息</li>
+            <li>HTTP 请求监控</li>
+            <li>SharedPreferences 缓存数据读取</li>
+        </ul>
+    ]]>    </description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <dependencies>
+        <plugin id="com.intellij.modules.platform"/>
+        <plugin id="shop.itbug.FlutterCheckVersionX"/>
+    </dependencies>
+
+    <!-- Extensions defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!-- MCP Server 设置页面，作为 FlutterX 设置的子页面 -->
+        <projectConfigurable instance="shop.itbug.flutterxmcp.setting.McpServerSetting" parentId="setting.flutterx" id="flutterx.mcp.server" displayName="MCP Server"/>
+
+        <!-- 项目启动时自动启动 MCP Server -->
+        <postStartupActivity implementation="shop.itbug.flutterxmcp.McpServerStartupActivity"/>
+    </extensions>
+
+    <!-- Actions -->
+    <actions>
+        <action id="flutterx.mcp.statusbar" class="shop.itbug.flutterxmcp.action.McpStatusBarAction" text="MCP: Stopped" description="FlutterX MCP Server status. Click to start/restart and copy config to clipboard.">
+            <add-to-group group-id="status_bar_actions" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>

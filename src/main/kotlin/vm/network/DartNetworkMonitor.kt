@@ -7,6 +7,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.model.IRequest
 import shop.itbug.flutterx.model.formatDate
 import vm.VmService
@@ -17,6 +18,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 监控到的网络请求数据模型
@@ -130,6 +132,9 @@ class DartNetworkMonitor(
     private val _isMonitoring = MutableStateFlow(false)
     val isMonitoring: StateFlow<Boolean> = _isMonitoring.asStateFlow()
 
+    private val _statusMessage = MutableStateFlow("")
+    val statusMessage: StateFlow<String> = _statusMessage.asStateFlow()
+
     private var lastUpdateTime = 0L
     private var pollingJob: Job? = null
     private var errorCount = 0
@@ -141,7 +146,7 @@ class DartNetworkMonitor(
     init {
         vmService.addEventHotResetListener(this)
         scope.launch {
-            delay(100)
+            delay(100.milliseconds)
             startMonitoring()
         }
     }
@@ -151,20 +156,24 @@ class DartNetworkMonitor(
      */
     suspend fun startMonitoring(intervalMs: Long = 1000L): Boolean {
         if (_isMonitoring.value) {
-            logger.debug("监控已在运行中")
+            logger.debug(PluginBundle.get("network.monitor.already.running"))
             return true
         }
 
         return try {
             val isAvailable = vmService.isHttpProfilingAvailable(isolateId)
             if (!isAvailable) {
-                logger.warn("HTTP分析功能不可用")
+                val msg = PluginBundle.get("network.monitor.http.profiling.unavailable")
+                logger.warn(msg)
+                _statusMessage.value = msg
                 return false
             }
 
             val timelineResult = vmService.setHttpTimelineLogging(isolateId, true)
             if (timelineResult == null) {
-                logger.warn("启用HTTP时间线日志失败")
+                val msg = PluginBundle.get("network.monitor.enable.timeline.failed")
+                logger.warn(msg)
+                _statusMessage.value = msg
                 return false
             }
 
@@ -174,10 +183,14 @@ class DartNetworkMonitor(
             errorCount = 0
             startPolling(intervalMs)
 
-            logger.info("网络监控已启动")
+            val msg = PluginBundle.get("network.monitor.started")
+            logger.info(msg)
+            _statusMessage.value = msg
             true
         } catch (e: Exception) {
-            logger.error("启动网络监控失败", e)
+            val msg = PluginBundle.get("network.monitor.start.failed")
+            logger.error(msg, e)
+            _statusMessage.value = "$msg: ${e.message}"
             false
         }
     }
@@ -208,9 +221,11 @@ class DartNetworkMonitor(
 
         try {
             vmService.setHttpTimelineLogging(isolateId, false)
-            logger.info("网络监控已停止")
+            val msg = PluginBundle.get("network.monitor.stopped")
+            logger.info(msg)
+            _statusMessage.value = msg
         } catch (e: Exception) {
-            logger.warn("停止监控时出错", e)
+            logger.warn(PluginBundle.get("network.monitor.stop.error"), e)
         }
     }
 
@@ -230,22 +245,28 @@ class DartNetworkMonitor(
                         throw e
                     } catch (e: Exception) {
                         errorCount++
-                        logger.error("轮询网络数据失败 (错误次数: $errorCount/$maxConsecutiveErrors)", e)
+                        val msg = PluginBundle.get("network.monitor.poll.failed", errorCount, maxConsecutiveErrors)
+                        logger.error(msg, e)
+                        _statusMessage.value = msg
 
                         if (errorCount >= maxConsecutiveErrors) {
-                            logger.error("连续错误过多,停止监控")
+                            val stopMsg = PluginBundle.get("network.monitor.too.many.errors")
+                            logger.error(stopMsg)
+                            _statusMessage.value = stopMsg
                             stopMonitoring()
                             break
                         }
                     }
 
-                    delay(intervalMs)
+                    delay(intervalMs.milliseconds)
                 }
             } catch (e: CancellationException) {
-                logger.debug("网络监控轮询已取消")
+                logger.debug(PluginBundle.get("network.monitor.poll.cancelled"))
                 throw e
             } catch (e: Exception) {
-                logger.warn("轮询过程中发生严重错误", e)
+                val msg = PluginBundle.get("network.monitor.poll.critical.error")
+                logger.warn(msg, e)
+                _statusMessage.value = "$msg: ${e.message}"
             }
         }
     }
@@ -272,7 +293,7 @@ class DartNetworkMonitor(
             // 协程取消异常必须重新抛出，不能记录
             throw e
         } catch (e: Exception) {
-            logger.warn("更新网络请求数据失败", e)
+            logger.warn(PluginBundle.get("network.monitor.update.failed"), e)
             // 不要抛出异常中断轮询，记录错误即可
             // throw e
         }
@@ -301,7 +322,7 @@ class DartNetworkMonitor(
                 }
             }
         } catch (e: Exception) {
-            logger.error("解析HTTP分析数据失败", e)
+            logger.error(PluginBundle.get("network.monitor.parse.failed"), e)
         }
     }
 
@@ -386,7 +407,7 @@ class DartNetworkMonitor(
                 updatedRequest
             }
         } catch (e: Exception) {
-            logger.error("获取请求详细信息失败: requestId=$requestId", e)
+            logger.warn("${PluginBundle.get("network.monitor.get.details.failed")}: requestId=$requestId", e)
             null
         }
     }
@@ -399,7 +420,7 @@ class DartNetworkMonitor(
             val bytes = jsonArray.map { it.asInt.toByte() }.toByteArray()
             String(bytes, Charsets.UTF_8)
         } catch (e: Exception) {
-            logger.warn("解码body失败", e)
+            logger.warn(PluginBundle.get("network.monitor.decode.body.failed"), e)
             "Failed to decode body: ${e.message}"
         }
     }
@@ -412,9 +433,11 @@ class DartNetworkMonitor(
         try {
             vmService.clearHttpProfile(isolateId)
             lastUpdateTime = timeSource.currentTimeMicros()
-            logger.info("请求数据已清除")
+            val msg = PluginBundle.get("network.monitor.data.cleared")
+            logger.info(msg)
+            _statusMessage.value = msg
         } catch (e: Exception) {
-            logger.error("清除请求数据失败", e)
+            logger.error(PluginBundle.get("network.monitor.clear.failed"), e)
         }
     }
 
@@ -441,7 +464,7 @@ class DartNetworkMonitor(
     override fun onStart() {
         scope.launch {
             stopMonitoring()
-            delay(100)
+            delay(100.milliseconds)
             startMonitoring()
         }
     }
@@ -520,7 +543,7 @@ class DartNetworkMonitor(
                     request.status = RequestStatus.ERROR
                 }
             } catch (e: Exception) {
-                thisLogger().warn("解析请求数据失败", e)
+                thisLogger().warn(PluginBundle.get("network.monitor.parse.request.failed"), e)
             }
         }
 
@@ -533,7 +556,7 @@ class DartNetworkMonitor(
                 if (responseJson.has("statusCode")) {
                     request.statusCode = responseJson.get("statusCode").asInt
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // ignore
             }
 
@@ -553,7 +576,7 @@ class DartNetworkMonitor(
                     }
                 }
             } catch (e: Exception) {
-                thisLogger().warn("解析响应头失败: ${e.message}")
+                thisLogger().warn("${PluginBundle.get("network.monitor.parse.response.headers.failed")}: ${e.message}")
             }
 
             // 3. 单独解析错误和结束时间
@@ -568,7 +591,7 @@ class DartNetworkMonitor(
                     request.status = RequestStatus.COMPLETED
                 }
             } catch (e: Exception) {
-                thisLogger().warn("解析响应元数据失败", e)
+                thisLogger().warn(PluginBundle.get("network.monitor.parse.response.meta.failed"), e)
             }
         }
 

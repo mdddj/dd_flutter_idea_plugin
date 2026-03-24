@@ -18,12 +18,13 @@ object MyIcons {
     val xcode = IconLoader.getIcon("/icons/xcode.svg", MyIcons::class.java)
     val language = IconLoader.getIcon("/icons/language.svg", MyIcons::class.java)
     val image = IconLoader.getIcon("/icons/image.svg", MyIcons::class.java)
-    val imageIconPath = PathIconKey("/icons/image.svg",MyIcons::class.java)
+    val imageIconPath = PathIconKey("/icons/image.svg", MyIcons::class.java)
 
     val moreHorizontal = IconLoader.getIcon("/icons/moreHorizontal.svg", MyIcons::class.java)
 
     /// compose
-    val download = IntelliJIconKey("/icons/new/download.svg","/icons/new/download.svg", MyIcons::class.java)
+    val download = IntelliJIconKey("/icons/new/download.svg", "/icons/new/download.svg", MyIcons::class.java)
+    val kofi = IntelliJIconKey("/icons/kofi.svg", "/icons/kofi.svg", MyIcons::class.java)
 }
 
 

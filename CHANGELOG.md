@@ -2,6 +2,83 @@
 
 ## Unreleased
 
+
+## 6.9.3 - 2026-03-24
+
+### 🐛 Bug Fixes
+- Fixed a Compose/Jewel layout crash when opening the Dart VM Service tool window on newer Android Studio builds.
+- Replaced the VM tool window's tab strip implementation to avoid `ScrollableContainer` constraint exceptions during focus and measure.
+- Stabilized several Dart VM panes so split layouts and scrollable content receive consistent full-size constraints.
+
+### 🔧 Compatibility
+- Updated bundled IDE plugin dependencies to `Dart 503.0.0` and `io.flutter 90.0.0`.
+
+## 6.9.2 - 2026-02-11
+
+### ✨ Network Inspector Enhancements
+- **Multi-Platform cURL**: Optimized cURL command generation for better compatibility across Windows (CMD/PowerShell) and Unix-like systems.
+- **PowerShell Support**: Added "Copy as PowerShell" functionality in the Network Overview tab (Windows only).
+- **Query Parameter Optimization**: Improved handling of multi-value query parameters in generated commands.
+- **UI Refinement**: Added scrolling support for the Flutter version ignore list in the settings panel.
+
+
+## 6.9.1 - 2026-01-26
+
+### ✨ Drift Debugger Optimizations
+- **Column Resizing**: Support dynamic column resizing by dragging header borders.
+- **CSV Support**: Added options to export table data to CSV and preview CSV content in the editor.
+- **Cell Interactions**: Added a context menu for table cells on hover:
+  - One-click copy cell value to clipboard.
+  - Inline editing of cell values.
+  - Open content in a standalone editor (supports Plain Text and JSON).
+  - Quick toggle between timestamp and formatted date/time display.
+- **Filtering & UI**: 
+  - Improved Filter Builder with type-aware operators.
+  - Added zebra-striped rows for better table readability.
+  - Refined database and table list interfaces.
+  - Added a status bar to display operation logs and status.
+
+### 🎨 UI/UX Improvements
+- **Donation Support**: Added a WeChat donation popup on the home page.
+- **Internationalization**: Improved localization for English, Traditional Chinese (HK), Japanese, and Korean.
+
+### 🐛 Bug Fixes & Technical
+- Fixed Drift database component layout issues.
+- Fixed MCP (Model Context Protocol) build configuration.
+- Improved selection feedback and animations across the tool windows.
+
+## 6.9.0 - 2026-01-21
+
+### ✨ New Features
+- **Drift Database Viewer**: Added complete Drift database viewer with real-time data inspection
+  - View and manage Drift database tables and data
+  - Support for filtering, sorting, and editing data
+  - Export database functionality
+  - Multi-language support (EN, CN, HK, JA, KO)
+- **Kofi Integration**: Added Kofi donation widget support
+
+### 🐛 Bug Fixes
+- Fixed `IndexOutOfBoundsException` in Flutter downloader when switching channels
+- Fixed `ArrayIndexOutOfBoundsException` in Privacy Scanner when clearing list
+- Fixed download location selector not showing when version is auto-selected
+- Fixed Drift component split layout not being draggable
+
+### 🌍 Internationalization
+- Added complete i18n support for Drift Database Viewer
+  - English, Chinese, Traditional Chinese (HK), Japanese, Korean
+- All UI components now support multiple languages
+
+### 🎨 UI/UX Improvements
+- Drift viewer now has resizable split panels for better workspace management
+- Improved Flutter downloader UX with auto-selection of first version
+- Enhanced error handling and user feedback
+
+### 🔧 Technical Improvements
+- Optimized VM Service extensions
+- Improved Gson safety configuration
+- Better icon resource management
+- Code cleanup and optimization
+
 ## 6.8.0 - 2025-12-12
 
 - New features: Shared Preferences panel (Dart Vm Service)
