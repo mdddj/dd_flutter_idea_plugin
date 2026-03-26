@@ -577,7 +577,7 @@ class FlutterDownloadDialog(val project: Project) : DialogWrapper(project) {
     }
 
     override fun createCenterPanel(): JComponent {
-        return JewelComposePanel({
+        return JewelComposePanel(true,{
             preferredSize = Dimension(450, 500)
         }) {
             FlutterDownloadPanel(project) {

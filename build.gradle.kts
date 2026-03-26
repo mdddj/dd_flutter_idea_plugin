@@ -23,12 +23,12 @@ val idePluginDependencies =
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.10.5"
+    kotlin("jvm") version "2.3.0"
+    id("org.jetbrains.intellij.platform") version "2.13.1"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
 }
 
 group = "shop.itbug"
@@ -83,7 +83,9 @@ dependencies {
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
-        intellijIdeaCommunity("2025.2.1")
+//        intellijIdeaCommunity("2026.1")
+        intellijIdea("2026.1")
+        idea
         bundledPlugins(bPlugins)
         plugins(*idePluginDependencies.toTypedArray())
         pluginVerifier()
@@ -143,8 +145,8 @@ compileKotlin.compilerOptions {
 tasks {
 
     patchPluginXml {
-        sinceBuild.set(sinceBuildVersion)
-        untilBuild.set("253.*")
+        sinceBuild.set("260.*")
+//        untilBuild.set("253.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
@@ -176,7 +178,7 @@ tasks {
 
     compileKotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(JvmTarget.JVM_25)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }

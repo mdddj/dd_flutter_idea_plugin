@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 7.0.0 - 2026-03-26
+
+### 🔧 Compatibility
+- Adapted FlutterX for IntelliJ IDEA 2026.1 and aligned platform compatibility for the new IDE build.
+
+### ✨ Includes updates from 6.9.0 - 6.9.3
+- Added and refined the Drift database viewer, including table browsing, editing, export, and UI improvements.
+- Improved Network Inspector command copying with better cross-platform cURL and PowerShell support.
+- Fixed several Flutter downloader, privacy scanner, Drift panel, and Dart VM tool window stability issues.
 
 ## 6.9.3 - 2026-03-24
 

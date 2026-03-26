@@ -111,7 +111,6 @@ fun FreezedClassConfig.mainClassRun(mainCall: VoidCallback, otherRun: VoidCallba
 
 @Service(Service.Level.PROJECT)
 @State(name = "FlutterX Freezed Code Gen Setting", category = SettingsCategory.PLUGINS)
-@Storage(roamingType = RoamingType.DEFAULT)
 class FreezedClassConfigStateService(project: Project) : SimplePersistentStateComponent<FreezedClassConfig>(
     FreezedClassConfig(
         saveDirectory = project.guessProjectDir()?.path ?: ""
@@ -124,7 +123,6 @@ class FreezedClassConfigStateService(project: Project) : SimplePersistentStateCo
 
 @Service(Service.Level.PROJECT)
 @State(name = "FlutterX Dart Macro Code Gen Setting", category = SettingsCategory.PLUGINS)
-@Storage(roamingType = RoamingType.DEFAULT)
 class DartMarcoClassConfigStateService(project: Project) : SimplePersistentStateComponent<DartMarcoClassConfig>(
     DartMarcoClassConfig(
         saveDir = project.guessProjectDir()?.path ?: ""

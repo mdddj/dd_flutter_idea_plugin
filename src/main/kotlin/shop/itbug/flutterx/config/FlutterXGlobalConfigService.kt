@@ -99,7 +99,7 @@ class FlutterConfigQuickOpenInCommandDialog(project: Project) : DialogWrapper(pr
 
     override fun createCenterPanel(): JComponent {
 
-        return JewelComposePanel(
+        return JewelComposePanel(true,
             {
                 preferredSize = Dimension(800, 550)
             }

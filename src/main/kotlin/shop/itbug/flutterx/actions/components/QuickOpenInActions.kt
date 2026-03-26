@@ -13,7 +13,7 @@ import shop.itbug.flutterx.util.RunUtil
 
 class QuickOpenInActions: DefaultActionGroup(), DumbAware {
 
-    override fun getChildren(e: AnActionEvent?): Array<out AnAction?> {
+    override fun getChildren(e: AnActionEvent?): Array<out AnAction> {
         if(e!=null){
             val list = mutableListOf<AnAction>()
             val setting = FlutterXGlobalConfigService.getInstance().state
