@@ -8,6 +8,18 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val pluginVersion: String by project
 
+val flutterDevVersion = "io.flutter:90.0.0"
+val isPublishPluginBuild =
+    gradle.startParameter.taskNames.any { taskName ->
+        taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")
+    }
+val idePluginDependencies =
+    buildList {
+        add("Dart:$dartVersion")
+        if (!isPublishPluginBuild) {
+            add(flutterDevVersion)
+        }
+    }
 
 plugins {
     idea
@@ -73,8 +85,7 @@ dependencies {
     intellijPlatform {
         intellijIdeaCommunity("2025.2.1")
         bundledPlugins(bPlugins)
-        //"io.flutter:88.2.0"
-        plugins("Dart:$dartVersion","io.flutter:90.0.0")
+        plugins(*idePluginDependencies.toTypedArray())
         pluginVerifier()
         zipSigner()
         javaCompiler()

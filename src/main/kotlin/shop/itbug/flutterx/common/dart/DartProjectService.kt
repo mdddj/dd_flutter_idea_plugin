@@ -471,6 +471,8 @@ class RunConfigListener(val project: Project) : UserDataHolderBase(), ExecutionL
             handler.addProcessListener(this)
             msgBus.processStarted(project, executorId, env, handler)
         }
+
+
     }
 
     override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
