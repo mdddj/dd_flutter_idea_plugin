@@ -26,9 +26,9 @@ jobs:
           fetch-depth: 0  # 获取完整历史记录用于生成变更日志
 
       - name: 准备JBR21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'jetbrains'
 
       - name: 获取标签版本号
