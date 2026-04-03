@@ -20,6 +20,9 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         toolWindow.addComposeTab("Vm") {
             DartVmStatusComponent(project)
         }
+        toolWindow.addComposeTab("Memory") {
+            DartVmMemoryComponent(project)
+        }
         //TODO  widget tree 有点不好弄!
 //        toolWindow.addComposeTab("Widget Tree") {
 //            WidgetTreeWindowContent(project)
@@ -64,4 +67,3 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
 
 fun Project.getDartVmWindow() = ToolWindowManager.getInstance(this).getToolWindow(dartVmToolWindowId)
 const val dartVmToolWindowId = "FlutterX Dart VM"
-

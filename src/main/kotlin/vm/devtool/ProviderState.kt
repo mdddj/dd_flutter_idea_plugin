@@ -40,11 +40,15 @@ class ProviderState(
      * 刷新 Provider 列表
      */
     fun refreshProviders() {
+        if (isLoading) return
         scope.launch {
             isLoading = true
             error = null
             try {
-                providers = ProviderHelper.getProviderNodes(vmService)
+                providers = ProviderHelper.getProviderNodes(vmService).sortedBy { it.type.lowercase() }
+                if (selectedProvider?.id != null && providers.none { it.id == selectedProvider?.id }) {
+                    selectedProvider = null
+                }
                 Logging.getLogger().logInformation("Loaded ${providers.size} providers")
             } catch (e: Exception) {
                 // 检查是否是控制流异常

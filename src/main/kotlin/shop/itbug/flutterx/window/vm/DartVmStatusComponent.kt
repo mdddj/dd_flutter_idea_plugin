@@ -94,7 +94,7 @@ private fun VmMemoryDisplay(app: FlutterAppInstance, vm: VM, vmService: VmServic
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("Quick Actions", color = JewelTheme.globalColors.text.normal)
+            Text(PluginBundle.get("vm.status.quick.actions"), color = JewelTheme.globalColors.text.normal)
             InspectorStateComponent(vmService, project)
         }
         Divider(
@@ -102,48 +102,48 @@ private fun VmMemoryDisplay(app: FlutterAppInstance, vm: VM, vmService: VmServic
             modifier = Modifier.fillMaxWidth()
         )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            SectionTitle("Memory")
+            SectionTitle(PluginBundle.get("vm.status.memory.section"))
             IconActionButton(
                 AllIconsKeys.Actions.Refresh,
                 onClick = { scope.launch { refresh() } },
-                contentDescription = "Refresh VM Memory"
+                contentDescription = PluginBundle.get("vm.status.refresh.memory.desc")
             )
         }
-        KeyValueRow("Current Memory", formatBytes(vmInfo.getCurrentMemory()))
-        KeyValueRow("Current RSS", formatBytes(vmInfo.getCurrentRSS()))
-        KeyValueRow("Max RSS", formatBytes(vmInfo.getMaxRSS()))
+        KeyValueRow(PluginBundle.get("vm.status.current.memory"), formatBytes(vmInfo.getCurrentMemory()))
+        KeyValueRow(PluginBundle.get("vm.status.current.rss"), formatBytes(vmInfo.getCurrentRSS()))
+        KeyValueRow(PluginBundle.get("vm.status.max.rss"), formatBytes(vmInfo.getMaxRSS()))
     }
 }
 
 @Composable
 private fun VmInfoDisplay(vmInfo: VM) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        SectionTitle("VM Information")
-        KeyValueRow("Type", vmInfo.type)
-        KeyValueRow("Name", vmInfo.getName())
-        KeyValueRow("Version", vmInfo.getVersion())
-        KeyValueRow("PID", vmInfo.getPid().toString())
-        KeyValueRow("Start Time", formatTimestamp(vmInfo.getStartTime()))
-        KeyValueRow("Embedder", vmInfo.getEmbedder())
+        SectionTitle(PluginBundle.get("vm.status.vm.info"))
+        KeyValueRow(PluginBundle.get("vm.status.type"), vmInfo.type)
+        KeyValueRow(PluginBundle.get("vm.status.name"), vmInfo.getName())
+        KeyValueRow(PluginBundle.get("vm.status.version"), vmInfo.getVersion())
+        KeyValueRow(PluginBundle.get("vm.status.pid"), vmInfo.getPid().toString())
+        KeyValueRow(PluginBundle.get("vm.status.start.time"), formatTimestamp(vmInfo.getStartTime()))
+        KeyValueRow(PluginBundle.get("vm.status.embedder"), vmInfo.getEmbedder())
 
-        OpenGroupPanel("Host & Target") {
-            KeyValueRow("OS", vmInfo.getOperatingSystem())
-            KeyValueRow("Host CPU", vmInfo.getHostCPU())
-            KeyValueRow("Target CPU", vmInfo.getTargetCPU())
-            KeyValueRow("Architecture", "${vmInfo.getArchitectureBits()}-bit")
+        OpenGroupPanel(PluginBundle.get("vm.status.host.target")) {
+            KeyValueRow(PluginBundle.get("vm.status.os"), vmInfo.getOperatingSystem())
+            KeyValueRow(PluginBundle.get("vm.status.host.cpu"), vmInfo.getHostCPU())
+            KeyValueRow(PluginBundle.get("vm.status.target.cpu"), vmInfo.getTargetCPU())
+            KeyValueRow(PluginBundle.get("vm.status.architecture"), PluginBundle.get("vm.status.arch.bits", vmInfo.getArchitectureBits()))
         }
 
-        OpenGroupPanel("Enabled Features") {
+        OpenGroupPanel(PluginBundle.get("vm.status.enabled.features")) {
             SelectionContainer {
                 Text(vmInfo.getFeatures())
             }
         }
-        OpenGroupPanel("Isolates (${vmInfo.getIsolates().size()})") {
+        OpenGroupPanel(PluginBundle.get("vm.status.isolates.group", vmInfo.getIsolates().size())) {
             vmInfo.getIsolates().forEach { isolate ->
                 IsolateInfoCard(isolate)
             }
         }
-        OpenGroupPanel("System Isolates (${vmInfo.getSystemIsolates().size()})") {
+        OpenGroupPanel(PluginBundle.get("vm.status.system.isolates.group", vmInfo.getSystemIsolates().size())) {
             vmInfo.getSystemIsolates().forEach { isolate ->
                 IsolateInfoCard(isolate)
             }
@@ -189,10 +189,10 @@ private fun IsolateInfoCard(isolate: IsolateRef) {
     ) {
         SelectionContainer {
             Column(modifier = Modifier.padding(12.dp)) {
-                KeyValueRow("Name", isolate.getName())
-                KeyValueRow("ID", isolate.getId())
-                KeyValueRow("Number", isolate.getNumber())
-                KeyValueRow("Is System", isolate.getIsSystemIsolate().toString())
+                KeyValueRow(PluginBundle.get("vm.status.name"), isolate.getName())
+                KeyValueRow(PluginBundle.get("vm.status.isolate.id"), isolate.getId())
+                KeyValueRow(PluginBundle.get("vm.status.isolate.number"), isolate.getNumber())
+                KeyValueRow(PluginBundle.get("vm.status.isolate.system"), isolate.getIsSystemIsolate().toString())
             }
         }
     }
@@ -223,9 +223,9 @@ private fun OpenGroupPanel(title: String, child: @Composable () -> Unit) {
                 .pointerHoverIcon(PointerIcon(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))),
         startComponent = {
             if (open) {
-                Icon(AllIconsKeys.General.ChevronDown, "Chevron")
+                Icon(AllIconsKeys.General.ChevronDown, PluginBundle.get("vm.status.chevron.desc"))
             } else {
-                Icon(AllIconsKeys.General.ChevronRight, "Chevron")
+                Icon(AllIconsKeys.General.ChevronRight, PluginBundle.get("vm.status.chevron.desc"))
             }
         },
     )
@@ -252,7 +252,7 @@ private fun InspectorStateComponent(vmService: VmService, project: Project) {
     }
     ToggleableIconActionButton(
         key = AllIconsKeys.General.Locate,
-        contentDescription = "",
+        contentDescription = PluginBundle.get("vm.status.inspector.toggle.desc"),
         value = isSelect,
         onValueChange = {
             manager.scope.launch {
@@ -260,6 +260,7 @@ private fun InspectorStateComponent(vmService: VmService, project: Project) {
             }
         }
     ) {
-        Text("Inspector: ${if(isSelect) "On" else "Off"}")
+        val stateText = if (isSelect) PluginBundle.get("vm.status.inspector.on") else PluginBundle.get("vm.status.inspector.off")
+        Text(PluginBundle.get("vm.status.inspector.state", stateText))
     }
 }

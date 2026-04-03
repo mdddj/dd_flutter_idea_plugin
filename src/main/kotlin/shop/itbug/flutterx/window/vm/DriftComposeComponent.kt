@@ -55,8 +55,9 @@ import shop.itbug.flutterx.common.dart.FlutterAppInstance
 import shop.itbug.flutterx.constance.Links
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
+import shop.itbug.flutterx.util.toast
+import shop.itbug.flutterx.util.toastWithError
 import vm.drift.*
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -99,31 +100,21 @@ private fun DriftMainPanel(app: FlutterAppInstance, project: Project) {
                     onRefresh = { scope.launch { service.fetchDatabases() } },
                     onExportDb = { db ->
                         scope.launch(Dispatchers.IO) {
-                            try {
+                            val saveResult = runCatching {
                                 val bytes = service.exportDatabase(db.id)
-                                withContext(Dispatchers.EDT) {
-                                    val descriptor =
-                                        FileSaverDescriptor("Export Database", "Save database to file", "sqlite")
-                                    val saveDialog =
-                                        FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project)
-                                    val homePath = System.getProperty("user.home")
-                                    val baseDir = LocalFileSystem.getInstance().findFileByPath(homePath)
-                                    val wrapper = saveDialog.save(baseDir, "${db.name}.sqlite")
-                                    if (wrapper != null) {
-                                        WriteCommandAction.runWriteCommandAction(project) {
-                                            try {
-                                                val file = wrapper.file
-                                                file.writeBytes(bytes)
-                                                VfsUtil.markDirtyAndRefresh(true, true, true, wrapper.virtualFile)
-                                            } catch (ioe: IOException) {
-
-                                            }
-                                        }
-                                    }
+                                saveWithDialog(
+                                    project = project,
+                                    title = PluginBundle.get("drift.export.db.title"),
+                                    description = PluginBundle.get("drift.export.db.desc"),
+                                    extension = "sqlite",
+                                    defaultFileName = "${db.name}.sqlite",
+                                ) { file ->
+                                    file.writeBytes(bytes)
                                 }
-                            } catch (e: Exception) {
-                                // 错误处理
+                            }.getOrElse {
+                                ExportSaveResult.Failed(it.message ?: PluginBundle.get("drift.unknown.error"))
                             }
+                            project.notifyExportResult(saveResult, "drift.export.db.success")
                         }
                     }
                 )
@@ -159,44 +150,44 @@ private fun DriftMainPanel(app: FlutterAppInstance, project: Project) {
                             onApplyFilters = { service.applyFilters() },
                             onUpdateLimit = { service.updateLimit(it) },
                             onUpdateCellValue = { pkName, pkVal, colName, newVal ->
-                                scope.launch {
-                                    service.updateCellValue(
-                                        state.selectedTable!!.name,
-                                        pkName,
-                                        pkVal,
-                                        colName,
-                                        newVal
-                                    )
+                                val tableName = state.selectedTable?.name
+                                if (tableName != null) {
+                                    scope.launch {
+                                        service.updateCellValue(
+                                            tableName,
+                                            pkName,
+                                            pkVal,
+                                            colName,
+                                            newVal
+                                        )
+                                    }
                                 }
                             },
                             onDeleteRow = { keyName, value ->
-                                scope.launch {
-                                    service.deleteData(state.selectedTable!!.name, keyName, value)
+                                val tableName = state.selectedTable?.name
+                                if (tableName != null) {
+                                    scope.launch {
+                                        service.deleteData(tableName, keyName, value)
+                                    }
                                 }
                             },
-                            onExportCsv = { result ->
+                            onExportCsv = { tableName, result ->
                                 scope.launch(Dispatchers.IO) {
-                                    val csvContent = result.toCsv()
-                                    withContext(Dispatchers.EDT) {
-                                        val descriptor =
-                                            FileSaverDescriptor("Export CSV", "Save table data to CSV file", "csv")
-                                        val saveDialog =
-                                            FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project)
-                                        val homePath = System.getProperty("user.home")
-                                        val baseDir = LocalFileSystem.getInstance().findFileByPath(homePath)
-                                        val wrapper = saveDialog.save(baseDir, "${state.selectedTable!!.name}.csv")
-                                        if (wrapper != null) {
-                                            WriteCommandAction.runWriteCommandAction(project) {
-                                                try {
-                                                    val file = wrapper.file
-                                                    file.writeText(csvContent)
-                                                    VfsUtil.markDirtyAndRefresh(true, true, true, wrapper.virtualFile)
-                                                } catch (ioe: IOException) {
-                                                    // handle error
-                                                }
-                                            }
+                                    val saveResult = runCatching {
+                                        val csvContent = result.toCsv()
+                                        saveWithDialog(
+                                            project = project,
+                                            title = PluginBundle.get("drift.export.csv"),
+                                            description = PluginBundle.get("drift.export.csv.desc"),
+                                            extension = "csv",
+                                            defaultFileName = "$tableName.csv",
+                                        ) { file ->
+                                            file.writeText(csvContent)
                                         }
+                                    }.getOrElse {
+                                        ExportSaveResult.Failed(it.message ?: PluginBundle.get("drift.unknown.error"))
                                     }
+                                    project.notifyExportResult(saveResult, "drift.export.csv.success")
                                 }
                             },
                             onPreviewCsv = { result ->
@@ -351,7 +342,7 @@ private fun DataViewerPanel(
     onUpdateLimit: (Int) -> Unit,
     onDeleteRow: (String, Any) -> Unit,
     onUpdateCellValue: (String, Any, String, String) -> Unit,
-    onExportCsv: (DriftQueryResult) -> Unit,
+    onExportCsv: (String, DriftQueryResult) -> Unit,
     onPreviewCsv: (DriftQueryResult) -> Unit,
     project: Project
 ) {
@@ -444,7 +435,7 @@ private fun DataViewerPanel(
                         IconActionButton(
                             key = AllIconsKeys.ToolbarDecorator.Export,
                             contentDescription = PluginBundle.get("drift.export.csv"),
-                            onClick = { onExportCsv(queryResult.data) }
+                            onClick = { onExportCsv(selectedTable.name, queryResult.data) }
                         ) {
                             Text(PluginBundle.get("drift.export.csv"))
                         }
@@ -486,7 +477,7 @@ private fun DataViewerPanel(
                                     Spacer(Modifier.width(4.dp))
                                     IconActionButton(
                                         key = AllIconsKeys.General.Close,
-                                        contentDescription = "Remove Filter",
+                                        contentDescription = PluginBundle.get("drift.remove.filter.desc"),
                                         onClick = { onRemoveFilter(filter) }
                                     )
                                 }
@@ -519,11 +510,14 @@ private fun DataViewerPanel(
                                         .padding(horizontal = 8.dp, vertical = 2.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("${order.columnName} ${if (order.isAscending) "ASC" else "DESC"}")
+                                    val direction =
+                                        if (order.isAscending) PluginBundle.get("drift.sort.asc")
+                                        else PluginBundle.get("drift.sort.desc")
+                                    Text("${order.columnName} $direction")
                                     Spacer(Modifier.width(4.dp))
                                     IconActionButton(
                                         key = AllIconsKeys.General.Close,
-                                        contentDescription = "Remove Sort",
+                                        contentDescription = PluginBundle.get("drift.remove.sort.desc"),
                                         onClick = { onToggleOrderBy(order.columnName) }
                                     )
                                 }
@@ -637,7 +631,7 @@ private fun ResultTable(
                             if (sort != null) {
                                 Icon(
                                     if (sort.isAscending) AllIconsKeys.General.ArrowUp else AllIconsKeys.General.ArrowDown,
-                                    contentDescription = "Sort Icon",
+                                    contentDescription = PluginBundle.get("drift.sort.icon.desc"),
                                     modifier = Modifier.size(12.dp)
                                 )
                             }
@@ -780,12 +774,12 @@ private fun SelectableItem(
 //底部显示一些 log和状态.
 @Composable
 private fun StatusBar(logs: List<String>) {
-    val lastLog = logs.lastOrNull() ?: "Ready"
+    val lastLog = logs.lastOrNull() ?: PluginBundle.get("drift.ready")
     Row(
         modifier = Modifier.fillMaxWidth().background(JewelTheme.globalColors.panelBackground).padding(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(AllIconsKeys.General.BalloonInformation, contentDescription = "Log")
+        Icon(AllIconsKeys.General.BalloonInformation, contentDescription = PluginBundle.get("drift.status.log.desc"))
         Spacer(Modifier.width(8.dp))
         SelectionContainer {
             Text(lastLog, modifier = Modifier.alpha(0.7f).animateContentSize())
@@ -1010,7 +1004,7 @@ private fun DataCell(
                 value.toString()
             }
         } else {
-            value?.toString() ?: "NULL"
+            value?.toString() ?: PluginBundle.get("drift.value.null")
         }
     }
 
@@ -1040,7 +1034,7 @@ private fun DataCell(
             ) {
                 IconActionButton(
                     key = AllIconsKeys.Actions.MoreHorizontal,
-                    contentDescription = "Cell Actions",
+                    contentDescription = PluginBundle.get("drift.cell.actions.desc"),
                     onClick = { showMenu = !showMenu }
                 )
 
@@ -1153,6 +1147,54 @@ private fun EditCellPopup(
     }
 }
 
+private sealed interface ExportSaveResult {
+    data class Saved(val path: String) : ExportSaveResult
+    data object Cancelled : ExportSaveResult
+    data class Failed(val message: String) : ExportSaveResult
+}
+
+private suspend fun saveWithDialog(
+    project: Project,
+    title: String,
+    description: String,
+    extension: String,
+    defaultFileName: String,
+    writeToFile: (java.io.File) -> Unit,
+): ExportSaveResult = withContext(Dispatchers.EDT) {
+    val descriptor = FileSaverDescriptor(title, description, extension)
+    val saveDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project)
+    val homePath = System.getProperty("user.home")
+    val baseDir = LocalFileSystem.getInstance().findFileByPath(homePath)
+    val wrapper = saveDialog.save(baseDir, defaultFileName) ?: return@withContext ExportSaveResult.Cancelled
+
+    runCatching {
+        WriteCommandAction.runWriteCommandAction(project) {
+            writeToFile(wrapper.file)
+            VfsUtil.markDirtyAndRefresh(true, true, true, wrapper.virtualFile)
+        }
+    }.fold(
+        onSuccess = { ExportSaveResult.Saved(wrapper.file.absolutePath) },
+        onFailure = {
+            ExportSaveResult.Failed(it.message ?: PluginBundle.get("drift.unknown.error"))
+        },
+    )
+}
+
+private fun Project.notifyExportResult(result: ExportSaveResult, successMessageKey: String) {
+    when (result) {
+        is ExportSaveResult.Saved -> {
+            toast(PluginBundle.get(successMessageKey, result.path))
+        }
+
+        is ExportSaveResult.Cancelled -> {
+            toast(PluginBundle.get("drift.export.cancelled"))
+        }
+
+        is ExportSaveResult.Failed -> {
+            toastWithError(PluginBundle.get("drift.export.error", result.message))
+        }
+    }
+}
 
 private fun openInEditor(project: Project, content: String, isJson: Boolean) {
     ApplicationManager.getApplication().invokeLater {

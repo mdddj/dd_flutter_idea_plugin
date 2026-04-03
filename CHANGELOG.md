@@ -12,6 +12,20 @@
 - Improved Network Inspector command copying with better cross-platform cURL and PowerShell support.
 - Fixed several Flutter downloader, privacy scanner, Drift panel, and Dart VM tool window stability issues.
 
+## 6.9.4 - 2026-04-03
+
+### Improvements
+- Added the Dart VM Memory module with Profile, Diff Snapshots, and Trace Instances panels.
+- Refined memory chart interactions and layout, including hover usage tooltips and cleaner controls.
+- Unified Drift export save flow and improved export notifications.
+
+### Localization
+- Expanded i18n coverage for Dart VM and Drift UI in zh/en/hk/ja/ko.
+
+### Fixes
+- Fixed i18n parameter formatting that displayed `Object@...` text in memory summaries.
+- Aligned Java/Kotlin JVM target to 21 to remove build target mismatch warnings.
+
 ## 6.9.3 - 2026-03-24
 
 ### 🐛 Bug Fixes

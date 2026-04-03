@@ -41,13 +41,10 @@ fun FlutterAppsTabComponent(project: Project, body: @Composable (app: FlutterApp
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
                 if (isEnableFuture.not()) {
-                    Text("Feature has been disabled in settings", color = JewelTheme.globalColors.text.error)
+                    Text(PluginBundle.get("vm.flutterapps.feature.disabled"), color = JewelTheme.globalColors.text.error)
                 }
                 CenterText(
-                    """Not Found any running flutter app.
-Please make sure the flutter app is running and the observatory is enabled.
-If you are running on a real device, please make sure the device is connected to the computer and the port is forwarded.
-"""
+                    PluginBundle.get("vm.flutterapps.notfound.message")
                 )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -68,7 +65,7 @@ If you are running on a real device, please make sure the device is connected to
 
                     if (showRewardAction) {
                         Box {
-                            Link(PluginBundle.get("reward") + "(WeChat)", onClick = {
+                            Link(PluginBundle.get("vm.flutterapps.reward.wechat"), onClick = {
                                 showRewardPopup = !showRewardPopup
                             })
 
@@ -82,7 +79,7 @@ If you are running on a real device, please make sure the device is connected to
                                         Icon(
                                             MyImages.wxDs,
                                             modifier = Modifier.size(200.dp),
-                                            contentDescription = "微信打赏"
+                                            contentDescription = PluginBundle.get("vm.flutterapps.reward.wechat.desc")
                                         )
                                     }
                                 }
