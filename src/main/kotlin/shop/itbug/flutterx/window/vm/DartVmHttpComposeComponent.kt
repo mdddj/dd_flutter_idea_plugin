@@ -190,7 +190,7 @@ private fun RequestListPanel(
             }
             SelectableIconActionButton(
                 key = AllIconsKeys.FileTypes.Image,
-                contentDescription = "",
+                contentDescription = PluginBundle.get("compose.dart.vm.network.list.showimage"),
                 onClick = {
                     showImageRequest = !showImageRequest
                 },
@@ -356,24 +356,24 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
     ) {
         SelectionContainer {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                KeyValueText("URL", request.uri)
-                KeyValueText("Method", request.method)
-                KeyValueText("Status", "") {
+                KeyValueText(PluginBundle.get("vm.http.url"), request.uri)
+                KeyValueText(PluginBundle.get("vm.http.method"), request.method)
+                KeyValueText(PluginBundle.get("vm.http.status"), "") {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         request.statusCode?.let { HttpStatusIndicator(it) }
-                        Text("${request.statusCode ?: "N/A"} (${request.status})")
+                        Text("${request.statusCode ?: PluginBundle.get("vm.http.na")} (${request.status})")
                     }
                 }
                 KeyValueText(
-                    "Duration",
-                    "${request.duration?.microseconds?.inWholeMilliseconds?.toString() ?: "N/A"} ms"
+                    PluginBundle.get("vm.http.duration"),
+                    "${request.duration?.microseconds?.inWholeMilliseconds?.toString() ?: PluginBundle.get("vm.http.na")} ms"
                 )
-                KeyValueText("Start Time", formatTime(request.startTime))
-                request.endTime?.let { KeyValueText("End Time", formatTime(it)) }
-                request.error?.let { KeyValueText("Error", it) }
+                KeyValueText(PluginBundle.get("vm.http.start.time"), formatTime(request.startTime))
+                request.endTime?.let { KeyValueText(PluginBundle.get("vm.http.end.time"), formatTime(it)) }
+                request.error?.let { KeyValueText(PluginBundle.get("vm.http.error"), it) }
             }
         }
         Row {
@@ -383,34 +383,34 @@ private fun OverviewTab(request: NetworkRequest, project: Project) {
             }) { Text(PluginBundle.get("show.raw.data")) }
         }
         Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())
-        Title("cURL")
+        Title(PluginBundle.get("vm.http.curl"))
         Text(curlText)
         Row {
-            IconActionButton(AllIconsKeys.Actions.Copy, contentDescription = "", onClick = {
+            IconActionButton(AllIconsKeys.Actions.Copy, contentDescription = PluginBundle.get("copy"), onClick = {
                 curlText.copyTextToClipboard()
             }) {
-                Text(PluginBundle.get("copy") + " cURL")
+                Text(PluginBundle.get("vm.http.copy.curl"))
             }
-            IconActionButton(AllIconsKeys.Debugger.ThreadRunning, contentDescription = "", onClick = {
+            IconActionButton(AllIconsKeys.Debugger.ThreadRunning, contentDescription = PluginBundle.get("vm.http.run.command"), onClick = {
                 RunUtil.runCommand(project, "cURL", curlText)
             }) {
-                Text("Run Command To Terminal")
+                Text(PluginBundle.get("vm.http.run.command"))
             }
         }
         if (SystemInfo.isWindows) {
             Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())
-            Title("PowerShell")
+            Title(PluginBundle.get("vm.http.powershell"))
             Text(powerShellText)
             Row {
-                IconActionButton(AllIconsKeys.Actions.Copy, contentDescription = "", onClick = {
+                IconActionButton(AllIconsKeys.Actions.Copy, contentDescription = PluginBundle.get("copy"), onClick = {
                     powerShellText.copyTextToClipboard()
                 }) {
-                    Text(PluginBundle.get("copy") + " PowerShell")
+                    Text(PluginBundle.get("vm.http.copy.powershell"))
                 }
             }
         }
         Divider(Orientation.Horizontal, modifier = Modifier.fillMaxWidth())
-        Title("Events")
+        Title(PluginBundle.get("vm.http.events"))
         Events(request)
     }
 }
@@ -423,11 +423,11 @@ private fun HeadersTab(requestHeaders: Map<String, String>?, responseHeaders: Ma
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Text("Request Headers", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(PluginBundle.get("vm.http.request.headers"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(6.dp))
             KeyValueTable(requestHeaders)
             Divider(orientation = Orientation.Horizontal, modifier = Modifier.fillMaxWidth().padding(12.dp))
-            Text(text = "Response Headers", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = PluginBundle.get("vm.http.response.headers"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(6.dp))
             KeyValueTable(responseHeaders)
         }
@@ -530,7 +530,7 @@ private fun RequestTableRow(
 
         // URL column - flexible
         Box(modifier = Modifier.weight(1f)) {
-            Tooltip(tooltip = { Text("Obsolete") }, enabled = isOutOfDate) {
+            Tooltip(tooltip = { Text(PluginBundle.get("vm.http.obsolete")) }, enabled = isOutOfDate) {
                 SearchResultCard(
                     request.formatUrl(DioListingUiConfig.setting),
                     searchQuery = searchText,
@@ -579,7 +579,7 @@ private fun RequestTableHeader() {
         // Method column - 70dp
         Box(modifier = Modifier.width(70.dp)) {
             Text(
-                "Method",
+                PluginBundle.get("vm.http.method"),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = JewelTheme.globalColors.text.info
@@ -589,7 +589,7 @@ private fun RequestTableHeader() {
         // Status Code column - 60dp
         Box(modifier = Modifier.width(60.dp), contentAlignment = Alignment.Center) {
             Text(
-                "Status",
+                PluginBundle.get("vm.http.status"),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = JewelTheme.globalColors.text.info
@@ -599,7 +599,7 @@ private fun RequestTableHeader() {
         // URL column - flexible
         Box(modifier = Modifier.weight(1f)) {
             Text(
-                "URL",
+                PluginBundle.get("vm.http.url"),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = JewelTheme.globalColors.text.info
@@ -609,7 +609,7 @@ private fun RequestTableHeader() {
         // Duration column - 80dp
         Box(modifier = Modifier.width(80.dp), contentAlignment = Alignment.CenterEnd) {
             Text(
-                "Duration",
+                PluginBundle.get("vm.http.duration"),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = JewelTheme.globalColors.text.info
@@ -619,7 +619,7 @@ private fun RequestTableHeader() {
         // Time column - 120dp
         Box(modifier = Modifier.width(145.dp), contentAlignment = Alignment.CenterEnd) {
             Text(
-                "Time",
+                PluginBundle.get("time"),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = JewelTheme.globalColors.text.info
@@ -648,7 +648,7 @@ private fun ImageTab(request: NetworkRequest) {
     val responseBytes = request.responseByteArray
     val isImage = request.isLikelyImage
     if (responseBytes == null || isImage.not()) {
-        Text("None")
+        Text(PluginBundle.get("vm.http.none"))
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(PluginBundle.get("compose.not.support.image"))
@@ -793,7 +793,7 @@ private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
                 onClick = { project.jsonToFreezedRun(text) },
                 enabled = text.isNotBlank() && isJson
             ) {
-                Text("Json to freezed")
+                Text(PluginBundle.get("freezed.btn.text"))
             }
 
             OutlinedButton(
@@ -804,7 +804,7 @@ private fun JsonTextPanelWithCoroutine(text: String, project: Project) {
                 },
                 enabled = isJson
             ) {
-                Text("Format Json")
+                Text(PluginBundle.get("vm.http.format.json"))
             }
         }
 

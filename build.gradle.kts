@@ -34,6 +34,11 @@ plugins {
 group = "shop.itbug"
 version = pluginVersion
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 repositories {
     mavenCentral()
     google()

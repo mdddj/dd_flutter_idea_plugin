@@ -23,6 +23,9 @@ import vm.element.*
 import vm.log.LoggingController
 import vm.logging.Logging
 import vm.network.DartNetworkMonitor
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.Base64
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -252,17 +255,47 @@ class VmService : VmServiceBase() {
         if (jsonText != null && jsonText.isNotEmpty()) {
             try {
                 val json = gson.fromJson(jsonText, JsonObject::class.java)
-                if (json.has("method") && json.get("method").asString == "streamNotify") {
-                    val params = json.getAsJsonObject("params")
-                    val streamId = params.get("streamId").asString
-                    val eventJson = params.getAsJsonObject("event")
-                    val event = Event(eventJson)
-                    forwardEventToCustomListeners(streamId, event)
-                }
+                forwardIfStreamNotify(json)
             } catch (e: Exception) {
                 // 忽略解析错误，不影响正常流程
             }
         }
+    }
+
+    private fun processBinaryMessage(payload: ByteArray) {
+        if (payload.size < 4) return
+        val dataOffset = ByteBuffer
+            .wrap(payload, 0, 4)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .int
+        if (dataOffset <= 4 || dataOffset > payload.size) return
+
+        val metaBytes = payload.copyOfRange(4, dataOffset)
+        val dataBytes = payload.copyOfRange(dataOffset, payload.size)
+        val metaJsonText = metaBytes.toString(Charsets.UTF_8)
+
+        runCatching {
+            val json = gson.fromJson(metaJsonText, JsonObject::class.java)
+            if (json.get("method")?.asString == "streamNotify") {
+                val params = json.getAsJsonObject("params")
+                val event = params?.getAsJsonObject("event")
+                event?.addProperty("dataBase64", Base64.getEncoder().encodeToString(dataBytes))
+            }
+            val patched = gson.toJson(json)
+            processMessage(patched)
+        }.onFailure {
+            Logging.getLogger().logError("Failed to parse binary VM message: ${it.message}", it)
+        }
+    }
+
+    private fun forwardIfStreamNotify(json: JsonObject) {
+        if (!json.has("method")) return
+        if (json.get("method").asString != "streamNotify") return
+        val params = json.getAsJsonObject("params") ?: return
+        val streamId = params.get("streamId")?.asString ?: return
+        val eventJson = params.getAsJsonObject("event") ?: return
+        val event = Event(eventJson)
+        forwardEventToCustomListeners(streamId, event)
     }
 
     suspend fun listenData() {
@@ -279,6 +312,11 @@ class VmService : VmServiceBase() {
                                 val message = frame.readText()
                                 processMessage(message)
                                 retryCount = 0  // 重置重试计数
+                            }
+
+                            is Frame.Binary -> {
+                                processBinaryMessage(frame.readBytes())
+                                retryCount = 0
                             }
 
                             is Frame.Close -> {

@@ -16,7 +16,6 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
@@ -26,6 +25,7 @@ import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.components.BorderLayoutPanel
+import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.manager.FlutterAndroidMigrateManager
 import java.awt.Dimension
 import java.io.File
@@ -74,16 +74,16 @@ sealed class AndroidMigrateFile(open val file: VirtualFile) {
 
 class AndroidBuildFile(androidBuildFile: VirtualFile) : AndroidMigrateFile(androidBuildFile) {
 
-    override fun updatePsi(project: Project, vf: VirtualFile) {
-        FlutterAndroidMigrateManager.getInstance(project).getNewAndroidBuildFile(vf)
+    override fun updatePsi(project: Project, file: VirtualFile) {
+        FlutterAndroidMigrateManager.getInstance(project).getNewAndroidBuildFile(file)
     }
 }
 
 
 class AndroidAppBuildFile(androidAppBuildFile: VirtualFile) : AndroidMigrateFile(androidAppBuildFile) {
 
-    override fun updatePsi(project: Project, vf: VirtualFile) {
-        FlutterAndroidMigrateManager.getInstance(project).getNewAppBuildFile(vf)
+    override fun updatePsi(project: Project, file: VirtualFile) {
+        FlutterAndroidMigrateManager.getInstance(project).getNewAppBuildFile(file)
     }
 }
 
@@ -99,14 +99,12 @@ class AndroidSettingsFile(override val file: VirtualFile) : AndroidMigrateFile(f
  * android 适配窗口
  *
  */
-class FlutterXAndroidMigrateWindow(val project: Project) : BorderLayoutPanel(),
+class FlutterXAndroidMigrateWindow(private val project: Project) : BorderLayoutPanel(),
     ListSelectionListener {
 
     private val androidService = FlutterAndroidMigrateManager.getInstance(project)
     private val sp = OnePixelSplitter()
 
-    //将要修改的文件列表
-    private val willUpdateFiles = mutableSetOf<AndroidMigrateFile>()
     private var diffPanel: DiffRequestPanel? = null
     private val list = JBList<AndroidMigrateFile>().apply {
         model = DefaultListModel()
@@ -137,31 +135,28 @@ class FlutterXAndroidMigrateWindow(val project: Project) : BorderLayoutPanel(),
         val findAndroidBuildFile = androidService.findAndroidBuildFile()
         if (findAndroidBuildFile != null) {
             val file = AndroidBuildFile(findAndroidBuildFile)
-            willUpdateFiles.add(file)
             getListModel().addElement(file)
             showDiffWindow(file)
         }
         val findAppBuildFile = androidService.findAppBuildFile()
         if (findAppBuildFile != null) {
             val file = AndroidAppBuildFile(findAppBuildFile)
-            willUpdateFiles.add(file)
             getListModel().addElement(file)
         }
 
         val settingsFile = androidService.findSettingsFile()
         if (settingsFile != null) {
             val file = AndroidSettingsFile(settingsFile)
-            willUpdateFiles.add(file)
             getListModel().addElement(file)
         }
-        list.selectedIndex = 0
+        if (getListModel().size > 0) {
+            list.selectedIndex = 0
+        }
 
     }
 
 
-    private fun getListModel(): DefaultListModel<AndroidMigrateFile> {
-        return list.model as DefaultListModel<AndroidMigrateFile>
-    }
+    private fun getListModel(): DefaultListModel<AndroidMigrateFile> = list.model as DefaultListModel<AndroidMigrateFile>
 
 
     ///显示 diff 窗口
@@ -180,34 +175,34 @@ class FlutterXAndroidMigrateWindow(val project: Project) : BorderLayoutPanel(),
                     diffPanel = panel
                     sp.secondComponent = panel.component
                 } else {
-                    diffPanel!!.setRequest(request)
+                    diffPanel?.setRequest(request)
                 }
             }
         }
 
     }
 
-    private fun createActionsList(): List<AnAction> {
-        return listOf(FlutterAndroidMigrateAction())
-    }
+    private fun createActionsList(): List<AnAction> = listOf(FlutterAndroidMigrateAction())
 
     override fun valueChanged(e: ListSelectionEvent?) {
-        if (e != null && e.valueIsAdjusting) {
-            val index = e.firstIndex
-            if (index >= 0) {
-                val select = list.selectedValue
-                showDiffWindow(select)
-            }
+        if (e == null || e.valueIsAdjusting) return
+        val selected = list.selectedValue ?: return
+        if (list.selectedIndex >= 0) {
+            showDiffWindow(selected)
         }
     }
 }
 
 
-class FileListRender(val project: Project) : ColoredListCellRenderer<AndroidMigrateFile>() {
+class FileListRender(private val project: Project) : ColoredListCellRenderer<AndroidMigrateFile>() {
     override fun customizeCellRenderer(
-        p0: JList<out AndroidMigrateFile?>, p1: AndroidMigrateFile?, p2: Int, p3: Boolean, p4: Boolean
+        _list: JList<out AndroidMigrateFile?>,
+        value: AndroidMigrateFile?,
+        _index: Int,
+        _selected: Boolean,
+        _hasFocus: Boolean,
     ) {
-        p1?.let {
+        value?.let {
             icon = it.file.fileType.icon
             append(it.findRelativePath(project))
         }
@@ -217,15 +212,14 @@ class FileListRender(val project: Project) : ColoredListCellRenderer<AndroidMigr
 
 
 //将更改应用到项目中
-class FlutterAndroidMigrateAction : AnAction("同意这些更改", "", AllIcons.Actions.Checked) {
+class FlutterAndroidMigrateAction : AnAction(PluginBundle.get("android.migrate.apply.changes"), "", AllIcons.Actions.Checked) {
 
 
     override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
         val editor = e.getData(DiffDataKeys.DIFF_REQUEST) ?: return
-        val file = editor.getUserData(FlutterAndroidMigrateManager.FILE)!!
-        LocalFileSystem.getInstance().apply {
-            file.doReplace(e.project!!)
-        }
+        val file = editor.getUserData(FlutterAndroidMigrateManager.FILE) ?: return
+        file.doReplace(project)
 
     }
 
