@@ -3,6 +3,9 @@ package shop.itbug.flutterx.window.vm
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,14 +48,13 @@ fun ProviderComposeComponent(project: Project) {
 @Composable
 private fun ProviderBody(project: Project, vmService: VmService) {
     val pubspecService = PubspecService.getInstance(project)
-    
+
     // 使用状态管理类
-    val providerState = remember(vmService) {
-        ProviderState(vmService).apply {
-            refreshProviders()
-        }
+    val providerState = remember(vmService) { ProviderState(vmService) }
+    LaunchedEffect(vmService) {
+        providerState.refreshProviders()
     }
-    
+
     val details by pubspecService.detailsFlow.collectAsState()
     val providerInfo = details.find { it.name == "provider" }
 
@@ -73,14 +75,17 @@ private fun ProviderBody(project: Project, vmService: VmService) {
                 ) {
                     Icon(
                         key = AllIconsKeys.General.Beta,
-                        contentDescription = "Beta version"
+                        contentDescription = PluginBundle.get("provider.beta.content.desc")
                     )
                     Text(
-                        "Select a provider to see details",
+                        PluginBundle.get("provider.select.details"),
                         color = JewelTheme.globalColors.text.info
                     )
                     if (providerInfo != null)
-                        Text("provider: ${providerInfo.version}", color = JewelTheme.globalColors.text.info)
+                        Text(
+                            PluginBundle.get("provider.version.label", providerInfo.version),
+                            color = JewelTheme.globalColors.text.info
+                        )
                 }
             }
         },
@@ -92,51 +97,124 @@ private fun ProviderBody(project: Project, vmService: VmService) {
 
 @Composable
 private fun ProviderList(state: ProviderState) {
-    val bgColor = if (JewelTheme.isDark) Color.DarkGray else Color.White
+    val searchState = rememberTextFieldState("")
+    val query = searchState.text.toString().trim()
+    val filteredProviders = remember(state.providers, query) {
+        if (query.isBlank()) {
+            state.providers
+        } else {
+            val q = query.lowercase()
+            state.providers.filter { node ->
+                node.type.lowercase().contains(q) || node.id.lowercase().contains(q)
+            }
+        }
+    }
+    val listState = rememberLazyListState()
+    val selectedId = state.selectedProvider?.id
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(12.dp).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 key = AllIconsKeys.General.Beta,
-                contentDescription = "Beta version"
+                contentDescription = PluginBundle.get("provider.beta.content.desc")
             )
             IconActionButton(
                 AllIconsKeys.Actions.Refresh,
-                contentDescription = "Refresh",
-                onClick = { state.refreshProviders() }
+                contentDescription = PluginBundle.get("provider.refresh.content.desc"),
+                onClick = {
+                    if (!state.isLoading) {
+                        state.refreshProviders()
+                    }
+                }
+            )
+            Text(
+                "${filteredProviders.size}/${state.providers.size}",
+                color = JewelTheme.globalColors.text.info
             )
         }
-        
+
+        TextField(
+            state = searchState,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(PluginBundle.get("provider.filter.placeholder")) },
+        )
+
         if (state.isLoading) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Loading...")
+                Text(PluginBundle.get("provider.loading"))
             }
         }
-        
+
         if (state.error != null) {
-            Text("Error: ${state.error}", color = JewelTheme.globalColors.text.error)
+            Text(
+                PluginBundle.get("provider.error", state.error.orEmpty()),
+                color = JewelTheme.globalColors.text.error
+            )
         }
-        
-        for (node in state.providers) Box(
-            modifier =
-                Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor).clickable(
-                    onClick = {
-                        state.selectProvider(node)
+
+        if (filteredProviders.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(PluginBundle.get("provider.empty"), color = JewelTheme.globalColors.text.info)
+            }
+            return@Column
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                items(filteredProviders, key = { it.id }) { node ->
+                    val isSelected = selectedId == node.id
+                    val bgColor = if (isSelected) {
+                        JewelTheme.globalColors.panelBackground
+                    } else if (JewelTheme.isDark) {
+                        Color(0xFF2D2D30)
+                    } else {
+                        Color.White
                     }
-                ).pointerHoverIcon(PointerIcon.Hand).fillMaxWidth().padding(12.dp)
-        ) { Text(node.type) }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(bgColor)
+                            .border(
+                                width = if (isSelected) 1.dp else 0.dp,
+                                color = if (isSelected) JewelTheme.globalColors.borders.focused else Color.Transparent,
+                                shape = RoundedCornerShape(10.dp),
+                            )
+                            .clickable(onClick = { state.selectProvider(node) })
+                            .pointerHoverIcon(PointerIcon.Hand)
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 8.dp)
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(node.type, maxLines = 1)
+                            Text(
+                                text = node.id,
+                                color = JewelTheme.globalColors.text.info,
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                }
+            }
+            VerticalScrollbar(
+                adapter = rememberScrollbarAdapter(listState),
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            )
+        }
     }
 }
 
 /** Provider 详情展示面板 */
 @Composable
 private fun ProviderDetails(vmService: VmService, provider: ProviderNode) {
-    println("provider详情:$provider")
     val rootPath = remember(provider, provider.id) { provider.getProviderPath() }
     Column(modifier = Modifier.fillMaxSize().padding(8.dp).verticalScroll(rememberScrollState())) {
         InstanceNodeViewer(vmService = vmService, path = rootPath)
@@ -150,23 +228,25 @@ private fun InstanceNodeViewer(
     path: InstancePath,
     parent: InstanceDetails? = null,
     parentInstanceId: String? = null,
-    field: ObjectField? = null
+    field: ObjectField? = null,
+    expandedByDefault: Boolean = path is InstancePath.FromProviderId && parent == null,
 ) {
     var details by remember(path) { mutableStateOf<InstanceDetails?>(null) }
     var error by remember(path) { mutableStateOf<String?>(null) }
-    var isExpanded by remember(path) { mutableStateOf(path.pathToProperty.isEmpty()) } // 根节点默认展开
+    var isExpanded by remember(path, expandedByDefault) { mutableStateOf(expandedByDefault) } // 仅 provider 根节点默认展开
     var refreshTrigger by remember { mutableStateOf(0) } // 刷新触发器
 
     LaunchedEffect(path, path.pathToProperty, refreshTrigger) {
         try {
             details = ProviderHelper.getInstanceDetails(vmService, path, parent)
+            error = null
         } catch (e: Exception) {
-            error = e.message ?: "An unknown error occurred"
+            error = e.message ?: PluginBundle.get("provider.unknown.error")
         }
     }
 
     if (error != null) {
-        Text("Error: $error", color = JewelTheme.globalColors.text.error)
+        Text(PluginBundle.get("provider.error", error.orEmpty()), color = JewelTheme.globalColors.text.error)
         return
     }
 
@@ -174,7 +254,7 @@ private fun InstanceNodeViewer(
         Row(verticalAlignment = Alignment.CenterVertically) {
             CircularProgressIndicator(modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(8.dp))
-            Text("Loading...")
+            Text(PluginBundle.get("provider.loading"))
         }
         return
     }
@@ -256,10 +336,11 @@ private fun InstanceNodeViewer(
                                     if (keyRef != null) {
                                         InstanceNodeViewer(
                                             vmService = vmService,
-                                            path = InstancePath.FromInstanceId(keyRef.getId())
+                                            path = InstancePath.FromInstanceId(keyRef.getId()),
+                                            expandedByDefault = false,
                                         )
                                     } else {
-                                        Text("null")
+                                        Text(PluginBundle.get("provider.value.null"))
                                     }
                                     Text(": ")
                                     // Value 部分 - 通过 MapKey 路径获取
@@ -313,7 +394,7 @@ private fun InstanceHeader(
             val iconKey =
                 if (isExpanded) AllIconsKeys.General.ArrowDown
                 else AllIconsKeys.General.ArrowRight
-            Icon(key = iconKey, contentDescription = "Expand/Collapse")
+            Icon(key = iconKey, contentDescription = PluginBundle.get("provider.expand.collapse.content.desc"))
             Spacer(Modifier.width(4.dp))
         } else {
             Spacer(Modifier.width(20.dp))
@@ -335,7 +416,7 @@ private fun InstanceHeader(
                         if (success) {
                             isEditing = false
                             // 延迟一下再刷新，确保 VM 已经更新
-                            delay(3000)
+                            delay(300)
                             onValueUpdated?.invoke()
                         }
                     }
@@ -348,7 +429,7 @@ private fun InstanceHeader(
                 is InstanceDetails.DartString -> Text(details.displayString, color = Color(0xFFCE9178))
                 is InstanceDetails.Number -> Text(details.displayString, color = Color(0xFFB5CEA8))
                 is InstanceDetails.Bool -> Text(details.displayString, color = Color(0xFF569CD6))
-                is InstanceDetails.Nill -> Text("null", color = Color(0xFF569CD6))
+                is InstanceDetails.Nill -> Text(PluginBundle.get("provider.value.null"), color = Color(0xFF569CD6))
                 is InstanceDetails.Object ->
                     Text(
                         "${details.type} #${details.hash.toString(16).take(4)}",
@@ -357,16 +438,16 @@ private fun InstanceHeader(
 
                 is InstanceDetails.DartList ->
                     Text(
-                        "List (${details.length} elements) #${
-                            details.hash.toString(16).take(4)
-                        }"
+                        PluginBundle.get("provider.list.summary", details.length, details.hash.toString(16).take(4))
                     )
 
                 is InstanceDetails.Map ->
                     Text(
-                        "Map (${details.associations.size} entries) #${
+                        PluginBundle.get(
+                            "provider.map.summary",
+                            details.associations.size,
                             details.hash.toString(16).take(4)
-                        }"
+                        )
                     )
 
                 is InstanceDetails.Enum -> Text("${details.type}.${details.value}")

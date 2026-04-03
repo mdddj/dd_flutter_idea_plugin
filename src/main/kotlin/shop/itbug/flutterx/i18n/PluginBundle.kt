@@ -8,7 +8,7 @@ const val pathToBundleKey = "messages.pluginBundle"
 object PluginBundle : DynamicPluginBundle(pathToBundleKey) {
 
     fun get(key: String, vararg params: Any): String {
-        return getMessage(key.trim(), params)
+        return getMessage(key.trim(), *params)
     }
 
     val doc: String get() = get("doc")

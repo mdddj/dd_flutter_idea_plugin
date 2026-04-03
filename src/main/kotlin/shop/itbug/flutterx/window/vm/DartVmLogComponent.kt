@@ -107,7 +107,7 @@ private fun DartVmLoggingScreen(controller: LoggingController, project: Project)
                     } else {
                         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                             Text(
-                                "Select a log to see details",
+                                PluginBundle.get("vm.log.select.details"),
                                 color = JewelTheme.globalColors.text.info
                             )
                         }
@@ -151,14 +151,14 @@ private fun SearchBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // 清空日志按钮
-        Tooltip(tooltip = { Text("Clear all logs") }) {
+        Tooltip(tooltip = { Text(PluginBundle.get("vm.log.clear.all")) }) {
             IconButton(
                 onClick = onClearLogs,
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Default)
             ) {
                 Icon(
                     key = AllIconsKeys.General.Delete,
-                    contentDescription = "Clear Logs"
+                    contentDescription = PluginBundle.get("vm.log.clear.content.desc")
                 )
             }
         }
@@ -169,13 +169,13 @@ private fun SearchBar(
         TextField(
             state = searchState,
             modifier = Modifier.weight(1f),
-            placeholder = { Text("Search logs (e.g., k:stdout, error)") },
+            placeholder = { Text(PluginBundle.get("vm.log.search.placeholder")) },
         )
 
         Divider(orientation = Orientation.Vertical)
 
         // GC 日志过滤切换
-        Tooltip(tooltip = { Text(if (hideGcLogs) "Show GC logs" else "Hide GC logs") }) {
+        Tooltip(tooltip = { Text(if (hideGcLogs) PluginBundle.get("vm.log.gc.show") else PluginBundle.get("vm.log.gc.hide")) }) {
             ToggleableIconButton(
                 value = !hideGcLogs,
                 onValueChange = { onHideGcLogsToggle(!it) },
@@ -183,7 +183,7 @@ private fun SearchBar(
             ) {
                 Icon(
                     key = AllIconsKeys.Actions.ClearCash,
-                    contentDescription = "Toggle GC Logs"
+                    contentDescription = PluginBundle.get("vm.log.gc.toggle.content.desc")
                 )
             }
         }
@@ -236,9 +236,9 @@ private fun LogLevelChip(level: Int) {
     }
 
     val text = when {
-        level >= LogLevel.SEVERE -> "SEVERE"
-        level >= LogLevel.INFO -> "INFO"
-        else -> "LOG"
+        level >= LogLevel.SEVERE -> PluginBundle.get("vm.log.level.severe")
+        level >= LogLevel.INFO -> PluginBundle.get("vm.log.level.info")
+        else -> PluginBundle.get("vm.log.level.log")
     }
 
     Text(
@@ -278,11 +278,11 @@ private fun LogDetailsPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Log Details",
+                PluginBundle.get("vm.log.details.title"),
             )
             IconActionButton(AllIconsKeys.Actions.Copy, onClick = {
                 details?.copyTextToClipboard()
-            }, contentDescription = "Copy")
+            }, contentDescription = PluginBundle.get("vm.log.copy.content.desc"))
             OutlinedButton({
                 details?.let { MyFileUtil.showJsonInEditor(project, it) }
             }) {
@@ -329,4 +329,3 @@ private fun LogDetailsPanel(
         }
     }
 }
-

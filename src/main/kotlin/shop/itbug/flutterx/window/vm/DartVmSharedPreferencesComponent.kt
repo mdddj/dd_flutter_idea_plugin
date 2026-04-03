@@ -28,6 +28,7 @@ import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.i18n.PluginBundle
 import vm.sp.AsyncState
 import vm.sp.SharedPreferencesData
 import vm.sp.SharedPreferencesServices
@@ -122,18 +123,18 @@ private fun KeysPanel(
                 TextField(
                     state = searchState,
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Search keys...") }
+                    placeholder = { Text(PluginBundle.get("vm.sp.search.keys.placeholder")) }
                 )
             }
 
             if (!searching) {
-                Text("Stored Keys", fontWeight = FontWeight.Bold)
+                Text(PluginBundle.get("vm.sp.stored.keys"), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.weight(1f))
             }
 
             IconActionButton(
                 key = if (searching) AllIconsKeys.Actions.Close else AllIconsKeys.Actions.Search,
-                contentDescription = if (searching) "Close" else "Search",
+                contentDescription = if (searching) PluginBundle.get("vm.sp.close") else PluginBundle.get("vm.sp.search"),
                 onClick = {
                     searching = !searching
                     if (!searching) {
@@ -142,19 +143,19 @@ private fun KeysPanel(
                     }
                 }
             ) {
-                Text(if (searching) "Close" else "Search")
+                Text(if (searching) PluginBundle.get("vm.sp.close") else PluginBundle.get("vm.sp.search"))
             }
 
             IconActionButton(
                 key = AllIconsKeys.Actions.Refresh,
-                contentDescription = "Refresh",
+                contentDescription = PluginBundle.get("vm.sp.refresh"),
                 onClick = {
                     searching = false
                     searchState.setTextAndPlaceCursorAtEnd("")
                     onRefresh()
                 }
             ) {
-                Text("Refresh")
+                Text(PluginBundle.get("vm.sp.refresh"))
             }
         }
 
@@ -166,18 +167,18 @@ private fun KeysPanel(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("API:", modifier = Modifier.alpha(0.7f))
+            Text(PluginBundle.get("vm.sp.api"), modifier = Modifier.alpha(0.7f))
             RadioButtonRow(
                 selected = !state.legacyApi,
                 onClick = { onApiChange(false) }
             ) {
-                Text("Async")
+                Text(PluginBundle.get("vm.sp.api.async"))
             }
             RadioButtonRow(
                 selected = state.legacyApi,
                 onClick = { onApiChange(true) }
             ) {
-                Text("Legacy")
+                Text(PluginBundle.get("vm.sp.api.legacy"))
             }
         }
 
@@ -194,7 +195,7 @@ private fun KeysPanel(
             is AsyncState.Error -> {
                 Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
                     Text(
-                        "Error: ${keysState.error.message}",
+                        PluginBundle.get("vm.sp.error", keysState.error.message ?: ""),
                         color = JewelTheme.globalColors.text.error
                     )
                 }
@@ -223,7 +224,7 @@ private fun KeysList(
 
     if (keys.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No keys found", modifier = Modifier.alpha(0.6f))
+            Text(PluginBundle.get("vm.sp.no.keys"), modifier = Modifier.alpha(0.6f))
         }
     } else {
         LazyColumn(
@@ -284,7 +285,7 @@ private fun DataPanel(
     Column(modifier = Modifier.fillMaxSize()) {
         if (selectedKey == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Select a key to view its data", modifier = Modifier.alpha(0.6f))
+                Text(PluginBundle.get("vm.sp.select.key"), modifier = Modifier.alpha(0.6f))
             }
         } else {
             // 头部
@@ -310,11 +311,11 @@ private fun DataPanel(
 
                 is AsyncState.Error -> {
                     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-                        Text(
-                            "Error: ${valueState.error.message}",
-                            color = JewelTheme.globalColors.text.error
-                        )
-                    }
+                    Text(
+                        PluginBundle.get("vm.sp.error", valueState.error.message ?: ""),
+                        color = JewelTheme.globalColors.text.error
+                    )
+                }
                 }
 
                 is AsyncState.Data -> {
@@ -369,7 +370,7 @@ private fun DataPanelHeader(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (isEditing) {
                     OutlinedButton(onClick = onStopEdit) {
-                        Text("Cancel")
+                        Text(PluginBundle.get("cancel"))
                     }
                     val data = (valueState as? AsyncState.Data)?.data
                     if (data != null && currentEditValue != null && currentEditValue != data.valueAsString) {
@@ -381,15 +382,15 @@ private fun DataPanelHeader(
                                 }
                             }
                         }) {
-                            Text("Apply")
+                            Text(PluginBundle.get("vm.sp.apply"))
                         }
                     }
                 } else {
                     OutlinedButton(onClick = { showDeleteDialog = true }) {
-                        Text("Remove")
+                        Text(PluginBundle.get("vm.sp.remove"))
                     }
                     DefaultButton(onClick = onStartEdit) {
-                        Text("Edit")
+                        Text(PluginBundle.get("edit"))
                     }
                 }
             }
@@ -458,17 +459,17 @@ private fun DeleteConfirmDialog(
                 .clickable(enabled = false) { },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Remove Key", fontWeight = FontWeight.Bold)
-            Text("Are you sure you want to remove '$keyName'?")
+            Text(PluginBundle.get("vm.sp.remove.key"), fontWeight = FontWeight.Bold)
+            Text(PluginBundle.get("vm.sp.remove.key.confirm", keyName))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedButton(onClick = onDismiss) {
-                    Text("Cancel")
+                    Text(PluginBundle.get("cancel"))
                 }
                 DefaultButton(onClick = onConfirm) {
-                    Text("Remove")
+                    Text(PluginBundle.get("vm.sp.remove"))
                 }
             }
         }
@@ -519,7 +520,7 @@ private fun DataContent(
     ) {
         // 类型显示
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Type:", modifier = Modifier.alpha(0.7f))
+            Text(PluginBundle.get("vm.sp.type"), modifier = Modifier.alpha(0.7f))
             Text(data.kind, fontWeight = FontWeight.Medium)
         }
 
@@ -550,18 +551,18 @@ private fun DataContent(
                             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
                         ) {
                             Text(
-                                "Press Enter to save",
+                                PluginBundle.get("vm.sp.press.enter.save"),
                                 modifier = Modifier.alpha(0.5f).align(Alignment.CenterVertically)
                             )
                             DefaultButton(onClick = doSave) {
-                                Text("Save")
+                                Text(PluginBundle.get("vm.sp.save"))
                             }
                         }
                     }
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Value:", modifier = Modifier.alpha(0.7f))
+                    Text(PluginBundle.get("vm.sp.value"), modifier = Modifier.alpha(0.7f))
                     ValueDisplay(data)
                 }
             }
@@ -591,7 +592,7 @@ private fun ValueDisplay(data: SharedPreferencesData) {
                     }
                 }
                 if (data.value.isEmpty()) {
-                    Text("(empty list)", modifier = Modifier.alpha(0.5f))
+                    Text(PluginBundle.get("vm.sp.empty.list"), modifier = Modifier.alpha(0.5f))
                 }
             }
         }
@@ -630,7 +631,7 @@ private fun EditableValue(
     onEnterPressed: () -> Unit = {}
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Value:", modifier = Modifier.alpha(0.7f))
+        Text(PluginBundle.get("vm.sp.value"), modifier = Modifier.alpha(0.7f))
 
         when (data) {
             is SharedPreferencesData.BoolData -> {
@@ -645,7 +646,7 @@ private fun EditableValue(
                             onEnterPressed()
                         }
                     ) {
-                        Text("true")
+                        Text(PluginBundle.get("vm.sp.bool.true"))
                     }
                     RadioButtonRow(
                         selected = value == "false",
@@ -654,7 +655,7 @@ private fun EditableValue(
                             onEnterPressed()
                         }
                     ) {
-                        Text("false")
+                        Text(PluginBundle.get("vm.sp.bool.false"))
                     }
                 }
             }
@@ -744,7 +745,7 @@ private fun StringListEditor(
 
                 IconActionButton(
                     key = AllIconsKeys.General.Remove,
-                    contentDescription = "Remove",
+                    contentDescription = PluginBundle.get("vm.sp.remove"),
                     onClick = {
                         val newItems = localItems.toMutableList()
                         newItems.removeAt(index)
@@ -752,7 +753,7 @@ private fun StringListEditor(
                         onItemsChange(newItems)
                     }
                 ) {
-                    Text("Remove item")
+                    Text(PluginBundle.get("vm.sp.remove.item"))
                 }
             }
         }
@@ -764,7 +765,7 @@ private fun StringListEditor(
         ) {
             IconActionButton(
                 key = AllIconsKeys.General.Add,
-                contentDescription = "Add item",
+                contentDescription = PluginBundle.get("vm.sp.add.item"),
                 onClick = {
                     val newItems = localItems.toMutableList()
                     newItems.add("")
@@ -772,7 +773,7 @@ private fun StringListEditor(
                     onItemsChange(newItems)
                 }
             ) {
-                Text("Add item")
+                Text(PluginBundle.get("vm.sp.add.item"))
             }
         }
     }

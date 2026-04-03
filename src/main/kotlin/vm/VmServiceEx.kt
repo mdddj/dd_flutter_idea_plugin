@@ -37,6 +37,222 @@ suspend fun VmService.getVersion(): Version {
     }
 }
 
+/**
+ * 获取 isolate 的 AllocationProfile，Sentinel 或错误时返回 null。
+ */
+suspend fun VmService.getAllocationProfileOrNull(
+    isolateId: String,
+    reset: Boolean? = null,
+    gc: Boolean? = null,
+): AllocationProfile? {
+    return suspendCancellableCoroutine { continuation ->
+        val consumer = object : GetAllocationProfileConsumer {
+            override fun received(response: AllocationProfile) {
+                continuation.resume(response)
+            }
+
+            override fun received(response: Sentinel) {
+                continuation.resume(null)
+            }
+
+            override fun onError(error: RPCError) {
+                continuation.resume(null)
+            }
+        }
+        if (reset != null || gc != null) {
+            getAllocationProfile(isolateId, reset, gc, consumer)
+        } else {
+            getAllocationProfile(isolateId, consumer)
+        }
+    }
+}
+
+/**
+ * 获取 isolate 的类列表，Sentinel 或错误时返回 null。
+ */
+suspend fun VmService.getClassListOrNull(isolateId: String): ClassList? {
+    return suspendCancellableCoroutine { continuation ->
+        getClassList(
+            isolateId,
+            object : GetClassListConsumer {
+                override fun received(response: ClassList) {
+                    continuation.resume(response)
+                }
+
+                override fun received(response: Sentinel) {
+                    continuation.resume(null)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(null)
+                }
+            },
+        )
+    }
+}
+
+/**
+ * 获取 isolate 的内存使用数据，Sentinel 或错误时返回 null。
+ */
+suspend fun VmService.getMemoryUsageOrNull(isolateId: String): MemoryUsage? {
+    return suspendCancellableCoroutine { continuation ->
+        getMemoryUsage(
+            isolateId,
+            object : GetMemoryUsageConsumer {
+                override fun received(response: MemoryUsage) {
+                    continuation.resume(response)
+                }
+
+                override fun received(response: Sentinel) {
+                    continuation.resume(null)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(null)
+                }
+            },
+        )
+    }
+}
+
+/**
+ * 获取某个 class 的实例集合，Sentinel 或错误时返回 null。
+ */
+suspend fun VmService.getInstancesOrNull(
+    isolateId: String,
+    classId: String,
+    limit: Int = 1000,
+): InstanceSet? {
+    return suspendCancellableCoroutine { continuation ->
+        getInstances(
+            isolateId,
+            classId,
+            limit,
+            object : GetInstancesConsumer {
+                override fun received(response: InstanceSet) {
+                    continuation.resume(response)
+                }
+
+                override fun received(response: Sentinel) {
+                    continuation.resume(null)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(null)
+                }
+            },
+        )
+    }
+}
+
+/**
+ * 获取对象的 retaining path，Sentinel 或错误时返回 null。
+ */
+suspend fun VmService.getRetainingPathOrNull(
+    isolateId: String,
+    targetId: String,
+    limit: Int = 32,
+): RetainingPath? {
+    return suspendCancellableCoroutine { continuation ->
+        getRetainingPath(
+            isolateId,
+            targetId,
+            limit,
+            object : GetRetainingPathConsumer {
+                override fun received(response: RetainingPath) {
+                    continuation.resume(response)
+                }
+
+                override fun received(response: Sentinel) {
+                    continuation.resume(null)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(null)
+                }
+            },
+        )
+    }
+}
+
+/**
+ * 获取分配跟踪样本（getAllocationTraces），错误时返回 null。
+ */
+suspend fun VmService.getAllocationTracesOrNull(
+    isolateId: String,
+    classId: String? = null,
+    timeOriginMicros: Int? = null,
+    timeExtentMicros: Int? = null,
+): CpuSamples? {
+    return suspendCancellableCoroutine { continuation ->
+        getAllocationTraces(
+            isolateId,
+            timeOriginMicros,
+            timeExtentMicros,
+            classId,
+            object : CpuSamplesConsumer {
+                override fun received(response: CpuSamples) {
+                    continuation.resume(response)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(null)
+                }
+            },
+        )
+    }
+}
+
+/**
+ * 请求堆快照，成功返回 true。
+ */
+suspend fun VmService.requestHeapSnapshotNow(isolateId: String): Boolean {
+    return suspendCancellableCoroutine { continuation ->
+        requestHeapSnapshot(
+            isolateId,
+            object : SuccessConsumer {
+                override fun received(response: Success) {
+                    continuation.resume(true)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(false)
+                }
+            },
+        )
+    }
+}
+
+/**
+ * 设置 class allocation tracing，成功返回 true。
+ */
+suspend fun VmService.setTraceClassAllocationEnabled(
+    isolateId: String,
+    classId: String,
+    enabled: Boolean,
+): Boolean {
+    return suspendCancellableCoroutine { continuation ->
+        setTraceClassAllocation(
+            isolateId,
+            classId,
+            enabled,
+            object : SetTraceClassAllocationConsumer {
+                override fun received(response: Sentinel) {
+                    continuation.resume(false)
+                }
+
+                override fun received(response: Success) {
+                    continuation.resume(true)
+                }
+
+                override fun onError(error: RPCError) {
+                    continuation.resume(false)
+                }
+            },
+        )
+    }
+}
+
 
 
 
