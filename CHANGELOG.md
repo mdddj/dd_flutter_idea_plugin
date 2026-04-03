@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 7.0.1 - 2026-04-03
+
+### Improvements
+- Synced updates from 6.9.4 into the 7.x line.
+- Added the Dart VM Memory module (Profile, Diff Snapshots, Trace Instances).
+- Improved VM/Drift localization and export flow stability.
+
 ## 7.0.0 - 2026-03-26
 
 ### 🔧 Compatibility
