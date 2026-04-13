@@ -4,6 +4,7 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
@@ -15,6 +16,7 @@ import com.intellij.openapi.wm.impl.status.TextPanel
 import com.intellij.ui.ClickListener
 import com.intellij.ui.awt.RelativePoint
 import shop.itbug.flutterx.actions.bar.getStatusBarActionGroup
+import shop.itbug.flutterx.config.FlutterXGlobalConfigService
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.icons.MyIcons
 import shop.itbug.flutterx.util.MyFileUtil
@@ -26,8 +28,9 @@ import javax.swing.JComponent
 
 ///用户面板
 class MyUserBarFactory : StatusBarWidgetFactory {
+    private val logger = thisLogger()
     override fun getId(): String {
-        return "user-account"
+        return ID
     }
 
     override fun getDisplayName(): String {
@@ -35,6 +38,15 @@ class MyUserBarFactory : StatusBarWidgetFactory {
     }
 
     override fun isAvailable(project: Project): Boolean {
+        val config = FlutterXGlobalConfigService.getInstance().state
+        if(config.forceHideBottomStatusBarAction){
+            logger.info("用户强制隐藏底部状态栏图标")
+            return false
+        }
+        if(config.forceEnableBottomStatusBarActions){
+            logger.info("用户强制显示底部状态栏图标")
+            return true
+        }
         val yamlFile = runReadAction { MyFileUtil.getPubspecFile(project) }
         return yamlFile != null
     }
@@ -50,6 +62,9 @@ class MyUserBarFactory : StatusBarWidgetFactory {
         return true
     }
 
+    companion object {
+        const val ID = "user-account"
+    }
 
 }
 
