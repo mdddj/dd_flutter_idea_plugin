@@ -47,6 +47,12 @@ class FlutterXGlobalConfigService : SimplePersistentStateComponent<FlutterXGloba
         //忽略不再检测的版本
         var ignoreFlutterVersions by stringSet()
 
+        //强制在底部显示 flutterx 状态栏,因为它默认会检测是不是 flutter 项目,如果 flutter 项目则不显示,开启后会被强制显示
+        var forceEnableBottomStatusBarActions by property(false)
+
+        // 强制不显示底部状态栏
+        var forceHideBottomStatusBarAction by property(false)
+
         fun updateList() {
             incrementModificationCount()
         }
