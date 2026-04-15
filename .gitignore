@@ -41,6 +41,7 @@ extend/FlutterX-ai/build
 .vscode/
 third_party/
 rust_plugin/
+notes/
 
 ### Mac OS ###
 .DS_Store
