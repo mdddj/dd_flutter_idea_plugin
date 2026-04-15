@@ -1,0 +1,191 @@
+// Copyright 2022 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file or at https://developers.google.com/open-source/licenses/bsd.
+
+import 'package:devtools_app/devtools_app.dart';
+import 'package:devtools_app/src/screens/memory/framework/memory_tabs.dart';
+import 'package:devtools_app/src/screens/memory/panes/diff/controller/diff_pane_controller.dart';
+import 'package:devtools_app/src/screens/memory/panes/profile/profile_pane_controller.dart';
+import 'package:devtools_app/src/screens/memory/shared/heap/class_filter.dart';
+import 'package:devtools_app_shared/ui.dart';
+import 'package:devtools_app_shared/utils.dart';
+import 'package:devtools_shared/devtools_shared.dart';
+import 'package:devtools_test/devtools_test.dart';
+import 'package:devtools_test/helpers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:stager/stager.dart';
+import 'package:vm_service/vm_service.dart';
+
+import '../../../test_infra/test_data/memory.dart';
+import '../../../test_infra/test_data/memory_allocation.dart';
+import '../../test_data/memory/heap/heap_data.dart';
+import '../../test_data/memory/heap/heap_graph_fakes.dart';
+import '../scene_test_extensions.dart';
+
+// To run:
+// flutter run -t test/test_infra/scenes/memory/default.stager_app.g.dart -d macos
+
+/// A namespace for stubbed data used in memory tests.
+extension MemoryDefaultSceneHeaps on Never {
+  /// Many instances of the same class with different long paths.
+  ///
+  /// If sorted by retaining path this class will be the second from the top.
+  /// It is needed to measure if selection of this class will cause UI to jank.
+  static HeapSnapshotGraph manyPaths() {
+    const pathLen = 100;
+    const pathCount = 100;
+    final result = FakeHeapSnapshotGraph();
+
+    for (int i = 0; i < pathCount; i++) {
+      final retainers = List<String>.generate(pathLen, (_) => 'Retainer$i');
+      final index = result.addChain([...retainers, 'TheData']);
+      result.objects[index].shallowSize = 10;
+    }
+
+    final heavyClassIndex = result.addChain(['HeavyClass']);
+    result.objects[heavyClassIndex].shallowSize = 10000;
+    return result;
+  }
+
+  static final forDiffTesting =
+      [
+            {'A': 1, 'B': 2, 'C': 1},
+            {'A': 1, 'B': 2},
+            {'B': 1, 'C': 2, 'D': 3},
+            {'B': 1, 'C': 2, 'D': 3},
+          ]
+          .map(
+            (e) =>
+                () => FakeHeapSnapshotGraph()..addClassInstances(e),
+          )
+          .toList();
+
+  static final golden = goldenHeapTests
+      .map(
+        (e) =>
+            () => e.loadHeap(),
+      )
+      .toList();
+
+  static List<HeapProvider> get all => [
+    ...forDiffTesting,
+    manyPaths,
+    ...golden,
+  ];
+}
+
+class MemoryDefaultScene extends Scene {
+  late MemoryController controller;
+  late FakeServiceConnectionManager fakeServiceConnection;
+
+  @override
+  Widget build(BuildContext context) {
+    return wrapWithControllers(const MemoryScreenBody(), memory: controller);
+  }
+
+  Future<void> pump(WidgetTester tester) async {
+    await tester.pumpSceneAsync(this);
+    // Delay to ensure the memory profiler has collected data.
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+    expect(find.byType(MemoryScreenBody), findsOneWidget);
+  }
+
+  @override
+  /// Sets up the scene.
+  ///
+  /// [classList] will be returned by VmService.getClassList.
+  /// [heapProviders] will be used to for heap snapshotting.
+  Future<void> setUp({
+    ClassList? classList,
+    List<HeapProvider>? heapProviders,
+  }) async {
+    heapProviders = heapProviders ?? MemoryDefaultSceneHeaps.all;
+
+    setGlobal(
+      DevToolsEnvironmentParameters,
+      ExternalDevToolsEnvironmentParameters(),
+    );
+    setGlobal(OfflineDataController, OfflineDataController());
+    setGlobal(IdeTheme, IdeTheme());
+    setGlobal(NotificationService, NotificationService());
+    setGlobal(
+      PreferencesController,
+      PreferencesController()..memory.showChart.value = false,
+    );
+
+    // Load canned data testHeapSampleData.
+    final memoryJson = SamplesMemoryJson.decode(
+      argJsonString: testHeapSampleData,
+    );
+    final allocationJson = AllocationMemoryJson.decode(
+      argJsonString: testAllocationData,
+    );
+
+    fakeServiceConnection = FakeServiceConnectionManager(
+      service: FakeServiceManager.createFakeService(
+        memoryData: memoryJson,
+        allocationData: allocationJson,
+        classList: classList,
+      ),
+    );
+    final app = fakeServiceConnection.serviceManager.connectedApp!;
+    mockConnectedApp(app, isProfileBuild: true);
+    when(
+      fakeServiceConnection.serviceManager.vm.operatingSystem,
+    ).thenReturn('ios');
+    setGlobal(ServiceConnectionManager, fakeServiceConnection);
+    setGlobal(BannerMessagesController, BannerMessagesController());
+    setGlobal(OfflineDataController, OfflineDataController());
+
+    final showAllFilter = ClassFilter(
+      filterType: ClassFilterType.showAll,
+      except: '',
+      only: '',
+    );
+
+    final diffController = DiffPaneController(
+      loader: HeapGraphLoaderProvided(heapProviders),
+      rootPackage: 'root',
+    )..derived.applyFilter(showAllFilter);
+
+    final profileController = ProfilePaneController(rootPackage: 'root')
+      ..setFilter(showAllFilter);
+
+    controller = MemoryController()
+      ..init(
+        connectedDiff: diffController,
+        connectedProfile: profileController,
+      );
+
+    await controller.initialized;
+
+    controller.chart.data.timeline.data
+      ..clear()
+      ..addAll(memoryJson.data);
+  }
+
+  @override
+  String get title => '$MemoryDefaultScene';
+
+  Future<void> takeSnapshot(WidgetTester tester) async {
+    final snapshots = controller.diff.core.snapshots;
+    final length = snapshots.value.length;
+    await tester.tap(find.byIcon(Icons.fiber_manual_record).first);
+    await tester.pumpAndSettle();
+    expect(snapshots.value.length, equals(length + 1));
+  }
+
+  Future<void> goToDiffTab(WidgetTester tester) async {
+    await tester.tap(find.byKey(MemoryScreenKeys.diffTab));
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> goToTraceTab(WidgetTester tester) async {
+    await tester.tap(find.byKey(MemoryScreenKeys.traceTab));
+    await tester.pumpAndSettle();
+  }
+
+  void tearDown() {}
+}

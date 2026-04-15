@@ -1,0 +1,8 @@
+▼[R][root]
+  ▼[M]MyApp
+    ▼[M]MaterialApp
+      ▼[S]Scaffold
+      ├───▼[C]Center
+      │     [T]Text
+      └─▼[A]AppBar
+          [T]Text

@@ -1,0 +1,22 @@
+# Output directory of webdev build
+build/
+
+# Directory created by dartdoc
+doc/api/
+
+# Generated files not intended to be checked in to version control
+.flutter-plugins-dependencies
+test/widget_test.dart
+.metadata
+
+# Platforms related
+android/**/*
+ios/**/*
+linux/**/*
+windows/**/*
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/

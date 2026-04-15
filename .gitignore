@@ -37,7 +37,6 @@ plugins/
 /.nb-gradle/
 .kotlin/
 extend/FlutterX-ai/build
-
 ### VS Code ###
 .vscode/
 

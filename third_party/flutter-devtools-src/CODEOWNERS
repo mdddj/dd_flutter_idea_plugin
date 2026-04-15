@@ -1,0 +1,39 @@
+*                   @flutter/devtools-reviewers
+
+# Inspector Files
+inspector/          @elliette
+
+# Network Files
+network/            @bkonyi @kenzieschmoll
+
+# Performance Files
+performance/        @kenzieschmoll
+
+# CPU Profiler files
+profiler/           @kenzieschmoll @bkonyi
+
+# Memory files
+memory/             @bkonyi @kenzieschmoll
+
+# Debugger files
+debugger/           @elliette
+
+# VM Developer files
+vm_developer/       @bkonyi
+
+# Tooling files
+/tool/              @kenzieschmoll
+
+# DevTools extensions and related files
+src/extensions/
+packages/devtools_extensions/    @kenzieschmoll
+packages/devtools_app_shared/    @kenzieschmoll
+
+# package:devtools_shared code, which is used across DevTools and the Dart SDK
+packages/devtools_shared/        @kenzieschmoll @bkonyi
+
+# Version bump files.
+# No owners to prevent version update spam
+packages/devtools_app/lib/devtools.dart
+packages/devtools_app/pubspec.yaml
+packages/devtools_test/pubspec.yaml

@@ -1,9 +1,0 @@
-{
-    "configurations": [
-        {
-            "type": "gradle",
-            "name": "Gradle configuration",
-            "tasks": ["runIde"]
-        }
-    ]
-}
