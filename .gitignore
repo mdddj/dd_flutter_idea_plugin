@@ -39,6 +39,8 @@ plugins/
 extend/FlutterX-ai/build
 ### VS Code ###
 .vscode/
+third_party/
+rust_plugin/
 
 ### Mac OS ###
 .DS_Store
