@@ -84,6 +84,7 @@ val bPlugins = mutableListOf(
 )
 
 dependencies {
+    implementation("org.jsoup:jsoup:1.18.3")
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")

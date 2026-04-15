@@ -5,6 +5,8 @@ import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.PsiTreeUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
@@ -14,6 +16,7 @@ import shop.itbug.flutterx.model.PubVersionDataModel
 import shop.itbug.flutterx.model.getLastVersionText
 import shop.itbug.flutterx.model.hasNewVersion
 import shop.itbug.flutterx.services.MyPackageGroup
+import shop.itbug.flutterx.services.PubChangelogService
 import shop.itbug.flutterx.services.PubService
 import shop.itbug.flutterx.util.*
 
@@ -34,7 +37,10 @@ data class DartYamlModel(
     val element: SmartPsiElementPointer<YAMLKeyValueImpl>,
     val plainText: SmartPsiElementPointer<YAMLPlainTextImpl>,
     val pubData: PubVersionDataModel? = null,
-    val type: MyPackageGroup? = null
+    val type: MyPackageGroup? = null,
+
+    //更新日志,需要解析出来才有
+    val changelog: String? = null
 ) {
 
     private fun getVersionModel() = DartPluginVersionName(name, version)
@@ -106,8 +112,7 @@ data class DartYamlModel(
         }
 
         /**
-         * 解析model的时候同时请求pub.dev的包数据
-         * 多了一个请求
+         * 先请求 pub package 详情，只有确认存在新版本时才继续拉取 changelog
          */
         suspend fun fetch(element: SmartPsiElementPointer<YAMLKeyValueImpl>): DartYamlModel? {
             val model = create(element) ?: return null
@@ -117,8 +122,19 @@ data class DartYamlModel(
             } ?: return null
             val isIgnored = YamlFileIgDartPackageCache.getInstance(project).state.hasItem(file, model.name)
             if (isIgnored) return null
-            val data = PubService.callPluginDetails(model.name) ?: return null
-            return model.copy(pubData = data)
+            val data = withContext(Dispatchers.IO) {
+                PubService.callPluginDetails(model.name)
+            } ?: return null
+
+            val modelWithPackageInfo = model.copy(pubData = data)
+            if (!modelWithPackageInfo.hasNewVersion()) {
+                return modelWithPackageInfo
+            }
+
+            val changelog = withContext(Dispatchers.IO) {
+                PubChangelogService.fetchLatestChangelog(model.name)?.formattedText
+            }
+            return modelWithPackageInfo.copy(changelog = changelog)
         }
     }
 }
