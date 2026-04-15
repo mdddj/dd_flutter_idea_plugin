@@ -43,6 +43,7 @@ private val getVersions get() = FlutterXGlobalConfigService.getInstance().state.
 class FlutterVersionIgnoreList : JBList<String>(DefaultListModel()) {
     private val myModel get() = model as DefaultListModel<String>
     private val actionGroup = DefaultActionGroup()
+    private val windowSize = Dimension(240,60)
     private val removeActin = object : DumbAwareAction(PluginBundle.get("delete_base_text")) {
         override fun actionPerformed(p0: AnActionEvent) {
             FlutterXGlobalConfigService.getInstance().updateBase {
@@ -63,11 +64,18 @@ class FlutterVersionIgnoreList : JBList<String>(DefaultListModel()) {
     }
 
     init {
-        this.preferredSize = Dimension(240, 60)
         border = JBUI.Borders.customLine(JBColor.border())
         myModel.addAll(getVersions)
         actionGroup.add(removeActin)
         PopupHandler.installPopupMenu(this, actionGroup,"FlutterVersionIgnoreList")
         ListUiUtil.Selection.installSelectionOnRightClick(this)
+    }
+
+    override fun getPreferredSize(): Dimension {
+        return windowSize
+    }
+
+    override fun getSize(): Dimension {
+        return windowSize
     }
 }

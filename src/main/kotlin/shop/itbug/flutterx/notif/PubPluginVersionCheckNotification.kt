@@ -23,7 +23,6 @@ import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.icons.MyIcons
 import shop.itbug.flutterx.services.PubCacheSizeCalcService
 import shop.itbug.flutterx.services.PubCacheSizeCalcService.Companion.TOPIC
-import shop.itbug.flutterx.services.noused.DartNoUsedCheckService
 import shop.itbug.flutterx.setting.IgPluginPubspecConfigList
 import shop.itbug.flutterx.tools.MyToolWindowTools
 import shop.itbug.flutterx.util.MyActionUtil
@@ -96,16 +95,10 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
 
 
         ///管理忽略的包
-        val igPackageLabel = createActionLabel("Ignore packages") {
+        val igPackageLabel = createActionLabel(PluginBundle.get("pub.dev.search.ignore.packages")) {
             IgPluginPubspecConfigList.showInPopup(project, file)
         }
         myLinksPanel.add(igPackageLabel)
-
-        ///检查没有被使用的包
-        val noUsedCheck = createActionLabel(PluginBundle.get("check_un_used_package")) {
-            DartNoUsedCheckService.getInstance(project).checkUnUsedPackaged()
-        }
-        myLinksPanel.add(noUsedCheck)
     }
 
     ///打开隐私扫描工具窗口
@@ -158,13 +151,13 @@ private class MyCheckPubCacheSizeComponent(project: Project) : HyperlinkLabel(),
 
 
     private fun setDefaultText() {
-        setHyperlinkText("Pub Cache Size: " + cacheService.getCurrentSizeFormatString())
+        setHyperlinkText(PluginBundle.get("pub.cache.size", cacheService.getCurrentSizeFormatString()))
     }
 
     override fun calcComplete(len: Long, formatString: String) {
         SwingUtilities.invokeLater {
             if (!isDisposed) {
-                setHyperlinkText("Pub Cache Size: $formatString")
+                setHyperlinkText(PluginBundle.get("pub.cache.size", formatString))
             }
 
         }
@@ -187,4 +180,3 @@ private class MyCheckPubCacheSizeComponent(project: Project) : HyperlinkLabel(),
         super.after(events)
     }
 }
-

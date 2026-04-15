@@ -39,6 +39,9 @@ class DartVmServiceWindowsFactory : ToolWindowFactory {
         toolWindow.addComposeTab("Shared Preferences") {
             DartVmSharedPreferencesComponent(project)
         }
+        toolWindow.addComposeTab("Hive CE") {
+            DartVmHiveComponent(project)
+        }
         toolWindow.addComposeTab("Drift DB") {
             DriftComposeComponent(project)
         }

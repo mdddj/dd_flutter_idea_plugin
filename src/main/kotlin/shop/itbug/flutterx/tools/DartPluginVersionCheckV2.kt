@@ -56,7 +56,8 @@ class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<Da
             if (lastVersion != null && ele != null && pt != null) {
                 holder.newAnnotation(
                     HighlightSeverity.WARNING, "${PluginBundle.get("version.tip.1")}:${lastVersion}"
-                ).range(pt).withFix(FixNewVersionAction(it)).create()
+                ).range(pt).withFix(FixNewVersionAction(it))
+                    .create()
 
             }
         }

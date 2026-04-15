@@ -20,7 +20,7 @@ import shop.itbug.flutterx.cache.YamlFileIgDartPackageCache
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.icons.MyIcons
 import shop.itbug.flutterx.services.PubService
-import shop.itbug.flutterx.services.noused.DartNoUsedCheckService
+import shop.itbug.flutterx.util.DartPackageDirectoryUtil
 import shop.itbug.flutterx.tools.YAML_DART_PACKAGE_INFO_KEY
 import shop.itbug.flutterx.tools.YAML_FILE_IS_FLUTTER_PROJECT
 import shop.itbug.flutterx.util.MyFileUtil
@@ -90,17 +90,17 @@ class PluginDartIconActionMenuList(val element: PsiElement, val file: YAMLFile) 
                     icon = MyImages.ignore
                 ),
                 PluginDartIconActionMenuItem(
-                    "Open Directory",
+                    PluginBundle.get("pub.dev.menu.open.directory"),
                     "open-directory",
                     icon = AllIcons.General.OpenDisk
                 ),
                 PluginDartIconActionMenuItem(
-                    "Show Json Data",
+                    PluginBundle.get("pub.dev.menu.show.json"),
                     "open-json-text",
                     icon = AllIcons.FileTypes.Json
                 ),
                 PluginDartIconActionMenuItem(
-                    "Open package api in browser",
+                    PluginBundle.get("pub.dev.menu.open.api"),
                     "open-api-in-browser",
                     icon = AllIcons.Toolwindows.WebToolWindow
                 )
@@ -114,7 +114,7 @@ class PluginDartIconActionMenuList(val element: PsiElement, val file: YAMLFile) 
 
 
     override fun getTextFor(value: PluginDartIconActionMenuItem?): String {
-        return value?.title ?: "未知选项"
+        return value?.title ?: PluginBundle.get("unknown.option")
     }
 
     override fun onChosen(selectedValue: PluginDartIconActionMenuItem?, finalChoice: Boolean): PopupStep<*>? {
@@ -134,7 +134,7 @@ class PluginDartIconActionMenuList(val element: PsiElement, val file: YAMLFile) 
             }
 
             menus[2].type -> {
-                DartNoUsedCheckService.getInstance(project).openInBrowser(pluginName)
+                DartPackageDirectoryUtil.openInstalledPackageDirectory(project, pluginName)
             }
 
             menus[3].type -> {
