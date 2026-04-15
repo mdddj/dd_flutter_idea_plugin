@@ -18,6 +18,19 @@
 - Added and refined the Drift database viewer, including table browsing, editing, export, and UI improvements.
 - Improved Network Inspector command copying with better cross-platform cURL and PowerShell support.
 - Fixed several Flutter downloader, privacy scanner, Drift panel, and Dart VM tool window stability issues.
+## 6.9.5 - 2026-04-15
+
+### New Features
+- Added a Hive CE inspector to the Dart VM tool window for schema loading, raw object decoding, and runtime value inspection.
+- Added pub.dev changelog fetching so dependency update previews can show the latest package release notes inline.
+- Added Flutter SDK changelog parsing so Flutter version update notifications can display release notes directly in the IDE.
+
+### Improvements
+- Refined pub package tools and dependency update preview rendering for richer version upgrade details.
+- Simplified legacy package check paths and cleaned related service wiring around version notifications.
+
+### Automation
+- Automated JetBrains Marketplace publishing in the GitHub release workflow for tagged releases.
 
 ## 6.9.4 - 2026-04-03
 
