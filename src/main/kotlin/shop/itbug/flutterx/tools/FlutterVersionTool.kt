@@ -98,4 +98,8 @@ object FlutterVersionTool {
         return "https://github.com/flutter/flutter/blob/${version}/CHANGELOG.md#${version.replace(".","")}"
     }
 
+    fun buildChangeLogRawUrl(version: String): String {
+        return "https://raw.githubusercontent.com/flutter/flutter/${version}/CHANGELOG.md"
+    }
+
 }

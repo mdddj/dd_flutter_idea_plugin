@@ -15,7 +15,6 @@ import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.model.PubVersionDataModel
 import shop.itbug.flutterx.model.getLastVersionText
 import shop.itbug.flutterx.model.hasNewVersion
-import shop.itbug.flutterx.services.MyPackageGroup
 import shop.itbug.flutterx.services.PubChangelogService
 import shop.itbug.flutterx.services.PubService
 import shop.itbug.flutterx.util.*
@@ -37,7 +36,6 @@ data class DartYamlModel(
     val element: SmartPsiElementPointer<YAMLKeyValueImpl>,
     val plainText: SmartPsiElementPointer<YAMLPlainTextImpl>,
     val pubData: PubVersionDataModel? = null,
-    val type: MyPackageGroup? = null,
 
     //更新日志,需要解析出来才有
     val changelog: String? = null
