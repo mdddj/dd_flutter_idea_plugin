@@ -143,7 +143,7 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
 
 
 class PubspecServiceFileListener(val project: Project) : BulkFileListener {
-    override fun after(events: List<out VFileEvent>) {
+    override fun after(events: List<VFileEvent>) {
         events.find { it.file?.name == "pubspec.yaml" } ?: return
         val service = PubspecService.getInstance(project)
         service.reCheck()

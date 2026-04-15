@@ -5,20 +5,7 @@
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
 
-    <!--    <extensions defaultExtensionNs="org.jetbrains.kotlin">-->
-    <!--        <supportsKotlinPluginMode supportsK2="true"/>-->
-    <!--    </extensions>-->
-    <!--    <depends>com.intellij.modules.platform</depends>-->
-    <!--    <depends>org.jetbrains.plugins.yaml</depends>-->
-    <!--    <depends>Dart</depends>-->
-    <!--    <depends>org.intellij.plugins.markdown</depends>-->
-    <!--    <depends>org.jetbrains.plugins.terminal</depends>-->
-    <!--    <depends>com.intellij.modules.json</depends>-->
-    <!--    <depends>com.intellij.gradle</depends>-->
-    <!--    <depends>com.intellij.platform.images</depends>-->
-    <!--    <depends>org.jetbrains.plugins.gradle</depends>-->
-    <!--    <depends>org.intellij.groovy</depends>-->
-    <!--    <depends>com.intellij.modules.lang</depends>-->
+
     <dependencies>
         <plugin id="com.intellij.modules.platform"/>
         <plugin id="org.jetbrains.plugins.yaml"/>
@@ -29,6 +16,7 @@
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
         <plugin id="org.intellij.groovy"/>
+
         <module name="intellij.libraries.ktor.client"/>
         <module name="intellij.libraries.ktor.client.cio"/>
         <module name="intellij.platform.jewel.foundation"/>
