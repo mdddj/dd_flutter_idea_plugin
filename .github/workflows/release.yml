@@ -8,6 +8,11 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    env:
+      CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+      idea_push_token: ${{ secrets.IDEA_PUSH_TOKEN }}
     steps:
       # ------------------- 新增步骤 -------------------
       - name: 从 Tag 中提取分支名
@@ -46,6 +51,12 @@ jobs:
       - name: 打包插件
         run: |
           ./gradlew buildPlugin --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetaspaceSize=512m"
+
+      - name: 发布主插件到 JetBrains Marketplace
+        run: |
+          ./gradlew publishPlugin --no-daemon --stacktrace
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1548m -XX:MaxMetaspaceSize=512m"
 
