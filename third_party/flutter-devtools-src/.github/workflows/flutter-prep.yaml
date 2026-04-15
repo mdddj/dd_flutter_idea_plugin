@@ -1,0 +1,79 @@
+# Copyright 2023 The Flutter Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file or at https://developers.google.com/open-source/licenses/bsd.
+
+name: Flutter SDK prep
+
+defaults:
+  run:
+    # Use Bash on all platforms including Windows to avoid
+    # two copies of bot scripts.
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      os-name:
+        description: 'The OS to run against, either "macos", "ubuntu" or "windows". If none is provided, will run against all.'
+        type: string
+
+    outputs:
+      latest_flutter_candidate:
+        description: "The latest Flutter candidate version."
+        value: ${{ jobs.reusable-flutter-prep.outputs.latest_flutter_candidate }}
+
+jobs:
+  reusable-flutter-prep:
+    name: ${{ matrix.os }} Flutter Prep
+    outputs:
+      latest_flutter_candidate: ${{ steps.flutter-candidate.outputs.FLUTTER_CANDIDATE }}
+    strategy:
+      matrix:
+        os: ${{ (inputs.os-name == 'macos' && fromJSON('[ "macos-latest"]')) || (inputs.os-name == 'ubuntu' && fromJSON('[ "ubuntu-latest"]')) || (inputs.os-name == 'windows' && fromJSON('[ "windows-latest"]')) || fromJSON('["ubuntu-latest", "macos-latest", "windows-latest"]') }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      # TODO(https://github.com/flutter/devtools/issues/5729) Consider caching DevTools so that we
+      # don't check it out again is subsequent workflows.
+      - name: Checkout DevTools (default)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Get Latest Flutter Candidate
+        id: flutter-candidate
+        run: |
+          LATEST_FLUTTER_CANDIDATE=$(./tool/latest_flutter_candidate.sh)
+          echo "FLUTTER_CANDIDATE=$LATEST_FLUTTER_CANDIDATE" >> $GITHUB_OUTPUT
+
+      - name: Load Cached Flutter SDK
+        id: cache-flutter
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7
+        with:
+          path: |
+            ./tool/flutter-sdk
+          key: flutter-sdk-${{ runner.os }}-${{ steps.flutter-candidate.outputs.FLUTTER_CANDIDATE }}
+
+      - if: ${{ steps.cache-flutter.outputs.cache-hit != 'true' }}
+        name: Clone Flutter SDK if none cached
+        run: |
+          git clone https://github.com/flutter/flutter.git ./tool/flutter-sdk
+          cd tool/flutter-sdk
+          git checkout $LATEST_FLUTTER_CANDIDATE
+        env:
+          LATEST_FLUTTER_CANDIDATE: ${{ steps.flutter-candidate.outputs.FLUTTER_CANDIDATE }}
+
+      - name: Assert that the Latest Flutter Candidate is checked out
+        run: |
+          cd tool/flutter-sdk
+          HEAD_SHA=$(git rev-parse HEAD)
+          LATEST_FLUTTER_CANDIDATE_SHA=$(git rev-list -1 "$LATEST_FLUTTER_CANDIDATE")
+          if [ "$HEAD_SHA" != "$LATEST_FLUTTER_CANDIDATE_SHA" ]; then
+            echo "::error ,title=Error checking out Latest Flutter Candidate::{expected HEAD to be at $LATEST_FLUTTER_CANDIDATE_SHA but got $HEAD_SHA}"
+            exit 1
+          fi
+        env:
+          LATEST_FLUTTER_CANDIDATE: ${{ steps.flutter-candidate.outputs.FLUTTER_CANDIDATE }}
+
+      - name: Setup Flutter SDK
+        run: |
+          ./tool/flutter-sdk/bin/flutter config --disable-analytics
+          ./tool/flutter-sdk/bin/cache/dart-sdk/bin/dart --disable-analytics
+          ./tool/flutter-sdk/bin/flutter doctor

@@ -4,5 +4,6 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugins/db_viewer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugins/drift" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/flutter-devtools-git" vcs="Git" />
   </component>
 </project>

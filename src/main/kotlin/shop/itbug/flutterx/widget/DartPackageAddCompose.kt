@@ -2,6 +2,7 @@ package shop.itbug.flutterx.widget
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.intellij.ide.BrowserUtil
@@ -21,7 +23,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import org.jetbrains.jewel.bridge.JewelComposePanel
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
@@ -48,16 +49,33 @@ import javax.swing.JComponent
  * 给flutter 项目中添加常用依赖第三个包
  */
 @get:Composable
-private val bgColor get() = if (JewelTheme.isDark) Color.Black.copy(alpha = 0.5f) else Color.White
+private val cardBackground get() = JewelTheme.globalColors.panelBackground
+
+@get:Composable
+private val cardBorderColor get() = JewelTheme.globalColors.borders.normal
+
+@get:Composable
+private val subtleInfoColor get() = JewelTheme.globalColors.text.info
+
+@get:Composable
+private val chipBackgroundColor: Color
+    get() = if (JewelTheme.isDark) {
+        JewelTheme.globalColors.outlines.focused.copy(alpha = 0.18f)
+    } else {
+        JewelTheme.globalColors.outlines.focused.copy(alpha = 0.1f)
+    }
 
 
 //依赖的类型
-enum class PackageGroup(val displayName: String) {
-    Provider("State management"),
-    Sql("Sql"),
-    Cache("Cache"),
-    UI("UI"),
-    Util("Util")
+enum class PackageGroup(private val displayNameKey: String) {
+    Provider("pub.dev.search.group.provider"),
+    Sql("pub.dev.search.group.sql"),
+    Cache("pub.dev.search.group.cache"),
+    UI("pub.dev.search.group.ui"),
+    Util("pub.dev.search.group.util");
+
+    val displayName: String
+        get() = PluginBundle.get(displayNameKey)
 }
 
 sealed class MyFlutterPackage {
@@ -84,14 +102,24 @@ fun AddPackageDialogContent(project: Project, viewModel: PubSearchViewModel) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(PluginBundle.get("pub.dev.search.recommended.title"), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(
+                PluginBundle.get("pub.dev.search.recommended.desc"),
+                color = subtleInfoColor
+            )
+        }
         CustomTabRow(
             selectedTabIndex = selectIndex,
             tabs = groupedPackages.keys.map { it.displayName },
             onTabClick = {
                 viewModel.changeTabIndex(it)
             },
-            modifier = Modifier.fillMaxWidth().background(JewelTheme.globalColors.panelBackground)
+            modifier = Modifier.fillMaxWidth()
         )
         Box(modifier = Modifier.weight(1f)) {
             MyFlutterPackageListView(viewModel, groupedPackages.values.toList()[selectIndex], project)
@@ -106,12 +134,28 @@ private fun MyFlutterPackageListView(viewModel: PubSearchViewModel, items: List<
         viewModel.getAllPackageInfo(items)
     }
 
-    if (loading) {
-        CircularProgressIndicator()
-    } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(12.dp)) {
-            itemsIndexed(items) { _, item ->
-                PackageGroupView(viewModel, item, project)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(12.dp))
+            .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp))
+            .background(cardBackground)
+            .padding(12.dp)
+    ) {
+        if (loading) {
+            SearchStatePanel(
+                title = PluginBundle.get("pub.dev.search.recommended.loading.title"),
+                message = PluginBundle.get("pub.dev.search.recommended.loading.message"),
+                loading = true
+            )
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                itemsIndexed(items) { _, item ->
+                    PackageGroupView(viewModel, item, project)
+                }
             }
         }
     }
@@ -125,22 +169,27 @@ private fun PackageGroupView(viewModel: PubSearchViewModel, item: MyFlutterPacka
 
     fun addToFile(model: PubPackageInfo, type: FlutterPluginType) {
         TaskRunUtil.runModal(project) {
-            it.text = "In progress..."
+            it.text = PluginBundle.get("pub.dev.search.action.in.progress")
             viewModel.addDepToFile(model, type)
         }
     }
 
     when (item) {
         is MyFlutterPackage.Group -> Box {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+                ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(item.groupName, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        Text("group", color = JewelTheme.globalColors.text.info)
+                        MiniTag(PluginBundle.get("pub.dev.search.package.count", item.packages.size))
+                        MiniTag(item.group.displayName)
                     }
                     DefaultButton({
                         item.packages.forEach {
@@ -150,7 +199,7 @@ private fun PackageGroupView(viewModel: PubSearchViewModel, item: MyFlutterPacka
                             }
                         }
                     }, enabled = item.packages.any { p -> !allDeps.any { it.name == p.name } }) {
-                        Text("Add all")
+                        Text(PluginBundle.get("pub.dev.search.add.all"))
                     }
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -210,53 +259,58 @@ private fun SimplePackageItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(bgColor)
+            .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp))
+            .background(cardBackground)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(14.dp),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = details.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = uiStyle.titleFontSize.sp,
                     )
-                    IconButton(onClick = {
-                        BrowserUtil.browse(URI.create("https://pub.dev/packages/${details.name}"))
-                    }) {
-                        Icon(key = AllIconsKeys.Ide.External_link_arrow, contentDescription = "")
-                    }
                     Text(
                         details.latest.version,
-                        color = JewelTheme.globalColors.text.info
+                        color = subtleInfoColor
                     )
+                    Tooltip(tooltip = { Text(PluginBundle.get("pub.dev.search.open.pub.dev")) }) {
+                        IconButton(onClick = {
+                            BrowserUtil.browse(URI.create("https://pub.dev/packages/${details.name}"))
+                        }) {
+                            Icon(key = AllIconsKeys.Ide.External_link_arrow, contentDescription = "")
+                        }
+                    }
 
                 }
-                Box(modifier = Modifier.height(4.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "${model.score.likeCount} likes",
-                        color = JewelTheme.globalColors.text.info
+                        PluginBundle.get("pub.dev.search.likes.count", model.score.likeCount),
+                        color = subtleInfoColor
                     )
 
-                    Tooltip({ Text("Downloads within 30 days") }, enabled = true) {
+                    Tooltip({ Text(PluginBundle.get("pub.dev.search.downloads.30d")) }, enabled = true) {
                         IconText("${model.score.downloadCount30Days}", MyIcons.download)
                     }
 
                     Text(
                         details.formatTime(),
-                        color = JewelTheme.globalColors.text.info
+                        color = subtleInfoColor
                     )
                     if (uiStyle.tags.isNotEmpty())
                         uiStyle.tags.forEach {
@@ -264,28 +318,35 @@ private fun SimplePackageItem(
                         }
                 }
                 if (uiStyle.hideDesc.not())
-                    Column {
-                        Text(
-                            details.latest.pubspec.description,
-                        )
-                    }
+                    Text(
+                        details.latest.pubspec.description,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
             }
 
-            Box(modifier = Modifier.width(100.dp)) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Box(modifier = Modifier.width(132.dp)) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
                     if (isAdded) {
                         OutlinedButton(
-                            {}, enabled = false
+                            onClick = {},
+                            enabled = false,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Added")
+                            Text(PluginBundle.get("pub.dev.search.added"))
                         }
+                        Text(PluginBundle.get("pub.dev.search.already.in.pubspec"), color = subtleInfoColor, fontSize = 12.sp)
                     } else {
                         if (useSimpleAddButton) {
-                            DefaultButton({
-                                onAdd.invoke(null)
-                            }) {
-                                Text("Add")
+                            DefaultButton(
+                                onClick = { onAdd.invoke(null) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(PluginBundle.get("add"))
                             }
                         } else {
                             DefaultSplitButton(
@@ -296,7 +357,7 @@ private fun SimplePackageItem(
                                 secondaryOnClick = {
                                     println("secondary click")
                                 },
-                                content = { Text("Add") },
+                                content = { Text(PluginBundle.get("add")) },
                                 menuContent = {
                                     items(
                                         items = listOf(
@@ -330,17 +391,15 @@ private fun SimplePackageItem(
 private fun GithubAndPub(model: PubPackageInfo) {
     val repository = model.model.latest.pubspec.repository
     val homepage = model.model.latest.pubspec.homepage
-    Box {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (repository != null && repository.isNotBlank())
-                Link("repository", onClick = {
-                    BrowserUtil.browse(repository)
-                })
-            if (homepage != null && homepage.isNotBlank())
-                Link("homepage", onClick = {
-                    BrowserUtil.browse(homepage)
-                })
-        }
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (repository != null && repository.isNotBlank())
+            Link(PluginBundle.get("pub.dev.search.link.repo"), onClick = {
+                BrowserUtil.browse(repository)
+            })
+        if (homepage != null && homepage.isNotBlank())
+            Link(PluginBundle.get("pub.dev.search.link.home"), onClick = {
+                BrowserUtil.browse(homepage)
+            })
     }
 }
 
@@ -349,19 +408,19 @@ private fun MiniTag(text: String) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
-            .background(if (JewelTheme.isDark) Color.DarkGray else Color.LightGray)
-            .padding(horizontal = 4.dp, vertical = 2.dp),
+            .background(chipBackgroundColor)
+            .padding(horizontal = 6.dp, vertical = 3.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text, color = JewelTheme.globalColors.text.info, fontSize = 10.sp)
+        Text(text, color = subtleInfoColor, fontSize = 10.sp)
     }
 }
 
 @Composable
 private fun IconText(text: String, icon: IconKey) {
     Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        Icon(key = icon, contentDescription = "", tint = JewelTheme.globalColors.text.info)
-        Text(text, color = JewelTheme.globalColors.text.info)
+        Icon(key = icon, contentDescription = "", tint = subtleInfoColor)
+        Text(text, color = subtleInfoColor)
     }
 }
 
@@ -444,7 +503,7 @@ class AddPackageDialogIdea(val project: Project, yamlFile: YAMLFile) : DialogWra
 
         )
         return JewelComposePanel({
-            preferredSize = Dimension(600, 500)
+            preferredSize = Dimension(760, 580)
         }) {
             var selectIndex by remember { mutableIntStateOf(0) }
             Column(modifier = Modifier.fillMaxSize()) {
@@ -472,7 +531,7 @@ class AddPackageDialogIdea(val project: Project, yamlFile: YAMLFile) : DialogWra
 
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(500, 400)
+        return Dimension(760, 580)
     }
 
     override fun createActions(): Array<out Action?> {
@@ -484,17 +543,123 @@ class AddPackageDialogIdea(val project: Project, yamlFile: YAMLFile) : DialogWra
 
 @Composable
 private fun SearchPackage(project: Project, viewModel: PubSearchViewModel) {
-
     val allDeps = viewModel.allDeps.collectAsState().value
+    val query by viewModel.searchQuery.collectAsState()
+    val searchState by viewModel.searchStateFlow.collectAsState()
+    val textFieldState = rememberTextFieldState(initialText = query)
 
-    SearchCompose(viewModel) { packages ->
-        val sortList = packages.sortedByDescending { it.score.likeCount }
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            itemsIndexed(sortList) { _, item ->
-                SimplePackageItem(item, allDeps.any { it.name == item.model.name }) { type ->
-                    TaskRunUtil.runModal(project) {
-                        it.text = "In progress..."
-                        viewModel.addDepToFile(item, type ?: FlutterPluginType.Dependencies)
+    LaunchedEffect(textFieldState.text) {
+        val value = textFieldState.text.toString()
+        if (value != query) {
+            viewModel.onQueryChanged(value)
+        }
+    }
+    LaunchedEffect(query) {
+        if (textFieldState.text.toString() != query) {
+            textFieldState.setTextAndPlaceCursorAtEnd(query)
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(PluginBundle.get("pub.dev.search.title"), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                if (searchState is PubPackageSearchState.Result && query.isNotBlank()) {
+                    Text(
+                        PluginBundle.get("pub.dev.search.results.count", (searchState as PubPackageSearchState.Result).data.size),
+                        color = subtleInfoColor
+                    )
+                }
+            }
+            Text(
+                PluginBundle.get("pub.dev.search.desc"),
+                color = subtleInfoColor
+            )
+        }
+
+        TextField(
+            state = textFieldState,
+            placeholder = { Text(PluginBundle.get("pub.dev.search.placeholder")) },
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                if (query.isNotBlank()) {
+                    IconActionButton(
+                        key = AllIconsKeys.Actions.Close,
+                        contentDescription = PluginBundle.get("pub.dev.search.clear"),
+                        onClick = {
+                            viewModel.onQueryChanged("")
+                            textFieldState.setTextAndPlaceCursorAtEnd("")
+                        }
+                    )
+                } else {
+                    Icon(key = AllIconsKeys.Actions.Search, contentDescription = PluginBundle.get("search"))
+                }
+            }
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+                .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp))
+                .background(cardBackground)
+                .padding(12.dp)
+        ) {
+            when (val state = searchState) {
+                is PubPackageSearchState.Empty -> {
+                    SearchStatePanel(
+                        title = PluginBundle.get("pub.dev.search.empty.title"),
+                        message = PluginBundle.get("pub.dev.search.empty.message")
+                    )
+                }
+
+                is PubPackageSearchState.Loading -> {
+                    SearchStatePanel(
+                        title = PluginBundle.get("pub.dev.search.loading.title"),
+                        message = PluginBundle.get("pub.dev.search.loading.message"),
+                        loading = true
+                    )
+                }
+
+                is PubPackageSearchState.Error -> {
+                    SearchStatePanel(
+                        title = PluginBundle.get("pub.dev.search.error.title"),
+                        message = state.error,
+                        isError = true
+                    )
+                }
+
+                is PubPackageSearchState.Result -> {
+                    val sortedResults = state.data.sortedWith(
+                        compareByDescending<PubPackageInfo> { it.score.likeCount }
+                            .thenByDescending { it.score.downloadCount30Days }
+                    )
+                    if (sortedResults.isEmpty()) {
+                        SearchStatePanel(
+                            title = PluginBundle.get("pub.dev.search.no.result.title"),
+                            message = PluginBundle.get("pub.dev.search.no.result.message")
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            itemsIndexed(sortedResults) { _, item ->
+                                SimplePackageItem(item, allDeps.any { it.name == item.model.name }) { type ->
+                                    TaskRunUtil.runModal(project) {
+                                        it.text = PluginBundle.get("pub.dev.search.action.in.progress")
+                                        viewModel.addDepToFile(item, type ?: FlutterPluginType.Dependencies)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -502,49 +667,34 @@ private fun SearchPackage(project: Project, viewModel: PubSearchViewModel) {
     }
 }
 
-
 @Composable
-private fun SearchCompose(
-    viewModel: PubSearchViewModel,
-    child: @Composable (result: List<PubPackageInfo>) -> Unit
+private fun SearchStatePanel(
+    title: String,
+    message: String,
+    loading: Boolean = false,
+    isError: Boolean = false
 ) {
-    val query by viewModel.searchQuery.collectAsState()
-    val searchState by viewModel.searchStateFlow.collectAsState()
-    val textFieldState = rememberTextFieldState(initialText = query)
-    LaunchedEffect(textFieldState.text) {
-        if (textFieldState.text.toString() != query) {
-            viewModel.onQueryChanged(textFieldState.text.toString())
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (loading) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(12.dp))
+        } else {
+            Icon(
+                key = if (isError) AllIconsKeys.General.Warning else AllIconsKeys.Actions.Search,
+                contentDescription = title,
+                tint = if (isError) JewelTheme.globalColors.text.error else subtleInfoColor
+            )
+            Spacer(modifier = Modifier.height(12.dp))
         }
-    }
-    LaunchedEffect(query) {
-        delay(500)
-        if (textFieldState.text.toString() != query) {
-            textFieldState.setTextAndPlaceCursorAtEnd(query)
-        }
-    }
-
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        TextField(
-            state = textFieldState,
-            placeholder = { Text(PluginBundle.get("search.pub.plugin")) },
-            modifier = Modifier.fillMaxWidth(),
+        Text(title, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            message,
+            color = if (isError) JewelTheme.globalColors.text.error else subtleInfoColor
         )
-        when (val state = searchState) {
-            is PubPackageSearchState.Empty -> {
-                Text("Enter something to start your search...")
-            }
-
-            is PubPackageSearchState.Loading -> {
-                CircularProgressIndicator()
-            }
-
-            is PubPackageSearchState.Error -> {
-                Text(state.error)
-            }
-
-            is PubPackageSearchState.Result -> {
-                child(state.data)
-            }
-        }
     }
 }

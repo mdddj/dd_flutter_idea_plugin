@@ -1,0 +1,102 @@
+<!--
+Copyright 2025 The Flutter Authors
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file or at https://developers.google.com/open-source/licenses/bsd.
+-->
+## Updating NEXT_RELEASE_NOTES.md
+
+When you add a user-facing change to DevTools,
+please add a release note entry to document this improvement.
+
+This entry should be phrased in the past tense.
+For example, "Added XYZ" instead of "Add XYZ".
+
+### Release note entry
+
+Use this format for the entry:
+
+```markdown
+* Created the best feature ever. -
+  [#10000000001](https://github.com/flutter/devtools/pull/10000000001),
+  [#10000000002](https://github.com/flutter/devtools/pull/10000000002),
+  [#10000000003](https://github.com/flutter/devtools/pull/10000000003)
+```
+
+Find other examples in [previous notes](https://github.com/flutter/website/tree/main/src/content/tools/devtools/release-notes).
+
+### Adding images to a release note entry
+
+Consider adding an image to the release note entry:
+
+1. Add the image to the `release_notes/images` folder,
+2. Reference it in the markdown, right after the release note entry:
+
+    ```markdown
+
+        ![Accessible image description](images/my_feature.png "Image hover description")
+
+    ```
+
+#### Image style
+
+Please use DevTools in **dark mode** when taking screenshots for release notes.
+We use a dark theme since this is the default theme for DevTools.
+
+#### Image size
+
+When adding images, be cognizant that the images will be rendered in a
+relatively small window in DevTools, and they should be sized accordingly.
+A wide aspect ratio is preferred so that the space of the release notes
+viewer can be used efficiently.
+
+## Generating release notes for the Flutter website
+
+Release notes for DevTools are hosted on the Flutter website.
+They are indexed at https://docs.flutter.dev/tools/devtools/release-notes.
+
+### Prerequisite
+
+Before continuing, ensure you have your local environment set up for
+[contributing](https://github.com/flutter/website) to the `flutter/website` repo.
+
+### Creating the release notes PR
+
+Draft release notes on a local `flutter/website` branch by running
+the following command with the path to your local `flutter/website` repo:
+
+```console
+dt release-notes -w /Users/me/absolute/path/to/flutter/website
+```
+
+Clean up the drafted notes on your local `flutter/website` branch and open a PR.
+
+### Testing the release notes in DevTools
+
+Once you push up your branch to `flutter/website` and open your PR,
+wait for the `github-actions` bot to stage your changes to Firebase.
+Open the link it comments and navigate to the release notes you want to test.
+The url should look something like:
+
+```
+https://flutter-docs-prod--pr12652-devtools-release-notes-2-52-3bbb8c0u.web.app/tools/devtools/release-notes/release-notes-2.52.0.md
+```
+
+- Copy this url and set `_debugReleaseNotesUrl` in
+  `release_notes.dart` to this value.
+
+- Run DevTools and the release notes viewer should open
+  with the markdown at the url you provided.
+
+- Verify the release notes viewer displays the new release notes as expected.
+  Some issues to watch out for are broken images or 'include_relative' lines in
+  the markdown that don't load properly.
+
+## Preparing release notes for the next release
+
+After completing the release, the `NEXT_RELEASE_NOTES.md` file needs to be
+cleared in preparation for the next release. This should happen automatically
+when you update the version for the next release:
+
+```sh
+dt update-version auto -t minor; dt update-version auto -t dev
+```

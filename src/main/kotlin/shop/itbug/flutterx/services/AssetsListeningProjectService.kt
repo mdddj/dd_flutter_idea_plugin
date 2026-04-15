@@ -18,6 +18,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.text.HtmlChunk
+import com.intellij.util.ui.JBUI
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -40,6 +41,7 @@ import shop.itbug.flutterx.util.DateUtils
 import shop.itbug.flutterx.util.MyDartPsiElementUtil
 import shop.itbug.flutterx.util.RunUtil
 import shop.itbug.flutterx.util.Util
+import shop.itbug.flutterx.util.toHexString
 
 //
 class MyAssetGenPostStart : ProjectActivity {
@@ -158,31 +160,32 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     logger.info("${release.version}被用户设置了忽略检测,不弹窗提醒")
                     return
                 }
-                showTip(release, project)
+                val changelog = FlutterChangelogService.fetchVersionChangelog(release.version)
+                showTip(release, project, changelog)
             }
         }
 
         /**
          * 弹出通知
          */
-        fun showTip(release: Release, project: Project) {
-            val html = HtmlChunk.div().addText("Flutter ${PluginBundle.get("flutter_has_new_version")}")
-                .children(
-                    HtmlChunk.nbsp(2),
-                    HtmlChunk
-                        .tag("strong")
-                        .bold()
-                        .addText(release.version),
-                    HtmlChunk.div().children(
-                        HtmlChunk.span().addText(PluginBundle.get("flutter_has_new_version_date")),
-                        HtmlChunk.nbsp(2),
-                        HtmlChunk.span().addText(
-                            DateUtils.timeAgo(
-                                DateUtils.parseDate(release.releaseDate)
-                            )
-                        ).bold()
+        fun showTip(release: Release, project: Project, changelog: FlutterChangelogEntry?) {
+            val children = mutableListOf<HtmlChunk>()
+            children += HtmlChunk.nbsp(2)
+            children += HtmlChunk.tag("strong").bold().addText(release.version)
+            children += HtmlChunk.div().children(
+                HtmlChunk.span().addText(PluginBundle.get("flutter_has_new_version_date")),
+                HtmlChunk.nbsp(2),
+                HtmlChunk.span().addText(
+                    DateUtils.timeAgo(
+                        DateUtils.parseDate(release.releaseDate)
                     )
-                )
+                ).bold()
+            )
+            changelog?.let { children += createChangelogHtml(it) }
+
+            val html = HtmlChunk.div()
+                .addText("Flutter ${PluginBundle.get("flutter_has_new_version")}")
+                .children(children)
                 .toString()
             val createNotification =
                 NotificationGroupManager.getInstance().getNotificationGroup("flutter_version_check").createNotification(
@@ -244,6 +247,37 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
             })
             createNotification.isSuggestionType = true
             createNotification.notify(project)
+        }
+
+        private fun createChangelogHtml(entry: FlutterChangelogEntry): HtmlChunk {
+            val listItems = entry.items.take(3).joinToString("") { item ->
+                HtmlChunk.tag("li").addText(item).toString()
+            }
+            val listChunk = HtmlChunk.tag("ul")
+                .attr("style", "margin: 6px 0 0 16px;")
+                .addRaw(listItems)
+
+            val moreChunk = if (entry.items.size > 3) {
+                HtmlChunk.div()
+                    .attr(
+                        "style",
+                        "margin-top: 4px; color: ${JBUI.CurrentTheme.ContextHelp.FOREGROUND.toHexString()};"
+                    )
+                    .addText("...")
+            } else {
+                HtmlChunk.text("")
+            }
+
+            return HtmlChunk.div()
+                .attr(
+                    "style",
+                    "margin-top: 8px; padding-top: 6px;"
+                )
+                .children(
+                    HtmlChunk.div().addText("Highlights").bold(),
+                    listChunk,
+                    moreChunk
+                )
         }
     }
 }

@@ -1,0 +1,16 @@
+[root]
+ └─CustomApp
+   └─Directionality
+     └─DefaultTextStyle
+       └─HomeScreen
+         └─CustomContainer
+           └─Padding
+             └─Container
+               └─CustomCenter
+                 └─CustomButton
+                   └─GestureDetector
+                     └─CustomContainer
+                       └─Padding
+                         └─Container
+                           └─CustomText
+                             └─Text

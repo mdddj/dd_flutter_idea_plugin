@@ -5,21 +5,7 @@
     <vendor email="hlxsmail@gmail.com" url="https://itbug.shop">梁典典</vendor>
 
 
-    <!--    <extensions defaultExtensionNs="org.jetbrains.kotlin">-->
-    <!--        <supportsKotlinPluginMode supportsK2="true"/>-->
-    <!--    </extensions>-->
-    <!--    <depends>com.intellij.modules.platform</depends>-->
-    <!--    <depends>org.jetbrains.plugins.yaml</depends>-->
-    <!--    <depends>Dart</depends>-->
-    <!--    <depends>org.intellij.plugins.markdown</depends>-->
-    <!--    <depends>org.jetbrains.plugins.terminal</depends>-->
-    <!--    <depends>com.intellij.modules.json</depends>-->
-    <!--    <depends>com.intellij.gradle</depends>-->
-    <!--    <depends>com.intellij.platform.images</depends>-->
-    <!--    <depends>org.jetbrains.plugins.gradle</depends>-->
-    <!--    <depends>org.intellij.groovy</depends>-->
-    <!--    <depends>com.intellij.modules.lang</depends>-->
-    <depends config-file="dart-vm-actions.xml">com.intellij.modules.lang</depends>
+
     <dependencies>
         <plugin id="com.intellij.modules.platform"/>
         <plugin id="org.jetbrains.plugins.yaml"/>
@@ -30,6 +16,7 @@
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
         <plugin id="org.intellij.groovy"/>
+
         <module name="intellij.libraries.ktor.client"/>
         <module name="intellij.libraries.ktor.client.cio"/>
         <module name="intellij.platform.jewel.foundation"/>
@@ -68,7 +55,6 @@
         <notificationGroup displayType="BALLOON" id="flutter_version_check"/>
         <notificationGroup displayType="BALLOON" id="json_to_freezed_tooltip"/>
         <notificationGroup displayType="BALLOON" id="dart_package_check_service"/>
-        <notificationGroup displayType="BALLOON" id="flutterx_check_unused_package"/>
         <notificationGroup displayType="BALLOON" id="open_flutter_project_in_ide"/>
         <notificationGroup displayType="BALLOON" id="DartVmServiceListener"/>
 
@@ -110,6 +96,9 @@
         <config.codeVisionGroupSettingProvider
                 implementation="shop.itbug.flutterx.inlay.freezed.FreezedActionInlaySettingProvider"
                 id="FreezedActionInlaySettingProvider"/>
+        <config.codeVisionGroupSettingProvider
+                implementation="shop.itbug.flutterx.inlay.dartfile.DartWidgetParseToRiverpodInlaySetting"
+                id="Simple-Widget-to-Riverpod-Widget"/>
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
         <config.codeVisionGroupSettingProvider
@@ -399,7 +388,7 @@
             <reference ref="OpenAndroidProjectOnASAction"/>
             <reference ref="OpenIosProjectInXcodeAction"/>
             <reference ref="OpenMacosProjectInXcodeAction"/>
-            <separator text="Other" />
+            <separator text="Other"/>
             <reference ref="FlutterDownloaderAction"/>
         </group>
         <!--    status bar widgets  end   -->
@@ -517,7 +506,6 @@
 
         <action id="FlutterL10nAddNewKeyAction"
                 class="shop.itbug.flutterx.actions.tool.FlutterL10nAddNewKeyAction" text="Add New Key"/>
-
 
 
         <action id="DartVmHttpModuleSimpleShowAction"
@@ -682,4 +670,3 @@
 
     </actions>
 </idea-plugin>
-

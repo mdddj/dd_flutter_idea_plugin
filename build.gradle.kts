@@ -24,7 +24,7 @@ val idePluginDependencies =
 plugins {
     idea
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.10.5"
+    id("org.jetbrains.intellij.platform") version "2.14.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
@@ -42,8 +42,6 @@ java {
 repositories {
     mavenCentral()
     google()
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-    maven("https://plugins.gradle.org/m2/")
     intellijPlatform {
         defaultRepositories()
         releases()
@@ -84,6 +82,7 @@ val bPlugins = mutableListOf(
 )
 
 dependencies {
+    implementation("org.jsoup:jsoup:1.18.3")
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")

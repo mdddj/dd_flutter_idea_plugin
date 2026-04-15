@@ -4,7 +4,7 @@ import com.intellij.codeInsight.codeVision.CodeVisionAnchorKind
 import com.intellij.codeInsight.codeVision.CodeVisionEntry
 import com.intellij.codeInsight.codeVision.CodeVisionHost
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
-import com.intellij.codeInsight.codeVision.settings.PlatformCodeVisionIds
+import com.intellij.codeInsight.codeVision.settings.CodeVisionGroupSettingProvider
 import com.intellij.codeInsight.codeVision.ui.model.ClickableTextCodeVisionEntry
 import com.intellij.codeInsight.hints.codeVision.CodeVisionProviderBase
 import com.intellij.codeInsight.hints.settings.language.isInlaySettingsEditor
@@ -25,7 +25,6 @@ import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import shop.itbug.flutterx.config.PluginConfig
 import shop.itbug.flutterx.constance.MyKeys
 import shop.itbug.flutterx.icons.MyIcons
-import shop.itbug.flutterx.services.PubspecService
 import java.awt.event.MouseEvent
 
 
@@ -34,9 +33,8 @@ import java.awt.event.MouseEvent
  */
 private fun PsiElement.needHandler(): Boolean {
     val setting = PluginConfig.getState(project)
-    val hasRiverpod = PubspecService.getInstance(project).hasRiverpod()
     val element = this
-    return setting.showRiverpodInlay && element is DartClassDefinitionImpl && hasRiverpod && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
+    return setting.showRiverpodInlay && element is DartClassDefinitionImpl && (element.superclass?.type?.text == "StatelessWidget" || element.superclass?.type?.text == "StatefulWidget")
 }
 
 
@@ -119,14 +117,23 @@ class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
     override val relativeOrderings: List<CodeVisionRelativeOrdering>
         get() = emptyList()
     override val id: String
-        get() = "Simple Widget to Riverpod Widget"
+        get() = "Simple-Widget-to-Riverpod-Widget"
 
     override val name: String
         get() = "Simple Widget to Riverpod Widget"
 
-    override val groupId: String
-        get() = PlatformCodeVisionIds.INHERITORS.key
 
     override val defaultAnchor: CodeVisionAnchorKind
         get() = CodeVisionAnchorKind.Top
+}
+
+class DartWidgetParseToRiverpodInlaySetting : CodeVisionGroupSettingProvider {
+    override val groupId: String
+        get() = "Simple-Widget-to-Riverpod-Widget"
+    override val description: String
+        get() = "Display some operations converted to riverpod widget on flutter widget"
+
+    override val groupName: String
+        get() = "Widget to Riverpod (FlutterX)"
+
 }
