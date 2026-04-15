@@ -41,11 +41,11 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
     private val job = Job()
     private var dependenciesNames = listOf<String>()
     private var details = listOf<DartYamlModel>()
-    
+
     // StateFlow for Compose
     private val _dependenciesNamesFlow = MutableStateFlow<List<String>>(emptyList())
     val dependenciesNamesFlow: StateFlow<List<String>> = _dependenciesNamesFlow.asStateFlow()
-    
+
     private val _detailsFlow = MutableStateFlow<List<DartYamlModel>>(emptyList())
     val detailsFlow: StateFlow<List<DartYamlModel>> = _detailsFlow.asStateFlow()
 
@@ -62,7 +62,7 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
             val all = tool.allDependencies()
             details = all
             dependenciesNames = all.map { it.name }
-            
+
             // Update flows
             _detailsFlow.value = all
             _dependenciesNamesFlow.value = dependenciesNames
@@ -71,12 +71,12 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
 
 
     /**
-     * 项目是否引入 riverpod 包
+     * 项目是否引入 riverpod 相关的包
      */
     fun hasRiverpod(): Boolean {
-        return hasDependencies("hooks_riverpod") || hasDependencies("riverpod_annotation") || hasDependencies("riverpod_annotation") || hasDependencies(
-            "riverpod_generator"
-        )
+        return hasDependencies("hooks_riverpod") ||
+                hasDependencies("riverpod_annotation") ||
+                hasDependencies("riverpod_generator")
     }
 
 
@@ -105,11 +105,9 @@ class PubspecService(val project: Project) : Disposable, CoroutineScope {
     /**
      * 检测依赖是否使用了[pluginName]这个包
      */
-     fun hasDependencies(pluginName: String): Boolean {
+    fun hasDependencies(pluginName: String): Boolean {
         return dependenciesNames.contains(pluginName)
     }
-
-
 
 
     companion object {
