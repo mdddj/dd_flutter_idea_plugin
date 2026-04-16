@@ -33,7 +33,7 @@ jobs:
       - name: 准备JBR21
         uses: actions/setup-java@v5
         with:
-          java-version: '25'
+          java-version: '21'
           distribution: 'jetbrains'
 
       - name: 获取标签版本号

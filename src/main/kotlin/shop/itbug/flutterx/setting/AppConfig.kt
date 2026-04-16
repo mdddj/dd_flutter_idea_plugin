@@ -7,8 +7,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
+import icons.MyImages
 import shop.itbug.flutterx.actions.context.SiteDocument
 import shop.itbug.flutterx.config.*
 import shop.itbug.flutterx.constance.Links
@@ -178,6 +180,9 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                         globalConfig.state.forceHideBottomStatusBarAction = it
 
                     })
+                }
+                row {
+                    cell(JBLabel(MyImages.load("/images/status_bar_img.png")))
                 }
                 row {
                     comment(PluginBundle.get("app.config.status.bar.comment"))

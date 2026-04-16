@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 7.0.2 - 2026-04-16
+
+### New Features
+- Added a Hive CE inspector to the Dart VM tool window for schema loading, raw object decoding, and runtime value inspection.
+- Added pub.dev changelog fetching so dependency update previews can show the latest package release notes inline.
+- Added Flutter SDK changelog parsing so Flutter version update notifications can display release notes directly in the IDE.
+
+### Improvements
+- Localized AppConfig settings.
+- Ignored `notes/` and other local-only directories in version control.
+- Stopped tracking IDE project files (`.idea/`).
+
+### Automation
+- Automated JetBrains Marketplace publishing in the GitHub release workflow for tagged releases.
+
 ## 7.0.1 - 2026-04-03
 
 ### Improvements

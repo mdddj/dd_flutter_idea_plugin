@@ -35,8 +35,8 @@ group = "shop.itbug"
 version = pluginVersion
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -182,7 +182,7 @@ tasks {
 
     compileKotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_25)
+            jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
