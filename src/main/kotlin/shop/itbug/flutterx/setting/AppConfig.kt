@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.EditorNotifications
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
@@ -114,6 +115,13 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                 }
             }
 
+            group(PluginBundle.get("app.config.pubspec.notifications.group")) {
+                row {
+                    checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showPubspecYamlNotificationBar)
+                        .comment(PluginBundle.get("pubspec_notification_bar_tooltip"))
+                }
+            }
+
             group(PluginBundle.get("app.config.assets.preview.group")) {
                 row {
                     checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::enableAssetsPreviewAction)
@@ -216,6 +224,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
         DioListingUiConfig.getInstance().loadState(dioSetting)
         GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
         PluginConfig.changeState(project) { pluginConfig }
+        EditorNotifications.getInstance(project).updateAllNotifications()
         FlutterL10nService.getInstance(project).configEndTheL10nFolder()
     }
 

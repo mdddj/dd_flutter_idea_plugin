@@ -8,6 +8,7 @@ import com.intellij.openapi.project.guessProjectDir
 class PluginSetting : BaseState() {
     var showRiverpodInlay by property(true)
     var autoImportRiverpodText by string("package:hooks_riverpod/hooks_riverpod.dart")
+    var showPubspecYamlNotificationBar by property(true)
     var openAndroidDirectoryInAS by property(true)
     var openIosDirectoryInXcode by property(true)
     var openMacosDirectoryInXcode by property(true)

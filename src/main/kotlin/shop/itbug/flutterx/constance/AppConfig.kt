@@ -6,11 +6,18 @@ import shop.itbug.flutterx.i18n.PluginBundle
 
 
 /// pub.dev镜像站点
-enum class DartPubMirrorImage(val title: String, val url: String) {
+enum class DartPubMirrorImage(val title: String, val url: String, val flutterStorageBaseUrl: String? = null) {
     DefaultPub(PluginBundle.defaultText(), Links.PUB_SERVER_URL),
-    FlutterChina("Flutter 社区 (CFUG)", Links.PUB_CFUG),
-    ShanghaiPub("上海交通大学镜像组", Links.SHANGHAI_PUB_SERVER_URL),
-    QingHuaPub("清华大学TUNA协会", Links.QINGHUA_PUB_SERVER_URL);
+    FlutterChina("Flutter 社区 (CFUG) · ${PluginBundle.get("sugg")}", Links.PUB_CFUG, Links.FLUTTER_STORAGE_BASE_URL_BY_CN),
+    QingHuaPub("清华大学TUNA协会", Links.QINGHUA_PUB_SERVER_URL, Links.QINGHUA_FLUTTER_STORAGE_BASE_URL);
+
+    val isChinaMirror: Boolean
+        get() = flutterStorageBaseUrl != null
+
+    companion object {
+        val chinaMirrors: List<DartPubMirrorImage>
+            get() = entries.filter { it.isChinaMirror }
+    }
 
     override fun toString(): String = title
 }
@@ -25,4 +32,3 @@ enum class FlutterCheckUrlMirrorImage(val title: String, val url: String) {
 
 
 val dartKeys = setOf("do", "abstract", "else", "in", "is", "as", "on", "if", "set", "this")
-

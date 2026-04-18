@@ -54,6 +54,9 @@ object Links {
     const val DEFAULT_FLUTTER_VERSION_INFO_URL_BY_CN =
         "https://storage.flutter-io.cn/flutter_infra_release/releases/releases_macos.json"
 
+    // flutter storage mirror
+    const val FLUTTER_STORAGE_BASE_URL_BY_CN = "https://storage.flutter-io.cn"
+
 
     //pub服务器地址
     const val PUB_SERVER_URL = "https://pub.dartlang.org"
@@ -61,11 +64,9 @@ object Links {
     //中国区
     const val PUB_CFUG = "https://pub.flutter-io.cn"
 
-    //上海交通大学
-    const val SHANGHAI_PUB_SERVER_URL = "https://mirror.sjtu.edu.cn/dart-pub"
-
     //清华大学 TUNA 协会
     const val QINGHUA_PUB_SERVER_URL = "https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
+    const val QINGHUA_FLUTTER_STORAGE_BASE_URL = "https://mirrors.tuna.tsinghua.edu.cn/flutter"
 
     fun generateDocCommit(link: String): String {
         return "<a href='$link'>${PluginBundle.doc}</a>"

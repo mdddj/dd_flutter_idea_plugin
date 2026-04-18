@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 7.0.3 - 2026-04-18
+
+### New Features
+- Added a pubspec.yaml notification toolbar action to run `flutter pub get` with supported China mirrors directly from the IDE.
+- Added an in-IDE command output dialog for inspecting `flutter pub get` results without leaving the editor.
+
+### Improvements
+- Added a settings toggle and toolbar menu action so the pubspec.yaml notification bar can be hidden or re-enabled at any time.
+- Refined China mirror presets to keep matched pub and Flutter storage endpoints, and highlighted the recommended CFUG mirror.
+
+### Localization
+- Added zh/en/hk/ja/ko translations for the new pubspec.yaml toolbar actions, mirror workflow, and output viewer.
+
 ## 7.0.2 - 2026-04-16
 
 ### New Features
