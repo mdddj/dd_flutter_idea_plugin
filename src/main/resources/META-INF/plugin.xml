@@ -243,6 +243,12 @@
                           relative-to-action="ProjectViewPopupMenuSettingsGroup"/>
         </action>
 
+        <action id="BatchPublishChildPackagesAction"
+                class="shop.itbug.flutterx.actions.BatchPublishChildPackagesAction"
+                text="Batch Publish Child Packages">
+            <add-to-group group-id="NewGroup"/>
+        </action>
+
         <!--        打开设置-->
         <action id="shop.itbug.flutterx.actions.OpenSettingAnAction"
                 class="shop.itbug.flutterx.actions.OpenSettingAnAction" text="Setting"

@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 7.0.4 - 2026-04-23
+
+### New Features
+- Added a `Publish to pub.dev` action in the `pubspec.yaml` notification bar with a release-notes popup, optional publish-date insertion, background publishing, and an output viewer.
+- Added batch publishing for child packages so multi-package directories can update versions, preview changelog changes, and publish in dependency-aware order from the IDE.
+
+### Improvements
+- Automatically hides publish actions for packages that declare `publish_to: none`, and reports skipped packages in the batch publishing flow.
+
+### Localization
+- Added zh/en/hk/ja/ko translations for the pub.dev publish workflow and the new batch child-package publishing UI.
+
 ## 7.0.3 - 2026-04-18
 
 ### New Features

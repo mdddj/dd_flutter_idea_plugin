@@ -16,12 +16,15 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.ui.popup.JBPopup
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -31,7 +34,10 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
-import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextArea
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.Dispatchers
@@ -51,13 +57,19 @@ import shop.itbug.flutterx.util.MyActionUtil
 import shop.itbug.flutterx.util.MyFileUtil
 import shop.itbug.flutterx.util.toast
 import shop.itbug.flutterx.util.toastWithError
+import java.awt.BorderLayout
 import java.awt.Cursor
 import java.awt.event.InputEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.io.File
 import java.lang.StringBuilder
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.function.Function
+import javax.swing.JButton
 import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import javax.swing.ToolTipManager
 
@@ -121,6 +133,13 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
         }
         myLinksPanel.add(chinaMirrorPubGetLabel)
 
+        if (shouldShowPublishAction()) {
+            lateinit var publishToPubDevLabel: HyperlinkLabel
+            publishToPubDevLabel = createActionLabel(PluginBundle.get("pubspec_notification_publish_to_pub_dev")) {
+                showPublishPopup(publishToPubDevLabel)
+            }
+            myLinksPanel.add(publishToPubDevLabel)
+        }
 
         ///重新索引
         val reIndexLabel = createActionLabel(PluginBundle.get("pubspec_yaml_file_re_index")) {
@@ -189,6 +208,351 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
                 true
             )
             .showUnderneathOf(anchor)
+    }
+
+    private fun showPublishPopup(anchor: JComponent) {
+        val currentVersion =
+            currentPubspecVersion() ?: PluginBundle.get("pubspec_notification_publish_version_unknown")
+        val textArea = JBTextArea().apply {
+            rows = 10
+            lineWrap = true
+            wrapStyleWord = true
+        }
+        val headerPanel = JPanel(BorderLayout(0, JBUI.scale(4))).apply {
+            add(
+                JBLabel(PluginBundle.get("pubspec_notification_publish_popup_version", currentVersion)),
+                BorderLayout.NORTH
+            )
+            add(JBLabel(PluginBundle.get("pubspec_notification_publish_popup_hint")), BorderLayout.SOUTH)
+        }
+        val includePublishDateCheckbox =
+            JBCheckBox(PluginBundle.get("pubspec_notification_publish_popup_include_date"), false)
+        val publishButton = JButton(PluginBundle.get("pubspec_notification_publish_popup_button"))
+        val contentPanel = JPanel(BorderLayout(0, JBUI.scale(8))).apply {
+            border = JBUI.Borders.empty(12)
+            add(headerPanel, BorderLayout.NORTH)
+            add(
+                JBScrollPane(textArea).apply {
+                    preferredSize = JBUI.size(460, 260)
+                },
+                BorderLayout.CENTER
+            )
+            add(
+                JPanel(BorderLayout()).apply {
+                    add(includePublishDateCheckbox, BorderLayout.WEST)
+                    add(publishButton, BorderLayout.EAST)
+                },
+                BorderLayout.SOUTH
+            )
+        }
+
+        lateinit var popup: JBPopup
+        publishButton.addActionListener {
+            val releaseNotes = textArea.text.trim()
+            if (releaseNotes.isBlank()) {
+                project.toastWithError(PluginBundle.get("pubspec_notification_publish_changelog_empty"))
+                return@addActionListener
+            }
+            popup.cancel()
+            runDartPubPublish(releaseNotes, includePublishDateCheckbox.isSelected)
+        }
+
+        popup = JBPopupFactory.getInstance()
+            .createComponentPopupBuilder(contentPanel, textArea)
+            .setTitle(PluginBundle.get("pubspec_notification_publish_popup_title"))
+            .setResizable(true)
+            .setMovable(true)
+            .setRequestFocus(true)
+            .setFocusable(true)
+            .setCancelKeyEnabled(true)
+            .createPopup()
+        popup.showUnderneathOf(anchor)
+    }
+
+    private fun currentPubspecVersion(): String? {
+        return currentPubspecValue("version")
+    }
+
+    private fun shouldShowPublishAction(): Boolean {
+        val publishTo = currentPubspecValue("publish_to") ?: return true
+        return !publishTo.equals("none", ignoreCase = true)
+    }
+
+    private fun currentPubspecValue(key: String): String? {
+        return runBlocking(Dispatchers.IO) {
+            PubspecYamlFileTools.create(file)
+                .getRootKeyValueList()
+                ?.firstOrNull { it.keyText.trim() == key }
+                ?.valueText
+                ?.trim()
+                ?.removeSurrounding("\"")
+                ?.removeSurrounding("'")
+                ?.takeIf { it.isNotBlank() }
+        }
+    }
+
+    private fun runDartPubPublish(releaseNotes: String, includePublishDate: Boolean) {
+        val workDirectory = file.virtualFile.parent?.toNioPath()?.toFile()
+        if (workDirectory == null) {
+            project.toastWithError(PluginBundle.get("pubspec_notification_pub_get_directory_not_found"))
+            return
+        }
+
+        ApplicationManager.getApplication().runWriteAction {
+            FileDocumentManager.getInstance().saveAllDocuments()
+        }
+        val version = currentPubspecVersion()
+        if (version.isNullOrBlank()) {
+            project.toastWithError(PluginBundle.get("pubspec_notification_publish_version_not_found"))
+            return
+        }
+
+        object : Task.Backgroundable(
+            project,
+            PluginBundle.get("pubspec_notification_publish_task_title", version),
+            true
+        ) {
+            private var exitCode: Int = -1
+            private var startError: String? = null
+            private var isCancelled = false
+            private var processHandler: OSProcessHandler? = null
+            private val output = StringBuilder()
+
+            override fun run(indicator: ProgressIndicator) {
+                indicator.isIndeterminate = true
+                indicator.text = PluginBundle.get("pubspec_notification_publish_task_running", version)
+                indicator.text2 = "CHANGELOG.md"
+
+                try {
+                    updateChangelogForPublish(workDirectory, version, releaseNotes, includePublishDate)
+                    indicator.text2 = "dart pub publish --force"
+
+                    val commandLine =
+                        GeneralCommandLine("dart", "pub", "publish", "--force").withWorkDirectory(workDirectory)
+                    val handler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
+                    processHandler = handler
+                    ProcessTerminatedListener.attach(handler)
+                    handler.addProcessListener(object : ProcessListener {
+                        override fun startNotified(event: com.intellij.execution.process.ProcessEvent) = Unit
+
+                        override fun processTerminated(event: com.intellij.execution.process.ProcessEvent) = Unit
+
+                        override fun processWillTerminate(
+                            event: com.intellij.execution.process.ProcessEvent,
+                            willBeDestroyed: Boolean
+                        ) = Unit
+
+                        override fun onTextAvailable(
+                            event: com.intellij.execution.process.ProcessEvent,
+                            outputType: com.intellij.openapi.util.Key<*>
+                        ) {
+                            synchronized(output) {
+                                output.append(event.text)
+                            }
+                        }
+                    })
+                    handler.startNotify()
+
+                    while (!handler.waitFor(500)) {
+                        indicator.checkCanceled()
+                    }
+                    exitCode = handler.exitCode ?: -1
+                } catch (_: ProcessCanceledException) {
+                    isCancelled = true
+                    processHandler?.destroyProcess()
+                    throw ProcessCanceledException()
+                } catch (e: Exception) {
+                    startError = e.message ?: version
+                }
+            }
+
+            override fun onSuccess() {
+                if (startError != null) {
+                    showPublishResultNotification(
+                        NotificationType.ERROR,
+                        PluginBundle.get("pubspec_notification_publish_start_failed", startError ?: version)
+                    )
+                    return
+                }
+                if (exitCode == 0) {
+                    showPublishResultNotification(
+                        NotificationType.INFORMATION,
+                        PluginBundle.get("pubspec_notification_publish_success", version)
+                    )
+                } else {
+                    showPublishResultNotification(
+                        NotificationType.ERROR,
+                        PluginBundle.get("pubspec_notification_publish_failed", version, exitCode.toString())
+                    )
+                }
+            }
+
+            override fun onCancel() {
+                if (isCancelled) {
+                    showPublishResultNotification(
+                        NotificationType.WARNING,
+                        PluginBundle.get("pubspec_notification_publish_cancelled", version)
+                    )
+                }
+            }
+
+            private fun showPublishResultNotification(
+                type: NotificationType,
+                content: String
+            ) {
+                val outputText = synchronized(output) {
+                    output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
+                }
+                val notification = NotificationGroupManager.getInstance()
+                    .getNotificationGroup("dio_socket_notify")
+                    .createNotification(content, type)
+                notification.icon = MyIcons.flutter
+                notification.addAction(object : DumbAwareAction(PluginBundle.get("pubspec_notification_view_output")) {
+                    override fun actionPerformed(e: AnActionEvent) {
+                        CommandOutputDialog(
+                            project,
+                            PluginBundle.get("pubspec_notification_output_dialog_title", "dart pub publish"),
+                            outputText
+                        ).show()
+                        notification.hideBalloon()
+                        notification.expire()
+                    }
+
+                    override fun getActionUpdateThread(): ActionUpdateThread {
+                        return ActionUpdateThread.BGT
+                    }
+                })
+                notification.notify(project)
+            }
+        }.queue()
+    }
+
+    private fun updateChangelogForPublish(
+        workDirectory: File,
+        version: String,
+        releaseNotes: String,
+        includePublishDate: Boolean
+    ) {
+        val changelogFile = File(workDirectory, "CHANGELOG.md")
+        if (!changelogFile.exists()) {
+            throw IllegalStateException(PluginBundle.get("pubspec_notification_publish_changelog_not_found"))
+        }
+
+        val originalContent = changelogFile.readText(Charsets.UTF_8)
+        val lineSeparator = detectLineSeparator(originalContent)
+        val normalizedNotes = normalizeReleaseNotes(releaseNotes, lineSeparator)
+        val updatedContent = insertOrUpdateChangelogSection(
+            originalContent,
+            version,
+            normalizedNotes,
+            lineSeparator,
+            includePublishDate
+        )
+
+        changelogFile.writeText(updatedContent, Charsets.UTF_8)
+        VirtualFileManager.getInstance().asyncRefresh(null)
+    }
+
+    private fun insertOrUpdateChangelogSection(
+        content: String,
+        version: String,
+        releaseNotes: String,
+        lineSeparator: String,
+        includePublishDate: Boolean
+    ): String {
+        val heading = buildChangelogHeading(content, version, includePublishDate)
+        val versionHeaderRegex = Regex(
+            "(?m)^## (\\[${Regex.escape(version)}\\]|${Regex.escape(version)})(?:\\s+-.*)?$"
+        )
+        val existingVersionMatch = versionHeaderRegex.find(content)
+        if (existingVersionMatch != null) {
+            val nextHeaderRegex = Regex("(?m)^## ")
+            val nextHeaderMatch = nextHeaderRegex.find(content, existingVersionMatch.range.last + 1)
+            val sectionEnd = nextHeaderMatch?.range?.first ?: content.length
+            val existingSection = content.substring(existingVersionMatch.range.first, sectionEnd)
+            val existingBody = existingSection.substringAfter(existingVersionMatch.value).trim()
+            val mergedSection = buildString {
+                append(heading)
+                append(lineSeparator)
+                append(lineSeparator)
+                append(releaseNotes)
+                if (existingBody.isNotBlank()) {
+                    append(lineSeparator)
+                    append(lineSeparator)
+                    append(existingBody)
+                }
+                if (nextHeaderMatch != null) {
+                    append(lineSeparator)
+                    append(lineSeparator)
+                }
+            }
+            return ensureTrailingLineBreak(
+                content.replaceRange(existingVersionMatch.range.first, sectionEnd, mergedSection),
+                lineSeparator
+            )
+        }
+
+        val unreleasedRegex = Regex("(?m)^## Unreleased(?:\\r?\\n)*")
+        val unreleasedMatch = unreleasedRegex.find(content)
+        if (unreleasedMatch == null) {
+            val prependedContent = buildString {
+                append(heading)
+                append(lineSeparator)
+                append(lineSeparator)
+                append(releaseNotes)
+                val remainingContent = content.trimStart('\r', '\n')
+                if (remainingContent.isNotBlank()) {
+                    append(lineSeparator)
+                    append(lineSeparator)
+                    append(remainingContent)
+                }
+            }
+            return ensureTrailingLineBreak(prependedContent, lineSeparator)
+        }
+        val insertedContent = buildString {
+            append("## Unreleased")
+            append(lineSeparator)
+            append(lineSeparator)
+            append(heading)
+            append(lineSeparator)
+            append(lineSeparator)
+            append(releaseNotes)
+            append(lineSeparator)
+            append(lineSeparator)
+        }
+        return ensureTrailingLineBreak(
+            content.replaceRange(unreleasedMatch.range.first, unreleasedMatch.range.last + 1, insertedContent),
+            lineSeparator
+        )
+    }
+
+    private fun buildChangelogHeading(content: String, version: String, includePublishDate: Boolean): String {
+        val usesBracketVersion = Regex("(?m)^## \\[").containsMatchIn(content)
+        val publishDateSuffix = if (includePublishDate) {
+            " - ${LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)}"
+        } else {
+            ""
+        }
+        return if (usesBracketVersion) {
+            "## [$version]$publishDateSuffix"
+        } else {
+            "## $version$publishDateSuffix"
+        }
+    }
+
+    private fun normalizeReleaseNotes(releaseNotes: String, lineSeparator: String): String {
+        return releaseNotes
+            .trim()
+            .replace("\r\n", "\n")
+            .replace('\r', '\n')
+            .split('\n')
+            .joinToString(lineSeparator)
+    }
+
+    private fun detectLineSeparator(text: String): String = if (text.contains("\r\n")) "\r\n" else "\n"
+
+    private fun ensureTrailingLineBreak(text: String, lineSeparator: String): String {
+        return if (text.endsWith(lineSeparator)) text else text + lineSeparator
     }
 
     private fun runFlutterPubGetWithMirror(mirror: DartPubMirrorImage) {
