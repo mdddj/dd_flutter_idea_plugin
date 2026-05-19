@@ -24,7 +24,7 @@ val idePluginDependencies =
 plugins {
     idea
     kotlin("jvm") version "2.3.0"
-    id("org.jetbrains.intellij.platform") version "2.13.1"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
@@ -76,9 +76,9 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
     "org.intellij.groovy",
+    "org.jetbrains.kotlin",
     "com.intellij.modules.json",
-    "com.intellij.platform.images",
-    "org.intellij.intelliLang"
+    "com.intellij.platform.images"
 )
 
 dependencies {
@@ -149,7 +149,7 @@ compileKotlin.compilerOptions {
 tasks {
 
     patchPluginXml {
-        sinceBuild.set("260.*")
+        sinceBuild.set("261")
 //        untilBuild.set("253.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
