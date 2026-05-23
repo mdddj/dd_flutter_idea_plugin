@@ -31,6 +31,8 @@
         <supportsKotlinPluginMode supportsK2="true"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
+        <projectViewNodeDecorator implementation="shop.itbug.flutterx.projectView.FlutterPlatformDirectoryDecorator"/>
+
         <intentionAction>
             <className>shop.itbug.flutterx.actions.internal.L10nKeyExtractIntentionAction</className>
             <language>Dart</language>

@@ -1,5 +1,6 @@
 package shop.itbug.flutterx.setting
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.options.Configurable
@@ -132,6 +133,13 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
 
             }
 
+            group(PluginBundle.get("app.config.project.view.group")) {
+                row(PluginBundle.get("app.config.project.view.platform.directory.icons")) {
+                    checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showFlutterPlatformDirectoryIcons)
+                        .comment(PluginBundle.get("app.config.project.view.platform.directory.icons.comment"))
+                }
+            }
+
 
             group(PluginBundle.get("app.config.freezed.notifications.group", PluginBundle.get("tool"))) {
                 row {
@@ -253,6 +261,7 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
         GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
         PluginConfig.changeState(project) { pluginConfig }
         EditorNotifications.getInstance(project).updateAllNotifications()
+        ProjectView.getInstance(project).refresh()
         FlutterL10nService.getInstance(project).configEndTheL10nFolder()
     }
 

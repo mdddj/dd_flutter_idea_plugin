@@ -34,6 +34,9 @@ class PluginSetting : BaseState() {
     //启用 freezed 工具
     var enableFreezedIntentionActions by property(false)
 
+    //在 Project View 中显示 Flutter 平台目录图标
+    var showFlutterPlatformDirectoryIcons by property(true)
+
 
 }
 
