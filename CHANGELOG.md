@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 7.0.5 - 2026-05-23
+
+### New Features
+- Added custom Project View icons for Flutter root platform directories: `web`, `windows`, `linux`, `macos`, `android`, and `ios`.
+- Added a Project View setting to show or hide Flutter platform directory icons.
+
+### Improvements
+- Bolded Flutter platform directory names in the Project View for quicker scanning.
+- Improved Dart type inlay click navigation by resolving targets through non-blocking read actions before opening declarations.
+
+### Fixes
+- Fixed settings UI disposable lifecycle handling for the AppConfig panel.
+
+### Localization
+- Added zh/en/hk/ja/ko translations for the Project View icon setting.
+
 ## 7.0.4 - 2026-04-23
 
 ### New Features
