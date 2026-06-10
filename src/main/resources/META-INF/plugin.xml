@@ -27,8 +27,39 @@
         <module name="intellij.platform.jewel.markdown.core"/>
         <module name="intellij.platform.jewel.markdown.ideLafBridgeStyling"/>
     </dependencies>
+    <extensionPoints>
+        <extensionPoint
+                name="dartVmDevTool"
+                interface="shop.itbug.flutterx.api.vm.DartVmDevToolExtension" dynamic="false"/>
+    </extensionPoints>
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <supportsKotlinPluginMode supportsK2="true"/>
+    </extensions>
+    <extensions defaultExtensionNs="shop.itbug.FlutterCheckVersionX">
+        <dartVmDevTool id="vm"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmStatusDevToolExtension"
+                       order="first"/>
+        <dartVmDevTool id="memory"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmMemoryDevToolExtension"
+                       order="after vm"/>
+        <dartVmDevTool id="http"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmHttpDevToolExtension"
+                       order="after memory"/>
+        <dartVmDevTool id="logging"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmLoggingDevToolExtension"
+                       order="after http"/>
+        <dartVmDevTool id="provider"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmProviderDevToolExtension"
+                       order="after logging"/>
+        <dartVmDevTool id="sharedPreferences"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmSharedPreferencesDevToolExtension"
+                       order="after provider"/>
+        <dartVmDevTool id="hive"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmHiveDevToolExtension"
+                       order="after sharedPreferences"/>
+        <dartVmDevTool id="drift"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmDriftDevToolExtension"
+                       order="after hive"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="shop.itbug.flutterx.projectView.FlutterPlatformDirectoryDecorator"/>
