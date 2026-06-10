@@ -1,13 +1,13 @@
 ---
 name: flutterx-release
-description: Release workflow for the dd_flutter_idea_plugin / FlutterX IntelliJ plugin. Use when the user asks to publish, release, bump, tag, or prepare a new plugin version, including creating the version branch, updating CHANGELOG.md and gradle.properties, pushing code, and triggering GitHub Actions with a v* tag.
+description: Release workflow for the dd_flutter_idea_plugin / FlutterX IntelliJ plugin. Use when the user asks to publish, release, bump, tag, or prepare a new plugin version, including creating the version branch, updating CHANGELOG.md and gradle.properties, pushing code, triggering GitHub Actions with a v* tag, and merging the released version branch back to master.
 ---
 
 # FlutterX Release
 
 ## Overview
 
-Follow this workflow to publish a new FlutterX plugin version from this repository. The GitHub release workflow is tag-triggered and checks out a branch named after the tag without the `v` prefix, so the remote version branch must exist before pushing the tag.
+Follow this workflow to publish a new FlutterX plugin version from this repository. The GitHub release workflow is tag-triggered and checks out a branch named after the tag without the `v` prefix, so the remote version branch must exist before pushing the tag. After a successful release workflow, merge the released version branch back into `master` and push `master`.
 
 ## Preconditions
 
@@ -61,10 +61,19 @@ Follow this workflow to publish a new FlutterX plugin version from this reposito
    - Run `gh run list --workflow release.yml --limit 5` when GitHub CLI is available.
    - Report the workflow status, run id, and any immediate failure.
 
-8. Leave the repository on the new version branch.
-   - After the release workflow succeeds, ensure the local checkout is on `<version>`.
-   - Treat `<version>` as the new active development branch for subsequent fixes and feature iteration.
-   - If release documentation or workflow notes were added after tagging, commit and push them to `<version>` after the release workflow is complete.
+8. Merge the released version branch back to `master`.
+   - Start only after the release workflow succeeds. If the workflow is still running, report `in_progress` and do not merge to `master` yet.
+   - Preserve any local uncommitted changes before switching branches. Prefer committing intended release follow-up changes to `<version>`; otherwise stash them with a clear message.
+   - Update master first: `git switch master` then `git pull --ff-only origin master`.
+   - Merge the released version branch: `git merge --no-ff <version> -m "merge: <version> into master"`.
+   - Resolve conflicts deliberately. Prefer the released `<version>` side for release metadata and released feature implementation; preserve independent `master` changes when they do not conflict with the release.
+   - Run at least `./gradlew compileKotlin verifyPluginConfiguration` after resolving conflicts.
+   - Push master: `git push origin master`.
+
+9. Leave the repository on `master`.
+   - After the master merge succeeds, ensure the local checkout is on `master` and tracks `origin/master`.
+   - Report any stashes that were created to preserve local-only files or post-release edits.
+   - Treat `master` as the synchronized branch containing the released version.
 
 ## Changelog Guidance
 
@@ -79,8 +88,10 @@ Write user-facing entries, not raw commit messages. Mention setting changes, UI 
 ## Guardrails
 
 - Never push `v<version>` before pushing branch `<version>`.
+- Never merge `<version>` to `master` before the release workflow has completed successfully.
 - Never reuse an existing version branch or tag without explicit user instruction.
-- Do not return to the previous version branch after a successful release unless the user explicitly asks.
+- Do not return to the version branch after a successful master merge unless the user explicitly asks.
 - Never run destructive git commands such as `git reset --hard` or `git checkout --` unless the user explicitly asks.
 - Do not leave required long-running commands active at the end of the turn.
 - Include validation results and the GitHub Actions state in the final response.
+- Include the master merge commit and push result in the final response.
