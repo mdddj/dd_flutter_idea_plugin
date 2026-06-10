@@ -2,6 +2,32 @@
 
 ## Unreleased
 
+## 7.1.0 - 2026-06-10
+
+### New Features
+- Added the Dart VM DevTool extension point so third-party plugins can contribute custom tabs to the FlutterX Dart VM tool window.
+- Rebuilt built-in Dart VM tabs on top of the extension point, including VM, Memory, HTTP Monitor, Logging, Provider, Shared Preferences, Hive CE, and Drift DB.
+- Added Dart VM tab visibility settings, including support for future third-party extension tabs.
+- Added extension metadata support for optional localized descriptions in Dart VM tab settings.
+
+### Improvements
+- Improved the Dart VM empty state with grouped documentation, community, feedback, and donation links.
+- Added documentation links for both the server-hosted and GitHub Pages FlutterX documentation sites.
+- Added WeChat and Alipay donation QR code support and link icons.
+- Exposed running Dart VM apps directly through the public dev tool context API.
+- Updated Dart and Flutter plugin dependency versions and related compatibility fixes.
+
+### Fixes
+- Fixed the Android Studio open action visibility so the user setting is honored even when an Android directory exists.
+- Fixed Dart VM panels not updating when a Flutter app starts after the tool window has already been opened.
+- Removed FlutterX's custom Dart documentation provider so the bundled Dart plugin documentation is used.
+- Replaced deprecated `ConcurrentHashMap` usage in the VM service implementation.
+- Fixed nullable Dart component name handling after Dart plugin API changes.
+
+### Automation
+- Updated release workflow runtimes and added local release workflow documentation.
+- Added a Codex skill for Dart VM DevTool extension development.
+
 ## 7.0.5 - 2026-05-23
 
 ### New Features
