@@ -67,13 +67,14 @@ class StatefulToConsumerAction : AnAction() {
         val isClass = psi is DartClassDefinitionImpl
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
         val dartClassName =
-            if (isClass) psi.componentName else e.getData(CommonDataKeys.PSI_ELEMENT) as DartComponentNameImpl
+            if (isClass) psi.componentName ?: return else e.getData(CommonDataKeys.PSI_ELEMENT) as? DartComponentNameImpl
+                ?: return
         val classDefinition =
-            if (isClass) psi else dartClassName.parent as DartClassDefinitionImpl
+            if (isClass) psi else dartClassName.parent as? DartClassDefinitionImpl ?: return
 
 
+        val className = dartClassName.name ?: return
         e.project?.let { project ->
-            val className = dartClassName.name
             WriteCommandAction.runWriteCommandAction(project) {
                 classDefinition.superclass?.replace(project.createSuperclass()) //1.替换继承
             }

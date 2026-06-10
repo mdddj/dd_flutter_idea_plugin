@@ -1,6 +1,7 @@
 package vm.network
 
 import com.google.gson.JsonObject
+import kotlinx.coroutines.suspendCancellableCoroutine
 import vm.VmService
 import vm.consumer.ServiceExtensionConsumer
 import vm.consumer.defaultServiceExtensionConsumer
@@ -29,7 +30,7 @@ suspend fun VmService.getSocketProfilingState(isolateId: String): JsonObject? {
         return null
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.socketProfilingEnabled",
@@ -50,7 +51,7 @@ suspend fun VmService.clearSocketProfile(isolateId: String): Boolean {
         return false
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.clearSocketProfile",
@@ -78,7 +79,7 @@ suspend fun VmService.getSocketProfile(isolateId: String): JsonObject? {
         return null
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getSocketProfile",
@@ -108,7 +109,7 @@ suspend fun VmService.setHttpTimelineLogging(isolateId: String, enabled: Boolean
         return null
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.httpEnableTimelineLogging",
@@ -133,7 +134,7 @@ suspend fun VmService.getHttpTimelineLoggingState(isolateId: String): JsonObject
         return null
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.httpEnableTimelineLogging",
@@ -156,7 +157,7 @@ suspend fun VmService.getHttpProfileRequest(isolateId: String, requestId: String
         return null
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getHttpProfileRequest",
@@ -181,7 +182,7 @@ suspend fun VmService.clearHttpProfile(isolateId: String): Boolean {
         return false
     }
 
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.clearHttpProfile",
@@ -206,7 +207,7 @@ suspend fun VmService.clearHttpProfile(isolateId: String): Boolean {
  * 获取打开的文件列表
  */
 suspend fun VmService.getOpenFiles(isolateId: String): JsonObject? {
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getOpenFiles",
@@ -224,7 +225,7 @@ suspend fun VmService.getOpenFiles(isolateId: String): JsonObject? {
  * 根据ID获取打开文件的详细信息
  */
 suspend fun VmService.getOpenFileById(isolateId: String, fileId: Int): JsonObject? {
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getOpenFileById",
@@ -246,7 +247,7 @@ suspend fun VmService.getOpenFileById(isolateId: String, fileId: Int): JsonObjec
  * 获取子进程列表
  */
 suspend fun VmService.getSpawnedProcesses(isolateId: String): JsonObject? {
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getSpawnedProcesses",
@@ -264,7 +265,7 @@ suspend fun VmService.getSpawnedProcesses(isolateId: String): JsonObject? {
  * 根据ID获取子进程详细信息
  */
 suspend fun VmService.getSpawnedProcessById(isolateId: String, processId: Int): JsonObject? {
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getSpawnedProcessById",
@@ -286,7 +287,7 @@ suspend fun VmService.getSpawnedProcessById(isolateId: String, processId: Int): 
  * 获取Dart IO扩展版本
  */
 suspend fun VmService.getDartIOVersion(isolateId: String): JsonObject? {
-    return suspendCoroutine { cont ->
+    return suspendCancellableCoroutine { cont ->
         callServiceExtension(
             isolateId = isolateId,
             method = "ext.dart.io.getVersion",

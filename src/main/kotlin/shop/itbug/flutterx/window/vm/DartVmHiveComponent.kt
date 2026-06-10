@@ -56,7 +56,8 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import shop.itbug.flutterx.actions.context.SiteDocument
-import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.api.vm.DartVmApp
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.i18n.PluginBundle
 import vm.hive.HiveBoxState
 import vm.hive.HiveConnectAction
@@ -75,14 +76,14 @@ import vm.hive.toHiveSearchableString
 import vm.hive.toHiveSummaryText
 
 @Composable
-fun DartVmHiveComponent(project: Project) {
-    FlutterAppsTabComponent(project) { app ->
-        HiveMainPanel(project, app)
+fun DartVmHiveComponent(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) { app ->
+        HiveMainPanel(context.project, app)
     }
 }
 
 @Composable
-private fun HiveMainPanel(project: Project, app: FlutterAppInstance) {
+private fun HiveMainPanel(project: Project, app: DartVmApp) {
     val service = remember(app.vmService) { HiveServices(project, app.vmService) }
     val state by service.state.collectAsState()
     val scope = rememberCoroutineScope()

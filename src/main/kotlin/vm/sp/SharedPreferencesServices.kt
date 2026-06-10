@@ -13,6 +13,7 @@ import vm.getVm
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * SharedPreferences 数据类型
@@ -219,7 +220,7 @@ class SharedPreferencesServices(val vmService: VmService) : CoroutineScope {
                     })
 
                     // 超时处理
-                    delay(10000)
+                    delay(10000.milliseconds)
                     if (!received && cont.isActive) {
                         vmService.removeEventListener(listener)
                         cont.resumeWithException(Exception("Timeout waiting for event: $eventKind"))

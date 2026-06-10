@@ -15,7 +15,6 @@ import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.model.PubVersionDataModel
 import shop.itbug.flutterx.model.getLastVersionText
 import shop.itbug.flutterx.model.hasNewVersion
-import shop.itbug.flutterx.services.PubChangelogService
 import shop.itbug.flutterx.services.PubService
 import shop.itbug.flutterx.util.*
 
@@ -36,9 +35,6 @@ data class DartYamlModel(
     val element: SmartPsiElementPointer<YAMLKeyValueImpl>,
     val plainText: SmartPsiElementPointer<YAMLPlainTextImpl>,
     val pubData: PubVersionDataModel? = null,
-
-    //更新日志,需要解析出来才有
-    val changelog: String? = null
 ) {
 
     private fun getVersionModel() = DartPluginVersionName(name, version)
@@ -109,9 +105,6 @@ data class DartYamlModel(
             }
         }
 
-        /**
-         * 先请求 pub package 详情，只有确认存在新版本时才继续拉取 changelog
-         */
         suspend fun fetch(element: SmartPsiElementPointer<YAMLKeyValueImpl>): DartYamlModel? {
             val model = create(element) ?: return null
             val (file, project) = readAction {
@@ -124,15 +117,7 @@ data class DartYamlModel(
                 PubService.callPluginDetails(model.name)
             } ?: return null
 
-            val modelWithPackageInfo = model.copy(pubData = data)
-            if (!modelWithPackageInfo.hasNewVersion()) {
-                return modelWithPackageInfo
-            }
-
-            val changelog = withContext(Dispatchers.IO) {
-                PubChangelogService.fetchLatestChangelog(model.name)?.formattedText
-            }
-            return modelWithPackageInfo.copy(changelog = changelog)
+            return model.copy(pubData = data)
         }
     }
 }

@@ -51,7 +51,7 @@ class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
         return element.needHandler()
     }
 
-    override fun getHint(element: PsiElement, file: PsiFile): String? {
+    override fun getHint(element: PsiElement, file: PsiFile): String {
         return "Riverpod Tool"
     }
 
@@ -84,7 +84,6 @@ class DartWidgetToRiverpodWidgetCodeVisit : CodeVisionProviderBase() {
         for (element in traverser) {
             if (!acceptsElement(element)) continue
             val hint = getHint(element, file)
-            if (hint == null) continue
             val range = MyHintsUtils.getTextRangeWithoutLeadingCommentsAndWhitespaces(element)
             val handler = ClickHandler(element, hint)
             lenses.add(

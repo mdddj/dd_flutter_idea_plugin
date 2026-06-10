@@ -1,4 +1,3 @@
-import com.google.gson.GsonBuilder
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlinx.coroutines.runBlocking
 import vm.VmService
@@ -12,7 +11,6 @@ import vm.logging.Logger
 import vm.logging.Logging
 
 class DartVmClassTest : BasePlatformTestCase() {
-    val json = GsonBuilder().setPrettyPrinting().create()
 
     override fun getTestDataPath(): String {
         return "src/test/testData"

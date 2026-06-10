@@ -22,19 +22,22 @@ import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.services.PubspecService
 import shop.itbug.flutterx.util.firstChatToUpper
 import vm.VmService
 import vm.devtool.*
+import kotlin.time.Duration.Companion.milliseconds
 
 /** flutter provider component for toolwindow */
 @Composable
-fun ProviderComposeComponent(project: Project) {
+fun ProviderComposeComponent(context: DartVmDevToolContext) {
+    val project = context.project
     val pubspecService = PubspecService.getInstance(project)
     val dependenciesNames by pubspecService.dependenciesNamesFlow.collectAsState()
     val isUseProviderDeps = dependenciesNames.contains("provider")
-    FlutterAppsTabComponent(project) {
+    FlutterAppsTabComponent(context) {
         if (!isUseProviderDeps) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(PluginBundle.get("notfound_provider_deps"))
@@ -416,7 +419,7 @@ private fun InstanceHeader(
                         if (success) {
                             isEditing = false
                             // 延迟一下再刷新，确保 VM 已经更新
-                            delay(300)
+                            delay(300.milliseconds)
                             onValueUpdated?.invoke()
                         }
                     }

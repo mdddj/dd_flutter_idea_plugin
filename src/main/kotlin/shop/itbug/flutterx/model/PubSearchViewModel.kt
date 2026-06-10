@@ -7,6 +7,7 @@ import shop.itbug.flutterx.common.yaml.PubspecYamlFileTools
 import shop.itbug.flutterx.services.PubService
 import shop.itbug.flutterx.util.PubspecYamlElementFactory
 import shop.itbug.flutterx.widget.MyFlutterPackage
+import kotlin.time.Duration.Companion.milliseconds
 
 
 sealed class PubPackageSearchState {
@@ -46,7 +47,7 @@ class PubSearchViewModel(
     init {
         viewModelScope.launch {
             _searchQuery
-                .debounce(300L)
+                .debounce(300L.milliseconds)
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
                     if (query.isEmpty()) {

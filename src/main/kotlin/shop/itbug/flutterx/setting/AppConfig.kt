@@ -14,9 +14,11 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
 import icons.MyImages
+import org.jetbrains.jewel.bridge.JewelComposePanel
 import shop.itbug.flutterx.actions.context.SiteDocument
 import shop.itbug.flutterx.config.*
 import shop.itbug.flutterx.constance.Links
+import shop.itbug.flutterx.dialog.FlutterDownloadPanel
 import shop.itbug.flutterx.dialog.MyRowBuild
 import shop.itbug.flutterx.dsl.settingPanel
 import shop.itbug.flutterx.i18n.PluginBundle
@@ -24,6 +26,7 @@ import shop.itbug.flutterx.services.FlutterL10nService
 import shop.itbug.flutterx.services.MyUserBarFactory
 import shop.itbug.flutterx.services.PluginStateService
 import shop.itbug.flutterx.socket.service.DioApiService
+import java.awt.Dimension
 import javax.swing.JComponent
 
 //
@@ -136,7 +139,6 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
             group(PluginBundle.get("app.config.project.view.group")) {
                 row(PluginBundle.get("app.config.project.view.platform.directory.icons")) {
                     checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showFlutterPlatformDirectoryIcons)
-                        .comment(PluginBundle.get("app.config.project.view.platform.directory.icons.comment"))
                 }
             }
 
@@ -237,6 +239,15 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
             add(PluginBundle.get("basic"), dialog)
             add(PluginBundle.get("assets.gen"), generateSettingPanel)
             add("FlutterX", pluginConfigPanel)
+            add(PluginBundle.get("flutter.downloader.title"), createFlutterDownloaderPanel(project))
+        }
+    }
+
+    private fun createFlutterDownloaderPanel(project: Project): JComponent {
+        return JewelComposePanel(true, {
+            preferredSize = Dimension(450, 500)
+        }) {
+            FlutterDownloadPanel(project, showCloseButton = false)
         }
     }
 
@@ -259,7 +270,9 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
         PluginStateService.getInstance().loadState(model)
         DioListingUiConfig.getInstance().loadState(dioSetting)
         GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
-        PluginConfig.changeState(project) { pluginConfig }
+        PluginConfig.changeState(project) {
+            pluginConfig
+        }
         EditorNotifications.getInstance(project).updateAllNotifications()
         ProjectView.getInstance(project).refresh()
         FlutterL10nService.getInstance(project).configEndTheL10nFolder()

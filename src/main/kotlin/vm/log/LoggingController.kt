@@ -13,6 +13,7 @@ import vm.retrieveFullStringValue
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.math.max
+import kotlin.time.Duration.Companion.milliseconds
 
 const val DEFAULT_LOG_BUFFER_REDUCTION_SIZE = 500
 
@@ -62,13 +63,13 @@ class LoggingController(
         scope.launch {
             combine(searchQuery, hideGcLogs) { query, hideGc ->
                 Pair(query, hideGc)
-            }.debounce(150)
+            }.debounce(150.milliseconds)
                 .collect {
                     updateFilteredLogs()
                 }
         }
         scope.launch {
-            delay(100)
+            delay(100.milliseconds)
             startListenStream()
         }
     }
@@ -294,7 +295,7 @@ class LoggingController(
             val message = try {
                 val bytes = Base64.getDecoder().decode(e.getBytes())
                 String(bytes, StandardCharsets.UTF_8)
-            } catch (ex: Exception) {
+            } catch (_: Exception) {
                 return // 解码失败则忽略
             }
 
@@ -331,7 +332,7 @@ class LoggingController(
             if (message != "\n") {
                 this.buffer = newLog
                 timerJob = scope.launch {
-                    delay(5) // 短暂延迟等待换行符
+                    delay(5.milliseconds) // 短暂延迟等待换行符
                     if (isActive && this@StdoutEventHandler.buffer != null) {
                         log(this@StdoutEventHandler.buffer!!)
                         this@StdoutEventHandler.buffer = null

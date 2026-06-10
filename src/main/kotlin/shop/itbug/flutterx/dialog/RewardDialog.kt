@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBLabel
 import icons.MyImages
 import shop.itbug.flutterx.util.SwingUtil
 import java.awt.Dimension
+import java.awt.GridLayout
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -23,13 +24,15 @@ class RewardDialog(var project: Project) : DialogWrapper(project) {
 
 
     override fun createCenterPanel(): JComponent {
-        return wxLabel
-
+        return JPanel(GridLayout(1, 2, 12, 0)).apply {
+            add(rewardLabel(MyImages.wx))
+            add(rewardLabel(MyImages.alipay))
+        }
     }
 
-    val wxLabel: JBLabel get() = JBLabel().apply {
-        icon = SwingUtil.createAutoAdjustIconWithMyIcon(MyImages.wx)
-        maximumSize = Dimension(50,50)
+    private fun rewardLabel(icon: javax.swing.Icon): JBLabel = JBLabel().apply {
+        this.icon = SwingUtil.createAutoAdjustIconWithMyIcon(icon)
+        preferredSize = Dimension(260, 260)
     }
 
     override fun createButtonsPanel(buttons: MutableList<out JButton>): JPanel {

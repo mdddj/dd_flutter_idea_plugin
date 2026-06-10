@@ -15,7 +15,7 @@ class ModelToFreezedModelServiceImpl : ModelToFreezedModelService {
         val classProperties = DartPsiElementUtil.getClassProperties(classPsiElement)
         val models = DartPsiElementUtil.getModels(classProperties)
         return FreezedCovertModel(
-            properties = models, className = classPsiElement.componentName.text, isDartClassElementType = true
+            properties = models, className = classPsiElement.componentName?.text.orEmpty(), isDartClassElementType = true
         )
     }
 

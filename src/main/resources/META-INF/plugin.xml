@@ -16,6 +16,8 @@
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
         <plugin id="org.intellij.groovy"/>
+        <plugin id="com.redhat.devtools.lsp4ij" />
+
 
         <module name="intellij.libraries.ktor.client"/>
         <module name="intellij.libraries.ktor.client.cio"/>
@@ -30,7 +32,11 @@
     <extensionPoints>
         <extensionPoint
                 name="dartVmDevTool"
-                interface="shop.itbug.flutterx.api.vm.DartVmDevToolExtension" dynamic="false"/>
+                beanClass="shop.itbug.flutterx.api.vm.DartVmDevToolExtensionBean"
+                dynamic="false">
+            <with attribute="implementation"
+                  implements="shop.itbug.flutterx.api.vm.DartVmDevToolExtension"/>
+        </extensionPoint>
     </extensionPoints>
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <supportsKotlinPluginMode supportsK2="true"/>
@@ -38,27 +44,35 @@
     <extensions defaultExtensionNs="shop.itbug.FlutterCheckVersionX">
         <dartVmDevTool id="vm"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmStatusDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.vm.description"
                        order="first"/>
         <dartVmDevTool id="memory"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmMemoryDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.memory.description"
                        order="after vm"/>
         <dartVmDevTool id="http"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmHttpDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.http.description"
                        order="after memory"/>
         <dartVmDevTool id="logging"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmLoggingDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.logging.description"
                        order="after http"/>
         <dartVmDevTool id="provider"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmProviderDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.provider.description"
                        order="after logging"/>
         <dartVmDevTool id="sharedPreferences"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmSharedPreferencesDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.shared.preferences.description"
                        order="after provider"/>
         <dartVmDevTool id="hive"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmHiveDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.hive.description"
                        order="after sharedPreferences"/>
         <dartVmDevTool id="drift"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmDriftDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.drift.description"
                        order="after hive"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
@@ -185,11 +199,6 @@
         <lang.documentationProvider implementationClass="shop.itbug.flutterx.document.YamlDocument"
                                     language="yaml" order="first"/>
 
-        <!--    dart文档的HTML实现    -->
-        <lang.documentationProvider implementationClass="shop.itbug.flutterx.document.DartDocumentExt"
-                                    language="Dart"
-                                    order="first, after Translation.TranslatedDocumentationProvider.Dart"/>
-
         <!--   dio监听http请求小窗口   -->
         <toolWindow factoryClass="shop.itbug.flutterx.window.FlutterXSocketWindow" id="Dio Request"
                     anchor="bottom" icon="/icons/flutter.svg"/>
@@ -300,9 +309,9 @@
 
 
         <group id="Dio.Request.Item.Render.Option" icon="AllIcons.Actions.GroupBy" popup="true">
-            <separator key="ui.render"/>
+            <separator />
             <reference ref="shop.itbug.flutterx.form.components.ChangeDioRequestItemUi"/>
-            <separator key="dio.apis.option.title"/>
+            <separator />
             <group id="Dio.Request.UI" class="shop.itbug.flutterx.form.components.DioUIShowActionGroup"/>
         </group>
 

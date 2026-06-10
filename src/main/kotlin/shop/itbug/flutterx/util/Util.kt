@@ -169,7 +169,7 @@ class Util {
             if (ip.contains(":")) return true
             if (ip.startsWith("127.")) return true
             if (ip.startsWith("169.254.")) return true
-            if (ip.split(".").size == 4 && ip.split(".")[2] === "0") return false
+            if (ip.split(".").size == 4 && ip.split(".")[2] == "0") return false
             return ip == "255.255.255.255"
         }
 

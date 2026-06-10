@@ -16,7 +16,7 @@ class DartStructureAwareNavbar : StructureAwareNavBarModelExtension() {
         `object` ?: return null
         when (`object`) {
             is DartClassDefinitionImpl -> {
-                return `object`.componentName.text
+                return `object`.componentName?.text
             }
 
             is DartMethodDeclarationImpl -> {

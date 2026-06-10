@@ -8,7 +8,7 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val pluginVersion: String by project
 
-val flutterDevVersion = "io.flutter:90.0.0"
+val flutterDevVersion = "io.flutter:93.0.0"
 val isPublishPluginBuild =
     gradle.startParameter.taskNames.any { taskName ->
         taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")
@@ -19,6 +19,7 @@ val idePluginDependencies =
         if (!isPublishPluginBuild) {
             add(flutterDevVersion)
         }
+        add("com.redhat.devtools.lsp4ij:0.19.4")
     }
 
 plugins {
@@ -82,7 +83,6 @@ val bPlugins = mutableListOf(
 )
 
 dependencies {
-    implementation("org.jsoup:jsoup:1.18.3")
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")

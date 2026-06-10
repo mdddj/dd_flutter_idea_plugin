@@ -9,6 +9,9 @@ object MyImages {
     @JvmField
     val wx: Icon = load("/images/wx.png")
 
+    @JvmField
+    val alipay: Icon = load("/images/alipay.png")
+
 
     @JvmField
     val ignore: Icon = load("/icons/ignore.svg")
@@ -21,4 +24,6 @@ object MyImages {
     }
 
     val wxDs = PathIconKey("images/wx.png", MyImages::class.java)
+
+    val alipayDs = PathIconKey("images/alipay.png", MyImages::class.java)
 }

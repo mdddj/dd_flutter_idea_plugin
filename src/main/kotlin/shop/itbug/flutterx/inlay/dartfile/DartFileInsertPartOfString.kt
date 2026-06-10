@@ -75,7 +75,7 @@ private fun DartPartOfStatementImpl.parts(): List<DartPartStatementImpl> {
 
 private fun validIsShow(element: PsiElement, parts: List<DartPartStatementImpl>): Boolean {
     val file = (element as DartPartOfStatementImpl).findTargetFile() ?: return false
-    val text = generatePartStatementText(parts.last(), element) ?: return false
+    val text = generatePartStatementText(parts.last(), element)
     return !file.findByText(text)
 }
 
@@ -96,7 +96,7 @@ private fun createPartOf(s: String, project: Project): DartPartStatementImpl? {
 }
 
 
-private fun generatePartStatementText(part: DartPartStatementImpl, element: PsiElement): String? {
+private fun generatePartStatementText(part: DartPartStatementImpl, element: PsiElement): String {
     val p1 = part.containingFile.virtualFile.path
     val p2 = element.containingFile.virtualFile.path
     val rl = getRelativeOrFileName(p1, p2)
@@ -104,7 +104,7 @@ private fun generatePartStatementText(part: DartPartStatementImpl, element: PsiE
 }
 
 private fun generatePartStatement(part: DartPartStatementImpl, element: PsiElement): DartPartStatementImpl? {
-    val text = generatePartStatementText(part, element) ?: return null
+    val text = generatePartStatementText(part, element)
     val createPartOf = createPartOf(text, project = element.project)
     return createPartOf
 }

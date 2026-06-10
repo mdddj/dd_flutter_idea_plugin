@@ -55,7 +55,7 @@ internal class AssetPsiReference(
     val psiFile: PsiFile
 ) :
     PsiReferenceBase<PsiElement?>(element, TextRange(1, element.string!!.length + 1)) {
-    override fun resolve(): PsiElement? {
+    override fun resolve(): PsiElement {
         return psiFile
     }
 }

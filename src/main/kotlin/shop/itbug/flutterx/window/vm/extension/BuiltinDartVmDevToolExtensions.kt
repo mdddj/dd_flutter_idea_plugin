@@ -1,6 +1,7 @@
 package shop.itbug.flutterx.window.vm.extension
 
 import androidx.compose.runtime.Composable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import org.jetbrains.jewel.bridge.JewelComposePanel
 import shop.itbug.flutterx.api.vm.DartVmDevToolContext
@@ -15,88 +16,88 @@ import shop.itbug.flutterx.window.vm.DriftComposeComponent
 import shop.itbug.flutterx.window.vm.ProviderComposeComponent
 import javax.swing.JComponent
 
-private fun ToolWindow.createDartVmComposeComponent(
+fun ToolWindow.createDartVmComposeComponent(
     content: @Composable () -> Unit
-): JComponent = JewelComposePanel(true, {}) {
+): JComponent = JewelComposePanel(false, {}) {
     content()
 }
 
 class DartVmStatusDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Vm"
+    override fun getTabTitle(project: Project): String = "Vm"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DartVmStatusComponent(context.project)
+            DartVmStatusComponent(context)
         }
     }
 }
 
 class DartVmMemoryDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Memory"
+    override fun getTabTitle(project: Project): String = "Memory"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DartVmMemoryComponent(context.project)
+            DartVmMemoryComponent(context)
         }
     }
 }
 
 class DartVmHttpDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Http Monitor"
+    override fun getTabTitle(project: Project): String = "Http Monitor"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DartHttpUI(context.project)
+            DartHttpUI(context)
         }
     }
 }
 
 class DartVmLoggingDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Logging"
+    override fun getTabTitle(project: Project): String = "Logging"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DartVmLoggingComponent(context.project)
+            DartVmLoggingComponent(context)
         }
     }
 }
 
 class DartVmProviderDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Provider"
+    override fun getTabTitle(project: Project): String = "Provider"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            ProviderComposeComponent(context.project)
+            ProviderComposeComponent(context)
         }
     }
 }
 
 class DartVmSharedPreferencesDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Shared Preferences"
+    override fun getTabTitle(project: Project): String = "Shared Preferences"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DartVmSharedPreferencesComponent(context.project)
+            DartVmSharedPreferencesComponent(context)
         }
     }
 }
 
 class DartVmHiveDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Hive CE"
+    override fun getTabTitle(project: Project): String = "Hive CE"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DartVmHiveComponent(context.project)
+            DartVmHiveComponent(context)
         }
     }
 }
 
 class DartVmDriftDevToolExtension : DartVmDevToolExtension {
-    override fun getTabTitle(context: DartVmDevToolContext): String = "Drift DB"
+    override fun getTabTitle(project: Project): String = "Drift DB"
 
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
-            DriftComposeComponent(context.project)
+            DriftComposeComponent(context)
         }
     }
 }

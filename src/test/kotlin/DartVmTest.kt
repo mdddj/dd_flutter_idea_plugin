@@ -8,6 +8,7 @@ import vm.consumer.ProtocolListConsumer
 import vm.element.*
 import vm.logging.Logger
 import vm.logging.Logging
+import kotlin.time.Duration.Companion.milliseconds
 
 class DartVmTest : BasePlatformTestCase() {
 
@@ -47,10 +48,10 @@ class DartVmTest : BasePlatformTestCase() {
             Logging.getLogger().logInformation("结束获取 widgets信息")
             assertNotNull(widgets)
 
-            delay(3000)
+            delay(3000.milliseconds)
             assertTrue(vmService.myWebSocketSession != null)
             assertTrue(vmService.runtimeVersion != null)
-            delay(1000)
+            delay(1000.milliseconds)
             vmService.close()
         }
     }
@@ -69,7 +70,7 @@ class DartVmTest : BasePlatformTestCase() {
                     override fun onError(error: RPCError) {}
                 }
             )
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 
@@ -94,7 +95,7 @@ class DartVmTest : BasePlatformTestCase() {
                     override fun onError(error: RPCError) {}
                 }
             )
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 
@@ -131,7 +132,7 @@ class DartVmTest : BasePlatformTestCase() {
             //                )
             val response = vmService.getProperties(id, "test-group", nodeId)
             log(response)
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 
@@ -142,7 +143,7 @@ class DartVmTest : BasePlatformTestCase() {
             val id = vm.getMainIsolateId()
             id.let {
                 vm.setInspectorOverlay(id, true)
-                delay(3000)
+                delay(3000.milliseconds)
                 vm.setInspectorOverlay(id, false)
             }
         }
@@ -181,7 +182,7 @@ class DartVmTest : BasePlatformTestCase() {
 
 
 
-            delay(1000)
+            delay(1000.milliseconds)
         }
     }
 

@@ -17,8 +17,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.util.io.HttpRequests
@@ -95,7 +95,11 @@ sealed interface LoadingState<out T> {
  * Flutter 版本下载器面板
  */
 @Composable
-fun FlutterDownloadPanel(project: Project, onClose: () -> Unit = {}) {
+fun FlutterDownloadPanel(
+    project: Project,
+    onClose: () -> Unit = {},
+    showCloseButton: Boolean = true,
+) {
     var selectedPlatformIndex by remember { mutableIntStateOf(0) }
     var releasesState by remember { mutableStateOf<LoadingState<FlutterReleasesResponse>>(LoadingState.Idle) }
     var selectedReleaseIndex by remember { mutableIntStateOf(-1) }
@@ -184,8 +188,6 @@ fun FlutterDownloadPanel(project: Project, onClose: () -> Unit = {}) {
             )
         }
 
-        Spacer(Modifier.weight(1f))
-
         // 下载状态和按钮
         DownloadSection(
             project = project,
@@ -194,7 +196,8 @@ fun FlutterDownloadPanel(project: Project, onClose: () -> Unit = {}) {
             downloadPath = downloadPath,
             downloadState = downloadState,
             onDownloadStateChange = { downloadState = it },
-            onClose = onClose
+            onClose = onClose,
+            showCloseButton = showCloseButton
         )
     }
 }
@@ -351,7 +354,8 @@ private fun DownloadSection(
     downloadPath: String,
     downloadState: FlutterDownloadState,
     onDownloadStateChange: (FlutterDownloadState) -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    showCloseButton: Boolean,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -465,8 +469,10 @@ private fun DownloadSection(
                 }
             }
 
-            OutlinedButton(onClick = onClose) {
-                Text(PluginBundle.get("close"))
+            if (showCloseButton) {
+                OutlinedButton(onClick = onClose) {
+                    Text(PluginBundle.get("close"))
+                }
             }
 
             DefaultButton(
@@ -504,69 +510,86 @@ private fun startDownload(
 
     onStateChange(FlutterDownloadState.Downloading)
 
-    object : Task.Backgroundable(project, "Downloading Flutter ${release.version}", true) {
-        override fun run(indicator: ProgressIndicator) {
-            indicator.isIndeterminate = false
-            indicator.text = "Downloading $fileName"
+    var error: Throwable? = null
+    val completed = try {
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(
+            {
+                downloadFlutterArchive(downloadUrl, fileName, targetFile, onStateChange)
+            },
+            "Downloading Flutter ${release.version}",
+            true,
+            project
+        )
+    } catch (throwable: Throwable) {
+        error = throwable
+        false
+    }
 
-            try {
-                HttpRequests.request(downloadUrl).connect { request ->
-                    request.connection.connectTimeout = 30000
-                    request.connection.readTimeout = 30000
-
-                    val connection = request.connection
-                    val contentLength = connection.contentLengthLong
-
-                    if (contentLength > 0) {
-                        connection.inputStream.use { input ->
-                            targetFile.outputStream().use { output ->
-                                val buffer = ByteArray(8192)
-                                var bytesRead: Int
-                                var totalBytesRead = 0L
-
-                                while (input.read(buffer).also { bytesRead = it } != -1) {
-                                    if (indicator.isCanceled) {
-                                        throw InterruptedException("Download cancelled")
-                                    }
-                                    output.write(buffer, 0, bytesRead)
-                                    totalBytesRead += bytesRead
-
-                                    val fraction = totalBytesRead.toDouble() / contentLength
-                                    indicator.fraction = fraction
-
-                                    val downloadedMB = totalBytesRead / (1024.0 * 1024.0)
-                                    val totalMB = contentLength / (1024.0 * 1024.0)
-                                    val text = "%.1f MB / %.1f MB".format(downloadedMB, totalMB)
-
-                                    onStateChange(FlutterDownloadState.Progress(fraction, text))
-                                }
-                            }
-                        }
-                    } else {
-                        request.saveToFile(targetFile, indicator)
-                    }
-                }
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-
-        override fun onSuccess() {
-            onStateChange(FlutterDownloadState.Success(targetFile))
-            // 下载成功后关闭对话框
-            onClose()
-        }
-
-        override fun onThrowable(error: Throwable) {
-            targetFile.delete()
-            onStateChange(FlutterDownloadState.Error(error.message ?: "Download failed"))
-        }
-
-        override fun onCancel() {
+    when {
+        !completed || error is ProcessCanceledException -> {
             targetFile.delete()
             onStateChange(FlutterDownloadState.Error(PluginBundle.get("flutter.downloader.download.cancelled")))
         }
-    }.queue()
+
+        error != null -> {
+            targetFile.delete()
+            onStateChange(FlutterDownloadState.Error(error.message ?: PluginBundle.get("flutter.downloader.download.failed")))
+        }
+
+        else -> {
+            onStateChange(FlutterDownloadState.Success(targetFile))
+            onClose()
+        }
+    }
+}
+
+private fun downloadFlutterArchive(
+    downloadUrl: String,
+    fileName: String,
+    targetFile: File,
+    onStateChange: (FlutterDownloadState) -> Unit,
+) {
+    val progressManager = ProgressManager.getInstance()
+    val indicator = progressManager.progressIndicator
+    indicator?.isIndeterminate = false
+    indicator?.text = "Downloading $fileName"
+
+    HttpRequests.request(downloadUrl).connect { request ->
+        request.connection.connectTimeout = 30000
+        request.connection.readTimeout = 30000
+
+        val connection = request.connection
+        val contentLength = connection.contentLengthLong
+
+        if (contentLength > 0) {
+            connection.inputStream.use { input ->
+                targetFile.outputStream().use { output ->
+                    val buffer = ByteArray(8192)
+                    var bytesRead: Int
+                    var totalBytesRead = 0L
+
+                    while (input.read(buffer).also { bytesRead = it } != -1) {
+                        ProgressManager.checkCanceled()
+                        output.write(buffer, 0, bytesRead)
+                        totalBytesRead += bytesRead
+
+                        val fraction = totalBytesRead.toDouble() / contentLength
+                        indicator?.fraction = fraction
+
+                        val downloadedMB = totalBytesRead / (1024.0 * 1024.0)
+                        val totalMB = contentLength / (1024.0 * 1024.0)
+                        val text = "%.1f MB / %.1f MB".format(downloadedMB, totalMB)
+                        indicator?.text2 = text
+
+                        onStateChange(FlutterDownloadState.Progress(fraction, text))
+                    }
+                }
+            }
+        } else {
+            indicator?.isIndeterminate = true
+            request.saveToFile(targetFile, indicator)
+        }
+    }
 }
 
 /// flutter下载器
@@ -580,9 +603,9 @@ class FlutterDownloadDialog(val project: Project) : DialogWrapper(project) {
         return JewelComposePanel(true,{
             preferredSize = Dimension(450, 500)
         }) {
-            FlutterDownloadPanel(project) {
+            FlutterDownloadPanel(project, onClose = {
                 close(OK_EXIT_CODE)
-            }
+            })
         }
     }
 

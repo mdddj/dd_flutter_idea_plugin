@@ -32,5 +32,8 @@ object MyIcons {
     /// compose
     val download = IntelliJIconKey("/icons/new/download.svg", "/icons/new/download.svg", MyIcons::class.java)
     val kofi = IntelliJIconKey("/icons/kofi.svg", "/icons/kofi.svg", MyIcons::class.java)
+    val wechat = IntelliJIconKey("/icons/wechat.svg", "/icons/wechat.svg", MyIcons::class.java)
+    val alipay = IntelliJIconKey("/icons/alipay.svg", "/icons/alipay.svg", MyIcons::class.java)
+    val discord = IntelliJIconKey("/icons/discord.svg", "/icons/discord.svg", MyIcons::class.java)
+    val qq = IntelliJIconKey("/icons/qq.svg", "/icons/qq.svg", MyIcons::class.java)
 }
-

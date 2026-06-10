@@ -140,7 +140,7 @@ class MyDartConstructorManager(private val dartConstructorPsiElement: DartFactor
     private val className: String?
         get() {
             val dartClassPsi = PsiTreeUtil.findFirstParent(dartConstructorPsiElement) { it is DartClassDefinitionImpl }
-            val name = dartClassPsi?.let { cs -> (cs as DartClassDefinitionImpl).componentName.name }
+            val name = dartClassPsi?.let { cs -> (cs as DartClassDefinitionImpl).componentName?.name }
             return name
         }
 
@@ -184,4 +184,3 @@ fun PsiElement.getDartInfo(): HoverInformation? {
     }
     return r.first()
 }
-

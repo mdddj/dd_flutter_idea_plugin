@@ -27,6 +27,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import shop.itbug.flutterx.util.MyFileUtil
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.milliseconds
 
 data class DotRemoveElement(
     val element: SmartPsiElementPointer<PsiElement>,
@@ -172,7 +173,7 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope {
                             _scanProgress.value = progress
                             onProgress(progress)
                         }
-                        delay(1) //需要添加延迟,dart分析服务器会检测到 null
+                        delay(1.milliseconds) //需要添加延迟,dart分析服务器会检测到 null
                         result
                     }
                 }

@@ -42,7 +42,8 @@ import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.jewel.ui.theme.simpleListItemStyle
 import shop.itbug.flutterx.actions.isValidJson
-import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.api.vm.DartVmApp
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.common.jsonToFreezedRun
 import shop.itbug.flutterx.config.DioListingUiConfig
 import shop.itbug.flutterx.document.copyTextToClipboard
@@ -64,14 +65,14 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun DartHttpUI(project: Project) {
-    FlutterAppsTabComponent(project) {
-        AppContentPanel(it, project)
+fun DartHttpUI(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) {
+        AppContentPanel(it, context.project)
     }
 }
 
 @Composable
-private fun AppContentPanel(app: FlutterAppInstance, project: Project) {
+private fun AppContentPanel(app: DartVmApp, project: Project) {
     val vmService = app.vmService
     val httpRequests = vmService.dartHttpMonitor.requests.collectAsState().value.values.reversed()
     var selectedRequest by remember { mutableStateOf<NetworkRequest?>(null) }

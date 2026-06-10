@@ -31,12 +31,22 @@ class PluginSetting : BaseState() {
     //启用dart vm service 控制台监听器
     var enableVmServiceListen by property(true)
 
+    //隐藏的 Dart VM 工具窗口 tab id。默认未配置的 tab 都显示。
+    var hiddenDartVmDevToolTabIds by stringSet()
+
     //启用 freezed 工具
     var enableFreezedIntentionActions by property(false)
 
     //在 Project View 中显示 Flutter 平台目录图标
     var showFlutterPlatformDirectoryIcons by property(true)
 
+    fun isDartVmDevToolTabVisible(tabId: String): Boolean {
+        return tabId !in hiddenDartVmDevToolTabIds
+    }
+
+    fun replaceHiddenDartVmDevToolTabIds(tabIds: Set<String>) {
+        hiddenDartVmDevToolTabIds = tabIds.toMutableSet()
+    }
 
 }
 
