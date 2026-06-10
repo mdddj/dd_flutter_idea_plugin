@@ -34,7 +34,7 @@ class YamlPathResolveHandleInlay : InlayHintsProvider<NoSettings> {
         editor: Editor,
         settings: NoSettings,
         sink: InlayHintsSink
-    ): InlayHintsCollector? {
+    ): InlayHintsCollector {
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(
                 element: PsiElement,

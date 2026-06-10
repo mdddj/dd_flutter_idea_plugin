@@ -67,7 +67,8 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.jewel.ui.theme.simpleListItemStyle
-import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.api.vm.DartVmApp
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.util.toast
@@ -91,6 +92,7 @@ import kotlin.math.max
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 private enum class DiffSortMode {
     AbsDeltaBytes,
@@ -116,14 +118,14 @@ private enum class MemoryChartRange(val labelKey: String, val windowMillis: Long
 }
 
 @Composable
-fun DartVmMemoryComponent(project: Project) {
-    FlutterAppsTabComponent(project) {
-        DartVmMemoryScreen(it, project)
+fun DartVmMemoryComponent(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) {
+        DartVmMemoryScreen(it, context.project)
     }
 }
 
 @Composable
-private fun DartVmMemoryScreen(app: FlutterAppInstance, project: Project) {
+private fun DartVmMemoryScreen(app: DartVmApp, project: Project) {
     val scope = rememberCoroutineScope()
     val controller = remember(app.vmService) {
         DartVmMemoryController(app.vmService, scope)
@@ -1285,7 +1287,7 @@ private fun SnapshotIdentityDetails(
             mutableStateOf("")
         }
         LaunchedEffect(rawQuery, row.classId, beforeSnapshotId, afterSnapshotId) {
-            delay(180)
+            delay(180.milliseconds)
             debouncedQuery = rawQuery.trim()
         }
         val filteringInProgress = rawQuery.trim() != debouncedQuery

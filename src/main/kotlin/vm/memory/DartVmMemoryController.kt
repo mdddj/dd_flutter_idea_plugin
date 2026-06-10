@@ -27,6 +27,7 @@ import vm.element.IsolateRef
 import vm.element.MemoryUsage
 import vm.element.ObjRef
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 enum class HeapSnapshotStatus {
     Requested,
@@ -422,7 +423,7 @@ class DartVmMemoryController(
         memorySamplingJob = scope.launch {
             while (isActive && _selectedIsolateId.value == isolateId) {
                 runCatching { sampleMemoryUsage() }
-                delay(memorySampleIntervalMs)
+                delay(memorySampleIntervalMs.milliseconds)
             }
         }
     }

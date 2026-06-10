@@ -43,7 +43,7 @@ class FreezedActionInlay : CodeVisionProviderBase() {
         ).findFreezedMetadata() != null
     }
 
-    override fun getHint(element: PsiElement, file: PsiFile): String? {
+    override fun getHint(element: PsiElement, file: PsiFile): String {
         return "Freezed Action"
     }
 
@@ -83,7 +83,7 @@ class FreezedActionInlay : CodeVisionProviderBase() {
         edit: Editor
     ): DefaultActionGroup {
         val dartClassElement = psiElement as DartClassDefinitionImpl
-        val className = dartClassElement.componentName.name ?: ""
+        val className = dartClassElement.componentName?.name ?: ""
         val dartClassManager = DartClassManager(className, dartClassElement)
         return DefaultActionGroup().apply {
             add(object : MyAction({ "Rename" }) {

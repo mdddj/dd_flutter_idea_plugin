@@ -5,7 +5,6 @@ import com.google.gson.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.Disposer
-import fleet.multiplatform.shims.ConcurrentHashMap
 import io.ktor.websocket.*
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.delay
@@ -26,9 +25,11 @@ import vm.network.DartNetworkMonitor
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Base64
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.time.Duration.Companion.milliseconds
 
 
 interface VmServiceComponent : VmHotResetListener, Disposable {}
@@ -340,7 +341,7 @@ class VmService : VmServiceBase() {
 
                 if (retryCount < maxRetries) {
                     Logging.getLogger().logInformation("等待 ${retryCount * 1000}ms 后重试...")
-                    delay(retryCount * 1000L)
+                    delay((retryCount * 1000L).milliseconds)
                 } else {
                     Logging.getLogger().logError("达到最大重试次数，停止监听")
                 }

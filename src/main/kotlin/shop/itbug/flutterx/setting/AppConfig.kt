@@ -1,5 +1,7 @@
 package shop.itbug.flutterx.setting
 
+import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
@@ -7,11 +9,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.EditorNotifications
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.dsl.builder.*
+import icons.MyImages
+import org.jetbrains.jewel.bridge.JewelComposePanel
 import shop.itbug.flutterx.actions.context.SiteDocument
 import shop.itbug.flutterx.config.*
 import shop.itbug.flutterx.constance.Links
+import shop.itbug.flutterx.dialog.FlutterDownloadPanel
 import shop.itbug.flutterx.dialog.MyRowBuild
 import shop.itbug.flutterx.dsl.settingPanel
 import shop.itbug.flutterx.i18n.PluginBundle
@@ -19,34 +26,59 @@ import shop.itbug.flutterx.services.FlutterL10nService
 import shop.itbug.flutterx.services.MyUserBarFactory
 import shop.itbug.flutterx.services.PluginStateService
 import shop.itbug.flutterx.socket.service.DioApiService
+import java.awt.Dimension
 import javax.swing.JComponent
 
 //
 class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
     private val logger = thisLogger()
-    var model = PluginStateService.appSetting
-    val disposer = Disposer.newDisposable()
+    private var model = PluginStateService.appSetting
+    private var disposer: Disposable? = null
+    private var dialog: DialogPanel? = null
 
-    val pluginConfig: PluginSetting = PluginConfig.getState(project)
     val globalConfig = FlutterXGlobalConfigService.getInstance()
 
-    private val dioSetting get() = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
-    private val initDioSetting = dioSetting.copy()
-    private val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
+    private var pluginConfig: PluginSetting? = null
+    private var dioSetting: DoxListeningSetting? = null
+    private var initDioSetting: DoxListeningSetting? = null
+    private var generaAssetsSettingPanel: GenerateAssetsClassConfigModel? = null
     private var generaAssetsSettingPanelModelIs = false
-    private var generateSettingPanel =
-        GeneraAssetsSettingPanel(
+    private var generateSettingPanel: GeneraAssetsSettingPanel? = null
+    private var pluginConfigPanel: DialogPanel? = null
+
+    override fun createComponent(): JComponent {
+        disposeSettingsUi()
+
+        val uiDisposable = Disposer.newDisposable("FlutterX settings")
+        disposer = uiDisposable
+        model = PluginStateService.appSetting
+
+        val pluginConfig = PluginConfig.getState(project)
+        this.pluginConfig = pluginConfig
+
+        val dioSetting = DioListingUiConfig.getInstance().state ?: DoxListeningSetting()
+        this.dioSetting = dioSetting
+        initDioSetting = dioSetting.copy()
+
+        val generaAssetsSettingPanel = GenerateAssetsClassConfig.getGenerateAssetsSetting(project)
+        this.generaAssetsSettingPanel = generaAssetsSettingPanel
+        generaAssetsSettingPanelModelIs = false
+
+        val dialog = settingPanel(project, model, dioSetting, uiDisposable) {
+            model = it
+        }
+        this.dialog = dialog
+
+        val generateSettingPanel = GeneraAssetsSettingPanel(
             project,
-            settingModel = generaAssetsSettingPanel, parentDisposable = disposer,
+            settingModel = generaAssetsSettingPanel,
+            parentDisposable = uiDisposable,
         ) {
             generaAssetsSettingPanelModelIs = it
         }
+        this.generateSettingPanel = generateSettingPanel
 
-
-    private lateinit var pluginConfigPanel: DialogPanel
-
-    override fun createComponent(): JComponent {
-        pluginConfigPanel = panel {
+        val pluginConfigPanel = panel {
 
 
             group(PluginBundle.get("app.config.riverpod.group")) {
@@ -104,11 +136,24 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
 
             }
 
+            group(PluginBundle.get("app.config.project.view.group")) {
+                row(PluginBundle.get("app.config.project.view.platform.directory.icons")) {
+                    checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showFlutterPlatformDirectoryIcons)
+                }
+            }
+
 
             group(PluginBundle.get("app.config.freezed.notifications.group", PluginBundle.get("tool"))) {
                 row {
                     checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showFreezed3FixNotification)
                         .comment(PluginBundle.get("freezed3_setting_tooltip"))
+                }
+            }
+
+            group(PluginBundle.get("app.config.pubspec.notifications.group")) {
+                row {
+                    checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showPubspecYamlNotificationBar)
+                        .comment(PluginBundle.get("pubspec_notification_bar_tooltip"))
                 }
             }
 
@@ -180,37 +225,56 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                     })
                 }
                 row {
+                    cell(JBLabel(MyImages.load("/images/status_bar_img.png")))
+                }
+                row {
                     comment(PluginBundle.get("app.config.status.bar.comment"))
                 }
             }
 
         }
+        this.pluginConfigPanel = pluginConfigPanel
+
         return JBTabbedPane().apply {
-            add(PluginBundle.get("basic"), panel)
+            add(PluginBundle.get("basic"), dialog)
             add(PluginBundle.get("assets.gen"), generateSettingPanel)
             add("FlutterX", pluginConfigPanel)
+            add(PluginBundle.get("flutter.downloader.title"), createFlutterDownloaderPanel(project))
         }
     }
 
-    val dialog: DialogPanel = settingPanel(project, model, dioSetting, disposer) {
-        model = it
+    private fun createFlutterDownloaderPanel(project: Project): JComponent {
+        return JewelComposePanel(true, {
+            preferredSize = Dimension(450, 500)
+        }) {
+            FlutterDownloadPanel(project, showCloseButton = false)
+        }
     }
 
-    private val panel: JComponent get() = dialog
-
     override fun isModified(): Boolean {
-        return dialog.isModified() || generaAssetsSettingPanelModelIs
-                || pluginConfigPanel.isModified()
+        return dialog?.isModified() == true || generaAssetsSettingPanelModelIs
+                || pluginConfigPanel?.isModified() == true
     }
 
     override fun apply() {
+        val dialog = dialog ?: return
+        val generateSettingPanel = generateSettingPanel ?: return
+        val pluginConfigPanel = pluginConfigPanel ?: return
+        val dioSetting = dioSetting ?: return
+        val generaAssetsSettingPanel = generaAssetsSettingPanel ?: return
+        val pluginConfig = pluginConfig ?: return
+
         dialog.apply()
         generateSettingPanel.doApply()
         pluginConfigPanel.apply()
         PluginStateService.getInstance().loadState(model)
         DioListingUiConfig.getInstance().loadState(dioSetting)
         GenerateAssetsClassConfig.getInstance(project).loadState(generaAssetsSettingPanel)
-        PluginConfig.changeState(project) { pluginConfig }
+        PluginConfig.changeState(project) {
+            pluginConfig
+        }
+        EditorNotifications.getInstance(project).updateAllNotifications()
+        ProjectView.getInstance(project).refresh()
         FlutterL10nService.getInstance(project).configEndTheL10nFolder()
     }
 
@@ -223,9 +287,9 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
     }
 
     override fun reset() {
-        dialog.reset()
+        dialog?.reset()
         super<Configurable>.reset()
-        pluginConfigPanel.reset()
+        pluginConfigPanel?.reset()
     }
 
     override fun cancel() {
@@ -236,6 +300,9 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
     }
 
     private fun tryHandleDioSettings() {
+        val initDioSetting = initDioSetting ?: return
+        val dioSetting = dioSetting ?: return
+
         if (initDioSetting.enableFlutterXDioSocket != dioSetting.enableFlutterXDioSocket) {
             if (!dioSetting.enableFlutterXDioSocket) {
                 DioApiService.getInstance().stopAll(project)
@@ -246,10 +313,25 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
     }
 
     override fun disposeUIResources() {
-        Disposer.dispose(disposer)
         println("app config disposed...disposeUIResources()")
         tryHandleDioSettings()
         tryHandleStatusBarStatus()
+        disposeSettingsUi()
+    }
+
+    private fun disposeSettingsUi() {
+        disposer?.let {
+            Disposer.dispose(it)
+        }
+        disposer = null
+        dialog = null
+        pluginConfig = null
+        dioSetting = null
+        initDioSetting = null
+        generaAssetsSettingPanel = null
+        generaAssetsSettingPanelModelIs = false
+        generateSettingPanel = null
+        pluginConfigPanel = null
     }
 
     private fun tryHandleStatusBarStatus(){

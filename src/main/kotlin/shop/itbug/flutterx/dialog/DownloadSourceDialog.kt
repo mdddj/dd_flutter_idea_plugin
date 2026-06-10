@@ -97,7 +97,7 @@ class DownloadSourceDialog(val project: Project, sources: List<DownloadSource>) 
     }
 
     override fun createCenterPanel(): JComponent {
-        return JewelComposePanel({
+        return JewelComposePanel(true,{
             preferredSize = Dimension(550, 350)
         }) {
             Box(

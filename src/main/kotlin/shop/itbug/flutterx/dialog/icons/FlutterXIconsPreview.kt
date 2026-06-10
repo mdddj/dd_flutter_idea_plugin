@@ -30,6 +30,7 @@ import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.util.firstChatToUpper
 import shop.itbug.flutterx.widget.SearchResultCard
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -157,7 +158,7 @@ private fun IconItem(icon: FlutterIcon, searchQuery: String) {
 
     LaunchedEffect(isCopyComplete){
         if(isCopyComplete){
-            delay(2000)
+            delay(2000.milliseconds)
             isCopyComplete = false
         }
     }

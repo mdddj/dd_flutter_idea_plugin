@@ -8,7 +8,7 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val pluginVersion: String by project
 
-val flutterDevVersion = "io.flutter:90.0.0"
+val flutterDevVersion = "io.flutter:93.0.0"
 val isPublishPluginBuild =
     gradle.startParameter.taskNames.any { taskName ->
         taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")
@@ -19,16 +19,17 @@ val idePluginDependencies =
         if (!isPublishPluginBuild) {
             add(flutterDevVersion)
         }
+        add("com.redhat.devtools.lsp4ij:0.19.4")
     }
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.14.0"
+    kotlin("jvm") version "2.3.0"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
 }
 
 group = "shop.itbug"
@@ -76,18 +77,19 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
     "org.intellij.groovy",
+    "org.jetbrains.kotlin",
     "com.intellij.modules.json",
-    "com.intellij.platform.images",
-    "org.intellij.intelliLang"
+    "com.intellij.platform.images"
 )
 
 dependencies {
-    implementation("org.jsoup:jsoup:1.18.3")
     implementation("org.smartboot.socket:aio-pro:latest.release")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
-        intellijIdeaCommunity("2025.2.1")
+//        intellijIdeaCommunity("2026.1")
+        intellijIdea("2026.1")
+        idea
         bundledPlugins(bPlugins)
         plugins(*idePluginDependencies.toTypedArray())
         pluginVerifier()
@@ -147,8 +149,8 @@ compileKotlin.compilerOptions {
 tasks {
 
     patchPluginXml {
-        sinceBuild.set(sinceBuildVersion)
-        untilBuild.set("253.*")
+        sinceBuild.set("261")
+//        untilBuild.set("253.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }

@@ -51,7 +51,8 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.api.vm.DartVmApp
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.constance.Links
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
@@ -62,14 +63,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun DriftComposeComponent(project: Project) {
-    FlutterAppsTabComponent(project) { app: FlutterAppInstance ->
-        DriftMainPanel(app, project)
+fun DriftComposeComponent(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) { app ->
+        DriftMainPanel(app, context.project)
     }
 }
 
 @Composable
-private fun DriftMainPanel(app: FlutterAppInstance, project: Project) {
+private fun DriftMainPanel(app: DartVmApp, project: Project) {
     val vmService = app.vmService
     val service = remember(vmService) { DriftServices(vmService) }
     val state by service.state.collectAsState()

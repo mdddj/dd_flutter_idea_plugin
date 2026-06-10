@@ -18,6 +18,7 @@ import com.intellij.util.messages.Topic
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import shop.itbug.flutterx.api.vm.DartVmApp
 import shop.itbug.flutterx.config.PluginConfig
 import vm.VmService
 import vm.VmServiceBase
@@ -39,10 +40,15 @@ data class FlutterAppInfo(
  */
 data class FlutterAppInstance(
     val processHandler: ProcessHandler,
-    val vmService: VmService,
+    override val vmService: VmService,
     val appInfo: FlutterAppInfo,
     val events: MutableList<FlutterEvent> = mutableListOf()
-)
+) : DartVmApp {
+    override val appId: String get() = appInfo.appId
+    override val vmUrl: String get() = appInfo.vmUrl
+    override val deviceId: String get() = appInfo.deviceId
+    override val mode: String get() = appInfo.mode
+}
 
 
 interface FlutterXVmStateListener {

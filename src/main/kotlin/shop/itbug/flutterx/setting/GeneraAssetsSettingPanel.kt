@@ -33,7 +33,7 @@ class GeneraAssetsSettingPanel(
     val parentDisposable: Disposable,
     modified: GeneraAssetsSettingPanelIsModified,
 
-    ) : BorderLayoutPanel(), Disposable {
+    ) : BorderLayoutPanel() {
 
     //忽略的文件
     private val igFilesWidget = IgFileList(project).apply {
@@ -41,13 +41,12 @@ class GeneraAssetsSettingPanel(
     }
 
 
-    private val dialogPanel = getGeneraAssetsPanel(project, settingModel, this, modified)
+    private val dialogPanel = getGeneraAssetsPanel(project, settingModel, parentDisposable, modified)
 
 
     init {
         addToCenter(createTopActionsPanel())
         addToRight(createRightSettingPanel())
-        Disposer.register(parentDisposable, this)
     }
 
     private fun createTopActionsPanel(): JPanel {
@@ -83,9 +82,6 @@ class GeneraAssetsSettingPanel(
         dialogPanel.apply()
     }
 
-    override fun dispose() {
-
-    }
 }
 
 

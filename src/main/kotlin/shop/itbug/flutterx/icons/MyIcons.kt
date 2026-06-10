@@ -22,9 +22,18 @@ object MyIcons {
 
     val moreHorizontal = IconLoader.getIcon("/icons/moreHorizontal.svg", MyIcons::class.java)
 
+    val platformWeb = IconLoader.getIcon("/icons/platforms/web.png", MyIcons::class.java)
+    val platformWindows = IconLoader.getIcon("/icons/platforms/windows.png", MyIcons::class.java)
+    val platformLinux = IconLoader.getIcon("/icons/platforms/linux.png", MyIcons::class.java)
+    val platformMacos = IconLoader.getIcon("/icons/platforms/macos.png", MyIcons::class.java)
+    val platformAndroid = IconLoader.getIcon("/icons/platforms/android.png", MyIcons::class.java)
+    val platformIos = IconLoader.getIcon("/icons/platforms/ios.png", MyIcons::class.java)
+
     /// compose
     val download = IntelliJIconKey("/icons/new/download.svg", "/icons/new/download.svg", MyIcons::class.java)
     val kofi = IntelliJIconKey("/icons/kofi.svg", "/icons/kofi.svg", MyIcons::class.java)
+    val wechat = IntelliJIconKey("/icons/wechat.svg", "/icons/wechat.svg", MyIcons::class.java)
+    val alipay = IntelliJIconKey("/icons/alipay.svg", "/icons/alipay.svg", MyIcons::class.java)
+    val discord = IntelliJIconKey("/icons/discord.svg", "/icons/discord.svg", MyIcons::class.java)
+    val qq = IntelliJIconKey("/icons/qq.svg", "/icons/qq.svg", MyIcons::class.java)
 }
-
-

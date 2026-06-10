@@ -502,7 +502,7 @@ class AddPackageDialogIdea(val project: Project, yamlFile: YAMLFile) : DialogWra
             elementFactory
 
         )
-        return JewelComposePanel({
+        return JewelComposePanel(true, {
             preferredSize = Dimension(760, 580)
         }) {
             var selectIndex by remember { mutableIntStateOf(0) }

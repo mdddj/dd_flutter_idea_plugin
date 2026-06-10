@@ -32,7 +32,7 @@ class DartPackageSearchDialogInlay : InlayHintsProvider<DartPackageSearchDialogI
         editor: Editor,
         settings: Settings,
         sink: InlayHintsSink
-    ): InlayHintsCollector? {
+    ): InlayHintsCollector {
 
         fun isDepsEle(element: PsiElement): Boolean {
             return element.text == "dependencies"

@@ -2,6 +2,104 @@
 
 ## Unreleased
 
+## 7.1.0 - 2026-06-10
+
+### New Features
+- Added the Dart VM DevTool extension point so third-party plugins can contribute custom tabs to the FlutterX Dart VM tool window.
+- Rebuilt built-in Dart VM tabs on top of the extension point, including VM, Memory, HTTP Monitor, Logging, Provider, Shared Preferences, Hive CE, and Drift DB.
+- Added Dart VM tab visibility settings, including support for future third-party extension tabs.
+- Added extension metadata support for optional localized descriptions in Dart VM tab settings.
+
+### Improvements
+- Improved the Dart VM empty state with grouped documentation, community, feedback, and donation links.
+- Added documentation links for both the server-hosted and GitHub Pages FlutterX documentation sites.
+- Added WeChat and Alipay donation QR code support and link icons.
+- Exposed running Dart VM apps directly through the public dev tool context API.
+- Updated Dart and Flutter plugin dependency versions and related compatibility fixes.
+
+### Fixes
+- Fixed the Android Studio open action visibility so the user setting is honored even when an Android directory exists.
+- Fixed Dart VM panels not updating when a Flutter app starts after the tool window has already been opened.
+- Removed FlutterX's custom Dart documentation provider so the bundled Dart plugin documentation is used.
+- Replaced deprecated `ConcurrentHashMap` usage in the VM service implementation.
+- Fixed nullable Dart component name handling after Dart plugin API changes.
+
+### Automation
+- Updated release workflow runtimes and added local release workflow documentation.
+- Added a Codex skill for Dart VM DevTool extension development.
+
+## 7.0.5 - 2026-05-23
+
+### New Features
+- Added custom Project View icons for Flutter root platform directories: `web`, `windows`, `linux`, `macos`, `android`, and `ios`.
+- Added a Project View setting to show or hide Flutter platform directory icons.
+
+### Improvements
+- Bolded Flutter platform directory names in the Project View for quicker scanning.
+- Improved Dart type inlay click navigation by resolving targets through non-blocking read actions before opening declarations.
+
+### Fixes
+- Fixed settings UI disposable lifecycle handling for the AppConfig panel.
+
+### Localization
+- Added zh/en/hk/ja/ko translations for the Project View icon setting.
+
+## 7.0.4 - 2026-04-23
+
+### New Features
+- Added a `Publish to pub.dev` action in the `pubspec.yaml` notification bar with a release-notes popup, optional publish-date insertion, background publishing, and an output viewer.
+- Added batch publishing for child packages so multi-package directories can update versions, preview changelog changes, and publish in dependency-aware order from the IDE.
+
+### Improvements
+- Automatically hides publish actions for packages that declare `publish_to: none`, and reports skipped packages in the batch publishing flow.
+
+### Localization
+- Added zh/en/hk/ja/ko translations for the pub.dev publish workflow and the new batch child-package publishing UI.
+
+## 7.0.3 - 2026-04-18
+
+### New Features
+- Added a pubspec.yaml notification toolbar action to run `flutter pub get` with supported China mirrors directly from the IDE.
+- Added an in-IDE command output dialog for inspecting `flutter pub get` results without leaving the editor.
+
+### Improvements
+- Added a settings toggle and toolbar menu action so the pubspec.yaml notification bar can be hidden or re-enabled at any time.
+- Refined China mirror presets to keep matched pub and Flutter storage endpoints, and highlighted the recommended CFUG mirror.
+
+### Localization
+- Added zh/en/hk/ja/ko translations for the new pubspec.yaml toolbar actions, mirror workflow, and output viewer.
+
+## 7.0.2 - 2026-04-16
+
+### New Features
+- Added a Hive CE inspector to the Dart VM tool window for schema loading, raw object decoding, and runtime value inspection.
+- Added pub.dev changelog fetching so dependency update previews can show the latest package release notes inline.
+- Added Flutter SDK changelog parsing so Flutter version update notifications can display release notes directly in the IDE.
+
+### Improvements
+- Localized AppConfig settings.
+- Ignored `notes/` and other local-only directories in version control.
+- Stopped tracking IDE project files (`.idea/`).
+
+### Automation
+- Automated JetBrains Marketplace publishing in the GitHub release workflow for tagged releases.
+
+## 7.0.1 - 2026-04-03
+
+### Improvements
+- Synced updates from 6.9.4 into the 7.x line.
+- Added the Dart VM Memory module (Profile, Diff Snapshots, Trace Instances).
+- Improved VM/Drift localization and export flow stability.
+
+## 7.0.0 - 2026-03-26
+
+### 🔧 Compatibility
+- Adapted FlutterX for IntelliJ IDEA 2026.1 and aligned platform compatibility for the new IDE build.
+
+### ✨ Includes updates from 6.9.0 - 6.9.3
+- Added and refined the Drift database viewer, including table browsing, editing, export, and UI improvements.
+- Improved Network Inspector command copying with better cross-platform cURL and PowerShell support.
+- Fixed several Flutter downloader, privacy scanner, Drift panel, and Dart VM tool window stability issues.
 ## 6.9.5 - 2026-04-15
 
 ### New Features

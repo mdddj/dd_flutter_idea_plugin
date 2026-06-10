@@ -36,7 +36,7 @@ class DartClassManager(val className: String, private val psiElement: DartClassD
     private val frs = listOf("freezed", "Freezed", "unfreezed")
 
     constructor(psiElement: DartClassDefinitionImpl) : this(
-        className = psiElement.componentName.name ?: "",
+        className = psiElement.componentName?.name ?: "",
         psiElement = psiElement
     )
 

@@ -18,7 +18,8 @@ import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.skiko.Cursor
-import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.api.vm.DartVmApp
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.util.MyFileUtil
 import vm.VmService
@@ -33,15 +34,15 @@ import kotlin.math.ln
 import kotlin.math.pow
 
 @Composable
-fun DartVmStatusComponent(project: Project) {
-    FlutterAppsTabComponent(project) {
-        FlutterAppStatusPanel(project, it)
+fun DartVmStatusComponent(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) {
+        FlutterAppStatusPanel(context.project, it)
     }
 
 }
 
 @Composable
-private fun FlutterAppStatusPanel(project: Project, app: FlutterAppInstance) {
+private fun FlutterAppStatusPanel(project: Project, app: DartVmApp) {
     val vmService = app.vmService
     var vm by remember { mutableStateOf<VM?>(null) }
     LaunchedEffect(app) {
@@ -78,7 +79,7 @@ private fun FlutterAppStatusPanel(project: Project, app: FlutterAppInstance) {
 }
 
 @Composable
-private fun VmMemoryDisplay(app: FlutterAppInstance, vm: VM, vmService: VmService, project: Project) {
+private fun VmMemoryDisplay(app: DartVmApp, vm: VM, vmService: VmService, project: Project) {
     var vmInfo by remember(app) { mutableStateOf(vm) }
     val scope = rememberCoroutineScope()
 

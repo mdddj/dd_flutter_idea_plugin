@@ -23,7 +23,7 @@ class MyTextDialog(
         title = "FlutterX"
     }
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         dialogPanel = panel {
             row {
                 textField().bindText({ text }, {

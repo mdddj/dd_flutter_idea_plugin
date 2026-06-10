@@ -158,19 +158,12 @@ class OpenAndroidProjectOnASAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-
-
-        e.presentation.isEnabledAndVisible = e.project != null
-        e.project?.let {
+        val project = e.project
+        e.presentation.isEnabledAndVisible = project?.let {
             val config = PluginConfig.getInstance(it).state
-            e.presentation.isVisible = config.openAndroidDirectoryInAS
-        }
-
-
-        e.project?.let {
             val tool = FlutterProjectUtil(it)
-            e.presentation.isVisible = tool.androidDirIsExist
-        }
+            config.openAndroidDirectoryInAS && tool.androidDirIsExist
+        } ?: false
         e.presentation.icon = MyIcons.androidStudio
         e.presentation.text = "Open Android Project"
     }
@@ -238,6 +231,3 @@ class OpenMacosProjectInXcodeAction : AnAction() {
     }
 
 }
-
-
-

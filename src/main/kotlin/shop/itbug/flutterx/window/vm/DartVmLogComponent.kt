@@ -21,6 +21,7 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.util.MyFileUtil
@@ -31,9 +32,9 @@ import vm.log.LoggingController
 
 // dart log UI
 @Composable
-fun DartVmLoggingComponent(project: Project) {
-    FlutterAppsTabComponent(project) {
-        DartVmLoggingScreen(it.vmService.logController, project)
+fun DartVmLoggingComponent(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) {
+        DartVmLoggingScreen(it.vmService.logController, context.project)
     }
 }
 

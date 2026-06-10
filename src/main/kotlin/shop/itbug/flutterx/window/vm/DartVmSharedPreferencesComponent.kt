@@ -27,23 +27,25 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import shop.itbug.flutterx.common.dart.FlutterAppInstance
+import shop.itbug.flutterx.api.vm.DartVmApp
+import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.i18n.PluginBundle
 import vm.sp.AsyncState
 import vm.sp.SharedPreferencesData
 import vm.sp.SharedPreferencesServices
 import vm.sp.SharedPreferencesState
+import kotlin.time.Duration.Companion.milliseconds
 
 // dart vm shared preferences 组件
 @Composable
-fun DartVmSharedPreferencesComponent(project: Project) {
-    FlutterAppsTabComponent(project) { app: FlutterAppInstance ->
+fun DartVmSharedPreferencesComponent(context: DartVmDevToolContext) {
+    FlutterAppsTabComponent(context) { app ->
         SharedPreferencesPanel(app)
     }
 }
 
 @Composable
-private fun SharedPreferencesPanel(app: FlutterAppInstance) {
+private fun SharedPreferencesPanel(app: DartVmApp) {
     val vmService = app.vmService
     val service = remember(vmService) { SharedPreferencesServices(vmService) }
     val state by service.state.collectAsState()
@@ -103,7 +105,7 @@ private fun KeysPanel(
     var debouncedText by remember { mutableStateOf("") }
 
     LaunchedEffect(searchState.text.toString()) {
-        delay(300)
+        delay(300.milliseconds)
         debouncedText = searchState.text.toString()
         onFilter(debouncedText)
     }

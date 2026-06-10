@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flutter VM Empty State Redesign</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --line: #dfe3ea;
+      --line-soft: #edf0f5;
+      --text: #1f2328;
+      --muted: #667085;
+      --blue: #2563d8;
+      --blue-soft: #e8f0ff;
+      --green: #208a55;
+      --green-soft: #e8f7ef;
+      --red: #d92d20;
+      --red-soft: #fff1f0;
+      --amber: #b45309;
+      --amber-soft: #fff7e6;
+      --shadow: 0 16px 45px rgba(21, 35, 56, 0.08);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 62%, #eef3f9 100%);
+      color: var(--text);
+    }
+
+    .frame {
+      width: 1244px;
+      height: 386px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 56px;
+      background: #fff;
+    }
+
+    .empty-state {
+      width: 920px;
+      min-height: 254px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 276px;
+      gap: 28px;
+      align-items: stretch;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      column-gap: 18px;
+      align-content: start;
+    }
+
+    .status-icon {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .status-icon svg,
+    .mini-icon svg,
+    .button svg,
+    .link svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .status-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.35;
+      font-weight: 650;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      max-width: 560px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .actions {
+      grid-column: 2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 560;
+      white-space: nowrap;
+    }
+
+    .button.primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .button.secondary {
+      color: var(--text);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .checks {
+      grid-column: 2;
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f4f6f9;
+      border: 1px solid var(--line-soft);
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      padding-left: 28px;
+      border-left: 1px solid var(--line-soft);
+    }
+
+    .side-title {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 650;
+      color: #475467;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .link {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 10px;
+      color: var(--blue);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 540;
+      text-decoration: none;
+      background: transparent;
+    }
+
+    .link.emphasis {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .link.muted {
+      color: #475467;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .support {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .support .mini-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .support strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.25;
+      font-weight: 650;
+      color: #145c3c;
+    }
+
+    .support span {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: #276d4c;
+    }
+
+    @media (max-width: 800px) {
+      .frame {
+        width: 100vw;
+        height: auto;
+        min-height: 100vh;
+        padding: 22px;
+      }
+
+      .empty-state {
+        width: 100%;
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        padding: 18px 0 0;
+        border-left: 0;
+        border-top: 1px solid var(--line-soft);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="frame">
+    <section class="empty-state" aria-label="Flutter VM empty state">
+      <div class="main">
+        <div class="status-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M10.3 3.4 2.8 16.2A2 2 0 0 0 4.5 19h15a2 2 0 0 0 1.7-2.8L13.7 3.4a2 2 0 0 0-3.4 0Z"/>
+            <path d="M12 8v4"/>
+            <path d="M12 16h.01"/>
+          </svg>
+        </div>
+
+        <div>
+          <h1>未找到正在运行的 Flutter 应用</h1>
+          <p class="subtitle">
+            请确认应用已启动，Dart VM Service / Observatory 已启用；真机调试时，设备需连接电脑并完成端口转发。
+          </p>
+        </div>
+
+        <div class="actions">
+          <div class="button primary">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+              <path d="M21 3v6h-6"/>
+            </svg>
+            重新检测
+          </div>
+          <div class="button secondary">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>
+            </svg>
+            查看连接文档
+          </div>
+        </div>
+
+        <div class="checks" aria-label="connection checklist">
+          <span class="chip"><span class="dot"></span>Flutter run</span>
+          <span class="chip"><span class="dot"></span>VM Service</span>
+          <span class="chip"><span class="dot"></span>端口转发</span>
+        </div>
+      </div>
+
+      <aside class="side">
+        <p class="side-title">更多资源</p>
+        <nav class="link-list" aria-label="resources">
+          <a class="link" href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>
+            </svg>
+            Dart VM 扩展开发文档
+          </a>
+          <a class="link" href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+            </svg>
+            Discord
+          </a>
+          <a class="link muted" href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m8 2 1.9 3.8L14 6.4l-3 2.9.7 4.1L8 11.5 4.3 13.4 5 9.3 2 6.4l4.1-.6L8 2Z"/>
+              <path d="M19 9v6"/>
+              <path d="M16 12h6"/>
+            </svg>
+            Bug 反馈
+          </a>
+          <a class="link emphasis" href="#">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.1-7.1l.4.4.4-.4a5 5 0 1 1 7.1 7.1Z"/>
+            </svg>
+            微信打赏
+          </a>
+        </nav>
+
+        <div class="spacer"></div>
+
+        <div class="support">
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 8h12a4 4 0 0 1 0 8h-1"/>
+              <path d="M5 8v8a4 4 0 0 0 4 4h3a4 4 0 0 0 4-4V8"/>
+              <path d="M7 4h8"/>
+            </svg>
+          </div>
+          <div>
+            <strong>Support me on Ko-fi</strong>
+            <span>外部赞助入口</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

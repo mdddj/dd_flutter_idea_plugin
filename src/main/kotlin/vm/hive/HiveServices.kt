@@ -27,6 +27,7 @@ import vm.getVm
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.time.Duration.Companion.milliseconds
 
 class HiveServices(
     project: Project,
@@ -264,7 +265,7 @@ class HiveServices(
 
     override fun onStart() {
         launch {
-            delay(500)
+            delay(500.milliseconds)
             schemaRegistry = HiveSchemaLoader.load(projectRoot)
             updateState {
                 it.copy(schemaFiles = schemaRegistry.sourceFiles.size)

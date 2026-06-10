@@ -31,7 +31,7 @@ jobs:
           fetch-depth: 0  # 获取完整历史记录用于生成变更日志
 
       - name: 准备JBR21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'jetbrains'
@@ -107,7 +107,7 @@ jobs:
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: 创建发布版本
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.get_version.outputs.tag_name }}
           name: FlutterX  ${{ steps.get_version.outputs.tag_name }}
@@ -123,7 +123,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 上传 FlutterX 资产文件
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: FlutterX-${{ steps.get_version.outputs.version }}
           # path 也需要指向正确的位置
@@ -131,7 +131,7 @@ jobs:
           retention-days: 30
 
       - name: 上传 FlutterX-MCP 资产文件
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: FlutterX-MCP-${{ steps.get_version.outputs.version }}
           path: ${{ steps.find_mcp_plugin.outputs.mcp_plugin_file }}

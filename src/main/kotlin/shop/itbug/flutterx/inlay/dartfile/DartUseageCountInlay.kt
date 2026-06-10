@@ -30,7 +30,7 @@ class DartUseageCountInlay : CodeVisionProviderBase() {
 
     override fun getHint(element: PsiElement, file: PsiFile): String? {
         if (element is DartClassDefinitionImpl) {
-            return "${element.componentName.getUsagesCount()} usages"
+            return "${element.componentName?.getUsagesCount() ?: 0} usages"
         }
         return null
     }
@@ -65,5 +65,4 @@ class DartUseageCountInlay : CodeVisionProviderBase() {
 private fun PsiElement.getUsagesCount(): Int {
     return ReferencesSearch.search(this, GlobalSearchScope.allScope(project)).findAll().size
 }
-
 
