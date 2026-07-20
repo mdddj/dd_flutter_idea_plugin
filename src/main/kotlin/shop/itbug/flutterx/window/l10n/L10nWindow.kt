@@ -94,7 +94,9 @@ class L10nWindow(val project: Project, val toolWindow: ToolWindow) : OnePixelSpl
 
     private fun initTreeModel() {
         service.handleKeys {
-            myTree.model = createTreeModel(it)
+            SwingUtilities.invokeLater {
+                myTree.model = createTreeModel(it)
+            }
         }
     }
 

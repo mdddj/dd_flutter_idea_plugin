@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+## 7.2.0 - 2026-07-20
+
+### 🔧 Compatibility
+- Upgraded target platform to **IntelliJ IDEA 2026.2** and updated platform Gradle plugin to 2.18.1.
+- Upgraded Kotlin to 2.3.20, Compose plugin to 2.3.20, and Gradle wrapper to 9.6.1.
+- Updated plugin dependencies: `io.flutter:94.0.0`, `Dart:507.0.0`, `LSP4IJ:0.20.1`.
+- Aligned Java and Kotlin JVM targets to 25 to match the IDEA 2026.2 platform JDK.
+- Resolved Gradle 9.6 deprecation warnings (`by project`, `by tasks`, `by tasks.registering`).
+- Updated plugin verification IDE from IntelliJ IDEA Community 2025.2 to IntelliJ IDEA 2026.2.
+- Updated `sinceBuild` to 262 for IDEA 2026.2 compatibility.
+
+### Improvements
+- Added build-time code generation for plugin metadata (`FlutterXPluginInfo.kt`) and replaced `PluginManagerCore` runtime lookups with the generated class.
+- Replaced `IdeBundle` message references with `PluginBundle` in restart confirmation dialogs for consistent i18n.
+- Simplified JSON validation utility by removing `groovy.json.JsonException` dependency in favor of `kotlinx.serialization`.
+- Replaced `org.jetbrains.skiko.Cursor` with `java.awt.Cursor` for broader AWT API compatibility.
+- Cleaned up stale navbar extension reference from `plugin.xml`.
+
+### Fixes
+- Fixed an EDT thread violation in the L10n window's tree initialization that caused `Access is allowed from Event Dispatch Thread (EDT) only` exceptions.
+
 ## 7.1.0 - 2026-06-10
 
 ### New Features

@@ -4,11 +4,11 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dartVersion: String by project
-val sinceBuildVersion: String by project
-val pluginVersion: String by project
+val dartVersion: String = project.property("dartVersion") as String
+val sinceBuildVersion: String = project.property("sinceBuildVersion") as String
+val pluginVersion: String = project.property("pluginVersion") as String
 
-val flutterDevVersion = "io.flutter:93.0.0"
+val flutterDevVersion = "io.flutter:94.0.0"
 val isPublishPluginBuild =
     gradle.startParameter.taskNames.any { taskName ->
         taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")
@@ -19,25 +19,25 @@ val idePluginDependencies =
         if (!isPublishPluginBuild) {
             add(flutterDevVersion)
         }
-        add("com.redhat.devtools.lsp4ij:0.19.4")
+        add("com.redhat.devtools.lsp4ij:0.20.1")
     }
 
 plugins {
     idea
-    kotlin("jvm") version "2.3.0"
-    id("org.jetbrains.intellij.platform") version "2.16.0"
+    kotlin("jvm") version "2.3.20"
+    id("org.jetbrains.intellij.platform") version "2.18.1"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
 }
 
 group = "shop.itbug"
 version = pluginVersion
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.toVersion(25)
+    targetCompatibility = JavaVersion.toVersion(25)
 }
 
 repositories {
@@ -88,7 +88,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
 //        intellijIdeaCommunity("2026.1")
-        intellijIdea("2026.1")
+        intellijIdea("2026.2")
         idea
         bundledPlugins(bPlugins)
         plugins(*idePluginDependencies.toTypedArray())
@@ -112,7 +112,7 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            create(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
+            create(IntelliJPlatformType.IntellijIdea, "2026.2")
         }
     }
 }
@@ -141,7 +141,7 @@ val currentVersionChangelog = provider {
     )
 }
 
-val compileKotlin: KotlinCompile by tasks
+val compileKotlin: KotlinCompile = tasks.getByName("compileKotlin") as KotlinCompile
 compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xmulti-dollar-interpolation", "-Xwhen-guards"))
 }
@@ -149,7 +149,7 @@ compileKotlin.compilerOptions {
 tasks {
 
     patchPluginXml {
-        sinceBuild.set("261")
+        sinceBuild.set("262")
 //        untilBuild.set("253.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
@@ -182,7 +182,7 @@ tasks {
 
     compileKotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(JvmTarget.JVM_25)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
@@ -227,7 +227,7 @@ idea {
 
 // 代码生成插件的基本信息
 
-val generateFlutterPluginInfo by tasks.registering {
+val generateFlutterPluginInfo = tasks.register("generateFlutterPluginInfo") {
     group = "codegen"
     description = "Generates FlutterPluginInfo class with version info"
 
@@ -242,21 +242,22 @@ val generateFlutterPluginInfo by tasks.registering {
     }
 
     // 设置输入和输出以支持增量构建
-//    outputs.file(outputFile)
-//
-//    doLast {
-//        val q = "\"\"\"\n"
-//        outputFile.writeText(
-//            """
-//            |package codegen
-//            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
-//            |object FlutterXPluginInfo {
-//            |    const val VERSION: String = "${project.version}"
-//            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
-//            |}
-//            |""".trimMargin().trimIndent()
-//        )
-//    }
+    outputs.file(outputFile)
+
+    doLast {
+        val q = "\"\"\"\n"
+        outputFile.writeText(
+            """
+            |package codegen
+            |// 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
+            |object FlutterXPluginInfo {
+            |    const val VERSION: String = "${project.version}"
+            |    const val NAME: String = "${project.name}"
+            |    const val CHANGELOG: String = $q${currentVersionChangelog.get()}$q
+            |}
+            |""".trimMargin().trimIndent()
+        )
+    }
 }
 
 // 让 Kotlin 编译任务依赖生成任务
