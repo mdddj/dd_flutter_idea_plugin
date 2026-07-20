@@ -240,7 +240,6 @@
         <!--        <configurationType implementation="shop.itbug.flutterx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.flutterx.editor.MyYamlSplitEditorProvider"/>-->
 
-        <!--        <navbar implementation="shop.itbug.flutterx.navbar.DartStructureAwareNavbar"/>-->
 
 
         <!--        <psi.referenceContributor-->

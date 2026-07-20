@@ -2,7 +2,6 @@ package shop.itbug.flutterx.widget
 
 import com.intellij.CommonBundle
 import com.intellij.ide.GeneralSettings
-import com.intellij.ide.IdeBundle
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -57,9 +56,9 @@ object PopupWidgets {
 
         if (GeneralSettings.getInstance().isConfirmExit) {
             val answer = Messages.showYesNoDialog(
-                IdeBundle.message(if (app.isRestartCapable) "dialog.message.restart.ide" else "dialog.message.restart.alt"),
-                IdeBundle.message("dialog.title.restart.ide"),
-                IdeBundle.message(if (app.isRestartCapable) "ide.restart.action" else "ide.shutdown.action"),
+                PluginBundle.get(if (app.isRestartCapable) "dialog.message.restart.ide" else "dialog.message.restart.alt"),
+                PluginBundle.get("dialog.title.restart.ide"),
+                PluginBundle.get(if (app.isRestartCapable) "ide.restart.action" else "ide.shutdown.action"),
                 CommonBundle.getCancelButtonText(),
                 Messages.getQuestionIcon()
             )

@@ -17,7 +17,6 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import org.jetbrains.skiko.Cursor
 import shop.itbug.flutterx.api.vm.DartVmApp
 import shop.itbug.flutterx.api.vm.DartVmDevToolContext
 import shop.itbug.flutterx.i18n.PluginBundle
@@ -27,6 +26,7 @@ import vm.element.IsolateRef
 import vm.element.VM
 import vm.getVm
 import vm.setInspectorOverlay
+import java.awt.Cursor
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.swing.SwingUtilities

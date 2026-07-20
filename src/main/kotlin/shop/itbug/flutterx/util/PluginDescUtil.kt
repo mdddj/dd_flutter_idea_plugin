@@ -1,13 +1,11 @@
 package shop.itbug.flutterx.util
 
-import com.intellij.ide.plugins.PluginManagerCore
+import codegen.FlutterXPluginInfo
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.extensions.PluginId
 import org.jetbrains.kotlin.konan.file.File
 
 object PluginDescUtil {
-    fun getPluginId() = PluginId.getId("shop.itbug.FlutterCheckVersionX")
-    fun getPluginName(): String = PluginManagerCore.getPlugin(getPluginId())!!.name
+    fun getPluginName(): String = FlutterXPluginInfo.NAME
 
     fun getPluginFontsDir(): String {
         val path = PathManager.getPluginsPath() + File.separator + getPluginName() + File.separator + "fonts"
