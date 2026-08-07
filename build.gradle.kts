@@ -8,7 +8,7 @@ val dartVersion: String = project.property("dartVersion") as String
 val sinceBuildVersion: String = project.property("sinceBuildVersion") as String
 val pluginVersion: String = project.property("pluginVersion") as String
 
-val flutterDevVersion = "io.flutter:94.0.0"
+val flutterDevVersion = "io.flutter:95.0.0"
 val isPublishPluginBuild =
     gradle.startParameter.taskNames.any { taskName ->
         taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")

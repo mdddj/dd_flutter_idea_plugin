@@ -14,6 +14,7 @@ import shop.itbug.flutterx.window.vm.DartVmSharedPreferencesComponent
 import shop.itbug.flutterx.window.vm.DartVmStatusComponent
 import shop.itbug.flutterx.window.vm.DriftComposeComponent
 import shop.itbug.flutterx.window.vm.ProviderComposeComponent
+import shop.itbug.flutterx.window.vm.RiverpodComposeComponent
 import javax.swing.JComponent
 
 fun ToolWindow.createDartVmComposeComponent(
@@ -68,6 +69,16 @@ class DartVmProviderDevToolExtension : DartVmDevToolExtension {
     override fun createComponent(context: DartVmDevToolContext): JComponent {
         return context.toolWindow.createDartVmComposeComponent {
             ProviderComposeComponent(context)
+        }
+    }
+}
+
+class DartVmRiverpodDevToolExtension : DartVmDevToolExtension {
+    override fun getTabTitle(project: Project): String = "Riverpod"
+
+    override fun createComponent(context: DartVmDevToolContext): JComponent {
+        return context.toolWindow.createDartVmComposeComponent {
+            RiverpodComposeComponent(context)
         }
     }
 }
