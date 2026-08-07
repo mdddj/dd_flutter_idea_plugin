@@ -62,6 +62,10 @@
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmProviderDevToolExtension"
                        descriptionKey="dart.vm.dev.tool.provider.description"
                        order="after logging"/>
+        <dartVmDevTool id="riverpod"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmRiverpodDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.riverpod.description"
+                       order="after provider"/>
         <dartVmDevTool id="sharedPreferences"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmSharedPreferencesDevToolExtension"
                        descriptionKey="dart.vm.dev.tool.shared.preferences.description"
