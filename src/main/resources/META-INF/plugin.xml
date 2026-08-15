@@ -37,6 +37,10 @@
             <with attribute="implementation"
                   implements="shop.itbug.flutterx.api.vm.DartVmDevToolExtension"/>
         </extensionPoint>
+        <extensionPoint
+                name="pubspecInlayProvider"
+                interface="shop.itbug.flutterx.api.inlay.PubspecInlayProvider"
+                dynamic="false"/>
     </extensionPoints>
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <supportsKotlinPluginMode supportsK2="true"/>
@@ -74,6 +78,18 @@
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmDriftDevToolExtension"
                        descriptionKey="dart.vm.dev.tool.drift.description"
                        order="after hive"/>
+        <pubspecInlayProvider
+                id="addPackage"
+                implementation="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogInlay"
+                order="first"/>
+        <pubspecInlayProvider
+                id="pathPackage"
+                implementation="shop.itbug.flutterx.inlay.yaml.YamlPathResolveHandleInlay"
+                order="after addPackage"/>
+        <pubspecInlayProvider
+                id="packageVersion"
+                implementation="shop.itbug.flutterx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
+                order="last"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="shop.itbug.flutterx.projectView.FlutterPlatformDirectoryDecorator"/>
@@ -122,13 +138,6 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.flutterx.hints.IpHostAutoCompletionContributor"/>
 
-        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
-                                              implementationClass="shop.itbug.flutterx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
-                                              isEnabledByDefault="true" language="yaml" nameKey="lastupdate_date_time"
-                                              bundle="messages.pluginBundle"
-                                              providerId="flutterxWithPubspecUpdateTime"/>
-
-
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.flutterx.inlay.dartfile.DartWidgetToRiverpodWidgetCodeVisit"/>
         <codeInsight.daemonBoundCodeVisionProvider
@@ -163,11 +172,8 @@
         <!-- id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
 
         <codeInsight.inlayProvider
-                implementationClass="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogInlay"
-                language="yaml" id="DartPackageSearchDialogInlay"/>
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.flutterx.inlay.yaml.YamlPathResolveHandleInlay"
-                language="yaml"/>
+                implementationClass="shop.itbug.flutterx.inlay.yaml.FlutterXPubspecInlayProvider"
+                language="yaml" id="FlutterXPubspecInlayProvider"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.flutterx.inlay.dartfile.DartUseageCountInlay"/>-->
 
@@ -417,6 +423,8 @@
                 id="LanguagePopupSettingsAction"/>
         <action id="FlutterDownloaderAction" class="shop.itbug.flutterx.dialog.FlutterDownloaderAction"
                 text="Flutter Downloader" icon="AllIcons.Actions.Download"/>
+        <action id="FlutterInstallerAction" class="shop.itbug.flutterx.dialog.FlutterInstallerAction"
+                text="Flutter Installer" icon="AllIcons.Actions.Execute"/>
         <group id="status_bar_actions">
             <reference ref="SearchPubPluginAction"/>
             <reference ref="FlutterRunBuilderCommandAction"/>
@@ -437,6 +445,7 @@
             <reference ref="OpenMacosProjectInXcodeAction"/>
             <separator text="Other"/>
             <reference ref="FlutterDownloaderAction"/>
+            <reference ref="FlutterInstallerAction"/>
         </group>
         <!--    status bar widgets  end   -->
         <action id="SimpleClassToFreezedAction"

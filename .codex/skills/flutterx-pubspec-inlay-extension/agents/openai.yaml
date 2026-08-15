@@ -1,0 +1,4 @@
+interface:
+  display_name: "FlutterX Pubspec Inlay Extension"
+  short_description: "Extend pubspec.yaml inlays with package context"
+  default_prompt: "Use $flutterx-pubspec-inlay-extension to add or review a FlutterX pubspec inlay provider."

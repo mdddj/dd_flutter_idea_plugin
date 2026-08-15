@@ -1,6 +1,6 @@
 package shop.itbug.flutterx.tools
 
-import com.intellij.codeInsight.hints.declarative.impl.DeclarativeInlayHintsPassFactory
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.codeInspection.util.IntentionFamilyName
@@ -30,14 +30,13 @@ import javax.swing.Icon
 
 val YAML_DART_PACKAGE_INFO_KEY = Key.create<List<DartYamlModel>>("DART_PACKAGE_INFO_KEY")
 val YAML_FILE_IS_FLUTTER_PROJECT = Key.create<Boolean>("DART_FILE_IS_DART")
-private val EDITOR = Key.create<Editor>("FLUTTERX EDITOR")
+private val PUBSPEC_INLAY_DATA_SIGNATURE_KEY = Key.create<String>("FLUTTERX_PUBSPEC_INLAY_DATA_SIGNATURE")
 
 
 class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<DartYamlModel>>() {
 
     override fun collectInformation(file: PsiFile, editor: Editor, hasErrors: Boolean): PubspecYamlFileTools? {
         val yamlFile = file as? YAMLFile ?: return null
-        file.putUserData(EDITOR, editor)
         return PubspecYamlFileTools.create(yamlFile)
     }
 
@@ -65,9 +64,21 @@ class DartPluginVersionCheckV2 : ExternalAnnotator<PubspecYamlFileTools, List<Da
 
             }
         }
-        file.getUserData(EDITOR)?.let { editor ->
-            DeclarativeInlayHintsPassFactory.scheduleRecompute(
-                editor, project = file.project,
+        val inlayDataSignature = file.getUserData(YAML_DART_PACKAGE_INFO_KEY)
+            .orEmpty()
+            .joinToString(separator = "\u0000") { model ->
+                listOf(
+                    model.name,
+                    model.version,
+                    model.pubData?.latest?.version.orEmpty(),
+                    model.pubData?.lastVersionUpdateTimeString.orEmpty(),
+                ).joinToString(separator = "\u0001")
+            }
+        if (file.getUserData(PUBSPEC_INLAY_DATA_SIGNATURE_KEY) != inlayDataSignature) {
+            file.putUserData(PUBSPEC_INLAY_DATA_SIGNATURE_KEY, inlayDataSignature)
+            DaemonCodeAnalyzer.getInstance(file.project).restart(
+                file,
+                "FlutterX pubspec package data changed",
             )
         }
 

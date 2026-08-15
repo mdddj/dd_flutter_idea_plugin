@@ -1,52 +1,33 @@
 package shop.itbug.flutterx.inlay.yaml
 
-import com.intellij.codeInsight.hints.declarative.*
-import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import org.jetbrains.yaml.psi.YAMLFile
-import shop.itbug.flutterx.inlay.getLine
-import shop.itbug.flutterx.tools.YAML_DART_PACKAGE_INFO_KEY
-import shop.itbug.flutterx.util.YamlExtends
+import shop.itbug.flutterx.api.inlay.PubspecInlayContext
+import shop.itbug.flutterx.api.inlay.PubspecInlayProvider
 
-class PubspecPackageUpdateTimeShowInlay : InlayHintsProvider {
+class PubspecPackageUpdateTimeShowInlay : PubspecInlayProvider {
+    override fun collect(context: PubspecInlayContext) {
+        val packageContext = context.packageContext ?: return
+        val model = packageContext.dartYamlModel ?: return
+        packageContext.pubVersionDataModel ?: return
+        val factory = context.factory
 
-    override fun createCollector(file: PsiFile, editor: Editor): InlayHintsCollector {
+        model.getLastUpdateTimeFormatString().takeIf { it.isNotBlank() }?.let { lastUpdate ->
+            context.addInlineElement(
+                presentation = factory.inset(
+                    factory.smallTextWithoutBackground(lastUpdate),
+                    left = 5,
+                ),
+                placeAtTheEndOfLine = true,
+            )
+        }
 
-        return object : SharedBypassCollector {
-            override fun collectFromElement(element: PsiElement, sink: InlayTreeSink) {
-                if (file !is YAMLFile) return
-                val dartInfos = file.getUserData(YAML_DART_PACKAGE_INFO_KEY) ?: return
-                val packageInfo = YamlExtends(element).getMyDartPackageModel()
-                if (packageInfo != null) {
-                    val model = dartInfos.find { it.name == packageInfo.packageName }
-                    if (model != null && model.pubData != null && model.getLastUpdate() != null) {
-                        sink.addPresentation(
-                            EndOfLinePosition(editor.getLine(element)),
-                            null,
-                            null,
-                            HintFormat.default.withColorKind(HintColorKind.TextWithoutBackground)
-                                .withHorizontalMargin(HintMarginPadding.MarginAndSmallerPadding)
-                                .withFontSize(HintFontSize.AsInEditor)
-                        ) {
-                            this.text(model.getLastUpdateTimeFormatString())
-
-                        }
-
-                        model.getLastVersionText()?.let { lastVersion ->
-                            sink.addPresentation(
-                                InlineInlayPosition(element.textRange.endOffset, true, 0),
-                                null,
-                                null,
-                                HintFormat.default.withHorizontalMargin(HintMarginPadding.MarginAndSmallerPadding)
-                                    .withColorKind(HintColorKind.Default).withFontSize(HintFontSize.AsInEditor)
-                            ) {
-                                this.text(lastVersion)
-                            }
-                        }
-                    }
-                }
-            }
+        model.getLastVersionText()?.let { lastVersion ->
+            context.addInlineElement(
+                presentation = factory.inset(
+                    factory.roundWithBackground(factory.smallText(lastVersion)),
+                    left = 5,
+                ),
+                relatesToPrecedingText = true,
+            )
         }
     }
 }
