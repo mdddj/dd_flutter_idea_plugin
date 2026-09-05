@@ -8,7 +8,7 @@ val dartVersion: String by project
 val sinceBuildVersion: String by project
 val pluginVersion: String by project
 
-val flutterDevVersion = "io.flutter:93.0.0"
+val flutterDevVersion = "io.flutter:96.0.0"
 val isPublishPluginBuild =
     gradle.startParameter.taskNames.any { taskName ->
         taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")
@@ -19,7 +19,6 @@ val idePluginDependencies =
         if (!isPublishPluginBuild) {
             add(flutterDevVersion)
         }
-        add("com.redhat.devtools.lsp4ij:0.19.4")
     }
 
 plugins {

@@ -16,7 +16,6 @@
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
         <plugin id="org.intellij.groovy"/>
-        <plugin id="com.redhat.devtools.lsp4ij" />
 
 
         <module name="intellij.libraries.ktor.client"/>
