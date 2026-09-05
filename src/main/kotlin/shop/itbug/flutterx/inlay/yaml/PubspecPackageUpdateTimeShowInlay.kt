@@ -12,9 +12,11 @@ class PubspecPackageUpdateTimeShowInlay : PubspecInlayProvider {
 
         model.getLastUpdateTimeFormatString().takeIf { it.isNotBlank() }?.let { lastUpdate ->
             context.addInlineElement(
-                presentation = factory.inset(
-                    factory.smallTextWithoutBackground(lastUpdate),
-                    left = 5,
+                presentation = context.centerVertically(
+                    factory.inset(
+                        factory.smallTextWithoutBackground(lastUpdate),
+                        left = 5,
+                    ),
                 ),
                 placeAtTheEndOfLine = true,
             )

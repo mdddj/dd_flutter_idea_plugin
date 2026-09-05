@@ -31,6 +31,15 @@ class PubspecInlayContext internal constructor(
     val packageContext: PubspecPackageContext?,
     private val sink: InlayHintsSink,
 ) {
+    fun centerVertically(presentation: InlayPresentation): InlayPresentation {
+        val centeredOffset = ((editor.lineHeight - presentation.height) / 2).coerceAtLeast(0)
+        val baselineOffset = if (centeredOffset > 0) 1 else 0
+        return factory.inset(
+            presentation,
+            top = centeredOffset + baselineOffset,
+        )
+    }
+
     fun addInlineElement(
         presentation: InlayPresentation,
         offset: Int = element.textRange.endOffset,

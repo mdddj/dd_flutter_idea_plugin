@@ -43,6 +43,8 @@ interface PubspecInlayProvider : DumbAware {
 
 Use `context.addInlineElement(...)` to add an inlay. It places the presentation at `element.textRange.endOffset` by default. Supply `offset`, `relatesToPrecedingText`, or `placeAtTheEndOfLine` when the presentation needs different anchoring.
 
+Legacy inline presentations are painted from the top of the editor line. Wrap presentations shorter than the editor line, especially `smallText(...)` and `smallTextWithoutBackground(...)`, with `context.centerVertically(...)` before adding them. The helper derives the offset from the current editor line height and presentation height, then applies the one-pixel baseline correction required by IDEA's small inlay font.
+
 ## Package Context
 
 `packageContext` is created only for direct package entries under these `pubspec.yaml` sections:
@@ -106,9 +108,11 @@ class MyPubspecInlayProvider : PubspecInlayProvider {
         // Decide what to render from the unified package context.
         val text = pubData?.latest?.version ?: dartModel?.version ?: return
         context.addInlineElement(
-            presentation = context.factory.inset(
-                context.factory.smallText("$packageName $text"),
-                left = 5,
+            presentation = context.centerVertically(
+                context.factory.inset(
+                    context.factory.smallText("$packageName $text"),
+                    left = 5,
+                ),
             ),
         )
     }

@@ -26,7 +26,9 @@ object DartPackageDirectoryUtil {
         task.queue()
     }
 
-    private fun findInstalledPackageDirectory(project: Project, packageName: String): VirtualFile? {
+
+    // 获取插件在本机的目录
+    internal fun findInstalledPackageDirectory(project: Project, packageName: String): VirtualFile? {
         val roots = ProjectRootManager.getInstance(project).orderEntries().roots(OrderRootType.CLASSES).roots
         return roots.firstOrNull { root ->
             if (!root.isDirectory) {

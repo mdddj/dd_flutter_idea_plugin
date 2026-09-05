@@ -87,6 +87,10 @@
                 implementation="shop.itbug.flutterx.inlay.yaml.YamlPathResolveHandleInlay"
                 order="after addPackage"/>
         <pubspecInlayProvider
+                id="builtInKotlinCompatibility"
+                implementation="shop.itbug.flutterx.inlay.yaml.BuiltInKotlinCompatibilityInlay"
+                order="after pathPackage"/>
+        <pubspecInlayProvider
                 id="packageVersion"
                 implementation="shop.itbug.flutterx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
                 order="last"/>
