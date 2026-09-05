@@ -2,14 +2,26 @@
 
 ## Unreleased
 
+## 7.2.1 - 2026-09-05
+
 ### New Features
 
-- **Reworked the Riverpod DevTool tab to align with the official `riverpod_devtool`**, including:
-  - Frame-based event history with an interactive **frame stepper** (dots colored by the selected provider's status per frame).
-  - Provider list grouped by status (Modified / Disposed / Unchanged) computed per selected frame.
-  - Provider details with tabs: **State Diff** (uses the built-in IDE diff editor to highlight which properties changed between frames), **State Tree**, and **Events**.
-  - State accumulation per frame (dependencies/parents tracking) and incremental frame refresh via the `riverpod:new_event` extension event.
-  - Hot-restart detection to reset and reconnect the devtool data automatically.
+- Added a frame-based Riverpod DevTool experience aligned with the official `riverpod_devtool`, including provider status grouping, state diffs, state trees, event history, and hot-restart recovery.
+- Added a Flutter SDK installer flow with channel and version selection, download progress, and installation support.
+- Added pubspec inlay extension points so package metadata and actions can be contributed independently.
+- Added AGP 9 built-in Kotlin compatibility detection for installed Flutter packages.
+
+### Improvements
+
+- Improved Riverpod DevTool state tracking with incremental event updates and provider dependency accumulation.
+- Added richer pubspec package inlays and improved YAML path resolution behavior.
+- Updated Dart and Flutter plugin dependencies for the current IntelliJ platform.
+
+### Fixes
+
+- Fixed Dart 509 compatibility by migrating from the removed synchronous `analysis_getHover` API to the Dart LSP hover API.
+- Fixed semantic and syntax highlighting failures in large Dart files caused by the obsolete hover API.
+- Fixed LSP4J class loader conflicts by removing the redundant lsp4ij dependency and using the Dart plugin's LSP implementation.
 
 ## 7.2.0 - 2026-07-20
 
