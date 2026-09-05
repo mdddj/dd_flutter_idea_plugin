@@ -149,7 +149,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("261")
-//        untilBuild.set("253.*")
+        untilBuild.set("261.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
