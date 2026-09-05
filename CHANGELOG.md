@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 7.1.1 - 2026-09-05
+
+### Fixes
+- Fixed Dart 509 compatibility by migrating FlutterX from the removed synchronous `analysis_getHover` API to the Dart LSP hover API.
+- Fixed Dart syntax and semantic highlighting failures in large files caused by the obsolete hover API, including issue #112.
+- Fixed LSP4J class loader conflicts by removing the redundant lsp4ij plugin dependency and using the Dart plugin's LSP implementation.
+
 ## 7.1.0 - 2026-06-10
 
 ### New Features
