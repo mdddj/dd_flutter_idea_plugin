@@ -19,7 +19,6 @@ val idePluginDependencies =
         if (!isPublishPluginBuild) {
             add(flutterDevVersion)
         }
-        add("com.redhat.devtools.lsp4ij:0.20.1")
     }
 
 plugins {

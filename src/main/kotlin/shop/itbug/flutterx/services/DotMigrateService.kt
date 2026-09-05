@@ -16,8 +16,14 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
 import com.jetbrains.lang.dart.DartFileType
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
+import com.jetbrains.lang.dart.psi.DartClass
+import com.jetbrains.lang.dart.psi.DartEnumDefinition
+import com.jetbrains.lang.dart.psi.DartFieldFormalParameter
+import com.jetbrains.lang.dart.psi.DartMethodDeclaration
 import com.jetbrains.lang.dart.psi.DartNamedArgument
+import com.jetbrains.lang.dart.psi.DartSimpleFormalParameter
+import com.jetbrains.lang.dart.psi.DartVarAccessDeclaration
+import com.jetbrains.lang.dart.util.DartResolveUtil
 import com.jetbrains.lang.dart.psi.DartReferenceExpression
 import com.jetbrains.lang.dart.psi.DartShorthandExpression
 import kotlinx.coroutines.*
@@ -53,7 +59,6 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope {
     private val job = SupervisorJob()
     private val smartPointerManager = SmartPointerManager.getInstance(project)
     private val logger = thisLogger()
-    private val dartService = DartAnalysisServerService.getInstance(project)
     private var _cachedElements = MutableStateFlow<MutableList<DotRemoveElement>>(mutableListOf())
     val cachedElements = _cachedElements.asStateFlow()
 
@@ -228,14 +233,18 @@ class DotMigrateService(val project: Project) : Disposable, CoroutineScope {
     private data class KindAndType(val type: String, val kind: String)
 
     private fun getElementKind(element: PsiElement): KindAndType? {
-        val file = element.containingFile.virtualFile ?: return null
-        val result = dartService.analysis_getHover(file, element.textOffset)
-        if (result.isNotEmpty()) {
-            val r = result[0]
-            val t = r.staticType
-            return KindAndType(t ?: "", r.elementKind ?: "")
-        }
-        return null
+        val target = DartResolveUtil.findReferenceAndComponentTarget(element) ?: return null
+        val type = when (target) {
+            is DartSimpleFormalParameter -> target.type?.text
+            is DartFieldFormalParameter -> target.type?.text
+            is DartVarAccessDeclaration -> target.type?.text
+            is DartMethodDeclaration -> target.returnType?.text
+            else -> null
+        }.orEmpty()
+        val isEnum = target is DartClass && target.isEnum ||
+            PsiTreeUtil.getParentOfType(target, DartEnumDefinition::class.java) != null
+        val kind = if (isEnum) "enum" else ""
+        return if (type.isNotEmpty() || kind.isNotEmpty()) KindAndType(type, kind) else null
     }
 
     fun stop() {
