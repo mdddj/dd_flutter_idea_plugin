@@ -8,6 +8,7 @@
 - Removed the Enum Migrate tool from the FlutterX tool window.
 - Removed Aliyun Gradle mirror inlays for Groovy and Kotlin DSL build files.
 - Removed the bundled Groovy plugin dependency.
+- Removed the bundled Kotlin IDE plugin dependency.
 
 ## 7.2.1 - 2026-09-05
 

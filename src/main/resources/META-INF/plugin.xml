@@ -10,7 +10,6 @@
         <plugin id="com.intellij.modules.platform"/>
         <plugin id="org.jetbrains.plugins.yaml"/>
         <plugin id="Dart"/>
-        <plugin id="org.jetbrains.kotlin"/>
         <plugin id="org.intellij.plugins.markdown"/>
         <plugin id="org.jetbrains.plugins.terminal"/>
         <plugin id="com.intellij.modules.json"/>
@@ -39,9 +38,6 @@
                 interface="shop.itbug.flutterx.api.inlay.PubspecInlayProvider"
                 dynamic="false"/>
     </extensionPoints>
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <supportsKotlinPluginMode supportsK2="true"/>
-    </extensions>
     <extensions defaultExtensionNs="shop.itbug.FlutterCheckVersionX">
         <dartVmDevTool id="vm"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmStatusDevToolExtension"

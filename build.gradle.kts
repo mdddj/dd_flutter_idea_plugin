@@ -75,7 +75,6 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.terminal",
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
-    "org.jetbrains.kotlin",
     "com.intellij.modules.json",
     "com.intellij.platform.images"
 )
@@ -282,7 +281,7 @@ tasks.clean {
 tasks.test {
     dependencies {
         intellijPlatform {
-            bundledPlugins("org.jetbrains.kotlin", "org.jetbrains.plugins.yaml")
+            bundledPlugins("org.jetbrains.plugins.yaml")
         }
     }
 }
