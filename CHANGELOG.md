@@ -2,11 +2,18 @@
 
 ## Unreleased
 
+## 7.3.0 - 2026-10-08
+
 ### New Features
 
 - Added MCP tools for Dart VM data: `flutterx_list_apps`, `flutterx_vm_info`, and `flutterx_list_data_tools` let AI agents discover running Flutter apps and inspect the VM.
 - Added an optional `DartVmMcpToolExtension` interface so any Dart VM dev tool tab can expose its own MCP tools; toolsets are collected automatically.
 - Added read-only MCP tools for every built-in Dart VM tab: `flutterx_vm_status`, `flutterx_logs`, `flutterx_memory`, `flutterx_http`, `flutterx_providers`, `flutterx_riverpod`, `flutterx_shared_preferences`, `flutterx_hive`, and `flutterx_drift`.
+
+### Improvements
+
+- Made the Riverpod panel easier to scan: frames start at 1, same-name providers stay distinct, and short value changes show as before/after cards.
+- Updated bundled IDE plugin dependencies to Dart 510 and Flutter 97.
 
 ### Removed
 
