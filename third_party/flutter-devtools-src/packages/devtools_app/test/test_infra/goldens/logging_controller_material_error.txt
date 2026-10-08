@@ -1,0 +1,27 @@
+Exception caught by widgets library
+The following assertion was thrown building TextField:
+No Material widget found.
+TextField widgets require a Material widget ancestor.
+In material design, most widgets are conceptually "printed" on a sheet of material. In Flutter's material library, that material is represented by the Material widget. It is the Material widget that renders ink splashes, for instance. Because of this, many material library widgets require that there be a Material widget in the tree above them.
+To introduce a Material widget, you can either directly include one, or use a widget that contains Material itself, such as a Card, Dialog, Drawer, or Scaffold.
+▶The specific widget that could not find a Material ancestor was: TextField
+▼The ancestors of this widget were: 
+├─▶Column
+├─▶ExampleWidget
+├─▶MaterialApp
+├─MissingMaterialError
+├─▶MaterialApp
+├─MyApp
+└─...
+
+▼The relevant error-causing widget was: 
+<STACK_TRACE_LINE>
+
+▼When the exception was thrown, this was the stack: 
+<STACK_TRACE_LINE>
+<STACK_TRACE_LINE>
+<STACK_TRACE_LINE>
+<STACK_TRACE_LINE>
+<STACK_TRACE_LINE>
+...
+

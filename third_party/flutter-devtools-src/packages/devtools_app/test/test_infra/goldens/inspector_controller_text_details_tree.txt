@@ -1,0 +1,18 @@
+▼[T]Text <-- selected
+│ "Hello, World!"
+│ textAlign: null [D]
+│ textDirection: null [D]
+│ locale: null [D]
+│ softWrap: null [D]
+│ overflow: null [D]
+│ textScaleFactor: null [D]
+│ maxLines: null [D]
+│ textWidthBasis: null [D]
+│ textHeightBehavior: null [D]
+│ dependencies: [MediaQuery, DefaultTextStyle]
+└─▼[R]RichText
+    softWrap: wrapping at box width
+    maxLines: unlimited
+    text: "Hello, World!"
+    dependencies: [_LocalizationsScope-[GlobalKey#00000], Directionality]
+    ▶renderObject: RenderParagraph#00000 relayoutBoundary=up2

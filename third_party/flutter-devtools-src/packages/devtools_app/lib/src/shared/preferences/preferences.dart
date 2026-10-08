@@ -1,0 +1,341 @@
+// Copyright 2020 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file or at https://developers.google.com/open-source/licenses/bsd.
+
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:collection/collection.dart';
+import 'package:devtools_app_shared/ui.dart';
+import 'package:devtools_app_shared/utils.dart';
+import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
+
+import '../../service/vm_service_wrapper.dart';
+import '../analytics/analytics.dart' as ga;
+import '../analytics/constants.dart' as gac;
+import '../config_specific/logger/logger_helpers.dart';
+import '../constants.dart';
+import '../diagnostics/inspector_service.dart';
+import '../globals.dart';
+import '../primitives/query_parameters.dart';
+import '../server/server.dart';
+import '../utils/utils.dart';
+
+part '_cpu_profiler_preferences.dart';
+part '_extension_preferences.dart';
+part '_inspector_preferences.dart';
+part '_logging_preferences.dart';
+part '_memory_preferences.dart';
+part '_network_preferences.dart';
+part '_performance_preferences.dart';
+
+final _log = Logger('PreferencesController');
+
+const _thirdPartyPathSegment = 'third_party';
+
+/// DevTools preferences for experimental features.
+enum _ExperimentPreferences {
+  /// Deprecated, we ignore this key in favor of [wasmOptOut].
+  wasm,
+
+  /// Whether a user has opted out of the dart2wasm experiment.
+  wasmOptOut;
+
+  String get storageKey {
+    if (name == 'wasm') {
+      _log.warning(
+        '[deprecated] The "wasm" key is deprecated, use "wasmOptOut" instead.',
+      );
+    }
+    return '$storagePrefix.$name';
+  }
+
+  static const storagePrefix = 'experiment';
+}
+
+/// DevTools preferences for UI-related settings.
+enum _UiPreferences {
+  darkMode,
+  // TODO(kenz): consider renaming this to 'advancedDeveloperMode' if the DTD
+  //  tools tab stays in DevTools indefinitely. This will depend on whether
+  //  https://github.com/flutter/devtools/issues/9216 is resolved.
+  vmDeveloperMode;
+
+  String get storageKey => '$storagePrefix.$name';
+
+  static const storagePrefix = 'ui';
+}
+
+/// DevTools preferences for general settings.
+///
+/// These values are not stored in the DevTools storage file with a prefix.
+enum _GeneralPreferences { verboseLogging }
+
+/// A controller for global application preferences.
+class PreferencesController extends DisposableController
+    with AutoDisposeControllerMixin {
+  /// Whether the user preference for DevTools theme is set to dark mode.
+  ///
+  /// To check whether DevTools is using a light or dark theme, other parts of
+  /// the DevTools codebase should always check [isDarkThemeEnabled] instead of
+  /// directly checking the value of this notifier. This is because
+  /// [isDarkThemeEnabled] properly handles the case where DevTools is embedded
+  /// inside of an IDE, and this notifier only tracks the value of the dark
+  /// theme user preference.
+  final darkModeEnabled = ValueNotifier<bool>(useDarkThemeAsDefault);
+
+  /// Whether the user has enabled advanced developer mode.
+  ///
+  /// When enabled, DevTools will show additional features that are intended for
+  /// advanced development journeys, such as inspecting the internal state of
+  /// the Dart VM or the Dart Tooling Daemon.
+  final advancedDeveloperModeEnabled = ValueNotifier<bool>(false);
+
+  /// Whether DevTools should loaded with the dart2wasm + skwasm instead of
+  /// dart2js + canvaskit
+  final wasmEnabled = ValueNotifier<bool>(false);
+
+  final verboseLoggingEnabled = ValueNotifier<bool>(
+    Logger.root.level == verboseLoggingLevel,
+  );
+
+  CpuProfilerPreferencesController get cpuProfiler => _cpuProfiler;
+  final _cpuProfiler = CpuProfilerPreferencesController();
+
+  ExtensionsPreferencesController get devToolsExtensions => _extensions;
+  final _extensions = ExtensionsPreferencesController();
+
+  // TODO(https://github.com/flutter/devtools/issues/7860): Clean-up after
+  // Inspector V2 has been released.
+  InspectorPreferencesController get inspector => _inspector;
+  final _inspector = InspectorPreferencesController();
+
+  LoggingPreferencesController get logging => _logging;
+  final _logging = LoggingPreferencesController();
+
+  MemoryPreferencesController get memory => _memory;
+  final _memory = MemoryPreferencesController();
+
+  NetworkPreferencesController get network => _network;
+  final _network = NetworkPreferencesController();
+
+  PerformancePreferencesController get performance => _performance;
+  final _performance = PerformancePreferencesController();
+
+  @override
+  Future<void> init() async {
+    // Get the current values and listen for and write back changes.
+    await _initDarkMode();
+    await _initAdvancedDeveloperMode();
+    await _initWasmEnabled();
+    await _initVerboseLogging();
+
+    await cpuProfiler.init();
+    await devToolsExtensions.init();
+    await inspector.init();
+    await logging.init();
+    await memory.init();
+    await network.init();
+    await performance.init();
+
+    setGlobal(PreferencesController, this);
+  }
+
+  /// Enables the wasm experiment in storage.
+  ///
+  /// This is used to persist the preference across reloads.
+  Future<void> enableWasmInStorage() async {
+    await storage.setValue(_ExperimentPreferences.wasm.storageKey, 'true');
+  }
+
+  Future<void> _initDarkMode() async {
+    final darkModeValue = await storage.getValue(
+      _UiPreferences.darkMode.storageKey,
+    );
+    final useDarkMode =
+        (darkModeValue == null && useDarkThemeAsDefault) ||
+        darkModeValue == 'true';
+    ga.impression(gac.devToolsMain, gac.startingTheme(darkMode: useDarkMode));
+    toggleDarkModeTheme(useDarkMode);
+    addAutoDisposeListener(darkModeEnabled, () {
+      safeUnawaited(
+        storage.setValue(
+          _UiPreferences.darkMode.storageKey,
+          '${darkModeEnabled.value}',
+        ),
+      );
+    });
+  }
+
+  Future<void> _initAdvancedDeveloperMode() async {
+    final advancedDeveloperModeValue = await boolValueFromStorage(
+      _UiPreferences.vmDeveloperMode.storageKey,
+      defaultsTo: false,
+    );
+    toggleAdvancedDeveloperMode(advancedDeveloperModeValue);
+    addAutoDisposeListener(advancedDeveloperModeEnabled, () {
+      safeUnawaited(
+        storage.setValue(
+          _UiPreferences.vmDeveloperMode.storageKey,
+          '${advancedDeveloperModeEnabled.value}',
+        ),
+      );
+    });
+  }
+
+  Future<void> _initWasmEnabled() async {
+    wasmEnabled.value = kIsWasm;
+
+    final queryParams = DevToolsQueryParams.load();
+    // If the user forced the dart2js-compiled DevTools via query parameter,
+    // then set the storage value to match. This will persist across multiple
+    // sessions of DevTools.
+    final jsEnabledFromQueryParams = queryParams.useJs;
+    if (jsEnabledFromQueryParams) {
+      safeUnawaited(
+        storage.setValue(_ExperimentPreferences.wasmOptOut.storageKey, 'true'),
+      );
+      ga.impression(gac.devToolsMain, gac.forceLoadJs);
+    }
+
+    addAutoDisposeListener(wasmEnabled, () async {
+      final enabled = wasmEnabled.value;
+      _log.fine('preference update (wasmEnabled = $enabled)');
+
+      await storage.setValue(
+        _ExperimentPreferences.wasmOptOut.storageKey,
+        '${!enabled}',
+      );
+
+      // Update the wasm mode query parameter if it does not match the value of
+      // the setting.
+      final wasmEnabledFromQueryParams = DevToolsQueryParams.load().useWasm;
+      if (wasmEnabledFromQueryParams != enabled) {
+        _log.fine(
+          'Reloading DevTools for Wasm preference update (enabled = $enabled)',
+        );
+        updateQueryParameter(
+          DevToolsQueryParams.compilerKey,
+          enabled ? 'wasm' : null,
+          reload: true,
+        );
+      }
+    });
+
+    final optOutFromStorage = await boolValueFromStorage(
+      _ExperimentPreferences.wasmOptOut.storageKey,
+      defaultsTo: false,
+    );
+    final enabledFromStorage = !optOutFromStorage;
+    final enabledFromQueryParams = queryParams.useWasm;
+
+    if (enabledFromQueryParams && !kIsWasm) {
+      // If we hit this case, we tried to load DevTools with WASM but we fell
+      // back to JS. We know this because the flutter_bootstrap.js logic always
+      // sets the 'wasm' query parameter to 'true' when attempting to load
+      // DevTools with wasm. Remove the wasm query parameter and return early.
+      updateQueryParameter(DevToolsQueryParams.compilerKey, null);
+      ga.impression(gac.devToolsMain, gac.jsFallback);
+
+      // Do not show the JS fallback notification when embedded in VS Code
+      // because we do not expect the WASM build to load successfully by
+      // default. This is because cross-origin-isolation is disabled by VS
+      // Code. See https://github.com/microsoft/vscode/issues/186614.
+      final embeddedInVsCode =
+          queryParams.embedMode.embedded && queryParams.ide == 'VSCode';
+      if (!embeddedInVsCode) {
+        notificationService.push(
+          'Something went wrong when trying to load DevTools with WebAssembly. '
+          'Falling back to Javascript.',
+        );
+      }
+      return;
+    }
+
+    final shouldEnableWasm =
+        (enabledFromStorage || enabledFromQueryParams) &&
+        !jsEnabledFromQueryParams &&
+        kIsWeb &&
+        // Wasm cannot be enabled if DevTools was built using `flutter run`.
+        !usingDebugDevToolsServer;
+    assert(kIsWasm == shouldEnableWasm);
+    // This should be a no-op if the flutter_bootstrap.js logic set the
+    // renderer properly, but we call this to be safe in case something went
+    // wrong.
+    toggleWasmEnabled(shouldEnableWasm);
+  }
+
+  Future<void> _initVerboseLogging() async {
+    final verboseLoggingEnabledValue = await boolValueFromStorage(
+      _GeneralPreferences.verboseLogging.name,
+      defaultsTo: false,
+    );
+    toggleVerboseLogging(verboseLoggingEnabledValue);
+    addAutoDisposeListener(verboseLoggingEnabled, () {
+      safeUnawaited(
+        storage.setValue(
+          _GeneralPreferences.verboseLogging.name,
+          verboseLoggingEnabled.value.toString(),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    cpuProfiler.dispose();
+    devToolsExtensions.dispose();
+    inspector.dispose();
+    logging.dispose();
+    memory.dispose();
+    network.dispose();
+    performance.dispose();
+    super.dispose();
+  }
+
+  /// Change the value of the dark mode setting.
+  void toggleDarkModeTheme(bool? useDarkMode) {
+    if (useDarkMode != null) {
+      darkModeEnabled.value = useDarkMode;
+    }
+  }
+
+  /// Change the value of the advanced developer mode setting.
+  void toggleAdvancedDeveloperMode(bool? enable) {
+    if (enable != null) {
+      advancedDeveloperModeEnabled.value = enable;
+      VmServiceWrapper.enablePrivateRpcs = enable;
+    }
+  }
+
+  /// Change the value of the wasm mode setting.
+  void toggleWasmEnabled(bool? enable) {
+    if (enable != null) {
+      wasmEnabled.value = enable;
+    }
+  }
+
+  void toggleVerboseLogging(bool? enableVerboseLogging) {
+    if (enableVerboseLogging != null) {
+      verboseLoggingEnabled.value = enableVerboseLogging;
+      if (enableVerboseLogging) {
+        setDevToolsLoggingLevel(verboseLoggingLevel);
+      } else {
+        setDevToolsLoggingLevel(basicLoggingLevel);
+      }
+    }
+  }
+}
+
+/// Retrieves a boolean value from the preferences stored in local storage.
+///
+/// If the value is not present in the stored preferences, this will default to
+/// the value specified by [defaultsTo].
+Future<bool> boolValueFromStorage(
+  String storageKey, {
+  required bool defaultsTo,
+}) async {
+  final value = await storage.getValue(storageKey);
+  return defaultsTo ? value != 'false' : value == 'true';
+}

@@ -1,0 +1,118 @@
+// Copyright 2024 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file or at https://developers.google.com/open-source/licenses/bsd.
+
+import 'package:devtools_app_shared/utils.dart';
+import 'package:flutter/foundation.dart';
+
+import '../../../../../shared/globals.dart';
+import '../../../../../shared/utils/utils.dart';
+import '../../../shared/primitives/memory_timeline.dart';
+import '../data/primitives.dart';
+import 'memory_tracker.dart';
+
+/// Connection between chart and application.
+///
+/// The connection consists of listeners to events from vm and
+/// ongoing requests to vm service for current memory usage.
+///
+/// When user pauses the chart, the data is still collected.
+///
+/// Does not fail in case of accidental disconnect.
+///
+/// All interactions between chart and vm are initiated by this class.
+/// So, if this class is not instantiated, the interaction does not happen.
+class ChartVmConnection extends DisposableController
+    with AutoDisposeControllerMixin {
+  ChartVmConnection(this.timeline, {required this.isAndroidChartVisible});
+
+  final MemoryTimeline timeline;
+  final ValueListenable<bool> isAndroidChartVisible;
+
+  late final _memoryTracker = MemoryTracker(
+    timeline,
+    isAndroidChartVisible: isAndroidChartVisible,
+  );
+
+  bool initialized = false;
+
+  PeriodicDebouncer? _polling;
+
+  late final bool isDeviceAndroid;
+
+  /// Initializes the connection.
+  ///
+  /// This method should be called without async gap after validation that
+  /// the application is still connected.
+  @override
+  void init() {
+    if (initialized) return;
+
+    assert(serviceConnection.serviceManager.connectedState.value.connected);
+
+    isDeviceAndroid =
+        serviceConnection.serviceManager.vm?.operatingSystem == 'android';
+
+    addAutoDisposeListener(serviceConnection.serviceManager.connectedState, () {
+      final connected =
+          serviceConnection.serviceManager.connectedState.value.connected;
+      if (!connected) {
+        _polling?.cancel();
+      }
+    });
+
+    autoDisposeStreamSubscription(
+      serviceConnection.serviceManager.service!.onExtensionEvent.listen(
+        _memoryTracker.onMemoryData,
+      ),
+    );
+
+    autoDisposeStreamSubscription(
+      serviceConnection.serviceManager.service!.onGCEvent.listen(
+        _memoryTracker.onGCEvent,
+      ),
+    );
+
+    autoDisposeStreamSubscription(
+      serviceConnection.serviceManager.service!.onIsolateEvent.listen(
+        _memoryTracker.onIsolateEvent,
+      ),
+    );
+
+    _polling = PeriodicDebouncer.run(chartUpdateDelay, ({
+      DebounceCancelledCallback? cancelledCallback,
+    }) async {
+      if (!_isConnected) {
+        _polling?.cancel();
+        return;
+      }
+      try {
+        await _memoryTracker.pollMemory();
+      } catch (e, trace) {
+        // TODO (polina-c): remove after fixing https://github.com/flutter/devtools/issues/7808
+        // and https://github.com/flutter/devtools/issues/7722
+        final isDisconnectionError =
+            e.toString().contains('connection') ||
+            trace.toString().contains('isFlutterApp');
+
+        if (_isConnected && !isDisconnectionError) {
+          rethrow;
+        }
+      }
+    });
+
+    initialized = true;
+  }
+
+  bool get _isConnected =>
+      serviceConnection.serviceManager.connectedState.value.connected;
+
+  @override
+  void dispose() {
+    _polling?.cancel();
+    _polling?.dispose();
+    _polling = null;
+    _memoryTracker.dispose();
+    super.dispose();
+  }
+}
