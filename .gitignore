@@ -53,3 +53,8 @@ notes/
 flutterdemo/
 
 packages/
+
+### Local agent / IDE client ###
+.memory/
+.pi/
+src/.mcp.json
