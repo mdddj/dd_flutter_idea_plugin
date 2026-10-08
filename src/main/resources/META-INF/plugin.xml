@@ -10,13 +10,11 @@
         <plugin id="com.intellij.modules.platform"/>
         <plugin id="org.jetbrains.plugins.yaml"/>
         <plugin id="Dart"/>
-        <plugin id="org.jetbrains.kotlin"/>
         <plugin id="org.intellij.plugins.markdown"/>
         <plugin id="org.jetbrains.plugins.terminal"/>
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
-        <plugin id="org.intellij.groovy"/>
-        <plugin id="com.redhat.devtools.lsp4ij" />
+        <plugin id="com.intellij.mcpServer" />
 
 
         <module name="intellij.libraries.ktor.client"/>
@@ -37,10 +35,11 @@
             <with attribute="implementation"
                   implements="shop.itbug.flutterx.api.vm.DartVmDevToolExtension"/>
         </extensionPoint>
+        <extensionPoint
+                name="pubspecInlayProvider"
+                interface="shop.itbug.flutterx.api.inlay.PubspecInlayProvider"
+                dynamic="false"/>
     </extensionPoints>
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <supportsKotlinPluginMode supportsK2="true"/>
-    </extensions>
     <extensions defaultExtensionNs="shop.itbug.FlutterCheckVersionX">
         <dartVmDevTool id="vm"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmStatusDevToolExtension"
@@ -62,6 +61,10 @@
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmProviderDevToolExtension"
                        descriptionKey="dart.vm.dev.tool.provider.description"
                        order="after logging"/>
+        <dartVmDevTool id="riverpod"
+                       implementation="shop.itbug.flutterx.window.vm.extension.DartVmRiverpodDevToolExtension"
+                       descriptionKey="dart.vm.dev.tool.riverpod.description"
+                       order="after provider"/>
         <dartVmDevTool id="sharedPreferences"
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmSharedPreferencesDevToolExtension"
                        descriptionKey="dart.vm.dev.tool.shared.preferences.description"
@@ -74,6 +77,22 @@
                        implementation="shop.itbug.flutterx.window.vm.extension.DartVmDriftDevToolExtension"
                        descriptionKey="dart.vm.dev.tool.drift.description"
                        order="after hive"/>
+        <pubspecInlayProvider
+                id="addPackage"
+                implementation="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogInlay"
+                order="first"/>
+        <pubspecInlayProvider
+                id="pathPackage"
+                implementation="shop.itbug.flutterx.inlay.yaml.YamlPathResolveHandleInlay"
+                order="after addPackage"/>
+        <pubspecInlayProvider
+                id="builtInKotlinCompatibility"
+                implementation="shop.itbug.flutterx.inlay.yaml.BuiltInKotlinCompatibilityInlay"
+                order="after pathPackage"/>
+        <pubspecInlayProvider
+                id="packageVersion"
+                implementation="shop.itbug.flutterx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
+                order="last"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="shop.itbug.flutterx.projectView.FlutterPlatformDirectoryDecorator"/>
@@ -122,13 +141,6 @@
         <completion.contributor language="Dart"
                                 implementationClass="shop.itbug.flutterx.hints.IpHostAutoCompletionContributor"/>
 
-        <codeInsight.declarativeInlayProvider group="OTHER_GROUP"
-                                              implementationClass="shop.itbug.flutterx.inlay.yaml.PubspecPackageUpdateTimeShowInlay"
-                                              isEnabledByDefault="true" language="yaml" nameKey="lastupdate_date_time"
-                                              bundle="messages.pluginBundle"
-                                              providerId="flutterxWithPubspecUpdateTime"/>
-
-
         <codeInsight.daemonBoundCodeVisionProvider
                 implementation="shop.itbug.flutterx.inlay.dartfile.DartWidgetToRiverpodWidgetCodeVisit"/>
         <codeInsight.daemonBoundCodeVisionProvider
@@ -146,16 +158,6 @@
         <config.codeVisionGroupSettingProvider
                 implementation="shop.itbug.flutterx.inlay.dartfile.DartWidgetParseToRiverpodInlaySetting"
                 id="Simple-Widget-to-Riverpod-Widget"/>
-        <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
-        <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlayGroupSetting"
-                id="GradleAliyuMirrorImageInlayGroupSetting"/>
-        <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.KtsAliyunMirrorInlay"/>
-        <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
-                id="KtsAliyunMirrorInlayGroupSetting"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
         <!--        <config.codeVisionGroupSettingProvider-->
@@ -163,11 +165,8 @@
         <!-- id="DartPackageSearchDialogCodeVisionGroupSetting"/>-->
 
         <codeInsight.inlayProvider
-                implementationClass="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogInlay"
-                language="yaml" id="DartPackageSearchDialogInlay"/>
-        <codeInsight.inlayProvider
-                implementationClass="shop.itbug.flutterx.inlay.yaml.YamlPathResolveHandleInlay"
-                language="yaml"/>
+                implementationClass="shop.itbug.flutterx.inlay.yaml.FlutterXPubspecInlayProvider"
+                language="yaml" id="FlutterXPubspecInlayProvider"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.flutterx.inlay.dartfile.DartUseageCountInlay"/>-->
 
@@ -245,6 +244,8 @@
         <!--        <psi.referenceContributor-->
         <!-- implementation="shop.itbug.flutterx.reference.AssetReferenceContributor" language="Dart"/>-->
 
+        <mcpServer.mcpToolset implementation="shop.itbug.flutterx.mcp.FlutterXDartVmMcpTools"/>
+        <mcpServer.mcpToolsProvider implementation="shop.itbug.flutterx.mcp.DartVmExtensionMcpToolsProvider"/>
 
     </extensions>
 
@@ -417,6 +418,8 @@
                 id="LanguagePopupSettingsAction"/>
         <action id="FlutterDownloaderAction" class="shop.itbug.flutterx.dialog.FlutterDownloaderAction"
                 text="Flutter Downloader" icon="AllIcons.Actions.Download"/>
+        <action id="FlutterInstallerAction" class="shop.itbug.flutterx.dialog.FlutterInstallerAction"
+                text="Flutter Installer" icon="AllIcons.Actions.Execute"/>
         <group id="status_bar_actions">
             <reference ref="SearchPubPluginAction"/>
             <reference ref="FlutterRunBuilderCommandAction"/>
@@ -437,6 +440,7 @@
             <reference ref="OpenMacosProjectInXcodeAction"/>
             <separator text="Other"/>
             <reference ref="FlutterDownloaderAction"/>
+            <reference ref="FlutterInstallerAction"/>
         </group>
         <!--    status bar widgets  end   -->
         <action id="SimpleClassToFreezedAction"

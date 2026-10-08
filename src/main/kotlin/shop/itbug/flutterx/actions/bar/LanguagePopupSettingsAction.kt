@@ -11,6 +11,7 @@ import shop.itbug.flutterx.widget.PopupWidgets
 class LanguagePopupSettingsAction : AnAction(), DumbAware {
     override fun actionPerformed(p0: AnActionEvent) {
         PopupWidgets.showPluginLanguageSettings(p0)
+        
     }
 
     override fun update(e: AnActionEvent) {

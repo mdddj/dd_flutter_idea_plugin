@@ -14,13 +14,13 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.DartTokenTypes
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.*
 import com.jetbrains.lang.dart.util.DartElementGenerator
 import shop.itbug.flutterx.config.GenerateAssetsClassConfig
 import shop.itbug.flutterx.config.GenerateAssetsClassConfigModel
 import shop.itbug.flutterx.config.PluginConfig
+import shop.itbug.flutterx.document.getDartElementType
 import shop.itbug.flutterx.services.PubspecService
 import java.io.File
 
@@ -60,10 +60,7 @@ object MyDartPsiElementUtil {
      * @param referenceResolve 引用节点
      */
     fun getRefreshMethodName(referenceResolve: DartReferenceExpressionImpl): String {
-        val dartData = DartAnalysisServerService.getInstance(referenceResolve.project).analysis_getHover(
-            referenceResolve.containingFile.virtualFile, referenceResolve.textOffset
-        )
-        return dartData.firstOrNull()?.staticType.toString()
+        return referenceResolve.getDartElementType().orEmpty()
     }
 
 

@@ -5,12 +5,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.childrenOfType
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.DartDefaultFormalNamedParameter
 import com.jetbrains.lang.dart.psi.DartSimpleFormalParameter
 import com.jetbrains.lang.dart.psi.DartSimpleType
 import com.jetbrains.lang.dart.psi.impl.*
 import shop.itbug.flutterx.document.generateClassByNames
+import shop.itbug.flutterx.document.getDartElementType
 import shop.itbug.flutterx.util.MyDartPsiElementUtil
 
 
@@ -376,14 +376,7 @@ val DartDefaultFormalNamedParameterActionManager.MyPropertiesWrapper.final_type_
         if (t != null) {
             //处理this
             element.firstChild?.firstChild?.children?.find { it is DartReferenceExpressionImpl }?.let { ref ->
-                run {
-                    val d = DartAnalysisServerService.getInstance(ref.project)
-                        .analysis_getHover(ref.containingFile.virtualFile, ref.textOffset)
-                    if (d.isNotEmpty()) {
-                        val type = d.first().staticType
-                        return type
-                    }
-                }
+                return ref.getDartElementType() ?: typeString
             }
         }
         return typeString

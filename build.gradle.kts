@@ -8,7 +8,7 @@ val dartVersion: String = project.property("dartVersion") as String
 val sinceBuildVersion: String = project.property("sinceBuildVersion") as String
 val pluginVersion: String = project.property("pluginVersion") as String
 
-val flutterDevVersion = "io.flutter:94.0.0"
+val flutterDevVersion = "io.flutter:97.0.0"
 val isPublishPluginBuild =
     gradle.startParameter.taskNames.any { taskName ->
         taskName == "publishPlugin" || taskName.endsWith(":publishPlugin")
@@ -19,7 +19,6 @@ val idePluginDependencies =
         if (!isPublishPluginBuild) {
             add(flutterDevVersion)
         }
-        add("com.redhat.devtools.lsp4ij:0.20.1")
     }
 
 plugins {
@@ -76,8 +75,6 @@ val bPlugins = mutableListOf(
     "org.jetbrains.plugins.terminal",
     "org.jetbrains.plugins.yaml",
     "org.intellij.plugins.markdown",
-    "org.intellij.groovy",
-    "org.jetbrains.kotlin",
     "com.intellij.modules.json",
     "com.intellij.platform.images"
 )
@@ -95,6 +92,7 @@ dependencies {
         pluginVerifier()
         zipSigner()
         javaCompiler()
+        bundledPlugin("com.intellij.mcpServer")
         bundledPlugin("com.intellij.java")
         bundledModule("intellij.libraries.ktor.client")
         bundledModule("intellij.libraries.ktor.client.cio")
@@ -150,7 +148,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("262")
-//        untilBuild.set("253.*")
+        untilBuild.set("262.*")
         changeNotes.set(myChangeLog)
         pluginDescription.set(file("插件介绍h.md").readText().trim())
     }
@@ -284,7 +282,7 @@ tasks.clean {
 tasks.test {
     dependencies {
         intellijPlatform {
-            bundledPlugins("org.jetbrains.kotlin", "org.jetbrains.plugins.yaml", "org.intellij.groovy")
+            bundledPlugins("org.jetbrains.plugins.yaml")
         }
     }
 }

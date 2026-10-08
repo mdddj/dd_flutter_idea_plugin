@@ -7,7 +7,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -58,7 +57,6 @@ class MyAssetGenPostStart : ProjectActivity {
             }
             FlutterXVMService.getInstance(project)
             FlutterVersionService.getInstance(project).refreshAndGetFlutterVersion()
-            project.service<DotMigrateService>()
         }
     }
 }

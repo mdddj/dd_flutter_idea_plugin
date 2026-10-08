@@ -2,10 +2,10 @@ package shop.itbug.flutterx.document
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService
 import com.jetbrains.lang.dart.psi.impl.*
-import org.dartlang.analysis.server.protocol.HoverInformation
 import shop.itbug.flutterx.manager.*
+import shop.itbug.flutterx.util.DartLspHoverInfo
+import shop.itbug.flutterx.util.DartLspHoverUtil
 import shop.itbug.flutterx.util.manager
 
 
@@ -174,13 +174,5 @@ fun PsiElement.getDartElementType(): String? {
 }
 
 
-///获取dart的信息(来自分析服务器)
-fun PsiElement.getDartInfo(): HoverInformation? {
-    val file = containingFile.virtualFile ?: return null
-    val r =
-        DartAnalysisServerService.getInstance(project).analysis_getHover(file, this.textRange.startOffset)
-    if (r.isEmpty()) {
-        return null
-    }
-    return r.first()
-}
+///获取dart的信息(来自 LSP)
+fun PsiElement.getDartInfo(): DartLspHoverInfo? = DartLspHoverUtil.getHover(this)
