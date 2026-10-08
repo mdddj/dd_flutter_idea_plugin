@@ -9,7 +9,6 @@ import org.jetbrains.jewel.bridge.addComposeTab
 import shop.itbug.flutterx.common.yaml.hasPubspecYamlFile
 import shop.itbug.flutterx.config.DioListingUiConfig
 import shop.itbug.flutterx.config.DoxListeningSetting
-import shop.itbug.flutterx.dialog.FlutterDownloadPanel
 import shop.itbug.flutterx.dialog.icons.CupertinoIconsDialog
 import shop.itbug.flutterx.dialog.icons.MaterialIconsDialog
 import shop.itbug.flutterx.form.socket.SocketRequestForm
