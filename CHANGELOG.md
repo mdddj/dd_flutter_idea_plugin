@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### New Features
+
+- Added MCP tools for Dart VM data: `flutterx_list_apps`, `flutterx_vm_info`, and `flutterx_list_data_tools` let AI agents discover running Flutter apps and inspect the VM.
+- Added an optional `DartVmMcpToolExtension` interface so any Dart VM dev tool tab can expose its own MCP tools; toolsets are collected automatically.
+- Added read-only MCP tools for every built-in Dart VM tab: `flutterx_vm_status`, `flutterx_logs`, `flutterx_memory`, `flutterx_http`, `flutterx_providers`, `flutterx_riverpod`, `flutterx_shared_preferences`, `flutterx_hive`, and `flutterx_drift`.
+
 ### Removed
 
 - Removed the Android Gradle Migrate tool from the FlutterX tool window.

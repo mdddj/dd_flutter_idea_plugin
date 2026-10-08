@@ -14,6 +14,8 @@
         <plugin id="org.jetbrains.plugins.terminal"/>
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
+        <plugin id="com.intellij.mcpServer" />
+
 
         <module name="intellij.libraries.ktor.client"/>
         <module name="intellij.libraries.ktor.client.cio"/>
@@ -242,6 +244,8 @@
         <!--        <psi.referenceContributor-->
         <!-- implementation="shop.itbug.flutterx.reference.AssetReferenceContributor" language="Dart"/>-->
 
+        <mcpServer.mcpToolset implementation="shop.itbug.flutterx.mcp.FlutterXDartVmMcpTools"/>
+        <mcpServer.mcpToolsProvider implementation="shop.itbug.flutterx.mcp.DartVmExtensionMcpToolsProvider"/>
 
     </extensions>
 

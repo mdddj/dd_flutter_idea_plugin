@@ -92,6 +92,7 @@ dependencies {
         pluginVerifier()
         zipSigner()
         javaCompiler()
+        bundledPlugin("com.intellij.mcpServer")
         bundledPlugin("com.intellij.java")
         bundledModule("intellij.libraries.ktor.client")
         bundledModule("intellij.libraries.ktor.client.cio")

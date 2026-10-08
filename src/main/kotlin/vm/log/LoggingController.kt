@@ -221,6 +221,28 @@ class LoggingController(
         updateFilteredLogs()
     }
 
+    /**
+     * 按当前缓冲做一次只读快照，不改 UI 上的搜索和 GC 过滤。
+     * 结果按时间从新到旧。
+     */
+    fun snapshot(limit: Int, query: String?, includeGc: Boolean): List<LogData> {
+        val token = query?.trim()?.lowercase().orEmpty()
+        return synchronized(_allLogs) {
+            _allLogs.asReversed().asSequence()
+                .filter { includeGc || it.kind != "gc" }
+                .filter { log ->
+                    token.isEmpty() ||
+                            log.kind.lowercase().contains(token) ||
+                            log.summary?.lowercase()?.contains(token) == true ||
+                            log.details.value?.lowercase()?.contains(token) == true
+                }
+                .take(limit)
+                .toList()
+        }
+    }
+
+    fun bufferedLogCount(): Int = synchronized(_allLogs) { _allLogs.size }
+
     fun dispose() {
         vmService.removeEventListener(this)
         streamsToListen.forEach(vmService::streamCancel)
