@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Removed
+
+- Removed the Android Gradle Migrate tool from the FlutterX tool window.
+- Removed the Enum Migrate tool from the FlutterX tool window.
+- Removed Aliyun Gradle mirror inlays for Groovy and Kotlin DSL build files.
+- Removed the bundled Groovy plugin dependency.
+
 ## 7.2.1 - 2026-09-05
 
 ### New Features

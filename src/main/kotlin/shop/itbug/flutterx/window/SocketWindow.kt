@@ -16,7 +16,6 @@ import shop.itbug.flutterx.form.socket.SocketRequestForm
 import shop.itbug.flutterx.hive.HiveWidget
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.socket.service.DioApiService
-import shop.itbug.flutterx.window.android.FlutterXAndroidMigrateWindow
 import shop.itbug.flutterx.window.l10n.L10nWindow
 import shop.itbug.flutterx.window.logger.LoggerWindow
 import shop.itbug.flutterx.window.preview.ImagesPreviewWindow
@@ -70,16 +69,6 @@ class FlutterXSocketWindow : ToolWindowFactory {
         toolWindow.contentManager.addContent(privacyContent)
 
 
-        //android gradle 适配窗口
-        val androidMigrateWindow = FlutterXAndroidMigrateWindow(project)
-        val androidMigrateWindowContent = instance.createContent(
-            androidMigrateWindow,
-            "Android Gradle Migrate Tool",
-            false
-        )
-        toolWindow.contentManager.addContent(androidMigrateWindowContent)
-
-
         // 资产图片拷贝窗口
         val imagesPreviewWindow = ImagesPreviewWindow(project, toolWindow)
         val imagesPreviewContent = instance.createContent(imagesPreviewWindow, "Assets Preview", true)
@@ -100,10 +89,6 @@ class FlutterXSocketWindow : ToolWindowFactory {
 
         toolWindow.addComposeTab("Material Icons") {
             MaterialIconsDialog(project)
-        }
-
-        toolWindow.addComposeTab("Enum Migrate") {
-            shop.itbug.flutterx.window.migrate.EnumMigrateWindow(project)
         }
 
     }

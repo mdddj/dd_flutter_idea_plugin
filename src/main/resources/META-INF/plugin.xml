@@ -15,8 +15,6 @@
         <plugin id="org.jetbrains.plugins.terminal"/>
         <plugin id="com.intellij.modules.json"/>
         <plugin id="com.intellij.platform.images"/>
-        <plugin id="org.intellij.groovy"/>
-
 
         <module name="intellij.libraries.ktor.client"/>
         <module name="intellij.libraries.ktor.client.cio"/>
@@ -162,16 +160,6 @@
         <config.codeVisionGroupSettingProvider
                 implementation="shop.itbug.flutterx.inlay.dartfile.DartWidgetParseToRiverpodInlaySetting"
                 id="Simple-Widget-to-Riverpod-Widget"/>
-        <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlay"/>
-        <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.GradleAliyuMirrorImageInlayGroupSetting"
-                id="GradleAliyuMirrorImageInlayGroupSetting"/>
-        <codeInsight.daemonBoundCodeVisionProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.KtsAliyunMirrorInlay"/>
-        <config.codeVisionGroupSettingProvider
-                implementation="shop.itbug.flutterx.inlay.gradle.KtsAliyunMirrorInlayGroupSetting"
-                id="KtsAliyunMirrorInlayGroupSetting"/>
         <!--        <codeInsight.daemonBoundCodeVisionProvider-->
         <!-- implementation="shop.itbug.flutterx.inlay.yaml.DartPackageSearchDialogCodeVision"/>-->
         <!--        <config.codeVisionGroupSettingProvider-->
