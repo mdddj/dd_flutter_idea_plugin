@@ -136,3 +136,11 @@ data class RiverpodProviderInfo(
     val hasState: Boolean,
     val creationStackTrace: String?
 )
+
+/** 某个 Provider 在选中帧上，用于对比的上一份状态和当前状态。 */
+data class RiverpodDiffSource(
+    val previousPath: String,
+    val previousFrameIndex: Int,
+    val currentPath: String,
+    val currentFrameIndex: Int,
+)

@@ -223,14 +223,10 @@ class RiverpodState(private val vmService: VmService) {
     }
 
     /**
-     * 计算用于 diff 的两个状态路径：
-     * - current：选中帧（含）之前该 element 最后一次更新的 state
-     * - previous：current 之前的最后一次更新的 state
-     *
-     * 若没有 previous（首次创建）或没有 state，返回 null。
+     * 计算用于 diff 的两份状态，并带上它们各自所在的帧。
+     * 没有上一份状态（首次创建）或没有 state 时返回 null。
      */
-    fun getStateDiffPaths(elementId: String, frameIndex: Int): Pair<String, String>? {
-        // 找到选中帧之前（含）最后一次更新
+    fun getStateDiffSource(elementId: String, frameIndex: Int): RiverpodDiffSource? {
         var currentFrame = -1
         var currentPath: String? = null
         for (i in frameIndex downTo 0) {
@@ -243,18 +239,24 @@ class RiverpodState(private val vmService: VmService) {
         }
         if (currentFrame < 0 || currentPath.isNullOrBlank()) return null
 
-        // 找到 current 之前的最后一次更新
+        var previousFrame = -1
         var previousPath: String? = null
         for (i in currentFrame - 1 downTo 0) {
             val path = elementChangesPerFrame.getOrNull(i)?.get(elementId)
             if (path != null) {
+                previousFrame = i
                 previousPath = path
                 break
             }
         }
-        if (previousPath.isNullOrBlank()) return null
+        if (previousFrame < 0 || previousPath.isNullOrBlank()) return null
 
-        return previousPath to currentPath
+        return RiverpodDiffSource(
+            previousPath = previousPath,
+            previousFrameIndex = previousFrame,
+            currentPath = currentPath,
+            currentFrameIndex = currentFrame,
+        )
     }
 
     /** 某 element 在指定帧的状态（added/modified/disposed/unchanged），取该帧内最后一次事件的状态 */

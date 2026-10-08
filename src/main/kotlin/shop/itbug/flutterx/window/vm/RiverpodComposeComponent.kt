@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package shop.itbug.flutterx.window.vm
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -106,133 +109,131 @@ private fun RiverpodBody(vmService: vm.VmService, project: Project) {
 
         true -> {
             Column(modifier = Modifier.fillMaxSize()) {
-                RiverpodTopBar(riverpodState, scope)
-                FrameStrip(state = riverpodState)
+                RiverpodFrameBar(riverpodState, scope)
                 HorizontalSplitLayout(
                     first = { ProviderListPanel(riverpodState) },
                     second = { ProviderDetailPanel(riverpodState, vmService, project) },
                     modifier = Modifier.fillMaxSize().weight(1f),
-                    firstPaneMinWidth = 100.dp,
-                    secondPaneMinWidth = 100.dp,
+                    firstPaneMinWidth = 200.dp,
+                    secondPaneMinWidth = 240.dp,
                 )
             }
         }
     }
 }
 
+/**
+ * 帧控制：上一帧/下一帧，加上带编号的帧按钮。
+ * 编号从 1 开始，和内部 0 起的下标分开，避免 "4/4" 旁边却有 5 个点。
+ */
 @Composable
-private fun RiverpodTopBar(state: RiverpodState, scope: CoroutineScope) {
-    Row(
+private fun RiverpodFrameBar(state: RiverpodState, scope: CoroutineScope) {
+    val frameCount = state.maxFrameIndex + 1
+    val selected = state.selectedFrameIndex
+    val selectedElementId = state.selectedProvider?.elementId
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(JewelTheme.globalColors.panelBackground)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        IconActionButton(
-            AllIconsKeys.Actions.Refresh,
-            contentDescription = "Refresh",
-            onClick = { scope.launch { state.refresh() } }
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            IconActionButton(
+                AllIconsKeys.Actions.Refresh,
+                contentDescription = PluginBundle.get("riverpod.refresh"),
+                onClick = { scope.launch { state.refresh() } }
+            )
+            if (frameCount > 0) {
+                IconActionButton(
+                    AllIconsKeys.General.ArrowLeft,
+                    contentDescription = PluginBundle.get("riverpod.frame.previous"),
+                    enabled = selected > 0,
+                    onClick = { state.navigateFrame(-1) }
+                )
+                Text(
+                    PluginBundle.get("riverpod.frame.position", selected + 1, frameCount),
+                    fontWeight = FontWeight.Medium
+                )
+                IconActionButton(
+                    AllIconsKeys.General.ArrowRight,
+                    contentDescription = PluginBundle.get("riverpod.frame.next"),
+                    enabled = selected < state.maxFrameIndex,
+                    onClick = { state.navigateFrame(1) }
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            Text(
+                PluginBundle.get("riverpod.providers.count", state.providers.size),
+                color = JewelTheme.globalColors.text.info
+            )
+        }
 
-        Divider(Orientation.Vertical, Modifier.height(16.dp).width(1.dp))
-
-        IconActionButton(
-            AllIconsKeys.Actions.Play_first,
-            contentDescription = "First Frame",
-            enabled = state.selectedFrameIndex > 0,
-            onClick = { state.selectFrame(0) }
-        )
-
-        IconActionButton(
-            AllIconsKeys.General.ArrowLeft,
-            contentDescription = "Previous Frame",
-            enabled = state.selectedFrameIndex > 0,
-            onClick = { state.navigateFrame(-1) }
-        )
-
-        Text(
-            "Frame ${state.selectedFrameIndex}/${state.maxFrameIndex}",
-            color = JewelTheme.globalColors.text.info
-        )
-
-        IconActionButton(
-            AllIconsKeys.General.ArrowRight,
-            contentDescription = "Next Frame",
-            enabled = state.selectedFrameIndex < state.maxFrameIndex,
-            onClick = { state.navigateFrame(1) }
-        )
-
-        IconActionButton(
-            AllIconsKeys.Actions.Play_last,
-            contentDescription = "Last Frame",
-            enabled = state.selectedFrameIndex < state.maxFrameIndex,
-            onClick = { state.selectFrame(state.maxFrameIndex) }
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        Text(
-            "${state.providers.size} providers",
-            color = JewelTheme.globalColors.text.info
-        )
+        if (frameCount > 0) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                for (index in 0 until frameCount) {
+                    FrameChip(
+                        index = index,
+                        selected = index == selected,
+                        status = selectedElementId?.let { state.getStatusAt(it, index) },
+                        onClick = { state.selectFrame(index) }
+                    )
+                }
+            }
+        }
     }
 }
 
-/**
- * 帧步进器：像官方 devtool 一样，用圆点表示每一帧，
- * 并按当前选中 provider 在该帧的状态着色。
- */
 @Composable
-private fun FrameStrip(state: RiverpodState) {
-    if (state.frames.isEmpty()) return
-    val selectedElementId = state.selectedProvider?.elementId
-    val frameCount = state.maxFrameIndex + 1
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(JewelTheme.globalColors.panelBackground)
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text("#", color = JewelTheme.globalColors.text.info)
-        for (index in 0 until frameCount) {
-            val isSelected = index == state.selectedFrameIndex
-            val status = selectedElementId?.let { state.getStatusAt(it, index) }
-            val dotColor = when (status) {
-                RiverpodProviderStatus.Added,
-                RiverpodProviderStatus.Modified -> Color(0xFF4EC9B0)
-                RiverpodProviderStatus.Disposed -> Color(0xFFCE9178)
-                null -> JewelTheme.globalColors.text.info.copy(alpha = 0.35f)
-            }
-            val borderColor = if (isSelected) {
-                JewelTheme.globalColors.borders.focused
-            } else {
-                Color.Transparent
-            }
-            Box(
-                modifier = Modifier
-                    .size(if (isSelected) 14.dp else 10.dp)
-                    .clip(CircleShape)
-                    .background(dotColor)
-                    .border(
-                        width = if (isSelected) 2.dp else 0.dp,
-                        color = borderColor,
-                        shape = CircleShape
-                    )
-                    .clickable { state.selectFrame(index) }
-                    .pointerHoverIcon(PointerIcon.Hand)
+private fun FrameChip(
+    index: Int,
+    selected: Boolean,
+    status: RiverpodProviderStatus?,
+    onClick: () -> Unit,
+) {
+    val statusColor = providerStatusColor(status)
+    val background = when {
+        selected -> statusColor.copy(alpha = 0.28f)
+        status != null -> statusColor.copy(alpha = 0.16f)
+        else -> Color.Transparent
+    }
+    val border = if (selected) {
+        JewelTheme.globalColors.borders.focused
+    } else if (status != null) {
+        statusColor.copy(alpha = 0.55f)
+    } else {
+        JewelTheme.globalColors.borders.normal
+    }
+    Tooltip(tooltip = {
+        Text(PluginBundle.get("riverpod.frame.chip", index + 1, statusLabel(status)))
+    }) {
+        Box(
+            modifier = Modifier
+                .height(22.dp)
+                .widthIn(min = 22.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(background)
+                .border(1.dp, border, RoundedCornerShape(6.dp))
+                .clickable(onClick = onClick)
+                .pointerHoverIcon(PointerIcon.Hand)
+                .padding(horizontal = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "${index + 1}",
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
             )
         }
-        Spacer(Modifier.width(4.dp))
-        Text(
-            "· tap a dot to inspect that frame",
-            color = JewelTheme.globalColors.text.info
-        )
     }
 }
 
@@ -250,9 +251,18 @@ private fun ProviderListPanel(state: RiverpodState) {
             state.providers.filter {
                 it.name.lowercase().contains(q) ||
                         it.arg.lowercase().contains(q) ||
-                        it.containerHash.lowercase().contains(q)
+                        it.containerHash.lowercase().contains(q) ||
+                        it.elementId.lowercase().contains(q) ||
+                        it.hashValue.lowercase().contains(q) ||
+                        it.creationStackTrace?.lowercase()?.contains(q) == true
             }
         }
+    }
+    val duplicateNames = remember(filteredProviders) {
+        filteredProviders.groupingBy { it.name }.eachCount().filterValues { it > 1 }.keys
+    }
+    val containerCount = remember(filteredProviders) {
+        filteredProviders.map { it.containerId }.toSet().size
     }
     // 状态分组基于"当前选中帧"中 provider 的实际状态（与官方 devtool 一致）
     val sections = remember(filteredProviders, frameIndex, state.frames) {
@@ -268,7 +278,7 @@ private fun ProviderListPanel(state: RiverpodState) {
         TextField(
             state = searchState,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Filter providers...") },
+            placeholder = { Text(PluginBundle.get("riverpod.filter")) },
         )
 
         if (state.error != null) {
@@ -280,12 +290,12 @@ private fun ProviderListPanel(state: RiverpodState) {
 
         if (filteredProviders.isEmpty() && state.providers.isNotEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("No matching providers", color = JewelTheme.globalColors.text.info)
+                Text(PluginBundle.get("riverpod.list.no.match"), color = JewelTheme.globalColors.text.info)
             }
         } else if (state.providers.isEmpty() && !state.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    "No provider events recorded. Interact with your app to trigger provider changes.",
+                    PluginBundle.get("riverpod.list.empty"),
                     color = JewelTheme.globalColors.text.info
                 )
             }
@@ -298,12 +308,17 @@ private fun ProviderListPanel(state: RiverpodState) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 sections.forEach { section ->
-                    item(key = "header_${section.label}") {
+                    item(key = "header_${section.id}") {
                         SectionHeader(section)
                     }
                     items(section.providers, key = { it.elementId }) { provider ->
                         ProviderRow(
                             provider = provider,
+                            subtitle = providerSubtitle(
+                                provider,
+                                nameIsDuplicate = provider.name in duplicateNames,
+                                containerCount = containerCount,
+                            ),
                             status = state.getStatusAt(provider.elementId, frameIndex),
                             selected = provider.elementId == selectedElementId,
                             onSelect = { state.selectProvider(provider) }
@@ -320,6 +335,7 @@ private fun ProviderListPanel(state: RiverpodState) {
 }
 
 private data class ProviderSection(
+    val id: String,
     val label: String,
     val color: Color,
     val providers: List<RiverpodProviderInfo>
@@ -336,9 +352,9 @@ private fun groupSections(
     val disposed = providers.filter { statusOf(it) == RiverpodProviderStatus.Disposed }
     val unchanged = providers.filter { statusOf(it) == null }
     return listOf(
-        ProviderSection("Modified", Color(0xFF4EC9B0), modified),
-        ProviderSection("Disposed", Color(0xFFCE9178), disposed),
-        ProviderSection("Unchanged", Color(0xFF808080), unchanged),
+        ProviderSection("modified", PluginBundle.get("riverpod.section.modified"), Color(0xFF4EC9B0), modified),
+        ProviderSection("disposed", PluginBundle.get("riverpod.section.disposed"), Color(0xFFCE9178), disposed),
+        ProviderSection("unchanged", PluginBundle.get("riverpod.section.unchanged"), Color(0xFF808080), unchanged),
     ).filter { it.providers.isNotEmpty() }
 }
 
@@ -367,67 +383,65 @@ private fun SectionHeader(section: ProviderSection) {
 @Composable
 private fun ProviderRow(
     provider: RiverpodProviderInfo,
+    subtitle: String,
     status: RiverpodProviderStatus?,
     selected: Boolean,
     onSelect: () -> Unit
 ) {
     val bgColor = if (selected) {
-        JewelTheme.globalColors.panelBackground
+        JewelTheme.globalColors.outlines.focused.copy(alpha = 0.22f)
     } else if (JewelTheme.isDark) {
         Color(0xFF2D2D30)
     } else {
         Color.White
     }
-    val statusColor = when (status) {
-        RiverpodProviderStatus.Added,
-        RiverpodProviderStatus.Modified -> Color(0xFF4EC9B0)
-        RiverpodProviderStatus.Disposed -> Color(0xFFCE9178)
-        null -> JewelTheme.globalColors.text.info.copy(alpha = 0.4f)
-    }
-    val subtitle = if (provider.origin?.isFamily == true) {
-        provider.arg
-    } else {
-        "scoped at #${provider.containerHash}"
-    }
+    val statusColor = providerStatusColor(status)
 
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(bgColor)
-            .border(
-                width = if (selected) 1.dp else 0.dp,
-                color = if (selected) JewelTheme.globalColors.borders.focused else Color.Transparent,
-                shape = RoundedCornerShape(10.dp),
-            )
-            .clickable(onClick = onSelect)
-            .pointerHoverIcon(PointerIcon.Hand)
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Tooltip(tooltip = {
+        Column {
+            Text(provider.name.ifBlank { "Provider" })
+            Text(provider.elementId, color = JewelTheme.globalColors.text.info)
+        }
+    }) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(bgColor)
+                .border(
+                    width = if (selected) 1.dp else 0.dp,
+                    color = if (selected) JewelTheme.globalColors.borders.focused else Color.Transparent,
+                    shape = RoundedCornerShape(10.dp),
+                )
+                .clickable(onClick = onSelect)
+                .pointerHoverIcon(PointerIcon.Hand)
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 8.dp)
         ) {
-            Box(
-                modifier = Modifier.size(8.dp).clip(CircleShape).background(statusColor)
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.weight(1f)) {
-                Text(
-                    provider.name.ifBlank { "Provider" },
-                    maxLines = 1,
-                    fontWeight = FontWeight.Medium
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier.size(8.dp).clip(CircleShape).background(statusColor)
                 )
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.weight(1f)) {
+                    Text(
+                        provider.name.ifBlank { "Provider" },
+                        maxLines = 1,
+                        fontWeight = FontWeight.Medium
+                    )
+                    if (subtitle.isNotBlank()) {
+                        Text(
+                            subtitle,
+                            maxLines = 1,
+                            color = JewelTheme.globalColors.text.info,
+                        )
+                    }
+                }
                 Text(
-                    subtitle.ifBlank { "—" },
+                    statusLabel(status),
+                    color = statusColor,
                     maxLines = 1,
-                    color = JewelTheme.globalColors.text.info,
-                )
-            }
-            if (provider.hasState) {
-                Text(
-                    "●",
-                    color = Color(0xFF569CD6),
-                    modifier = Modifier.padding(end = 4.dp)
                 )
             }
         }
@@ -619,7 +633,7 @@ private fun ProviderDetailPanel(state: RiverpodState, vmService: vm.VmService, p
                     contentDescription = "Select a provider"
                 )
                 Text(
-                    "Select a provider to inspect its state",
+                    PluginBundle.get("riverpod.select"),
                     color = JewelTheme.globalColors.text.info
                 )
             }
@@ -661,12 +675,11 @@ private fun ProviderDetailPanel(state: RiverpodState, vmService: vm.VmService, p
 
 @Composable
 private fun ProviderHeader(state: RiverpodState, provider: RiverpodProviderInfo) {
-    val statusColor = when (provider.status) {
-        RiverpodProviderStatus.Added,
-        RiverpodProviderStatus.Modified -> Color(0xFF4EC9B0)
-        RiverpodProviderStatus.Disposed -> Color(0xFFCE9178)
-        null -> JewelTheme.globalColors.text.info.copy(alpha = 0.4f)
-    }
+    val frameStatus = state.getStatusAt(provider.elementId, state.selectedFrameIndex)
+    val statusColor = providerStatusColor(frameStatus)
+    val duplicate = state.providers.count { it.name == provider.name } > 1
+    val containerCount = state.providers.map { it.containerId }.toSet().size
+    val subtitle = providerSubtitle(provider, duplicate, containerCount)
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
@@ -677,35 +690,20 @@ private fun ProviderHeader(state: RiverpodState, provider: RiverpodProviderInfo)
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(statusColor))
-            Text(provider.name.ifBlank { "Provider" }, fontWeight = FontWeight.Bold)
+            Text(provider.name.ifBlank { "Provider" }, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f, fill = false))
             Text(
-                provider.lastEventType.toDisplayString(),
+                statusLabel(frameStatus),
                 color = statusColor,
                 fontWeight = FontWeight.Medium
             )
-            Spacer(Modifier.weight(1f))
-            Text(
-                "frame #${provider.frameIndex}",
-                color = JewelTheme.globalColors.text.info
-            )
         }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (provider.arg.isNotBlank()) {
-                Text("arg: ${provider.arg}", color = JewelTheme.globalColors.text.info)
-            }
-            Text("container: #${provider.containerHash}", color = JewelTheme.globalColors.text.info)
-            if (provider.origin?.isFamily == true) {
-                Text("family", color = JewelTheme.globalColors.text.info)
-            }
+        if (subtitle.isNotBlank()) {
+            Text(subtitle, color = JewelTheme.globalColors.text.info, maxLines = 1)
         }
         val elementState = state.getElementStateAt(provider.elementId, state.selectedFrameIndex)
         if (elementState != null && elementState.parents.isNotEmpty()) {
             Text(
-                "dependencies: ${elementState.parents.size} · this provider listens to "
-                        + "${elementState.parents.size} upstream provider(s)",
+                PluginBundle.get("riverpod.dependencies", elementState.parents.size),
                 color = JewelTheme.globalColors.text.info
             )
         }
@@ -719,17 +717,14 @@ private fun StateTreeTab(state: RiverpodState, vmService: vm.VmService, provider
         modifier = Modifier.fillMaxSize().padding(12.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("State", fontWeight = FontWeight.Bold)
-            Text(
-                "· state at frame #${state.selectedFrameIndex}",
-                color = JewelTheme.globalColors.text.info
-            )
-        }
+        Text(
+            PluginBundle.get("riverpod.state.tree.caption", state.selectedFrameIndex + 1),
+            fontWeight = FontWeight.Bold
+        )
         if (statePath != null) {
             StateViewer(vmService, statePath)
         } else {
-            Text("State not available for this provider", color = JewelTheme.globalColors.text.info)
+            Text(PluginBundle.get("riverpod.state.diff.no.state"), color = JewelTheme.globalColors.text.info)
         }
     }
 }
@@ -744,11 +739,9 @@ private fun EventsTab(state: RiverpodState, provider: RiverpodProviderInfo) {
     val listState = rememberLazyListState()
 
     Column(modifier = Modifier.fillMaxSize().padding(12.dp)) {
-        Text("Frame Events", fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(6.dp))
         if (events.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("No events for this provider", color = JewelTheme.globalColors.text.info)
+                Text(PluginBundle.get("riverpod.events.empty"), color = JewelTheme.globalColors.text.info)
             }
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -757,30 +750,32 @@ private fun EventsTab(state: RiverpodState, provider: RiverpodProviderInfo) {
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    items(events, key = { "${it.first}_${it.second.type}" }) { (frameIndex, event) ->
+                    items(events.size) { index ->
+                        val (frameIndex, event) = events[index]
+                        val selectedFrame = frameIndex == state.selectedFrameIndex
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(
-                                    if (frameIndex == state.selectedFrameIndex) {
-                                        JewelTheme.globalColors.panelBackground
+                                    if (selectedFrame) {
+                                        JewelTheme.globalColors.outlines.focused.copy(alpha = 0.18f)
                                     } else {
                                         Color.Transparent
                                     }
                                 )
+                                .clickable { state.selectFrame(frameIndex) }
+                                .pointerHoverIcon(PointerIcon.Hand)
                                 .padding(horizontal = 8.dp, vertical = 6.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "F$frameIndex",
-                                color = JewelTheme.globalColors.text.info
+                                "${frameIndex + 1}",
+                                color = JewelTheme.globalColors.text.info,
+                                fontWeight = if (selectedFrame) FontWeight.Bold else FontWeight.Normal,
                             )
                             Text(event.type.toDisplayString(), fontWeight = FontWeight.Medium)
-                            if (event.hasState) {
-                                Text("has state", color = Color(0xFF569CD6))
-                            }
                         }
                     }
                 }
@@ -791,4 +786,57 @@ private fun EventsTab(state: RiverpodState, provider: RiverpodProviderInfo) {
             }
         }
     }
+}
+
+private val stackLocation = Regex("""([\w./\\+-]+\.dart):(\d+)""")
+
+private fun statusLabel(status: RiverpodProviderStatus?): String = when (status) {
+    RiverpodProviderStatus.Added -> PluginBundle.get("riverpod.status.added")
+    RiverpodProviderStatus.Modified -> PluginBundle.get("riverpod.status.modified")
+    RiverpodProviderStatus.Disposed -> PluginBundle.get("riverpod.status.disposed")
+    null -> PluginBundle.get("riverpod.status.unchanged")
+}
+
+private fun providerStatusColor(status: RiverpodProviderStatus?): Color = when (status) {
+    RiverpodProviderStatus.Added,
+    RiverpodProviderStatus.Modified -> Color(0xFF4EC9B0)
+    RiverpodProviderStatus.Disposed -> Color(0xFFCE9178)
+    null -> Color(0xFF808080)
+}
+
+/** 同名 Provider 用文件位置或短编号区分，不再显示大家都一样的 container hash。 */
+private fun providerSubtitle(
+    provider: RiverpodProviderInfo,
+    nameIsDuplicate: Boolean,
+    containerCount: Int,
+): String {
+    val arg = provider.arg.trim()
+    val usefulArg = arg.isNotBlank() && !arg.equals("null", ignoreCase = true)
+    val location = firstStackLocation(provider.creationStackTrace)
+    val id = shortProviderId(provider)
+    val base = when {
+        provider.origin?.isFamily == true && usefulArg -> arg
+        usefulArg -> arg
+        location != null -> location
+        containerCount > 1 -> "#${provider.containerHash}"
+        else -> ""
+    }
+    return when {
+        nameIsDuplicate && base.isNotBlank() -> "$base · $id"
+        nameIsDuplicate -> id
+        else -> base
+    }
+}
+
+private fun shortProviderId(provider: RiverpodProviderInfo): String {
+    val raw = provider.hashValue.ifBlank { provider.elementId }.filter { it.isLetterOrDigit() }
+    val tail = raw.takeLast(6).ifBlank { provider.elementId.takeLast(6) }
+    return "#$tail"
+}
+
+private fun firstStackLocation(stack: String?): String? {
+    if (stack.isNullOrBlank()) return null
+    val match = stackLocation.find(stack) ?: return null
+    val file = match.groupValues[1].substringAfterLast('/').substringAfterLast('\\')
+    return "$file:${match.groupValues[2]}"
 }
