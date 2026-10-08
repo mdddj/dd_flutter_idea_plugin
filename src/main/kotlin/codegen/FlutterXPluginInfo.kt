@@ -1,22 +1,22 @@
 package codegen
 // 自动生成的插件信息类,不要修改这个文件,否则会导致插件功能失效
 object FlutterXPluginInfo {
-    const val VERSION: String = "7.2.1"
+    const val VERSION: String = "7.3.0"
     const val NAME: String = "FlutterX"
     const val CHANGELOG: String = """
-<h2>7.2.1 - 2026-09-05</h2>
+<h2>7.3.0 - 2026-10-08</h2>
 
 <h3>New Features</h3>
 
-<ul><li>Added a frame-based Riverpod DevTool experience aligned with the official <code>riverpod_devtool</code>, including provider status grouping, state diffs, state trees, event history, and hot-restart recovery.</li><li>Added a Flutter SDK installer flow with channel and version selection, download progress, and installation support.</li><li>Added pubspec inlay extension points so package metadata and actions can be contributed independently.</li><li>Added AGP 9 built-in Kotlin compatibility detection for installed Flutter packages.</li></ul>
+<ul><li>Added MCP tools for Dart VM data: <code>flutterx_list_apps</code>, <code>flutterx_vm_info</code>, and <code>flutterx_list_data_tools</code> let AI agents discover running Flutter apps and inspect the VM.</li><li>Added an optional <code>DartVmMcpToolExtension</code> interface so any Dart VM dev tool tab can expose its own MCP tools; toolsets are collected automatically.</li><li>Added read-only MCP tools for every built-in Dart VM tab: <code>flutterx_vm_status</code>, <code>flutterx_logs</code>, <code>flutterx_memory</code>, <code>flutterx_http</code>, <code>flutterx_providers</code>, <code>flutterx_riverpod</code>, <code>flutterx_shared_preferences</code>, <code>flutterx_hive</code>, and <code>flutterx_drift</code>.</li></ul>
 
 <h3>Improvements</h3>
 
-<ul><li>Improved Riverpod DevTool state tracking with incremental event updates and provider dependency accumulation.</li><li>Added richer pubspec package inlays and improved YAML path resolution behavior.</li><li>Updated Dart and Flutter plugin dependencies for the current IntelliJ platform.</li></ul>
+<ul><li>Made the Riverpod panel easier to scan: frames start at 1, same-name providers stay distinct, and short value changes show as before/after cards.</li><li>Updated bundled IDE plugin dependencies to Dart 510 and Flutter 97.</li></ul>
 
-<h3>Fixes</h3>
+<h3>Removed</h3>
 
-<ul><li>Fixed Dart 509 compatibility by migrating from the removed synchronous <code>analysis_getHover</code> API to the Dart LSP hover API.</li><li>Fixed semantic and syntax highlighting failures in large Dart files caused by the obsolete hover API.</li><li>Fixed LSP4J class loader conflicts by removing the redundant lsp4ij dependency and using the Dart plugin's LSP implementation.</li></ul>
+<ul><li>Removed the Android Gradle Migrate tool from the FlutterX tool window.</li><li>Removed the Enum Migrate tool from the FlutterX tool window.</li><li>Removed Aliyun Gradle mirror inlays for Groovy and Kotlin DSL build files.</li><li>Removed the bundled Groovy plugin dependency.</li><li>Removed the bundled Kotlin IDE plugin dependency.</li><li>Removed the FlutterX-MCP companion plugin from <code>extras</code> and from the release workflow.</li></ul>
 """
 
 }
