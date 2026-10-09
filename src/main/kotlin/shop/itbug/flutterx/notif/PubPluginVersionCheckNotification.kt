@@ -17,9 +17,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -40,8 +37,11 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import com.intellij.openapi.application.runReadActionBlocking
+import com.intellij.openapi.progress.coroutineToIndicator
+import kotlinx.coroutines.ensureActive
+import shop.itbug.flutterx.util.launchBackgroundProgress
+import java.util.concurrent.CancellationException
 import org.jetbrains.yaml.psi.YAMLFile
 import shop.itbug.flutterx.common.yaml.PubspecYamlFileTools
 import shop.itbug.flutterx.constance.DartPubMirrorImage
@@ -84,8 +84,9 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (file.name != "pubspec.yaml") return@Function null
             val psiFile = PsiManager.getInstance(project).findFile(file) as? YAMLFile ?: return@Function null
 
-            val isFlutterProject =
-                runBlocking(Dispatchers.IO) { PubspecYamlFileTools.create(psiFile).isFlutterProject() }
+            val isFlutterProject = runReadActionBlocking {
+                PubspecYamlFileTools.create(psiFile).isFlutterProjectNow()
+            }
 
             if (!isFlutterProject) return@Function null
             return@Function YamlFileNotificationPanel(it, psiFile, project)
@@ -279,15 +280,8 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
     }
 
     private fun currentPubspecValue(key: String): String? {
-        return runBlocking(Dispatchers.IO) {
-            PubspecYamlFileTools.create(file)
-                .getRootKeyValueList()
-                ?.firstOrNull { it.keyText.trim() == key }
-                ?.valueText
-                ?.trim()
-                ?.removeSurrounding("\"")
-                ?.removeSurrounding("'")
-                ?.takeIf { it.isNotBlank() }
+        return runReadActionBlocking {
+            PubspecYamlFileTools.create(file).rootValueTextNow(key)
         }
     }
 
@@ -307,23 +301,43 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
             return
         }
 
-        object : Task.Backgroundable(
-            project,
-            PluginBundle.get("pubspec_notification_publish_task_title", version),
-            true
-        ) {
-            private var exitCode: Int = -1
-            private var startError: String? = null
-            private var isCancelled = false
-            private var processHandler: OSProcessHandler? = null
-            private val output = StringBuilder()
+        val output = StringBuilder()
+        var processHandler: OSProcessHandler? = null
 
-            override fun run(indicator: ProgressIndicator) {
-                indicator.isIndeterminate = true
-                indicator.text = PluginBundle.get("pubspec_notification_publish_task_running", version)
-                indicator.text2 = "CHANGELOG.md"
+        fun showPublishResultNotification(type: NotificationType, content: String) {
+            val outputText = synchronized(output) {
+                output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
+            }
+            val notification = NotificationGroupManager.getInstance()
+                .getNotificationGroup("dio_socket_notify")
+                .createNotification(content, type)
+            notification.icon = MyIcons.flutter
+            notification.addAction(object : DumbAwareAction(PluginBundle.get("pubspec_notification_view_output")) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    CommandOutputDialog(
+                        project,
+                        PluginBundle.get("pubspec_notification_output_dialog_title", "dart pub publish"),
+                        outputText
+                    ).show()
+                    notification.hideBalloon()
+                    notification.expire()
+                }
 
-                try {
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+            })
+            notification.notify(project)
+        }
+
+        project.launchBackgroundProgress(PluginBundle.get("pubspec_notification_publish_task_title", version)) {
+            var exitCode = -1
+            var startError: String? = null
+            try {
+                val progressContext = coroutineContext
+                coroutineToIndicator { indicator ->
+                    indicator.text = PluginBundle.get("pubspec_notification_publish_task_running", version)
+                    indicator.text2 = "CHANGELOG.md"
                     updateChangelogForPublish(workDirectory, version, releaseNotes, includePublishDate)
                     indicator.text2 = "dart pub publish --force"
 
@@ -352,79 +366,41 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
                         }
                     })
                     handler.startNotify()
-
                     while (!handler.waitFor(500)) {
-                        indicator.checkCanceled()
+                        progressContext.ensureActive()
                     }
                     exitCode = handler.exitCode ?: -1
-                } catch (_: ProcessCanceledException) {
-                    isCancelled = true
-                    processHandler?.destroyProcess()
-                    throw ProcessCanceledException()
-                } catch (e: Exception) {
-                    startError = e.message ?: version
                 }
+            } catch (e: CancellationException) {
+                processHandler?.destroyProcess()
+                showPublishResultNotification(
+                    NotificationType.WARNING,
+                    PluginBundle.get("pubspec_notification_publish_cancelled", version)
+                )
+                throw e
+            } catch (e: Exception) {
+                startError = e.message ?: version
             }
 
-            override fun onSuccess() {
-                if (startError != null) {
-                    showPublishResultNotification(
-                        NotificationType.ERROR,
-                        PluginBundle.get("pubspec_notification_publish_start_failed", startError ?: version)
-                    )
-                    return
-                }
-                if (exitCode == 0) {
-                    showPublishResultNotification(
-                        NotificationType.INFORMATION,
-                        PluginBundle.get("pubspec_notification_publish_success", version)
-                    )
-                } else {
-                    showPublishResultNotification(
-                        NotificationType.ERROR,
-                        PluginBundle.get("pubspec_notification_publish_failed", version, exitCode.toString())
-                    )
-                }
+            if (startError != null) {
+                showPublishResultNotification(
+                    NotificationType.ERROR,
+                    PluginBundle.get("pubspec_notification_publish_start_failed", startError)
+                )
+                return@launchBackgroundProgress
             }
-
-            override fun onCancel() {
-                if (isCancelled) {
-                    showPublishResultNotification(
-                        NotificationType.WARNING,
-                        PluginBundle.get("pubspec_notification_publish_cancelled", version)
-                    )
-                }
+            if (exitCode == 0) {
+                showPublishResultNotification(
+                    NotificationType.INFORMATION,
+                    PluginBundle.get("pubspec_notification_publish_success", version)
+                )
+            } else {
+                showPublishResultNotification(
+                    NotificationType.ERROR,
+                    PluginBundle.get("pubspec_notification_publish_failed", version, exitCode.toString())
+                )
             }
-
-            private fun showPublishResultNotification(
-                type: NotificationType,
-                content: String
-            ) {
-                val outputText = synchronized(output) {
-                    output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
-                }
-                val notification = NotificationGroupManager.getInstance()
-                    .getNotificationGroup("dio_socket_notify")
-                    .createNotification(content, type)
-                notification.icon = MyIcons.flutter
-                notification.addAction(object : DumbAwareAction(PluginBundle.get("pubspec_notification_view_output")) {
-                    override fun actionPerformed(e: AnActionEvent) {
-                        CommandOutputDialog(
-                            project,
-                            PluginBundle.get("pubspec_notification_output_dialog_title", "dart pub publish"),
-                            outputText
-                        ).show()
-                        notification.hideBalloon()
-                        notification.expire()
-                    }
-
-                    override fun getActionUpdateThread(): ActionUpdateThread {
-                        return ActionUpdateThread.BGT
-                    }
-                })
-                notification.notify(project)
-            }
-        }.queue()
+        }
     }
 
     private fun updateChangelogForPublish(
@@ -567,23 +543,44 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
             return
         }
 
-        object : Task.Backgroundable(
-            project,
-            PluginBundle.get("pubspec_notification_pub_get_task_title", mirror.title),
-            true
-        ) {
-            private var exitCode: Int = -1
-            private var startError: String? = null
-            private var isCancelled = false
-            private var processHandler: OSProcessHandler? = null
-            private val output = StringBuilder()
+        val output = StringBuilder()
+        var processHandler: OSProcessHandler? = null
 
-            override fun run(indicator: ProgressIndicator) {
-                indicator.isIndeterminate = true
-                indicator.text = PluginBundle.get("pubspec_notification_pub_get_task_running", mirror.title)
-                indicator.text2 = "${mirror.title} · flutter pub get"
+        fun showPubGetResultNotification(type: NotificationType, content: String) {
+            val outputText = synchronized(output) {
+                output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
+            }
+            val notification = NotificationGroupManager.getInstance()
+                .getNotificationGroup("dio_socket_notify")
+                .createNotification(content, type)
+            notification.icon = MyIcons.flutter
+            notification.addAction(object : DumbAwareAction(PluginBundle.get("pubspec_notification_view_output")) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    CommandOutputDialog(
+                        project,
+                        PluginBundle.get("pubspec_notification_output_dialog_title", mirror.title),
+                        outputText
+                    ).show()
+                    notification.hideBalloon()
+                    notification.expire()
+                }
 
-                try {
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+            })
+            notification.notify(project)
+        }
+
+        project.launchBackgroundProgress(PluginBundle.get("pubspec_notification_pub_get_task_title", mirror.title)) {
+            var exitCode = -1
+            var startError: String? = null
+            try {
+                val progressContext = coroutineContext
+                coroutineToIndicator { indicator ->
+                    indicator.text = PluginBundle.get("pubspec_notification_pub_get_task_running", mirror.title)
+                    indicator.text2 = "${mirror.title} · flutter pub get"
+
                     val commandLine = GeneralCommandLine("flutter", "pub", "get").withWorkDirectory(workDirectory)
                     commandLine.withEnvironment("PUB_HOSTED_URL", mirror.url)
                     commandLine.withEnvironment("FLUTTER_STORAGE_BASE_URL", flutterStorageBaseUrl)
@@ -611,87 +608,45 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
                         }
                     })
                     handler.startNotify()
-
                     while (!handler.waitFor(500)) {
-                        indicator.checkCanceled()
+                        progressContext.ensureActive()
                     }
                     exitCode = handler.exitCode ?: -1
-                } catch (_: ProcessCanceledException) {
-                    isCancelled = true
-                    processHandler?.destroyProcess()
-                    throw ProcessCanceledException()
-                } catch (e: Exception) {
-                    startError = e.message ?: mirror.title
                 }
+            } catch (e: CancellationException) {
+                processHandler?.destroyProcess()
+                showPubGetResultNotification(
+                    NotificationType.WARNING,
+                    PluginBundle.get("pubspec_notification_pub_get_cancelled", mirror.title)
+                )
+                throw e
+            } catch (e: Exception) {
+                startError = e.message ?: mirror.title
             }
 
-            override fun onSuccess() {
-                if (startError != null) {
-                    showPubGetResultNotification(
-                        NotificationType.ERROR,
-                        PluginBundle.get("pubspec_notification_pub_get_start_failed", startError ?: mirror.title),
-                        mirror
-                    )
-                    return
-                }
-                if (exitCode == 0) {
-                    showPubGetResultNotification(
-                        NotificationType.INFORMATION,
-                        PluginBundle.get("pubspec_notification_pub_get_success", mirror.title),
-                        mirror
-                    )
-                } else {
-                    showPubGetResultNotification(
-                        NotificationType.ERROR,
-                        PluginBundle.get(
-                            "pubspec_notification_pub_get_failed",
-                            mirror.title,
-                            exitCode.toString()
-                        ),
-                        mirror
-                    )
-                }
+            if (startError != null) {
+                showPubGetResultNotification(
+                    NotificationType.ERROR,
+                    PluginBundle.get("pubspec_notification_pub_get_start_failed", startError)
+                )
+                return@launchBackgroundProgress
             }
-
-            override fun onCancel() {
-                if (isCancelled) {
-                    showPubGetResultNotification(
-                        NotificationType.WARNING,
-                        PluginBundle.get("pubspec_notification_pub_get_cancelled", mirror.title),
-                        mirror
+            if (exitCode == 0) {
+                showPubGetResultNotification(
+                    NotificationType.INFORMATION,
+                    PluginBundle.get("pubspec_notification_pub_get_success", mirror.title)
+                )
+            } else {
+                showPubGetResultNotification(
+                    NotificationType.ERROR,
+                    PluginBundle.get(
+                        "pubspec_notification_pub_get_failed",
+                        mirror.title,
+                        exitCode.toString()
                     )
-                }
+                )
             }
-            private fun showPubGetResultNotification(
-                type: NotificationType,
-                content: String,
-                mirror: DartPubMirrorImage
-            ) {
-                val outputText = synchronized(output) {
-                    output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
-                }
-                val notification = NotificationGroupManager.getInstance()
-                    .getNotificationGroup("dio_socket_notify")
-                    .createNotification(content, type)
-                notification.icon = MyIcons.flutter
-                notification.addAction(object : DumbAwareAction(PluginBundle.get("pubspec_notification_view_output")) {
-                    override fun actionPerformed(e: AnActionEvent) {
-                        CommandOutputDialog(
-                            project,
-                            PluginBundle.get("pubspec_notification_output_dialog_title", mirror.title),
-                            outputText
-                        ).show()
-                        notification.hideBalloon()
-                        notification.expire()
-                    }
-
-                    override fun getActionUpdateThread(): ActionUpdateThread {
-                        return ActionUpdateThread.BGT
-                    }
-                })
-                notification.notify(project)
-            }
-        }.queue()
+        }
     }
 
     private fun initMoreMenu() {

@@ -1,15 +1,17 @@
 package shop.itbug.flutterx.widget
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.components.BorderLayoutPanel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import shop.itbug.flutterx.model.FlutterLocalVersion
 import shop.itbug.flutterx.model.getVersionText
 import shop.itbug.flutterx.tools.FlutterVersionTool
+import shop.itbug.flutterx.util.launchBackgroundProgress
 import java.awt.CardLayout
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -38,18 +40,14 @@ abstract class AsyncLoadingPanel<T>(val project: Project) : JPanel(CardLayout())
     }
 
     private fun startLoadTask() {
-        val task = object : Task.Backgroundable(project, getTaskName()) {
-            override fun run(indicator: ProgressIndicator) {
-                val data = loadData()
+        project.launchBackgroundProgress(getTaskName()) {
+            val data = loadData()
+            withContext(Dispatchers.EDT) {
                 val comp = createContentPanel(data)
-                SwingUtilities.invokeLater {
-                    this@AsyncLoadingPanel.add(comp, "content")
-                    (this@AsyncLoadingPanel.layout as CardLayout).show(this@AsyncLoadingPanel, "content")
-                }
-
+                this@AsyncLoadingPanel.add(comp, "content")
+                (this@AsyncLoadingPanel.layout as CardLayout).show(this@AsyncLoadingPanel, "content")
             }
         }
-        task.queue()
     }
 }
 
