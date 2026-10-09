@@ -19,7 +19,7 @@ import shop.itbug.flutterx.dialog.BatchPublishPackageRequest
 import shop.itbug.flutterx.dialog.CommandOutputDialog
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.icons.MyIcons
-import com.intellij.platform.util.progress.reportRawProgress
+import com.intellij.openapi.progress.coroutineToIndicator
 import kotlinx.coroutines.ensureActive
 import shop.itbug.flutterx.util.PubPackagePublishUtil
 import shop.itbug.flutterx.util.launchBackgroundProgress
@@ -127,12 +127,13 @@ class BatchPublishChildPackagesAction : MyAction() {
         project.launchBackgroundProgress(PluginBundle.get("batch_publish_child_packages_task_title")) {
             try {
                 val progressContext = coroutineContext
-                reportRawProgress { reporter ->
+                coroutineToIndicator { indicator ->
+                    indicator.isIndeterminate = false
                     packages.forEachIndexed { index, request ->
                         progressContext.ensureActive()
-                        reporter.fraction(index.toDouble() / packages.size.coerceAtLeast(1))
-                        reporter.text(PluginBundle.get("batch_publish_child_packages_task_running"))
-                        reporter.details("${index + 1}/${packages.size} · ${request.packageInfo.name}")
+                        indicator.fraction = index.toDouble() / packages.size.coerceAtLeast(1)
+                        indicator.text = PluginBundle.get("batch_publish_child_packages_task_running")
+                        indicator.text2 = "${index + 1}/${packages.size} · ${request.packageInfo.name}"
                         appendPackageOutputHeader(request)
 
                         try {
@@ -191,7 +192,7 @@ class BatchPublishChildPackagesAction : MyAction() {
                             }
                         }
                     }
-                    reporter.fraction(1.0)
+                    indicator.fraction = 1.0
                 }
                 showResultNotification()
             } catch (error: CancellationException) {

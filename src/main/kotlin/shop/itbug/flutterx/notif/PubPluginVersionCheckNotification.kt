@@ -38,7 +38,7 @@ import com.intellij.ui.components.JBTextArea
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.openapi.application.runReadActionBlocking
-import com.intellij.platform.util.progress.reportRawProgress
+import com.intellij.openapi.progress.coroutineToIndicator
 import kotlinx.coroutines.ensureActive
 import shop.itbug.flutterx.util.launchBackgroundProgress
 import java.util.concurrent.CancellationException
@@ -335,11 +335,11 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
             var startError: String? = null
             try {
                 val progressContext = coroutineContext
-                reportRawProgress { reporter ->
-                    reporter.text(PluginBundle.get("pubspec_notification_publish_task_running", version))
-                    reporter.details("CHANGELOG.md")
+                coroutineToIndicator { indicator ->
+                    indicator.text = PluginBundle.get("pubspec_notification_publish_task_running", version)
+                    indicator.text2 = "CHANGELOG.md"
                     updateChangelogForPublish(workDirectory, version, releaseNotes, includePublishDate)
-                    reporter.details("dart pub publish --force")
+                    indicator.text2 = "dart pub publish --force"
 
                     val commandLine =
                         GeneralCommandLine("dart", "pub", "publish", "--force").withWorkDirectory(workDirectory)
@@ -577,9 +577,9 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
             var startError: String? = null
             try {
                 val progressContext = coroutineContext
-                reportRawProgress { reporter ->
-                    reporter.text(PluginBundle.get("pubspec_notification_pub_get_task_running", mirror.title))
-                    reporter.details("${mirror.title} · flutter pub get")
+                coroutineToIndicator { indicator ->
+                    indicator.text = PluginBundle.get("pubspec_notification_pub_get_task_running", mirror.title)
+                    indicator.text2 = "${mirror.title} · flutter pub get"
 
                     val commandLine = GeneralCommandLine("flutter", "pub", "get").withWorkDirectory(workDirectory)
                     commandLine.withEnvironment("PUB_HOSTED_URL", mirror.url)
