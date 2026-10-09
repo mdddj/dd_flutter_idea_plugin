@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 7.3.2 - 2026-10-09
+
+### Fixes
+
+- Fixed the JetBrains Marketplace rejection for an internal progress API. Package publish, pub get, and batch publish now update progress through the public progress indicator.
+
 ## 7.3.1 - 2026-10-09
 
 ### Fixes
