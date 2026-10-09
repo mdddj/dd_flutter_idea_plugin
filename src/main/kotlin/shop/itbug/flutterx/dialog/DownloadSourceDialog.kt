@@ -16,11 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.io.HttpRequests
+import java.util.concurrent.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.jewel.bridge.JewelComposePanel
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -67,25 +68,25 @@ class DownloadSourceDialog(val project: Project, sources: List<DownloadSource>) 
     private val downloadJobs = sources.map { DownloadJob(it) }
 
 
-    private fun createDownloadTask(job: DownloadJob): Task.Modal {
+    private fun startDownload(job: DownloadJob) {
         val saveToFile = job.source.getSaveToFile()
-        return object : Task.Modal(project, PluginBundle.get("downloading"), true) {
-            override fun run(indicator: ProgressIndicator) {
-                indicator.isIndeterminate = false
-                indicator.text = "${PluginBundle.get("downloading")}  ${job.source.url}"
-                 HttpRequests.request(job.source.url).connect {
-                     it.connection.connectTimeout = 10000
-                    it.saveToFile(File(saveToFile), indicator)
+        job.state.value = DownloadState.Downloading
+        try {
+            runWithModalProgressBlocking(project, PluginBundle.get("downloading")) {
+                coroutineToIndicator { indicator ->
+                    indicator.isIndeterminate = false
+                    indicator.text = "${PluginBundle.get("downloading")}  ${job.source.url}"
+                    HttpRequests.request(job.source.url).connect {
+                        it.connection.connectTimeout = 10000
+                        it.saveToFile(File(saveToFile), indicator)
+                    }
                 }
             }
-
-            override fun onSuccess() {
-                job.state.value = DownloadState.Success(File(saveToFile))
-            }
-
-            override fun onThrowable(error: Throwable) {
-                job.state.value = DownloadState.Error(error.message ?: "An unknown error occurred")
-            }
+            job.state.value = DownloadState.Success(File(saveToFile))
+        } catch (_: CancellationException) {
+            job.state.value = DownloadState.Idle
+        } catch (error: Throwable) {
+            job.state.value = DownloadState.Error(error.message ?: "An unknown error occurred")
         }
     }
 
@@ -114,10 +115,6 @@ class DownloadSourceDialog(val project: Project, sources: List<DownloadSource>) 
         }
     }
 
-    private fun startDownload(job: DownloadJob) {
-        job.state.value = DownloadState.Downloading
-        createDownloadTask(job).queue()
-    }
 
     override fun createActions(): Array<out Action> = emptyArray()
 }

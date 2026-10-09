@@ -2,8 +2,8 @@ package shop.itbug.flutterx.dialog
 
 import com.google.gson.Gson
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
@@ -17,10 +17,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.model.FlutterPluginType
 import shop.itbug.flutterx.model.PluginVersionModel
 import shop.itbug.flutterx.util.MyPsiElementUtil
+import shop.itbug.flutterx.util.launchBackgroundProgress
+import java.util.concurrent.CancellationException
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
@@ -222,21 +225,24 @@ class VersionSelect(val project: Project) : ComboBox<String>() {
         try {
 
 
-            val task = object : Task.Backgroundable(project, PluginBundle.get("get_package_verion_task_title")) {
-                override fun run(indicator: ProgressIndicator) {
-                    try {
-                        val response = HttpRequests.request("https://pub.dartlang.org/packages/$pluginName.json")
+            project.launchBackgroundProgress(PluginBundle.get("get_package_verion_task_title")) {
+                try {
+                    val response = coroutineToIndicator { indicator ->
+                        HttpRequests.request("https://pub.dartlang.org/packages/$pluginName.json")
                             .readString(indicator)
-                        val result = Gson().fromJson(response, PluginVersionModel::class.java)
+                    }
+                    val result = Gson().fromJson(response, PluginVersionModel::class.java)
+                    withContext(Dispatchers.EDT) {
                         model = VersionSelectModel(versions = result.versions)
                         isEnabled = true
                         model.selectedItem = result.versions.first()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-            task.queue()
 
 
         } catch (_: Exception) {

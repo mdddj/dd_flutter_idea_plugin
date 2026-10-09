@@ -4,8 +4,6 @@ import com.intellij.json.JsonFileType
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -192,14 +190,11 @@ object MyFileUtil {
     fun reformatVirtualFile(file: VirtualFile, project: Project) {
         val vf = runReadAction { PsiManager.getInstance(project).findFile(file) }
         if (vf != null) {
-            val task = object : Task.Backgroundable(project, "Reformat ${file.name}", false) {
-                override fun run(p0: ProgressIndicator) {
-                    WriteCommandAction.runWriteCommandAction(project) {
-                        CodeStyleManager.getInstance(project).reformat(vf)
-                    }
+            project.launchBackgroundProgress("Reformat ${file.name}", cancellable = false) {
+                WriteCommandAction.runWriteCommandAction(project) {
+                    CodeStyleManager.getInstance(project).reformat(vf)
                 }
             }
-            task.queue()
 
         }
     }

@@ -8,9 +8,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandlerFactory
@@ -22,8 +19,12 @@ import shop.itbug.flutterx.dialog.BatchPublishPackageRequest
 import shop.itbug.flutterx.dialog.CommandOutputDialog
 import shop.itbug.flutterx.i18n.PluginBundle
 import shop.itbug.flutterx.icons.MyIcons
+import com.intellij.platform.util.progress.reportRawProgress
+import kotlinx.coroutines.ensureActive
 import shop.itbug.flutterx.util.PubPackagePublishUtil
+import shop.itbug.flutterx.util.launchBackgroundProgress
 import shop.itbug.flutterx.util.toastWithError
+import java.util.concurrent.CancellationException
 
 class BatchPublishChildPackagesAction : MyAction() {
 
@@ -73,152 +74,136 @@ class BatchPublishChildPackagesAction : MyAction() {
         packages: List<BatchPublishPackageRequest>,
         includePublishDate: Boolean
     ) {
-        object : Task.Backgroundable(
-            project,
-            PluginBundle.get("batch_publish_child_packages_task_title"),
-            true
-        ) {
-            private val output = StringBuilder()
-            private val failures = mutableListOf<String>()
-            private var successCount = 0
-            private var cancelled = false
-            private var currentProcessHandler: OSProcessHandler? = null
+        val output = StringBuilder()
+        val failures = mutableListOf<String>()
+        var successCount = 0
+        var currentProcessHandler: OSProcessHandler? = null
 
-            override fun run(indicator: ProgressIndicator) {
-                indicator.isIndeterminate = false
-
-                packages.forEachIndexed { index, request ->
-                    indicator.checkCanceled()
-                    indicator.fraction = index.toDouble() / packages.size.coerceAtLeast(1)
-                    indicator.text = PluginBundle.get("batch_publish_child_packages_task_running")
-                    indicator.text2 = "${index + 1}/${packages.size} · ${request.packageInfo.name}"
-                    appendPackageOutputHeader(request)
-
-                    try {
-                        PubPackagePublishUtil.updatePubspecVersion(
-                            request.packageInfo.workDirectory,
-                            request.packageInfo.name,
-                            request.version
-                        )
-                        PubPackagePublishUtil.updateChangelogForPublish(
-                            request.packageInfo.workDirectory,
-                            request.version,
-                            request.changelog,
-                            includePublishDate
-                        )
-                        val exitCode = runPublishCommand(indicator, request)
-                        if (exitCode == 0) {
-                            successCount += 1
-                        } else {
-                            failures += "${request.packageInfo.name} (exit code: $exitCode)"
-                        }
-                    } catch (_: ProcessCanceledException) {
-                        cancelled = true
-                        currentProcessHandler?.destroyProcess()
-                        throw ProcessCanceledException()
-                    } catch (error: Exception) {
-                        failures += "${request.packageInfo.name}: ${error.message ?: "unknown error"}"
-                        synchronized(output) {
-                            output.append(error.stackTraceToString()).appendLine()
-                        }
+        fun showResultNotification() {
+            val notification = NotificationGroupManager.getInstance()
+                .getNotificationGroup("dio_socket_notify")
+                .createNotification(
+                    if (failures.isEmpty()) {
+                        PluginBundle.get("batch_publish_child_packages_success", successCount.toString())
+                    } else {
+                        PluginBundle.get("batch_publish_child_packages_failed", failures.size.toString())
+                    },
+                    if (failures.isEmpty()) NotificationType.INFORMATION else NotificationType.ERROR
+                )
+            notification.icon = MyIcons.flutter
+            notification.addAction(object : com.intellij.openapi.project.DumbAwareAction(
+                PluginBundle.get("pubspec_notification_view_output")
+            ) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    val outputText = synchronized(output) {
+                        output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
                     }
+                    CommandOutputDialog(
+                        project,
+                        PluginBundle.get("batch_publish_child_packages_output_title"),
+                        outputText
+                    ).show()
+                    notification.hideBalloon()
+                    notification.expire()
                 }
 
-                indicator.fraction = 1.0
-            }
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+            })
+            notification.notify(project)
+        }
 
-            override fun onSuccess() {
-                val notification = NotificationGroupManager.getInstance()
+        fun appendPackageOutputHeader(request: BatchPublishPackageRequest) {
+            synchronized(output) {
+                output.appendLine("===== ${request.packageInfo.name} =====")
+                output.appendLine("version: ${request.version}")
+                output.appendLine("directory: ${request.packageInfo.workDirectory.absolutePath}")
+                output.appendLine("command: dart pub publish --force")
+                output.appendLine()
+            }
+        }
+
+        project.launchBackgroundProgress(PluginBundle.get("batch_publish_child_packages_task_title")) {
+            try {
+                val progressContext = coroutineContext
+                reportRawProgress { reporter ->
+                    packages.forEachIndexed { index, request ->
+                        progressContext.ensureActive()
+                        reporter.fraction(index.toDouble() / packages.size.coerceAtLeast(1))
+                        reporter.text(PluginBundle.get("batch_publish_child_packages_task_running"))
+                        reporter.details("${index + 1}/${packages.size} · ${request.packageInfo.name}")
+                        appendPackageOutputHeader(request)
+
+                        try {
+                            PubPackagePublishUtil.updatePubspecVersion(
+                                request.packageInfo.workDirectory,
+                                request.packageInfo.name,
+                                request.version
+                            )
+                            PubPackagePublishUtil.updateChangelogForPublish(
+                                request.packageInfo.workDirectory,
+                                request.version,
+                                request.changelog,
+                                includePublishDate
+                            )
+                            val commandLine = GeneralCommandLine("dart", "pub", "publish", "--force")
+                                .withWorkDirectory(request.packageInfo.workDirectory)
+                            val handler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
+                            currentProcessHandler = handler
+                            ProcessTerminatedListener.attach(handler)
+                            handler.addProcessListener(object : ProcessListener {
+                                override fun startNotified(event: com.intellij.execution.process.ProcessEvent) = Unit
+
+                                override fun processTerminated(event: com.intellij.execution.process.ProcessEvent) = Unit
+
+                                override fun processWillTerminate(
+                                    event: com.intellij.execution.process.ProcessEvent,
+                                    willBeDestroyed: Boolean
+                                ) = Unit
+
+                                override fun onTextAvailable(
+                                    event: com.intellij.execution.process.ProcessEvent,
+                                    outputType: com.intellij.openapi.util.Key<*>
+                                ) {
+                                    synchronized(output) {
+                                        output.append(event.text)
+                                    }
+                                }
+                            })
+                            handler.startNotify()
+                            while (!handler.waitFor(500)) {
+                                progressContext.ensureActive()
+                            }
+                            val exitCode = handler.exitCode ?: -1
+                            if (exitCode == 0) {
+                                successCount += 1
+                            } else {
+                                failures += "${request.packageInfo.name} (exit code: $exitCode)"
+                            }
+                        } catch (error: CancellationException) {
+                            currentProcessHandler?.destroyProcess()
+                            throw error
+                        } catch (error: Exception) {
+                            failures += "${request.packageInfo.name}: ${error.message ?: "unknown error"}"
+                            synchronized(output) {
+                                output.append(error.stackTraceToString()).appendLine()
+                            }
+                        }
+                    }
+                    reporter.fraction(1.0)
+                }
+                showResultNotification()
+            } catch (error: CancellationException) {
+                NotificationGroupManager.getInstance()
                     .getNotificationGroup("dio_socket_notify")
                     .createNotification(
-                        if (failures.isEmpty()) {
-                            PluginBundle.get("batch_publish_child_packages_success", successCount.toString())
-                        } else {
-                            PluginBundle.get("batch_publish_child_packages_failed", failures.size.toString())
-                        },
-                        if (failures.isEmpty()) NotificationType.INFORMATION else NotificationType.ERROR
+                        PluginBundle.get("batch_publish_child_packages_cancelled"),
+                        NotificationType.WARNING
                     )
-                notification.icon = MyIcons.flutter
-                notification.addAction(object : com.intellij.openapi.project.DumbAwareAction(
-                    PluginBundle.get("pubspec_notification_view_output")
-                ) {
-                    override fun actionPerformed(e: AnActionEvent) {
-                        val outputText = synchronized(output) {
-                            output.toString().ifBlank { PluginBundle.get("pubspec_notification_no_output") }
-                        }
-                        CommandOutputDialog(
-                            project,
-                            PluginBundle.get("batch_publish_child_packages_output_title"),
-                            outputText
-                        ).show()
-                        notification.hideBalloon()
-                        notification.expire()
-                    }
-
-                    override fun getActionUpdateThread(): ActionUpdateThread {
-                        return ActionUpdateThread.BGT
-                    }
-                })
-                notification.notify(project)
+                    .notify(project)
+                throw error
             }
-
-            override fun onCancel() {
-                if (cancelled) {
-                    NotificationGroupManager.getInstance()
-                        .getNotificationGroup("dio_socket_notify")
-                        .createNotification(
-                            PluginBundle.get("batch_publish_child_packages_cancelled"),
-                            NotificationType.WARNING
-                        )
-                        .notify(project)
-                }
-            }
-
-            private fun runPublishCommand(
-                indicator: ProgressIndicator,
-                request: BatchPublishPackageRequest
-            ): Int {
-                val commandLine =
-                    GeneralCommandLine("dart", "pub", "publish", "--force").withWorkDirectory(request.packageInfo.workDirectory)
-                val handler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
-                currentProcessHandler = handler
-                ProcessTerminatedListener.attach(handler)
-                handler.addProcessListener(object : ProcessListener {
-                    override fun startNotified(event: com.intellij.execution.process.ProcessEvent) = Unit
-
-                    override fun processTerminated(event: com.intellij.execution.process.ProcessEvent) = Unit
-
-                    override fun processWillTerminate(
-                        event: com.intellij.execution.process.ProcessEvent,
-                        willBeDestroyed: Boolean
-                    ) = Unit
-
-                    override fun onTextAvailable(
-                        event: com.intellij.execution.process.ProcessEvent,
-                        outputType: com.intellij.openapi.util.Key<*>
-                    ) {
-                        synchronized(output) {
-                            output.append(event.text)
-                        }
-                    }
-                })
-                handler.startNotify()
-
-                while (!handler.waitFor(500)) {
-                    indicator.checkCanceled()
-                }
-                return handler.exitCode ?: -1
-            }
-
-            private fun appendPackageOutputHeader(request: BatchPublishPackageRequest) {
-                synchronized(output) {
-                    output.appendLine("===== ${request.packageInfo.name} =====")
-                    output.appendLine("version: ${request.version}")
-                    output.appendLine("directory: ${request.packageInfo.workDirectory.absolutePath}")
-                    output.appendLine("command: dart pub publish --force")
-                    output.appendLine()
-                }
-            }
-        }.queue()
+        }
     }
 }
