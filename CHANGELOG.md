@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 7.3.1 - 2026-10-09
+
+### Fixes
+
+- Fixed a startup freeze when `pubspec.yaml` was already open. The IDE stopped responding, and the close button did nothing until the process was killed. Pubspec notifications now read the file on the current thread, and dependency gutter icons are created only after the project has finished opening and the document is committed.
+
+### Improvements
+
+- Replaced obsolete background and modal progress tasks with the IntelliJ 2026.2 progress APIs. Flutter version checks, package lookup, pub get, publish, downloads, and Freezed project scans use the new progress UI.
+- Localized the Flutter version check progress title in Simplified Chinese, English, Traditional Chinese, Japanese, and Korean.
+
+### Automation
+
+- Release builds now use JBR 25, matching the Java 25 compile target.
+- A successful release now opens a pull request into `master`.
+
 ## 7.3.0 - 2026-10-08
 
 ### New Features

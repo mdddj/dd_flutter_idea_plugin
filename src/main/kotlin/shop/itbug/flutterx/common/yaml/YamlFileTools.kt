@@ -36,6 +36,21 @@ class PubspecYamlFileTools private constructor(yaml: YAMLFile) : YamlFileToolBas
     suspend fun isFlutterProject() =
         hasKey("name") && hasKey("environment")
 
+    fun isFlutterProjectNow(): Boolean {
+        val keys = rootKeyValuesNow().map { it.keyText.trim() }.toSet()
+        return "name" in keys && "environment" in keys
+    }
+
+    fun rootValueTextNow(key: String): String? {
+        return rootKeyValuesNow()
+            .firstOrNull { it.keyText.trim() == key }
+            ?.valueText
+            ?.trim()
+            ?.removeSurrounding("\"")
+            ?.removeSurrounding("'")
+            ?.takeIf { it.isNotBlank() }
+    }
+
 
     /**
      * 获取插件列表

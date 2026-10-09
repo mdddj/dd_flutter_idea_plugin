@@ -5,12 +5,12 @@ import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.plugins.terminal.TerminalToolWindowFactory
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
+import kotlinx.coroutines.CancellationException
 import shop.itbug.flutterx.tools.log
 
 object RunUtil {
@@ -89,30 +89,17 @@ object RunUtil {
         onError: ((error: Throwable) -> String?)? = null,
         generalCommand: () -> GeneralCommandLine,
     ) {
-        val task = object : com.intellij.openapi.progress.Task.Backgroundable(project, title) {
-            override fun run(p0: ProgressIndicator) {
+        project.launchBackgroundProgress(title) {
+            try {
                 val command = generalCommand()
                 ExecUtil.execAndGetOutput(command)
-            }
-
-            override fun onThrowable(error: Throwable) {
-
-                val msg = onError?.invoke(error)
-                msg?.let {
-                    project.toastWithError(it)
-                }
-                super.onThrowable(error)
-            }
-
-            override fun onSuccess() {
-                val msg = onSuccess?.invoke()
-                msg?.let {
-                    project.toast(it)
-                }
-                super.onSuccess()
+                onSuccess?.invoke()?.let { project.toast(it) }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Throwable) {
+                onError?.invoke(error)?.let { project.toastWithError(it) }
             }
         }
-        task.queue()
     }
 
 
