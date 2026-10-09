@@ -37,10 +37,9 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.platform.util.progress.reportRawProgress
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.runBlocking
 import shop.itbug.flutterx.util.launchBackgroundProgress
 import java.util.concurrent.CancellationException
 import org.jetbrains.yaml.psi.YAMLFile
@@ -85,8 +84,9 @@ class PubPluginVersionCheckNotification : EditorNotificationProvider {
             if (file.name != "pubspec.yaml") return@Function null
             val psiFile = PsiManager.getInstance(project).findFile(file) as? YAMLFile ?: return@Function null
 
-            val isFlutterProject =
-                runBlocking(Dispatchers.IO) { PubspecYamlFileTools.create(psiFile).isFlutterProject() }
+            val isFlutterProject = runReadActionBlocking {
+                PubspecYamlFileTools.create(psiFile).isFlutterProjectNow()
+            }
 
             if (!isFlutterProject) return@Function null
             return@Function YamlFileNotificationPanel(it, psiFile, project)
@@ -280,15 +280,8 @@ private class YamlFileNotificationPanel(fileEditor: FileEditor, val file: YAMLFi
     }
 
     private fun currentPubspecValue(key: String): String? {
-        return runBlocking(Dispatchers.IO) {
-            PubspecYamlFileTools.create(file)
-                .getRootKeyValueList()
-                ?.firstOrNull { it.keyText.trim() == key }
-                ?.valueText
-                ?.trim()
-                ?.removeSurrounding("\"")
-                ?.removeSurrounding("'")
-                ?.takeIf { it.isNotBlank() }
+        return runReadActionBlocking {
+            PubspecYamlFileTools.create(file).rootValueTextNow(key)
         }
     }
 

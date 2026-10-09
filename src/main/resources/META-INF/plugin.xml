@@ -230,6 +230,8 @@
         <!-- language="yaml"/>-->
 
 
+        <postStartupActivity implementation="shop.itbug.flutterx.linemark.PubspecGutterIconStartupActivity"
+                             order="last"/>
         <postStartupActivity implementation="shop.itbug.flutterx.services.MyAssetGenPostStart"/>
         <postStartupActivity implementation="shop.itbug.flutterx.services.PubspecStartActivity"/>
         <postStartupActivity implementation="shop.itbug.flutterx.hints.FlutterAssetsStartHandle"/>
