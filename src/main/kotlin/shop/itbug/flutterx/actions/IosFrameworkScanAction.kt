@@ -4,9 +4,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
@@ -19,6 +16,7 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import shop.itbug.flutterx.document.copyTextToClipboard
 import shop.itbug.flutterx.i18n.PluginBundle
+import shop.itbug.flutterx.util.launchBackgroundProgress
 import shop.itbug.flutterx.util.toast
 import shop.itbug.flutterx.util.toastWithError
 import javax.swing.JComponent
@@ -62,12 +60,9 @@ class IosFrameworkScanActionDialog(val project: Project, val e: AnActionEvent) :
     }
 
     private fun startTask() {
-        val task = object : Task.Backgroundable(project, PluginBundle.get("scaning") + " - ios Framework") {
-            override fun run(indicator: ProgressIndicator) {
-                startTask(project, e)
-            }
+        project.launchBackgroundProgress(PluginBundle.get("scaning") + " - ios Framework") {
+            startTask(project, e)
         }
-        ProgressManager.getInstance().run(task)
     }
 
     //开始任务

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.platform.util.progress.withProgressText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.jetbrains.jewel.bridge.JewelComposePanel
@@ -169,8 +170,9 @@ private fun PackageGroupView(viewModel: PubSearchViewModel, item: MyFlutterPacka
 
     fun addToFile(model: PubPackageInfo, type: FlutterPluginType) {
         TaskRunUtil.runModal(project) {
-            it.text = PluginBundle.get("pub.dev.search.action.in.progress")
-            viewModel.addDepToFile(model, type)
+            withProgressText(PluginBundle.get("pub.dev.search.action.in.progress")) {
+                viewModel.addDepToFile(model, type)
+            }
         }
     }
 
@@ -654,8 +656,9 @@ private fun SearchPackage(project: Project, viewModel: PubSearchViewModel) {
                             itemsIndexed(sortedResults) { _, item ->
                                 SimplePackageItem(item, allDeps.any { it.name == item.model.name }) { type ->
                                     TaskRunUtil.runModal(project) {
-                                        it.text = PluginBundle.get("pub.dev.search.action.in.progress")
-                                        viewModel.addDepToFile(item, type ?: FlutterPluginType.Dependencies)
+                                        withProgressText(PluginBundle.get("pub.dev.search.action.in.progress")) {
+                                            viewModel.addDepToFile(item, type ?: FlutterPluginType.Dependencies)
+                                        }
                                     }
                                 }
                             }

@@ -4,11 +4,10 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.platform.util.progress.withProgressText
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,7 +23,8 @@ import com.jetbrains.lang.dart.psi.DartFile
 import com.jetbrains.lang.dart.psi.impl.DartClassDefinitionImpl
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
+import java.util.concurrent.CancellationException
 import shop.itbug.flutterx.actions.freezed.Freezed3ClassFixAction
 import shop.itbug.flutterx.config.PluginConfig
 import shop.itbug.flutterx.i18n.PluginBundle
@@ -95,42 +95,6 @@ private class Panel(val project: Project, val file: DartFile) : EditorNotificati
     }
 
 
-    val task = object : Task.Modal(project, "", true) {
-        override fun run(p0: ProgressIndicator) {
-            p0.text = "${PluginBundle.get("scan_privacy")}..."
-            val sourcesFiles = runReadAction { MyFileUtil.findAllProjectFiles(project) }
-            val freezedClasses = runBlocking {
-                sourcesFiles.map { file ->
-                    p0.text2 = file.name
-                    async {
-                        readAction {
-                            DartPsiElementUtil.findAllFreezedClassNot3Version(
-                                file,
-                                project
-                            )
-                        }
-                    }
-                }
-                    .awaitAll()
-            }.flatten()
-            println(freezedClasses.size)
-            if (freezedClasses.isNotEmpty()) {
-                p0.text = "Fixing"
-                runBlocking {
-                    freezedClasses.map { element ->
-                        async {
-                            p0.text2 = "fix ${readAction { element.myManagerFun().className }}"
-                            Freezed3ClassFixAction.fix(
-                                element,
-                                Freezed3ClassFixAction.createElementByXc(getIElementType(), project), project
-                            )
-                        }
-                    }.awaitAll()
-                }
-            }
-        }
-    }
-
     private fun getIElementType(): IElementType {
         if (useSelectKeyword == "sealed") {
             return DartTokenTypes.SEALED
@@ -163,7 +127,39 @@ private class Panel(val project: Project, val file: DartFile) : EditorNotificati
 
     private fun doScanTask(string: String) {
         useSelectKeyword = string
-        task.queue()
+        try {
+            runWithModalProgressBlocking(project, "${PluginBundle.get("scan_privacy")}...") {
+                val sourcesFiles = readAction { MyFileUtil.findAllProjectFiles(project) }
+                val freezedClasses = coroutineScope {
+                    sourcesFiles.map { file ->
+                        async {
+                            withProgressText(file.name) {
+                                readAction {
+                                    DartPsiElementUtil.findAllFreezedClassNot3Version(file, project)
+                                }
+                            }
+                        }
+                    }.awaitAll()
+                }.flatten()
+                if (freezedClasses.isNotEmpty()) {
+                    coroutineScope {
+                        freezedClasses.map { element ->
+                            async {
+                                val className = readAction { element.myManagerFun().className }
+                                withProgressText("fix $className") {
+                                    Freezed3ClassFixAction.fix(
+                                        element,
+                                        Freezed3ClassFixAction.createElementByXc(getIElementType(), project),
+                                        project
+                                    )
+                                }
+                            }
+                        }.awaitAll()
+                    }
+                }
+            }
+        } catch (_: CancellationException) {
+        }
     }
 
     private fun showPopup() {

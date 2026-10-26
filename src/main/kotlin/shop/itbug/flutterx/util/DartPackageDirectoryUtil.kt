@@ -2,8 +2,6 @@ package shop.itbug.flutterx.util
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
@@ -16,14 +14,10 @@ import java.nio.file.Path
 object DartPackageDirectoryUtil {
 
     fun openInstalledPackageDirectory(project: Project, packageName: String) {
-        val task = object : Task.Backgroundable(project, "Opening package directory", true) {
-            override fun run(indicator: ProgressIndicator) {
-                indicator.text = "Opening package directory"
-                val packageDirectory = findInstalledPackageDirectory(project, packageName) ?: return
-                BrowserUtil.browse(Path.of(packageDirectory.path))
-            }
+        project.launchBackgroundProgress("Opening package directory") {
+            val packageDirectory = findInstalledPackageDirectory(project, packageName) ?: return@launchBackgroundProgress
+            BrowserUtil.browse(Path.of(packageDirectory.path))
         }
-        task.queue()
     }
 
 

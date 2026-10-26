@@ -8,9 +8,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -23,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.messages.MessageBusConnection
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Job
 import shop.itbug.flutterx.actions.FlutterVersionIgnoreAction
 import shop.itbug.flutterx.actions.components.MyButtonAnAction
 import shop.itbug.flutterx.common.dart.FlutterXVMService
@@ -40,6 +37,7 @@ import shop.itbug.flutterx.util.DateUtils
 import shop.itbug.flutterx.util.MyDartPsiElementUtil
 import shop.itbug.flutterx.util.RunUtil
 import shop.itbug.flutterx.util.Util
+import shop.itbug.flutterx.util.launchBackgroundProgress
 import shop.itbug.flutterx.util.toHexString
 
 //
@@ -73,7 +71,7 @@ class MyProjectListening : ProjectManagerListener {
 @Service(Service.Level.PROJECT)
 class AssetsListeningProjectService(val project: Project) : Disposable {
     private val connect: MessageBusConnection = project.messageBus.connect(this)
-    private var checkFlutterVersionTask: CheckFlutterVersionTask = CheckFlutterVersionTask()
+    private var checkFlutterVersionJob: Job? = null
 
     companion object {
         fun getInstance(project: Project): AssetsListeningProjectService {
@@ -82,17 +80,15 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
     }
 
     override fun dispose() {
-        if (DioListingUiConfig.setting.checkFlutterVersion) {
-            if (checkFlutterVersionTask.indication?.isRunning == true) {
-                checkFlutterVersionTask.indication?.cancel()
-            }
-        }
+        checkFlutterVersionJob?.cancel()
     }
 
     ///初始化
     fun initListening() {
         if (DioListingUiConfig.setting.checkFlutterVersion) {
-            ProgressManager.getInstance().run(checkFlutterVersionTask)
+            checkFlutterVersionJob = project.launchBackgroundProgress(PluginBundle.get("detecting_flutter_version")) {
+                detectNewFlutterVersion()
+            }
         }
         checkAssetsChange()
     }
@@ -138,35 +134,28 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
     }
 
     ///检测flutter新版本弹出
-    private inner class CheckFlutterVersionTask :
-        Task.Backgroundable(project, "Detecting Flutter version...") {
-        var indication: ProgressIndicator? = null
-        private val logger = thisLogger()
-        override fun run(indicator: ProgressIndicator) {
-            this.indication = indicator
-            val flutterVersionService = FlutterVersionService.getInstance(project)
-            val flutterChannel = Util.getFlutterChannel() ?: return
-            val currentFlutterVersion =
-                runBlocking { flutterVersionService.refreshAndGetFlutterVersion() } ?: return
-            val version = flutterVersionService.getRemoteFlutterVersion() ?: return
-            val hash = version.getCurrentReleaseByChannel(flutterChannel)
-            val release = version.releases.find { o -> o.hash == hash } ?: return
-            if (release.version != currentFlutterVersion.getVersionText()) {
-
-                //检测这个版本是不是被用户设置了忽略检测
-                if (FlutterXGlobalConfigService.getInstance().isIgnoredFlutterVersionCheck(release.version)) {
-                    logger.info("${release.version}被用户设置了忽略检测,不弹窗提醒")
-                    return
-                }
-                val changelog = FlutterChangelogService.fetchVersionChangelog(release.version)
-                showTip(release, project, changelog)
+    private suspend fun detectNewFlutterVersion() {
+        val logger = thisLogger()
+        val flutterVersionService = FlutterVersionService.getInstance(project)
+        val flutterChannel = Util.getFlutterChannel() ?: return
+        val currentFlutterVersion = flutterVersionService.refreshAndGetFlutterVersion() ?: return
+        val version = flutterVersionService.getRemoteFlutterVersion() ?: return
+        val hash = version.getCurrentReleaseByChannel(flutterChannel)
+        val release = version.releases.find { o -> o.hash == hash } ?: return
+        if (release.version != currentFlutterVersion.getVersionText()) {
+            if (FlutterXGlobalConfigService.getInstance().isIgnoredFlutterVersionCheck(release.version)) {
+                logger.info("${release.version}被用户设置了忽略检测,不弹窗提醒")
+                return
             }
+            val changelog = FlutterChangelogService.fetchVersionChangelog(release.version)
+            showTip(release, project, changelog)
         }
+    }
 
-        /**
-         * 弹出通知
-         */
-        fun showTip(release: Release, project: Project, changelog: FlutterChangelogEntry?) {
+    /**
+     * 弹出通知
+     */
+    private fun showTip(release: Release, project: Project, changelog: FlutterChangelogEntry?) {
             val children = mutableListOf<HtmlChunk>()
             children += HtmlChunk.nbsp(2)
             children += HtmlChunk.tag("strong").bold().addText(release.version)
@@ -276,7 +265,6 @@ class AssetsListeningProjectService(val project: Project) : Disposable {
                     listChunk,
                     moreChunk
                 )
-        }
     }
 }
 

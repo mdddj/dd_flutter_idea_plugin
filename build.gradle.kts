@@ -24,7 +24,7 @@ val idePluginDependencies =
 plugins {
     idea
     kotlin("jvm") version "2.3.20"
-    id("org.jetbrains.intellij.platform") version "2.18.1"
+    id("org.jetbrains.intellij.platform") version "2.19.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
@@ -81,6 +81,8 @@ val bPlugins = mutableListOf(
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
+    // 错误自动上报。SDK 内部把 gson 重打包成 io.sentry.vendor.gson，不会和平台冲突。
+    implementation("io.sentry:sentry:8.61.1")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
@@ -229,21 +231,18 @@ val generateFlutterPluginInfo = tasks.register("generateFlutterPluginInfo") {
     group = "codegen"
     description = "Generates FlutterPluginInfo class with version info"
 
-    // 定义输出目录和文件路径
+    // 定义输出目录和文件路径。
+    // 注意：不要在这里删除旧文件——注册回调在配置阶段执行，
+    // 任何不触发该任务的 Gradle 命令都会让源文件凭空消失。
     val outputDir = file("src/main/kotlin/codegen")
     val outputFile = File(outputDir, "FlutterXPluginInfo.kt")
-    if (outputFile.exists()) {
-        outputFile.delete()
-    }
-    if (outputDir.exists().not()) {
-        outputDir.mkdirs()
-    }
 
-    // 设置输入和输出以支持增量构建
+    // 设置输出以支持增量构建
     outputs.file(outputFile)
 
     doLast {
         val q = "\"\"\"\n"
+        outputDir.mkdirs()
         outputFile.writeText(
             """
             |package codegen

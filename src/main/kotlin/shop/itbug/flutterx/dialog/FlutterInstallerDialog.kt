@@ -278,12 +278,6 @@ private fun FlutterInstallerContent(project: Project) {
                 maxLines = 1,
             )
             OutlinedButton(onClick = ::refresh, enabled = !scanning) {
-                Icon(
-                    key = AllIconsKeys.Actions.Refresh,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.width(6.dp))
                 Text(PluginBundle.get("flutter.installer.refresh"))
             }
         }
@@ -322,12 +316,6 @@ private fun FlutterInstallerContent(project: Project) {
                 onClick = ::install,
                 enabled = !installing && artifactIndex >= 0 && deviceIndex >= 0,
             ) {
-                Icon(
-                    key = AllIconsKeys.Actions.Execute,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.width(6.dp))
                 Text(PluginBundle.get("flutter.installer.install"))
             }
         }

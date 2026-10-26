@@ -123,6 +123,7 @@
         <notificationGroup displayType="BALLOON" id="dart_package_check_service"/>
         <notificationGroup displayType="BALLOON" id="open_flutter_project_in_ide"/>
         <notificationGroup displayType="BALLOON" id="DartVmServiceListener"/>
+        <notificationGroup displayType="BALLOON" id="flutterx_error_report"/>
 
         <!--    排水沟图标    -->
         <codeInsight.lineMarkerProvider language="yaml"
@@ -230,12 +231,16 @@
         <!-- language="yaml"/>-->
 
 
+        <postStartupActivity implementation="shop.itbug.flutterx.linemark.PubspecGutterIconStartupActivity"
+                             order="last"/>
         <postStartupActivity implementation="shop.itbug.flutterx.services.MyAssetGenPostStart"/>
         <postStartupActivity implementation="shop.itbug.flutterx.services.PubspecStartActivity"/>
         <postStartupActivity implementation="shop.itbug.flutterx.hints.FlutterAssetsStartHandle"/>
         <postStartupActivity implementation="shop.itbug.flutterx.services.UserDartLibServiceInit"/>
-        <!--        错误处理-->
-        <!--                <errorHandler implementation="shop.itbug.flutterx.common.PluginErrorHandle"/>-->
+        <!--        错误处理 V1: Fatal Errors 对话框里的"反馈到 GitHub"（用户手动）-->
+        <errorHandler implementation="shop.itbug.flutterx.common.PluginErrorHandle"/>
+        <!--        错误处理 V2: 自动上报到自建 Sentry（无需用户操作）-->
+        <errorReportSink implementation="shop.itbug.flutterx.common.FlutterXErrorReportSink"/>
         <!--        <configurationType implementation="shop.itbug.flutterx.run.FlutterXRunConfigType"/>-->
         <!--        <fileEditorProvider implementation="shop.itbug.flutterx.editor.MyYamlSplitEditorProvider"/>-->
 
@@ -248,6 +253,12 @@
         <mcpServer.mcpToolsProvider implementation="shop.itbug.flutterx.mcp.DartVmExtensionMcpToolsProvider"/>
 
     </extensions>
+
+    <applicationListeners>
+        <!-- IDE 退出时刷完 Sentry 队列 -->
+        <listener class="shop.itbug.flutterx.common.SentryAppLifecycleListener"
+                  topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
 
     <projectListeners>
         <listener class="shop.itbug.flutterx.services.MyProjectListening"

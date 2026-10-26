@@ -28,6 +28,15 @@ abstract class YamlFileToolBase(val file: YAMLFile) {
     suspend fun getYamlDocument() = file.findChild<YAMLDocumentImpl>()
     suspend fun getRootBlockMapping() = getYamlDocument()?.findChild<YAMLBlockMappingImpl>()
     suspend fun getRootKeyValueList() = getRootBlockMapping()?.chs<YAMLKeyValueImpl>()
+
+    /**
+     * 调用方必须已经持有读锁。不要包进 `runBlocking`，EDT 上这样做会和 `readAction` 互相等待。
+     */
+    fun rootKeyValuesNow(): List<YAMLKeyValueImpl> {
+        val document = PsiTreeUtil.getChildOfType(file, YAMLDocumentImpl::class.java) ?: return emptyList()
+        val mapping = PsiTreeUtil.getChildOfType(document, YAMLBlockMappingImpl::class.java) ?: return emptyList()
+        return PsiTreeUtil.getChildrenOfTypeAsList(mapping, YAMLKeyValueImpl::class.java)
+    }
 }
 
 

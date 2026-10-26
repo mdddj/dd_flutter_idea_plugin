@@ -7,11 +7,21 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.ui.awt.RelativePoint
 import icons.MyImages
 import org.jetbrains.yaml.psi.YAMLFile
@@ -32,25 +42,82 @@ import javax.swing.Icon
 
 class PluginDartIconLineMark : LineMarkerProvider {
 
-    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
-        val psiFile = element.containingFile ?: return null
-        if (psiFile !is YAMLFile) return null
-        val isFlutterProject = psiFile.getUserData(YAML_FILE_IS_FLUTTER_PROJECT) ?: return null
-        if (!isFlutterProject) return null
-        if (element.isDartPluginElement()) {
-            val packageName = element.getPluginName()
-            val isIgnored = YamlFileIgDartPackageCache.getInstance(element.project).state.hasItem(psiFile, packageName)
-            return LineMarkerInfo(
-                element.firstChild,
-                element.firstChild.textRange,
-                if (isIgnored) MyImages.ignore else MyIcons.dartPackageIcon,
-                { element.text },
-                PluginDartIconLineMarkNavHandler(element, psiFile),
-                GutterIconRenderer.Alignment.LEFT
-            ) { "" }
+    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? = null
+
+    override fun collectSlowLineMarkers(
+        elements: MutableList<out PsiElement>,
+        result: MutableCollection<in LineMarkerInfo<*>>,
+    ) {
+        if (elements.isEmpty()) return
+        val psiFile = elements.first().containingFile as? YAMLFile ?: return
+        if (psiFile.name != PUBSPEC_FILE_NAME) return
+        if (psiFile.getUserData(YAML_FILE_IS_FLUTTER_PROJECT) != true) return
+        val virtualFile = psiFile.virtualFile ?: return
+        val project = psiFile.project
+
+        // 启动恢复编辑器时，高亮线程持有读锁，EDT 还拿着文档锁。
+        // 这里创建 LineMarkerInfo 或首次读取项目服务会让两边互相等待，界面无法关闭。
+        if (!StartupManager.getInstance(project).postStartupActivityPassed()) {
+            return
         }
-        return null
+        val document = FileDocumentManager.getInstance().getCachedDocument(virtualFile)
+        if (document != null && !PsiDocumentManager.getInstance(project).isCommitted(document)) {
+            return
+        }
+
+        ProgressManager.checkCanceled()
+        val ignoreCache = YamlFileIgDartPackageCache.getInstance(project)
+        for (element in elements) {
+            if (!element.isDartPluginElement()) continue
+            val anchor = element.leafAnchor() ?: continue
+            val packageName = element.getPluginName()
+            val isIgnored = ignoreCache.state.hasItem(psiFile, packageName)
+            result.add(
+                LineMarkerInfo(
+                    anchor,
+                    anchor.textRange,
+                    if (isIgnored) MyImages.ignore else MyIcons.dartPackageIcon,
+                    { packageName },
+                    PluginDartIconLineMarkNavHandler(element, psiFile),
+                    GutterIconRenderer.Alignment.LEFT,
+                ) { packageName }
+            )
+        }
     }
+}
+
+private const val PUBSPEC_FILE_NAME = "pubspec.yaml"
+private const val PUBSPEC_GUTTER_RESTART_REASON = "FlutterX pubspec gutter icons"
+
+/**
+ * 启动阶段的高亮会跳过排水沟图标。项目打开后再刷新一次已打开的 pubspec.yaml。
+ */
+class PubspecGutterIconStartupActivity : ProjectActivity, DumbAware {
+    override suspend fun execute(project: Project) {
+        if (project.isDisposed) return
+        readAction {
+            if (project.isDisposed) return@readAction
+            val analyzer = DaemonCodeAnalyzer.getInstance(project)
+            for (virtualFile in FileEditorManager.getInstance(project).openFiles) {
+                if (virtualFile.name != PUBSPEC_FILE_NAME) continue
+                val file = PsiManager.getInstance(project).findFile(virtualFile) ?: continue
+                if (file.isValid) {
+                    analyzer.restart(file, PUBSPEC_GUTTER_RESTART_REASON)
+                }
+            }
+        }
+    }
+}
+
+private fun PsiElement.leafAnchor(): PsiElement? {
+    var current = firstChild ?: return null
+    var depth = 0
+    while (depth < 32) {
+        val child = current.firstChild ?: return current
+        current = child
+        depth++
+    }
+    return current
 }
 
 class PluginDartIconLineMarkNavHandler(val element: PsiElement, val file: YAMLFile) :
@@ -129,7 +196,7 @@ class PluginDartIconActionMenuList(val element: PsiElement, val file: YAMLFile) 
                 } else {
                     ignoreServices.state.addNew(file, pluginName)
                 }
-                DaemonCodeAnalyzer.getInstance(project).restart(file)
+                DaemonCodeAnalyzer.getInstance(project).restart(file, "FlutterX pubspec gutter ignore changed")
                 MyFileUtil.reIndexFile(project, file.virtualFile)
             }
 

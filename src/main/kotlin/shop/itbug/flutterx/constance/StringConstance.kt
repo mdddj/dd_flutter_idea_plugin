@@ -7,8 +7,21 @@ import shop.itbug.flutterx.i18n.PluginBundle
 const val discordUrl = "https://discord.gg/ethKNxKRcZ"
 const val qqGroup = "https://qm.qq.com/q/3zYRrSC7zW"
 
+/// 自建 Sentry 的 DSN（项目 12，经 rustrak.itbug.shop 反向代理，走 HTTPS）。
+/// 用户可在 Settings → FlutterX 里修改。
+const val SENTRY_DSN = "https://436a5096cc2c4f38b8285d6026541b03@rustrak.itbug.shop/12"
+
+/// 旧版用的是明文 http。启动时靠这个前缀识别需要迁移的老配置。
+const val LEGACY_SENTRY_DSN_PREFIX = "http://"
+
 
 object Links {
+
+    //问题反馈
+    const val ISSUES_URL = "https://github.com/mdddj/dd_flutter_idea_plugin/issues"
+
+    //预填内容的 issue 创建页
+    const val NEW_ISSUE_URL = "https://github.com/mdddj/dd_flutter_idea_plugin/issues/new"
 
     const val DOCUMENT_DEFAULT_URL = "https://mdddj.github.io/flutterx-doc/en/"
 
