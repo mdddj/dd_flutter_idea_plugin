@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 7.3.3 - 2026-10-26
+
 ### New Features
 
 - Added error reporting. Fatal Errors dialogs can open a pre-filled GitHub issue, and plugin errors and UI freezes are sent to Sentry in the background.

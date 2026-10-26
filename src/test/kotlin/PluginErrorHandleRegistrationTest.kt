@@ -1,3 +1,4 @@
+import codegen.FlutterXPluginInfo
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
@@ -49,7 +50,7 @@ class PluginErrorHandleRegistrationTest : BasePlatformTestCase() {
         val body = PluginErrorHandle().buildReportBody(arrayOf(event), "user comment")
 
         assertTrue(body.contains("user comment"))
-        assertTrue(body.contains("FlutterX 7.3.2"))
+        assertTrue(body.contains("FlutterX ${FlutterXPluginInfo.VERSION}"))
         assertTrue(body.contains("IllegalStateException: boom"))
         assertTrue(body.contains("attachment payload"))
         assertTrue(body.contains("details.txt"))

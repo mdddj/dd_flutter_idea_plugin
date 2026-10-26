@@ -1,3 +1,4 @@
+import codegen.FlutterXPluginInfo
 import com.intellij.openapi.diagnostic.ErrorReportSinkBean
 import com.intellij.openapi.diagnostic.UnhandledExceptionReport
 import com.intellij.openapi.diagnostic.UnhandledFreezeReport
@@ -119,7 +120,7 @@ class SentryReportingServiceTest : BasePlatformTestCase() {
 
         assertSame("must configure the caller's instance", options, configured)
         assertEquals(SENTRY_DSN, options.dsn)
-        assertEquals("FlutterX@7.3.2", options.release)
+        assertEquals("FlutterX@${FlutterXPluginInfo.VERSION}", options.release)
         assertTrue(options.isDebug == false)
         assertFalse("platform owns the uncaught handler", options.isEnableUncaughtExceptionHandler)
         assertFalse("platform owns the shutdown hook", options.isEnableShutdownHook)
@@ -169,7 +170,7 @@ class SentryReportingServiceTest : BasePlatformTestCase() {
         assertEquals(true, exception.mechanism!!.isHandled)
         assertEquals("test", event.tags?.get("report.kind"))
         // 插件身份必须随事件走，否则 Sentry 里分不清版本
-        assertEquals("7.3.2", event.tags?.get("plugin.version"))
+        assertEquals(FlutterXPluginInfo.VERSION, event.tags?.get("plugin.version"))
         assertNotNull(event.tags?.get("ide"))
         assertNotNull(event.tags?.get("os"))
     }
