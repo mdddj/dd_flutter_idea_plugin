@@ -231,21 +231,18 @@ val generateFlutterPluginInfo = tasks.register("generateFlutterPluginInfo") {
     group = "codegen"
     description = "Generates FlutterPluginInfo class with version info"
 
-    // 定义输出目录和文件路径
+    // 定义输出目录和文件路径。
+    // 注意：不要在这里删除旧文件——注册回调在配置阶段执行，
+    // 任何不触发该任务的 Gradle 命令都会让源文件凭空消失。
     val outputDir = file("src/main/kotlin/codegen")
     val outputFile = File(outputDir, "FlutterXPluginInfo.kt")
-    if (outputFile.exists()) {
-        outputFile.delete()
-    }
-    if (outputDir.exists().not()) {
-        outputDir.mkdirs()
-    }
 
-    // 设置输入和输出以支持增量构建
+    // 设置输出以支持增量构建
     outputs.file(outputFile)
 
     doLast {
         val q = "\"\"\"\n"
+        outputDir.mkdirs()
         outputFile.writeText(
             """
             |package codegen
