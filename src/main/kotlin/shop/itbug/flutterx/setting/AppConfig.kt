@@ -1,6 +1,8 @@
 package shop.itbug.flutterx.setting
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.options.Configurable
@@ -16,6 +18,8 @@ import com.intellij.ui.dsl.builder.*
 import icons.MyImages
 import org.jetbrains.jewel.bridge.JewelComposePanel
 import shop.itbug.flutterx.actions.context.SiteDocument
+import shop.itbug.flutterx.common.SENTRY_NOTIFICATION_GROUP
+import shop.itbug.flutterx.common.SentryReportingService
 import shop.itbug.flutterx.config.*
 import shop.itbug.flutterx.constance.Links
 import shop.itbug.flutterx.dialog.FlutterDownloadPanel
@@ -229,6 +233,49 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                 }
                 row {
                     comment(PluginBundle.get("app.config.status.bar.comment"))
+                }
+            }
+
+            group(PluginBundle.get("app.config.sentry.group")) {
+                row {
+                    checkBox(PluginBundle.get("app.config.sentry.enable"))
+                        .bindSelected({ globalConfig.state.sentryEnabled }, {
+                            globalConfig.state.sentryEnabled = it
+                        })
+                        .comment(PluginBundle.get("app.config.sentry.enable.comment"))
+                }
+                row(PluginBundle.get("app.config.sentry.dsn")) {
+                    textField()
+                        .align(Align.FILL)
+                        .bindText({ globalConfig.state.sentryDsn.orEmpty() }, { globalConfig.state.sentryDsn = it })
+                }
+                row {
+                    checkBox(PluginBundle.get("app.config.sentry.debug"))
+                        .bindSelected({ globalConfig.state.sentryDebug }, {
+                            globalConfig.state.sentryDebug = it
+                        })
+                        .comment(PluginBundle.get("app.config.sentry.debug.comment"))
+                }
+                row {
+                    button(PluginBundle.get("app.config.sentry.test")) {
+                        apply()
+                        val service = SentryReportingService.getInstance()
+                        // 设置页里的改动先落盘，再按新配置重启上报
+                        service.flushAndClose(flushMillis = 1000)
+                        service.start()
+                        val id = service.sendTestEvent()
+                        NotificationGroupManager.getInstance()
+                            .getNotificationGroup(SENTRY_NOTIFICATION_GROUP)
+                            .createNotification(
+                                if (id != null) PluginBundle.get("app.config.sentry.test.ok", id)
+                                else PluginBundle.get("app.config.sentry.test.fail"),
+                                if (id != null) NotificationType.INFORMATION else NotificationType.WARNING
+                            )
+                            .notify(project)
+                    }
+                }
+                row {
+                    comment(PluginBundle.get("app.config.sentry.privacy"))
                 }
             }
 

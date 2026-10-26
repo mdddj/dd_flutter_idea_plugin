@@ -32,6 +32,8 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.jewel.ui.theme.colorPalette
+import shop.itbug.flutterx.constance.LEGACY_SENTRY_DSN
+import shop.itbug.flutterx.constance.SENTRY_DSN
 import java.awt.Dimension
 import javax.swing.JComponent
 import com.intellij.openapi.components.State as IntellijState
@@ -52,6 +54,15 @@ class FlutterXGlobalConfigService : SimplePersistentStateComponent<FlutterXGloba
 
         // 强制不显示底部状态栏
         var forceHideBottomStatusBarAction by property(false)
+
+        // 自动把插件异常/冻结上报到自建 Sentry
+        var sentryEnabled by property(true)
+
+        // 自建 Sentry 的 DSN
+        var sentryDsn by string(SENTRY_DSN)
+
+        // 打开 Sentry SDK 的调试日志，排查上报问题时用
+        var sentryDebug by property(false)
 
         fun updateList() {
             incrementModificationCount()
@@ -77,6 +88,19 @@ class FlutterXGlobalConfigService : SimplePersistentStateComponent<FlutterXGloba
     fun updateBase(action: (s: MyState) -> Unit){
         action(state)
         updateData()
+    }
+
+    /**
+     * 旧版本直连 `http://64.90.30.70:8088/12`（明文）。现在默认走 HTTPS 反代，
+     * 配置文件里存着旧值的老用户需要迁移一次，否则会继续明文上报。
+     * 用户自己填的其它 DSN 不动。
+     */
+    override fun loadState(state: MyState) {
+        super.loadState(state)
+        if (state.sentryDsn == LEGACY_SENTRY_DSN) {
+            state.sentryDsn = SENTRY_DSN
+            logger.info("Migrated Sentry DSN from the legacy plaintext endpoint to HTTPS")
+        }
     }
 
     companion object {

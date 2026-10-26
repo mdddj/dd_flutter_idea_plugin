@@ -81,6 +81,8 @@ val bPlugins = mutableListOf(
 
 dependencies {
     implementation("org.smartboot.socket:aio-pro:latest.release")
+    // 错误自动上报。SDK 内部把 gson 重打包成 io.sentry.vendor.gson，不会和平台冲突。
+    implementation("io.sentry:sentry:8.61.1")
     testImplementation("junit:junit:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     intellijPlatform {
