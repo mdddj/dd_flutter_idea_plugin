@@ -24,7 +24,7 @@ val idePluginDependencies =
 plugins {
     idea
     kotlin("jvm") version "2.3.20"
-    id("org.jetbrains.intellij.platform") version "2.18.1"
+    id("org.jetbrains.intellij.platform") version "2.19.0"
     id("org.jetbrains.changelog") version "2.2.1"
     id("maven-publish")
     id("org.jetbrains.compose") version "1.8.2"
