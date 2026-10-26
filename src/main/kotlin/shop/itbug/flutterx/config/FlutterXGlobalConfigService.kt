@@ -32,7 +32,7 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
 import org.jetbrains.jewel.ui.theme.colorPalette
-import shop.itbug.flutterx.constance.LEGACY_SENTRY_DSN
+import shop.itbug.flutterx.constance.LEGACY_SENTRY_DSN_PREFIX
 import shop.itbug.flutterx.constance.SENTRY_DSN
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -91,13 +91,13 @@ class FlutterXGlobalConfigService : SimplePersistentStateComponent<FlutterXGloba
     }
 
     /**
-     * 旧版本直连 `http://64.90.30.70:8088/12`（明文）。现在默认走 HTTPS 反代，
-     * 配置文件里存着旧值的老用户需要迁移一次，否则会继续明文上报。
-     * 用户自己填的其它 DSN 不动。
+     * 旧版本默认 DSN 是明文 http，现在默认走 HTTPS。存着旧值的老用户迁移一次，
+     * 否则会继续明文上报。用同一个公钥才迁移，用户自己填的其它 DSN 不动。
      */
     override fun loadState(state: MyState) {
         super.loadState(state)
-        if (state.sentryDsn == LEGACY_SENTRY_DSN) {
+        val dsn = state.sentryDsn.orEmpty()
+        if (isLegacyDefaultDsn(dsn)) {
             state.sentryDsn = SENTRY_DSN
             logger.info("Migrated Sentry DSN from the legacy plaintext endpoint to HTTPS")
         }
@@ -105,6 +105,16 @@ class FlutterXGlobalConfigService : SimplePersistentStateComponent<FlutterXGloba
 
     companion object {
         fun getInstance() = service<FlutterXGlobalConfigService>()
+
+        /**
+         * 是否是旧版的明文 DSN：明文 http，且公钥和当前默认 DSN 相同。
+         * 只认公钥，不写死主机名，避免把服务器地址散落在代码里。
+         */
+        internal fun isLegacyDefaultDsn(dsn: String): Boolean {
+            if (!dsn.startsWith(LEGACY_SENTRY_DSN_PREFIX)) return false
+            return dsn.substringAfter("://").substringBefore("@") ==
+                    SENTRY_DSN.substringAfter("://").substringBefore("@")
+        }
     }
 }
 

@@ -4,8 +4,8 @@
 
 ### New Features
 
-- IDE Fatal Errors dialogs now offer "Report to GitHub". The full stack trace, plugin and IDE versions, OS, attachments, and your comment are copied to the clipboard, and a pre-filled GitHub issue page opens in the browser. Nothing is uploaded automatically.
-- Added automatic error reporting to a self-hosted Sentry instance over HTTPS (`https://rustrak.itbug.shop`). Unhandled exceptions and UI freezes attributed to the plugin are sent in the background through the platform `ErrorReportSink` API, so no user action is needed. Reporting can be disabled or pointed at a different DSN in `Settings | FlutterX`, which also has a "Send Test Event" button. Existing configs that still point at the old plaintext `64.90.30.70:8088` endpoint are migrated to HTTPS on load.
+- Added error reporting. Fatal Errors dialogs can open a pre-filled GitHub issue, and plugin errors and UI freezes are sent to Sentry in the background.
+- Error reporting can be turned off or repointed at `Settings | FlutterX`, which also has a "Send Test Event" button.
 
 ## 7.3.2 - 2026-10-09
 

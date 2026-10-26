@@ -7,7 +7,6 @@ import kotlinx.coroutines.runBlocking
 import shop.itbug.flutterx.common.FlutterXErrorReportSink
 import shop.itbug.flutterx.common.SentryReportingService
 import shop.itbug.flutterx.config.FlutterXGlobalConfigService
-import shop.itbug.flutterx.constance.LEGACY_SENTRY_DSN
 import shop.itbug.flutterx.constance.SENTRY_DSN
 
 /**
@@ -45,24 +44,18 @@ class SentryReportingServiceTest : BasePlatformTestCase() {
         )
     }
 
-    fun testDefaultDsnUsesHttpsReverseProxy() {
-        // 反代终结 TLS，插件侧不能再用明文 IP 直连
+    fun testDefaultDsnUsesHttps() {
         assertTrue("must be HTTPS", SENTRY_DSN.startsWith("https://"))
         assertTrue(SENTRY_DSN.endsWith("/12"))
-        assertTrue(SENTRY_DSN.contains("@rustrak.itbug.shop"))
-        assertFalse("must not point at the raw IP", SENTRY_DSN.contains("64.90.30.70"))
         assertTrue(SENTRY_DSN.substringAfter("://").substringBefore("@").isNotEmpty())
-        assertEquals(
-            "the public key must be unchanged after the proxy move",
-            LEGACY_SENTRY_DSN.substringAfter("://").substringBefore("@"),
-            SENTRY_DSN.substringAfter("://").substringBefore("@")
-        )
     }
 
     fun testLegacyPlaintextDsnIsMigratedOnLoad() {
+        // 旧版存的是明文 http + 同一个公钥；这里用公钥拼一个旧形态的 DSN
+        val key = SENTRY_DSN.substringAfter("://").substringBefore("@")
         val service = FlutterXGlobalConfigService()
         val state = FlutterXGlobalConfigService.MyState()
-        state.sentryDsn = LEGACY_SENTRY_DSN
+        state.sentryDsn = "http://$key@legacy.invalid/12"
 
         service.loadState(state)
 
@@ -77,6 +70,17 @@ class SentryReportingServiceTest : BasePlatformTestCase() {
         service.loadState(state)
 
         assertEquals("https://custom@example.com/9", state.sentryDsn)
+    }
+
+    fun testForeignPlaintextDsnIsNotMigrated() {
+        // 明文但不是本插件的公钥，不能擅自改写
+        val service = FlutterXGlobalConfigService()
+        val state = FlutterXGlobalConfigService.MyState()
+        state.sentryDsn = "http://someoneelse@example.com/3"
+
+        service.loadState(state)
+
+        assertEquals("http://someoneelse@example.com/3", state.sentryDsn)
     }
 
     fun testMaskDsnKeepsKeySecret() {
