@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 7.3.4 - 2026-10-29
+
+### New Features
+
+- Added a status bar entry that launches Xcode iOS simulators. It lists the available simulators, boots the one you pick, and brings the simulator UI to the front. The entry only appears on machines with `xcrun`, and can be turned off at `Settings | FlutterX`.
+
+### Improvements
+
+- The simulator launcher now supports Xcode 27, where `Simulator.app` was replaced by `DeviceHub.app`. The UI host is resolved by path, so opening the Simulator no longer fails with "Unable to find application named 'Simulator'" on macOS 26 and later.
+
 ## 7.3.3 - 2026-10-26
 
 ### New Features

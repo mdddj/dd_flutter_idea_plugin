@@ -12,6 +12,9 @@ class PluginSetting : BaseState() {
     var openAndroidDirectoryInAS by property(true)
     var openIosDirectoryInXcode by property(true)
     var openMacosDirectoryInXcode by property(true)
+
+    //显示启动 iOS 模拟器的入口(macOS only)
+    var showIosSimulatorLauncher by property(true)
     var showAssetsIconInEditor by property(true)
     var assetsIconSize by property(16)
     var showDiscord by property(true)

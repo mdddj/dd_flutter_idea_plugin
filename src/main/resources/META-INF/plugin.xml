@@ -425,6 +425,11 @@
                 id="OpenIosProjectInXcodeAction"/>
         <action class="shop.itbug.flutterx.actions.bar.OpenMacosProjectInXcodeAction"
                 id="OpenMacosProjectInXcodeAction"/>
+        <action class="shop.itbug.flutterx.actions.bar.LaunchIosSimulatorAction"
+                id="LaunchIosSimulatorAction" icon="AllIcons.Actions.Execute"
+                text="iOS Simulator">
+            <add-to-group group-id="RevealGroup" anchor="last"/>
+        </action>
         <action class="shop.itbug.flutterx.actions.bar.LanguagePopupSettingsAction"
                 id="LanguagePopupSettingsAction"/>
         <action id="FlutterDownloaderAction" class="shop.itbug.flutterx.dialog.FlutterDownloaderAction"
@@ -449,6 +454,7 @@
             <reference ref="OpenAndroidProjectOnASAction"/>
             <reference ref="OpenIosProjectInXcodeAction"/>
             <reference ref="OpenMacosProjectInXcodeAction"/>
+            <reference ref="LaunchIosSimulatorAction"/>
             <separator text="Other"/>
             <reference ref="FlutterDownloaderAction"/>
             <reference ref="FlutterInstallerAction"/>
