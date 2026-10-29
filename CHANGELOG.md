@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 7.3.4 - 2026-10-29
+
 ### New Features
 
 - Added a status bar entry that launches Xcode iOS simulators. It lists the available simulators, boots the one you pick, and brings the simulator UI to the front. The entry only appears on machines with `xcrun`, and can be turned off at `Settings | FlutterX`.
