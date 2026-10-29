@@ -116,6 +116,12 @@ class AppConfig(val project: Project) : Configurable, SearchableConfigurable {
                 }
             }
 
+            group(PluginBundle.get("ios.simulator.action")) {
+                row(PluginBundle.get("setting_show_ios_simulator_action")) {
+                    checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showIosSimulatorLauncher)
+                }
+            }
+
             group(PluginBundle.get("foot_bar_links_title")) {
                 row(PluginBundle.get("setting_show_discord_action")) {
                     checkBox(PluginBundle.get("open")).bindSelected(pluginConfig::showDiscord)
